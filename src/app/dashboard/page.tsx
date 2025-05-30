@@ -1,9 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Award, BarChart3, Bookmark, CalendarCheck2, Edit, ExternalLink, Eye, HandHeart, MessageCircle, Settings, ShieldCheck, Star } from 'lucide-react';
+import { Award, BarChart3, Bookmark, CalendarCheck2, Edit, ExternalLink, Eye, HandHeart, MessageSquare, Settings, ShieldCheck as ShieldCheckIcon, Star, UserPlus } from 'lucide-react';
+import VerifiedBadge from '@/components/verified-badge'; // New import
 
 // Mock data
 const userData = {
@@ -15,6 +17,8 @@ const userData = {
   impactPoints: 1250,
   level: 'Gold Contributor',
   nextLevelPoints: 2000,
+  isERotaractMember: true, // Added for badge logic
+  isCreator: false, // Added for "Become a Creator"
 };
 
 const joinedCampaigns = [
@@ -33,6 +37,7 @@ const milestones = [
   { name: '1000 Impact Points', achieved: true, date: 'Aug 20, 2023' },
   { name: 'Led a Discussion', achieved: false },
   { name: 'Submitted First Blog Post', achieved: true, date: 'Sep 05, 2023' },
+  { name: 'Became e-Rotaract Member', achieved: userData.isERotaractMember, date: userData.isERotaractMember ? 'Nov 10, 2023' : undefined }
 ];
 
 const volunteeringRecord = [
@@ -52,37 +57,46 @@ export default function DashboardPage() {
             <AvatarFallback>{userData.name.substring(0,2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="font-headline text-3xl font-bold text-primary">{userData.name}</h1>
+            <h1 className="font-headline text-3xl font-bold text-primary flex items-center">
+              {userData.name} {userData.isERotaractMember && <VerifiedBadge className="ml-2" size={24} />}
+            </h1>
             <p className="text-muted-foreground">{userData.email}</p>
             <p className="text-sm text-muted-foreground">Member since: {userData.memberSince}</p>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex gap-2 flex-wrap">
                 <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2" /> Edit Profile</Button>
                 <Button variant="outline" size="sm"><Settings className="w-4 h-4 mr-2" /> Settings</Button>
+                {userData.isERotaractMember && !userData.isCreator && (
+                  <Button variant="secondary" size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <UserPlus className="w-4 h-4 mr-2" /> Become a Creator
+                  </Button>
+                )}
             </div>
           </div>
         </div>
       </section>
 
-      <section>
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="font-headline text-xl text-primary flex items-center"><Award className="mr-2 h-5 w-5 text-accent"/>Impact Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex justify-between items-baseline">
-                <p className="text-4xl font-bold text-accent">{userData.impactPoints.toLocaleString()}</p>
-                <p className="text-lg text-muted-foreground">Impact Points</p>
-            </div>
-            <div>
-                <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium text-primary">{userData.level}</span>
-                    <span className="text-muted-foreground">{userData.nextLevelPoints.toLocaleString()} pts to next level</span>
-                </div>
-                <Progress value={progressToNextLevel} aria-label="Progress to next level" />
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      {userData.isERotaractMember && (
+        <section>
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="font-headline text-xl text-primary flex items-center"><Award className="mr-2 h-5 w-5 text-accent"/>Impact Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-baseline">
+                  <p className="text-4xl font-bold text-accent">{userData.impactPoints.toLocaleString()}</p>
+                  <p className="text-lg text-muted-foreground">Impact Points</p>
+              </div>
+              <div>
+                  <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-primary">{userData.level}</span>
+                      <span className="text-muted-foreground">{userData.nextLevelPoints.toLocaleString()} pts to next level</span>
+                  </div>
+                  <Progress value={progressToNextLevel} aria-label="Progress to next level" />
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="shadow-md">
@@ -112,7 +126,7 @@ export default function DashboardPage() {
 
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-accent"/>Impact Milestones</CardTitle>
+            <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheckIcon className="mr-2 h-5 w-5 text-accent"/>Impact Milestones</CardTitle>
             <CardDescription>Celebrate your achievements within the community.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -166,7 +180,7 @@ export default function DashboardPage() {
             <Link href={item.link} key={item.id} className="block p-3 bg-muted/30 rounded-md border hover:bg-muted/50 transition-colors">
               <div className="flex items-center mb-1">
                 {item.type === 'Creator' && <UserCircle className="h-4 w-4 mr-2 text-primary" />}
-                {item.type === 'Chatroom' && <MessageCircle className="h-4 w-4 mr-2 text-primary" />}
+                {item.type === 'Chatroom' && <MessageSquare className="h-4 w-4 mr-2 text-primary" />}
                 {item.type === 'Blog Post' && <Edit className="h-4 w-4 mr-2 text-primary" />}
                 <span className="text-xs font-semibold text-muted-foreground">{item.type}</span>
               </div>

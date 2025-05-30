@@ -1,15 +1,18 @@
 
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import CampaignCarousel from '@/components/campaign-carousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart3, Edit3, Lightbulb, MessageCircle, UserCircle, ArrowRight, ExternalLink } from 'lucide-react';
+import { BarChart3, Edit3, Lightbulb, MessageCircle, UserPlus, ArrowRight, ExternalLink, ShieldCheck } from 'lucide-react';
 import BlogCard, { type BlogCardProps } from '@/components/blog-card';
 import EventCard, { type EventCardProps } from '@/components/event-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useState } from 'react';
+import SignupModal from '@/components/auth/signup-modal';
 
-// Mock data - replace with actual data fetching
+
 const mockCarouselCampaigns = [
   { id: 'c1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'water nature', shortDescription: 'Bringing clean and safe drinking water to underserved communities in rural Uganda.' },
   { id: 'c2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'youth education', shortDescription: 'Equipping young people with skills for a brighter future through interactive workshops.' },
@@ -111,7 +114,16 @@ const feedItems: FeedItem[] = [
 
 
 export default function Home() {
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+  const [signupInitialStep, setSignupInitialStep] = useState<"user" | "community" | "erotaract" | null>(null);
+
+  const openSignupModalForERotaract = () => {
+    setSignupInitialStep("erotaract");
+    setIsSignupModalOpen(true);
+  };
+
   return (
+    <>
     <div className="space-y-12 animate-fade-in">
       <section>
         <CampaignCarousel campaigns={mockCarouselCampaigns} />
@@ -123,7 +135,7 @@ export default function Home() {
             <CardTitle className="font-headline text-2xl text-primary">Ready to Make an Impact?</CardTitle>
             <CardDescription>Your voice and actions can shape a better future. Get started:</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <Button size="lg" className="w-full py-6 text-base bg-primary hover:bg-primary/90" asChild>
               <Link href="/create?action=campaign">
                 <BarChart3 className="mr-2 h-5 w-5" /> Start a Campaign
@@ -134,10 +146,13 @@ export default function Home() {
                 <Edit3 className="mr-2 h-5 w-5" /> Share Your Story
               </Link>
             </Button>
-            <Button size="lg" className="w-full py-6 text-base bg-primary hover:bg-primary/90" asChild>
+             <Button size="lg" className="w-full py-6 text-base bg-primary hover:bg-primary/90" asChild>
                <Link href="/ideas">
                 <Lightbulb className="mr-2 h-5 w-5" /> Pitch an Idea
               </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="w-full py-6 text-base border-accent text-accent hover:bg-accent/10 hover:text-accent" onClick={openSignupModalForERotaract}>
+              <UserPlus className="mr-2 h-5 w-5" /> Join e-Rotaract Online
             </Button>
           </CardContent>
         </Card>
@@ -213,5 +228,7 @@ export default function Home() {
         )}
       </section>
     </div>
+    <SignupModal open={isSignupModalOpen} onOpenChange={setIsSignupModalOpen} initialStep={signupInitialStep} />
+    </>
   );
 }
