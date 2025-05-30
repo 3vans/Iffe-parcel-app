@@ -82,7 +82,7 @@ const feedItems: FeedItem[] = [
     type: 'room',
     name: 'Sustainable Agriculture Now',
     topic: 'Share tips & challenges in eco-friendly farming practices globally.',
-    chatLink: '/chat/sustainable-agri',
+    chatLink: '/chat', // Corrected link
   },
   {
     id: 'event-1',
