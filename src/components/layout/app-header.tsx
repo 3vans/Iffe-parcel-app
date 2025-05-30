@@ -8,7 +8,7 @@ import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { cn } from '@/lib/utils';
-import RotarySpinner from '@/components/ui/rotary-spinner'; // Added import for the spinner
+import RotarySpinner from '@/components/ui/rotary-spinner';
 
 const AppHeader = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -68,11 +68,10 @@ const AppHeader = () => {
           <Link href="/" legacyBehavior>
             <a className="flex items-center gap-2 font-headline text-lg md:text-xl font-bold text-primary hover:text-primary/80 transition-colors">
               <RotarySpinner size={20} /> 
-              Rotaract eClub Uganda Global
+              Rotaract e-Hub
             </a>
           </Link>
           
-          {/* Desktop Navigation Links - Hidden on mobile as they are in BottomNav */}
           <div className="hidden md:flex space-x-1 items-center">
             <Button variant="ghost" asChild>
               <Link href="/">
@@ -118,7 +117,6 @@ const AppHeader = () => {
 
           <div className="flex items-center space-x-2">
             <ThemeToggleButton />
-            {/* Auth Buttons - Hidden on mobile for cleaner look, accessible via other means or future mobile menu */}
             <div className="hidden md:flex items-center space-x-2">
               <Button variant="outline" onClick={() => setIsLoginModalOpen(true)}>
                 <LogIn className="mr-2 h-4 w-4"/> Login
