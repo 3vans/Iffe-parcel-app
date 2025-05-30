@@ -1,10 +1,12 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Wand2 } from 'lucide-react';
+import { Wand2 } from 'lucide-react';
+import RotarySpinner from '@/components/ui/rotary-spinner'; // New Import
 import { campaignDescriptionSummarizer } from '@/ai/flows/campaign-description-summarizer'; // Adjust path if needed
 import { useToast } from '@/hooks/use-toast';
 
@@ -54,7 +56,7 @@ const Summarizer: React.FC<SummarizerProps> = ({ campaignDescription, campaignTi
         <Button onClick={handleSummarize} disabled={isLoading} className="mb-4 bg-accent text-accent-foreground hover:bg-accent/90">
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <RotarySpinner size={16} className="mr-2" />
               Generating...
             </>
           ) : (
