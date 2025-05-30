@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wand2 } from 'lucide-react';
-import RotarySpinner from '@/components/ui/rotary-spinner'; // New Import
-import { campaignDescriptionSummarizer } from '@/ai/flows/campaign-description-summarizer'; // Adjust path if needed
+import RotarySpinner from '@/components/ui/rotary-spinner';
+import { campaignDescriptionSummarizer } from '@/ai/flows/campaign-description-summarizer';
 import { useToast } from '@/hooks/use-toast';
 
 interface SummarizerProps {
@@ -56,7 +56,7 @@ const Summarizer: React.FC<SummarizerProps> = ({ campaignDescription, campaignTi
         <Button onClick={handleSummarize} disabled={isLoading} className="mb-4 bg-accent text-accent-foreground hover:bg-accent/90">
           {isLoading ? (
             <>
-              <RotarySpinner size={16} className="mr-2" />
+              <RotarySpinner size={16} className="mr-2 text-accent-foreground" /> {/* Changed color here */}
               Generating...
             </>
           ) : (
