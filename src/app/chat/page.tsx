@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Smile, MessageCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface ChatMessage {
@@ -98,79 +98,76 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-10rem)] animate-fade-in">
-      <Card className="flex flex-col flex-grow shadow-xl overflow-hidden">
-        <CardHeader className="border-b p-4">
-          <CardTitle className="font-headline text-xl sm:text-2xl text-primary flex items-center">
-            <MessageCircle className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-accent" /> Community Chat
-          </CardTitle>
-          <CardDescription className="text-xs sm:text-sm">
-            Connect and discuss with other members.
-          </CardDescription>
-        </CardHeader>
-        
-        <ScrollArea className="flex-grow bg-muted/20">
-          <div className="p-4 space-y-4">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={cn(
-                  'flex items-start space-x-2 max-w-[80%] sm:max-w-[70%]',
-                  msg.sender === 'user' ? 'ml-auto flex-row-reverse space-x-reverse' : 'mr-auto'
-                )}
-              >
-                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-                  <AvatarImage src={msg.avatarUrl} alt={msg.userName} data-ai-hint={msg.dataAiHint} />
-                  <AvatarFallback>{msg.userName?.substring(0, 1).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <div
-                    className={cn(
-                      'p-2 sm:p-3 rounded-lg shadow',
-                      msg.sender === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-br-none'
-                        : 'bg-card text-card-foreground border rounded-bl-none'
-                    )}
-                  >
-                    <p className="text-sm">{msg.text}</p>
-                  </div>
-                   <p className={cn(
-                      "text-xs mt-1 px-1",
-                       msg.sender === 'user' ? 'text-muted-foreground text-right' : 'text-muted-foreground text-left'
-                    )}
-                  >
-                    {/* Optional: Show sender name for 'other' messages if needed */}
-                    {/* {msg.sender === 'other' && <span className="font-semibold">{msg.userName} &middot; </span>} */}
-                    {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
-        
-        <div className="p-3 sm:p-4 border-t bg-card">
-          <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" type="button" className="text-muted-foreground hover:text-accent shrink-0">
-              <Smile className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="sr-only">Add emoji</span>
-            </Button>
-            <Input
-              type="text"
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              className="flex-grow h-10 sm:h-11"
-              autoComplete="off"
-            />
-            <Button type="submit" size="icon" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 h-10 w-10 sm:h-11 sm:w-11">
-              <Send className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="sr-only">Send message</span>
-            </Button>
-          </form>
+    <div className="flex flex-col h-full bg-background animate-fade-in">
+      <div className="p-4 border-b bg-card sticky top-0 z-10">
+        <div className="flex items-center">
+          <MessageCircle className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+          <h1 className="font-headline text-xl sm:text-2xl text-primary">Community Chat</h1>
         </div>
-      </Card>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          Connect and discuss with other members.
+        </p>
+      </div>
+      
+      <ScrollArea className="flex-grow bg-muted/20">
+        <div className="p-4 space-y-4">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={cn(
+                'flex items-start space-x-2 max-w-[80%] sm:max-w-[70%]',
+                msg.sender === 'user' ? 'ml-auto flex-row-reverse space-x-reverse' : 'mr-auto'
+              )}
+            >
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+                <AvatarImage src={msg.avatarUrl} alt={msg.userName} data-ai-hint={msg.dataAiHint} />
+                <AvatarFallback>{msg.userName?.substring(0, 1).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <div
+                  className={cn(
+                    'p-2 sm:p-3 rounded-lg shadow',
+                    msg.sender === 'user'
+                      ? 'bg-primary text-primary-foreground rounded-br-none'
+                      : 'bg-card text-card-foreground border rounded-bl-none'
+                  )}
+                >
+                  <p className="text-sm">{msg.text}</p>
+                </div>
+                 <p className={cn(
+                    "text-xs mt-1 px-1",
+                     msg.sender === 'user' ? 'text-muted-foreground text-right' : 'text-muted-foreground text-left'
+                  )}
+                >
+                  {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </p>
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
+      
+      <div className="p-3 sm:p-4 border-t bg-card sticky bottom-0 z-10">
+        <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon" type="button" className="text-muted-foreground hover:text-accent shrink-0">
+            <Smile className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span className="sr-only">Add emoji</span>
+          </Button>
+          <Input
+            type="text"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="flex-grow h-10 sm:h-11"
+            autoComplete="off"
+          />
+          <Button type="submit" size="icon" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 h-10 w-10 sm:h-11 sm:w-11">
+            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="sr-only">Send message</span>
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
