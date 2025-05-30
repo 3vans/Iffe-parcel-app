@@ -3,15 +3,47 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
+import { cn } from '@/lib/utils';
 
 const AppHeader = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [signupInitialStep, setSignupInitialStep] = useState<"user" | "community" | "erotaract" | null>(null);
+  
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const headerRef = React.useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+  }, []);
+
+  const controlNavbar = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      if (window.scrollY > lastScrollY && window.scrollY > headerHeight) { // if scroll down hide the navbar
+        setShowNavbar(false);
+      } else { // if scroll up show the navbar
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY); 
+    }
+  }, [lastScrollY, headerHeight]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlNavbar);
+      return () => {
+        window.removeEventListener('scroll', controlNavbar);
+      };
+    }
+  }, [controlNavbar]);
 
 
   const openSignupModal = (initialStep: "user" | "community" | "erotaract" | null = null) => {
@@ -22,7 +54,13 @@ const AppHeader = () => {
 
   return (
     <>
-      <header className="bg-card shadow-md sticky top-0 z-50">
+      <header 
+        ref={headerRef}
+        className={cn(
+          "bg-card/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-transform duration-300 ease-in-out",
+          showNavbar ? "translate-y-0" : "-translate-y-full"
+        )}
+      >
         <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/" legacyBehavior>
             <a className="font-headline text-xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
@@ -30,7 +68,7 @@ const AppHeader = () => {
             </a>
           </Link>
           
-          {/* Desktop Navigation Links - Hidden on mobile */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-1 items-center">
             <Button variant="ghost" asChild>
               <Link href="/">
@@ -75,8 +113,8 @@ const AppHeader = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <ThemeToggleButton /> {/* Always visible */}
-            {/* Auth Buttons - Hidden on mobile */}
+            <ThemeToggleButton />
+            {/* Auth Buttons - Hidden on mobile for cleaner look, accessible via other means or future mobile menu */}
             <div className="hidden md:flex items-center space-x-2">
               <Button variant="outline" onClick={() => setIsLoginModalOpen(true)}>
                 <LogIn className="mr-2 h-4 w-4"/> Login
@@ -85,10 +123,6 @@ const AppHeader = () => {
                 <UserPlus className="mr-2 h-4 w-4"/> Sign Up
               </Button>
             </div>
-             {/* Placeholder for mobile menu trigger - can be added later */}
-            {/* <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button> */}
           </div>
         </nav>
       </header>
