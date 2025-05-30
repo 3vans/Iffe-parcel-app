@@ -6,7 +6,7 @@ import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, E
 import React, { useState } from 'react';
 import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
-import { ThemeToggleButton } from '@/components/theme-toggle-button'; // Added import
+import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 const AppHeader = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -22,14 +22,16 @@ const AppHeader = () => {
 
   return (
     <>
-      <header className="bg-card shadow-md sticky top-0 z-50 hidden md:block">
+      <header className="bg-card shadow-md sticky top-0 z-50">
         <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/" legacyBehavior>
-            <a className="font-headline text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
+            <a className="font-headline text-xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
               e-Rotary Hub
             </a>
           </Link>
-          <div className="space-x-1 flex items-center">
+          
+          {/* Desktop Navigation Links - Hidden on mobile */}
+          <div className="hidden md:flex space-x-1 items-center">
             <Button variant="ghost" asChild>
               <Link href="/">
                 <Home className="mr-1 h-4 w-4" /> Home
@@ -71,14 +73,22 @@ const AppHeader = () => {
               </Link>
             </Button>
           </div>
+
           <div className="flex items-center space-x-2">
-            <ThemeToggleButton /> {/* Added ThemeToggleButton */}
-            <Button variant="outline" onClick={() => setIsLoginModalOpen(true)}>
-              <LogIn className="mr-2 h-4 w-4"/> Login
-            </Button>
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => openSignupModal()}>
-              <UserPlus className="mr-2 h-4 w-4"/> Sign Up
-            </Button>
+            <ThemeToggleButton /> {/* Always visible */}
+            {/* Auth Buttons - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="outline" onClick={() => setIsLoginModalOpen(true)}>
+                <LogIn className="mr-2 h-4 w-4"/> Login
+              </Button>
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => openSignupModal()}>
+                <UserPlus className="mr-2 h-4 w-4"/> Sign Up
+              </Button>
+            </div>
+             {/* Placeholder for mobile menu trigger - can be added later */}
+            {/* <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu className="h-5 w-5" />
+            </Button> */}
           </div>
         </nav>
       </header>
