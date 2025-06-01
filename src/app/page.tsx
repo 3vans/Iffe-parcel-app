@@ -60,13 +60,13 @@ const feedItems: FeedItem[] = [
     avatarUrl: 'https://placehold.co/100x100.png',
     dataAiHint: 'activist group',
     specialty: 'Waste Management & Advocacy',
-    profileLink: '/profile/eco-warriors',
+    profileLink: '/dashboard', // Changed from /profile/eco-warriors
   },
   {
     id: 'blog-1',
     type: 'blog',
     post: {
-      id: 'b1',
+      id: 'b1', // This ID will be used for /blog/b1
       title: 'The Urban Garden Revolution',
       author: 'Jane Doe',
       date: 'Nov 05, 2023',
@@ -82,13 +82,13 @@ const feedItems: FeedItem[] = [
     type: 'room',
     name: 'Sustainable Agriculture Now',
     topic: 'Share tips & challenges in eco-friendly farming practices globally.',
-    chatLink: '/chat', // Corrected link
+    chatLink: '/chat', 
   },
   {
     id: 'event-1',
     type: 'event',
     event: {
-      id: 'e1',
+      id: 'e1', // This ID will be used for /events/e1
       title: 'Climate Action Dialogue: Youth Edition',
       date: 'Nov 28, 2023',
       time: '03:00 PM - 04:30 PM',
@@ -108,7 +108,7 @@ const feedItems: FeedItem[] = [
     avatarUrl: 'https://placehold.co/100x100.png',
     dataAiHint: 'tech team',
     specialty: 'Developing Solutions for Social Impact',
-    profileLink: '/profile/techforgood',
+    profileLink: '/dashboard', // Changed from /profile/techforgood
   },
 ];
 
@@ -232,3 +232,4 @@ export default function Home() {
     </>
   );
 }
+

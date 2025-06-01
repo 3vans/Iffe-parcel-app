@@ -1,0 +1,113 @@
+
+'use client'; // For form handling
+
+import Link from 'next/link';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, BarChart3 } from 'lucide-react';
+import { useState } from 'react';
+
+const campaignSchema = z.object({
+  title: z.string().min(5, 'Title must be at least 5 characters long.'),
+  shortDescription: z.string().min(10, 'Short description must be at least 10 characters.').max(150, 'Short description max 150 characters.'),
+  fullDescription: z.string().min(50, 'Full description must be at least 50 characters long.'),
+  goalAmount: z.coerce.number().min(1, 'Goal amount must be at least 1.'),
+  imageUrl: z.string().url('Must be a valid image URL.').optional().or(z.literal('')),
+  tags: z.string().optional(), // Comma-separated tags
+});
+
+type CampaignFormValues = z.infer<typeof campaignSchema>;
+
+export default function NewCampaignPage() {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<CampaignFormValues>({
+    resolver: zodResolver(campaignSchema),
+  });
+
+  const onSubmit: SubmitHandler<CampaignFormValues> = async (data) => {
+    setIsSubmitting(true);
+    // Simulate API call to create campaign
+    console.log('New campaign data:', data);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    toast({
+      title: "Campaign Submitted!",
+      description: "Your new campaign has been submitted for review.",
+      variant: "default",
+    });
+    reset();
+    setIsSubmitting(false);
+    // Optionally redirect user: router.push('/campaigns');
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto py-8 animate-slide-up">
+      <Button variant="ghost" asChild className="mb-6">
+        <Link href="/campaigns">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Campaigns
+        </Link>
+      </Button>
+      <Card className="shadow-xl">
+        <CardHeader>
+          <CardTitle className="font-headline text-3xl text-primary flex items-center">
+            <BarChart3 className="mr-3 h-7 w-7 text-accent" /> Start a New Campaign
+          </CardTitle>
+          <CardDescription>
+            Launch your initiative and rally support from the community. Campaigns will be reviewed before going live.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div>
+              <Label htmlFor="title" className="font-semibold">Campaign Title</Label>
+              <Input id="title" {...register('title')} className="mt-1" />
+              {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
+            </div>
+            
+            <div>
+              <Label htmlFor="shortDescription" className="font-semibold">Short Description (Teaser)</Label>
+              <Input id="shortDescription" {...register('shortDescription')} className="mt-1" placeholder="A brief summary for campaign cards (max 150 chars)" />
+              {errors.shortDescription && <p className="text-sm text-destructive mt-1">{errors.shortDescription.message}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="fullDescription" className="font-semibold">Full Campaign Description</Label>
+              <Textarea id="fullDescription" {...register('fullDescription')} rows={8} className="mt-1" placeholder="Tell the story of your campaign, its goals, and impact..." />
+              {errors.fullDescription && <p className="text-sm text-destructive mt-1">{errors.fullDescription.message}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="goalAmount" className="font-semibold">Fundraising Goal ($)</Label>
+              <Input id="goalAmount" type="number" {...register('goalAmount')} className="mt-1" placeholder="e.g., 5000" />
+              {errors.goalAmount && <p className="text-sm text-destructive mt-1">{errors.goalAmount.message}</p>}
+            </div>
+            
+            <div>
+              <Label htmlFor="imageUrl" className="font-semibold">Cover Image URL (Optional)</Label>
+              <Input id="imageUrl" type="url" {...register('imageUrl')} placeholder="https://example.com/campaign-image.png" className="mt-1" />
+              {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="tags" className="font-semibold">Tags (comma-separated, e.g., #Health, #Education)</Label>
+              <Input id="tags" {...register('tags')} className="mt-1" placeholder="#Environment, #YouthEmpowerment" />
+              {errors.tags && <p className="text-sm text-destructive mt-1">{errors.tags.message}</p>}
+            </div>
+
+            <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 py-3 text-base" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting Campaign...' : 'Submit Campaign for Review'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

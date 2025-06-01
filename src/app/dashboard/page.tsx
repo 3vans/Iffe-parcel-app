@@ -28,9 +28,9 @@ const joinedCampaigns = [
 ];
 
 const followedContent = [
-  { id: 'c1', type: 'Creator', name: 'Eco Warriors Uganda', link: '/profile/c1' },
-  { id: 'r1', type: 'Chatroom', name: 'Plastic Recycling Hub', link: '/chat/r1' },
-  { id: 'b2', type: 'Blog Post', name: 'Youth Voices: Leading Change', link: '/blog/2' },
+  { id: 'c1', type: 'Creator', name: 'Eco Warriors Uganda', link: '/dashboard' }, // Changed from /profile/c1
+  { id: 'r1', type: 'Chatroom', name: 'Plastic Recycling Hub', link: '/chat' }, // Changed from /chat/r1
+  { id: 'b2', type: 'Blog Post', name: 'Youth Voices: Leading Change', link: '/blog/2' }, // Will link to /blog/[id]
 ];
 
 const milestones = [
@@ -195,4 +195,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
