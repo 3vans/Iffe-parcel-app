@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tag, ArrowRight } from 'lucide-react';
+import { Tag, ArrowRight, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface CampaignTeaser {
@@ -89,8 +89,10 @@ export default async function CampaignsPage() {
       )}
        <div className="text-center mt-12">
         <Button size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10 hover:text-accent whitespace-normal text-center h-auto" asChild>
-          <Link href="/create?action=campaign">
-            Start Your Own Campaign
+          <Link href="/create?action=campaign" className="flex items-center justify-center">
+            <PlusCircle className="mr-0 md:mr-2 h-5 w-5" />
+            <span className="md:hidden">New Campaign</span>
+            <span className="hidden md:inline">Start Your Own Campaign</span>
           </Link>
         </Button>
       </div>
