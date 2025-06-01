@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -64,7 +65,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
             <h3 className="font-headline text-2xl md:text-4xl font-bold text-primary-foreground mb-2">
               {currentCampaign.title}
             </h3>
-            <p className="text-sm md:text-lg text-primary-foreground/90 mb-4 line-clamp-2">
+            <p className="text-sm md:text-lg text-primary-foreground/90 mb-4">
               {currentCampaign.shortDescription}
             </p>
             <Button variant="secondary" size="lg" asChild className="self-start bg-accent text-accent-foreground hover:bg-accent/90">
