@@ -72,7 +72,7 @@ export default async function CampaignsPage() {
                   )}
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                  <Button asChild className="w-full bg-primary hover:bg-primary/90">
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90 whitespace-normal h-auto text-center">
                     <Link href={`/campaigns/${campaign.id}`}>
                       View Details <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
