@@ -64,7 +64,7 @@ export default function AdminApprovalsPage() {
           <TabsTrigger value="posts">Pending Posts</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="members">
+        <TabsContent value="members" className="w-full">
           <Card>
             <CardHeader>
               <CardTitle>Pending Community Member Applications</CardTitle>
@@ -111,7 +111,7 @@ export default function AdminApprovalsPage() {
           </Card>
         </TabsContent>
         
-        <TabsContent value="posts">
+        <TabsContent value="posts" className="w-full">
           <Card>
             <CardHeader>
               <CardTitle>Pending Community Post Approvals</CardTitle>
