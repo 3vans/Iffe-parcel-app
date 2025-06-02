@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import IdeaCard, { type IdeaCardProps } from '@/components/idea-card';
 import { Button } from '@/components/ui/button';
@@ -12,13 +12,14 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, PlusCircle } from 'lucide-react';
+import { Lightbulb, PlusCircle, UploadCloud } from 'lucide-react';
+import Image from 'next/image'; // Import next/image
 
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
   description: z.string().min(20, 'Description must be at least 20 characters.'),
   imageUrl: z.string().url('Must be a valid URL for the image.').optional().or(z.literal('')),
-  dataAiHint: z.string().max(50, 'Keywords cannot exceed 50 characters.').optional(),
+  dataAiHint: z.string().max(100, 'Keywords cannot exceed 100 characters.').optional(), // Increased limit
 });
 type IdeaFormValues = z.infer<typeof ideaSchema>;
 
@@ -67,18 +68,47 @@ export default function IdeaBoxPage() {
   const [votedIdeas, setVotedIdeas] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<IdeaFormValues>({
+  const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<IdeaFormValues>({
     resolver: zodResolver(ideaSchema),
+    defaultValues: {
+        imageUrl: '',
+        dataAiHint: '',
+    }
   });
+  
+  const currentImageUrl = watch('imageUrl');
+
+  useEffect(() => {
+    // If the dialog is closed, reset the image preview
+    if (!isDialogOpen) {
+      setImagePreviewUrl(null);
+    }
+  }, [isDialogOpen]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImagePreviewUrl(result);
+        setValue('imageUrl', result, { shouldValidate: true }); 
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl(null);
+      setValue('imageUrl', '', { shouldValidate: true }); // Clear if no file selected
+    }
+  };
 
   const handleVote = (id: string) => {
     setIdeas(prevIdeas =>
       prevIdeas.map(idea => {
         if (idea.id === id) {
           if (votedIdeas.has(id)) {
-            // Unvoting
             setVotedIdeas(prevVoted => {
               const newVoted = new Set(prevVoted);
               newVoted.delete(id);
@@ -87,7 +117,6 @@ export default function IdeaBoxPage() {
             toast({ title: "Vote Removed.", description: `Your vote for "${idea.title}" has been removed.`});
             return { ...idea, votes: idea.votes - 1 };
           } else {
-            // Voting
             setVotedIdeas(prevVoted => new Set(prevVoted).add(id));
             toast({ title: "Vote Cast!", description: `Thank you for voting for "${idea.title}".`});
             return { ...idea, votes: idea.votes + 1 };
@@ -100,13 +129,12 @@ export default function IdeaBoxPage() {
 
   const onSubmitIdea: SubmitHandler<IdeaFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     const newIdea = {
-      id: String(ideas.length + 1 + Date.now()), // More unique ID
+      id: String(ideas.length + 1 + Date.now()),
       title: data.title,
       description: data.description,
-      submittedBy: 'CurrentUser', // Replace with actual user
+      submittedBy: 'CurrentUser', 
       dateSubmitted: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       votes: 0,
       commentsCount: 0,
@@ -117,6 +145,7 @@ export default function IdeaBoxPage() {
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
     toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
     reset();
+    setImagePreviewUrl(null); // Reset preview after submission
     setIsSubmitting(false);
     setIsDialogOpen(false);
   };
@@ -132,7 +161,13 @@ export default function IdeaBoxPage() {
       </section>
 
       <div className="text-center">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+             setIsDialogOpen(isOpen);
+             if (!isOpen) {
+                reset(); // Reset form when closing dialog
+                setImagePreviewUrl(null);
+             }
+        }}>
           <DialogTrigger asChild>
             <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
               <PlusCircle className="mr-2 h-5 w-5" /> Suggest a New Idea
@@ -160,14 +195,45 @@ export default function IdeaBoxPage() {
                 <Textarea id="description" {...register('description')} className="col-span-3 mt-1" rows={4} />
                 {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
               </div>
+              
               <div>
-                <Label htmlFor="imageUrl" className="text-right font-semibold">Image URL (Optional)</Label>
-                <Input id="imageUrl" {...register('imageUrl')} className="col-span-3 mt-1" placeholder="https://example.com/image.png" />
+                <Label htmlFor="imageUpload" className="text-right font-semibold flex items-center">
+                  <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Image (Optional)
+                </Label>
+                <Input 
+                  id="imageUpload" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageChange} 
+                  className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                />
+              </div>
+
+              {(imagePreviewUrl || (currentImageUrl && currentImageUrl.startsWith('data:image'))) && (
+                <div className="mt-2 col-span-3">
+                  <Label className="font-semibold">Image Preview:</Label>
+                  <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
+                    <Image src={imagePreviewUrl || currentImageUrl || ''} alt="Idea preview" layout="fill" objectFit="contain" />
+                  </div>
+                </div>
+              )}
+              
+              <div>
+                <Label htmlFor="imageUrl" className="text-right font-semibold">Or Paste Image URL (Optional)</Label>
+                <Input 
+                    id="imageUrl" 
+                    {...register('imageUrl')} 
+                    className="col-span-3 mt-1" 
+                    placeholder="https://example.com/image.png"
+                    // If a file is uploaded, this field is populated by its data URI.
+                    // User can still override by typing/pasting here.
+                />
                 {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
               </div>
+
               <div>
-                <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (Optional)</Label>
-                <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., nature community" />
+                <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (for AI)</Label>
+                <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., nature community (max 2 words)" />
                 {errors.dataAiHint && <p className="text-sm text-destructive mt-1">{errors.dataAiHint.message}</p>}
               </div>
               <DialogFooter>
@@ -199,3 +265,4 @@ export default function IdeaBoxPage() {
     </div>
   );
 }
+
