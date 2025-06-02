@@ -20,20 +20,17 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // Add states for other forms if they have different fields or logic
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     
-    // For this example, we'll use the 'user-login-form' values
-    // In a real app, you might have different state or handlers for each tab
     const currentEmail = email;
     const currentPassword = password;
 
     try {
       const result = await signIn('credentials', {
-        redirect: false, // Prevent NextAuth from redirecting automatically
+        redirect: false, 
         email: currentEmail,
         password: currentPassword,
       });
@@ -49,8 +46,8 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
           title: "Login Successful!",
           description: "Welcome back!",
         });
-        onOpenChange(false); // Close modal on successful login
-        setEmail(''); // Clear fields
+        onOpenChange(false); 
+        setEmail(''); 
         setPassword('');
       }
     } catch (error) {
@@ -65,6 +62,12 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
     }
   };
 
+  const handleTabChange = () => {
+    setEmail('');
+    setPassword('');
+    setIsLoading(false); // Reset loading state if tab changes during a submission attempt
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
@@ -74,10 +77,10 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
             Access your account or log in as a community member/admin.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="user" className="w-full">
+        <Tabs defaultValue="user" className="w-full" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="user" disabled={isLoading}>User</TabsTrigger>
-            <TabsTrigger value="community" disabled={true || isLoading}>Community</TabsTrigger> 
+            <TabsTrigger value="community" disabled={isLoading}>Community</TabsTrigger> 
             <TabsTrigger value="admin" disabled={isLoading}>Admin</TabsTrigger>
           </TabsList>
           
@@ -101,6 +104,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                 <Input 
                   id="user-password" 
                   type="password" 
+                  placeholder="Your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required 
@@ -113,11 +117,37 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
             </form>
           </TabsContent>
           
-          {/* Community Login Form (Placeholder/Disabled for now) */}
+          {/* Community Login Form */}
           <TabsContent value="community">
-             <div className="py-4 text-center text-muted-foreground">
-              Community member login is currently under development.
-            </div>
+             <form id="community-login-form" onSubmit={handleSubmit} className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="community-email">Email</Label>
+                <Input 
+                  id="community-email" 
+                  type="email" 
+                  placeholder="member@example.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)}
+                  required 
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <Label htmlFor="community-password">Password</Label>
+                <Input 
+                  id="community-password" 
+                  type="password" 
+                  placeholder="Your password"
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                  disabled={isLoading}
+                />
+              </div>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                {isLoading ? "Logging in..." : "Login as Community Member"}
+              </Button>
+            </form>
           </TabsContent>
           
           {/* Admin Login Form */}
@@ -129,7 +159,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                   id="admin-email" 
                   type="email" 
                   placeholder="admin@example.com" 
-                  value={email} // Re-using state for simplicity, ideally separate state
+                  value={email} 
                   onChange={(e) => setEmail(e.target.value)}
                   required 
                   disabled={isLoading}
@@ -140,7 +170,8 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                 <Input 
                   id="admin-password" 
                   type="password" 
-                  value={password} // Re-using state for simplicity
+                  placeholder="Admin password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required 
                   disabled={isLoading}
