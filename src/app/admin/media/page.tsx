@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, Link as LinkIcon, Video } from "lucide-react";
+import { UploadCloud, Video as VideoIcon } from "lucide-react"; // Changed LinkIcon to VideoIcon
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
@@ -30,13 +30,14 @@ interface GalleryImage {
 // Mock data structure for video items
 interface AdminVideoItem {
   id: string;
-  url: string;
+  url: string; // Can be actual URL or "Uploaded: <filename>"
   title: string;
   description?: string;
   tags: string[];
   submittedDate: string;
-  thumbnailUrl?: string; // Optional: for displaying a preview
-  dataAiHint?: string; // Optional: for AI image search for thumbnail
+  thumbnailUrl?: string; 
+  dataAiHint?: string; 
+  sourceType?: 'url' | 'upload'; // To distinguish source
 }
 
 const imageMediaSchema = z.object({
@@ -48,10 +49,41 @@ const imageMediaSchema = z.object({
 type ImageMediaFormValues = z.infer<typeof imageMediaSchema>;
 
 const videoMediaSchema = z.object({
-  videoUrl: z.string().url('Please enter a valid video URL.'),
+  videoFile: z.custom<FileList>().optional(),
+  videoUrl: z.string().url('Please enter a valid video URL.').optional().or(z.literal('')),
   title: z.string().min(3, 'Title must be at least 3 characters.').max(100, 'Title cannot exceed 100 characters.'),
   description: z.string().max(500, "Description cannot exceed 500 characters.").optional(),
   tags: z.string().optional(), // Comma-separated
+}).superRefine((data, ctx) => {
+  if ((!data.videoFile || data.videoFile.length === 0) && !data.videoUrl) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Either upload a video file or provide a video URL.",
+      path: ['videoFile'], 
+    });
+     ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Either upload a video file or provide a video URL.",
+      path: ['videoUrl']
+    });
+  }
+  if (data.videoFile && data.videoFile.length > 0) {
+    const file = data.videoFile[0];
+    if (file.size > 100 * 1024 * 1024) { // Example: 100MB limit
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Video file is too large (max 100MB for this demo).",
+        path: ['videoFile'],
+      });
+    }
+    if (!['video/mp4', 'video/webm', 'video/ogg'].includes(file.type)) {
+     ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Invalid video file type. Supported: MP4, WebM, Ogg.",
+        path: ['videoFile'],
+      });
+    }
+  }
 });
 type VideoMediaFormValues = z.infer<typeof videoMediaSchema>;
 
@@ -138,39 +170,57 @@ export default function AdminMediaPage() {
 
   const onSubmitVideoMedia: SubmitHandler<VideoMediaFormValues> = async (data) => {
     setIsSubmittingVideo(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
     console.log("Admin submitted video:", data);
     
-    // Basic YouTube thumbnail extraction (can be expanded for other platforms or made more robust)
+    let videoSourceUrl = data.videoUrl || '';
     let thumbnailUrl = 'https://placehold.co/320x180.png';
     let dataAiHint = 'video placeholder';
-    if (data.videoUrl.includes('youtube.com/watch?v=')) {
-        const videoId = data.videoUrl.split('v=')[1]?.split('&')[0];
-        if (videoId) {
-            thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-            dataAiHint = 'youtube video';
-        }
-    } else if (data.videoUrl.includes('youtu.be/')) {
-        const videoId = data.videoUrl.split('youtu.be/')[1]?.split('?')[0];
-         if (videoId) {
-            thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-            dataAiHint = 'youtube video';
-        }
+    let sourceType: 'url' | 'upload' = 'url';
+
+    if (data.videoFile && data.videoFile.length > 0) {
+      const file = data.videoFile[0];
+      videoSourceUrl = `Uploaded: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
+      thumbnailUrl = 'https://placehold.co/320x180.png?text=Uploaded+Video';
+      dataAiHint = 'uploaded video';
+      sourceType = 'upload';
+      toast({ title: "Video File Selected", description: `Simulating upload for "${file.name}".`});
+    } else if (data.videoUrl) {
+      if (data.videoUrl.includes('youtube.com/watch?v=')) {
+          const videoId = data.videoUrl.split('v=')[1]?.split('&')[0];
+          if (videoId) {
+              thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+              dataAiHint = 'youtube video';
+          }
+      } else if (data.videoUrl.includes('youtu.be/')) {
+          const videoId = data.videoUrl.split('youtu.be/')[1]?.split('?')[0];
+           if (videoId) {
+              thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+              dataAiHint = 'youtube video';
+          }
+      }
+      sourceType = 'url';
+    } else {
+      // This should be caught by validation, but defensive check
+      toast({ title: "Submission Error", description: "No video source (file or URL) provided.", variant: "destructive"});
+      setIsSubmittingVideo(false);
+      return;
     }
 
     const newVideo: AdminVideoItem = {
       id: `admin-vid-${Date.now()}`,
-      url: data.videoUrl,
+      url: videoSourceUrl,
       title: data.title,
       description: data.description,
       tags: data.tags ? data.tags.split(',').map(tag => tag.trim().startsWith('#') ? tag.trim() : `#${tag.trim()}`).filter(tag => tag.length > 1) : [],
       submittedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       thumbnailUrl: thumbnailUrl,
       dataAiHint: dataAiHint,
+      sourceType: sourceType,
     };
     setAdminVideoItems(prev => [newVideo, ...prev]);
-    toast({ title: "Video Added!", description: "The video has been added to the library (simulated)." });
-    videoForm.reset();
+    toast({ title: "Video Added!", description: `Video "${data.title}" has been added to the library (simulated).` });
+    videoForm.reset({ videoUrl: '', title: '', description: '', tags: '', videoFile: undefined });
     setIsSubmittingVideo(false);
     setIsAddVideoDialogOpen(false);
   };
@@ -297,30 +347,67 @@ export default function AdminMediaPage() {
           <hr className="my-6"/>
           <div>
             <h3 className="font-semibold text-lg mb-2">Video Library</h3>
-            <p className="text-muted-foreground mb-3">Add video links (e.g., YouTube, Rumble), manage video details, categories, and visibility.</p>
+            <p className="text-muted-foreground mb-3">Add video links (e.g., YouTube) or upload video files. Manage details, categories, and visibility.</p>
             
             <Dialog open={isAddVideoDialogOpen} onOpenChange={(isOpen) => {
               setIsAddVideoDialogOpen(isOpen);
               if (!isOpen) {
-                videoForm.reset();
+                videoForm.reset({ videoUrl: '', title: '', description: '', tags: '', videoFile: undefined });
               }
             }}>
               <DialogTrigger asChild>
-                <Button><LinkIcon className="mr-2 h-4 w-4" /> Add Video Link</Button>
+                <Button><VideoIcon className="mr-2 h-4 w-4" /> Add Video</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
+              <DialogContent className="sm:max-w-xl"> {/* Made dialog wider */}
                 <DialogHeader>
                   <DialogTitle className="font-headline text-2xl text-primary">Add Video to Library</DialogTitle>
                   <DialogDescription>
-                    Provide a video URL and details for the library.
+                    Upload a video file or provide a video URL, and add details for the library.
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={videoForm.handleSubmit(onSubmitVideoMedia)} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
                   <div>
-                    <Label htmlFor="videoUrlAdmin" className="text-right font-semibold">Video URL</Label>
-                    <Input id="videoUrlAdmin" {...videoForm.register('videoUrl')} className="col-span-3 mt-1" placeholder="https://youtube.com/watch?v=..." />
+                    <Label htmlFor="videoFileAdmin" className="text-right font-semibold flex items-center">
+                      <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Video File
+                    </Label>
+                    <Input 
+                      id="videoFileAdmin" 
+                      type="file" 
+                      accept="video/mp4,video/webm,video/ogg" 
+                      className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                      onChange={(e) => {
+                        videoForm.setValue('videoFile', e.target.files);
+                        if (e.target.files && e.target.files.length > 0) {
+                          videoForm.setValue('videoUrl', '', { shouldValidate: true }); // Clear URL if file is chosen
+                        }
+                      }}
+                    />
+                    {videoForm.formState.errors.videoFile && <p className="text-sm text-destructive mt-1">{videoForm.formState.errors.videoFile.message}</p>}
+                  </div>
+
+                  <div className="text-center my-2">
+                    <p className="text-sm font-semibold text-muted-foreground uppercase">Or</p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="videoUrlAdmin" className="text-right font-semibold">Paste Video URL</Label>
+                    <Input 
+                        id="videoUrlAdmin" 
+                        {...videoForm.register('videoUrl')} 
+                        className="col-span-3 mt-1" 
+                        placeholder="https://youtube.com/watch?v=..." 
+                        onFocus={() => {
+                            if (videoForm.getValues('videoFile') && videoForm.getValues('videoFile')?.length > 0) {
+                                videoForm.setValue('videoFile', undefined, {shouldValidate: true}); // Clear file if URL is focused
+                                // Clear the actual file input element too
+                                const fileInput = document.getElementById('videoFileAdmin') as HTMLInputElement;
+                                if (fileInput) fileInput.value = '';
+                            }
+                        }}
+                    />
                     {videoForm.formState.errors.videoUrl && <p className="text-sm text-destructive mt-1">{videoForm.formState.errors.videoUrl.message}</p>}
                   </div>
+                  <hr className="my-2" />
                   <div>
                     <Label htmlFor="videoTitleAdmin" className="text-right font-semibold">Video Title</Label>
                     <Input id="videoTitleAdmin" {...videoForm.register('title')} className="col-span-3 mt-1" placeholder="Catchy title for the video" />
@@ -355,12 +442,17 @@ export default function AdminMediaPage() {
                                 <div className="relative w-full aspect-video bg-muted">
                                     <Image src={video.thumbnailUrl || 'https://placehold.co/320x180.png'} alt={video.title} layout="fill" objectFit="cover" data-ai-hint={video.dataAiHint || 'video placeholder'} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-2">
-                                      <Video className="h-5 w-5 text-white/80 mr-1" />
+                                      <VideoIcon className="h-5 w-5 text-white/80 mr-1" />
                                       <p className="text-white text-xs font-medium truncate" title={video.title}>{video.title}</p>
                                     </div>
+                                    {video.sourceType === 'upload' && <Badge variant="secondary" className="absolute top-2 left-2 text-xs">Uploaded</Badge>}
                                 </div>
                                 <CardContent className="p-3 text-xs">
-                                    <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block" title={video.url}>{video.url}</a>
+                                    {video.sourceType === 'url' ? (
+                                        <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate block" title={video.url}>{video.url}</a>
+                                    ) : (
+                                        <p className="text-muted-foreground truncate block" title={video.url}>{video.url}</p>
+                                    )}
                                     <p className="text-muted-foreground mt-1 line-clamp-2" title={video.description}>{video.description || 'No description.'}</p>
                                     {video.tags.length > 0 && (
                                       <div className="mt-1.5 flex flex-wrap gap-1">
@@ -382,5 +474,4 @@ export default function AdminMediaPage() {
     </div>
   );
 }
-
     
