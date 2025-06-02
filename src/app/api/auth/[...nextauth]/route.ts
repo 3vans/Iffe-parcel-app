@@ -17,42 +17,31 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        if (!credentials) {
-          return null;
-        }
-        
-        const inputEmail = credentials.email;
-        const inputPassword = credentials.password;
-
-        // Explicitly check for admin credentials first
-        if (inputEmail === 'admin@rtry.com' && inputPassword === 'password1234567') {
-          const adminUserDetails = users.find(u => u.email === 'admin@rtry.com' && u.role === 'admin');
-          if (adminUserDetails) {
-            return { // Return the expected user object structure
-              id: adminUserDetails.id,
-              name: adminUserDetails.name,
-              email: adminUserDetails.email,
-              role: adminUserDetails.role,
-            };
-          } else {
-            // This case implies an issue with the predefined 'users' array if admin credentials are correct but user isn't found.
-            return null; 
-          }
+        if (!credentials?.email || !credentials.password) {
+          return null; // Credentials not provided
         }
 
-        // Fallback logic for other users based on credentials provided
-        const regularUser = users.find(u => u.email === inputEmail);
-        if (regularUser && regularUser.password === inputPassword) {
+        const { email, password } = credentials;
+
+        const user = users.find(u => u.email === email);
+
+        if (!user) {
+          return null; // User not found
+        }
+
+        // Check if the password matches
+        if (user.password === password) {
+          // If credentials are valid, return the user object
+          // Ensure the returned object includes all necessary fields for your session/JWT callbacks
           return {
-            id: regularUser.id,
-            name: regularUser.name,
-            email: regularUser.email,
-            role: regularUser.role,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role, // Crucial for role-based access
           };
         }
         
-        // If no credentials match (admin or regular user)
-        return null;
+        return null; // Password does not match
       },
     }),
   ],
@@ -88,3 +77,4 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
