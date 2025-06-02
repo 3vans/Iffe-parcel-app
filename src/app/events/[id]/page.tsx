@@ -31,8 +31,8 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
       </Button>
       <Card className="shadow-xl overflow-hidden">
         {mockEvent.imageUrl && (
-          <div className="relative w-full h-64 md:h-80 bg-muted">
-            <img src={mockEvent.imageUrl} alt={mockEvent.title} className="w-full h-full object-cover" data-ai-hint={mockEvent.dataAiHint} />
+          <div className="relative w-full bg-muted rounded-lg overflow-hidden">
+            <img src={mockEvent.imageUrl} alt={mockEvent.title} className="w-full h-auto max-h-[500px] object-cover" data-ai-hint={mockEvent.dataAiHint} />
              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             <CardTitle className="font-headline text-3xl md:text-4xl text-white absolute bottom-6 left-6 z-10 p-2 bg-black/30 rounded">{mockEvent.title}</CardTitle>
           </div>

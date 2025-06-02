@@ -33,8 +33,8 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         </CardHeader>
         <CardContent>
           {mockPost.imageUrl && (
-            <div className="relative w-full h-64 md:h-96 mb-6 rounded-lg overflow-hidden">
-              <img src={mockPost.imageUrl} alt={mockPost.title} className="w-full h-full object-cover" data-ai-hint={mockPost.dataAiHint} />
+            <div className="relative w-full mb-6 rounded-lg overflow-hidden">
+              <img src={mockPost.imageUrl} alt={mockPost.title} className="w-full h-auto max-h-[500px] object-cover" data-ai-hint={mockPost.dataAiHint} />
             </div>
           )}
           <div className="prose dark:prose-invert max-w-none">
@@ -57,3 +57,4 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
