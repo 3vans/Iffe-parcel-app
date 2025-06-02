@@ -10,6 +10,7 @@ import AuthProvider from '@/components/auth-provider'; // Import AuthProvider
 export const metadata: Metadata = {
   title: 'e-Rotary Hub',
   description: 'A digital headquarters for campaigns, collaboration, and community-led solutions.',
+  icons: null, // Explicitly tell Next.js not to look for default icons
 };
 
 export default function RootLayout({
