@@ -5,7 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 // Mock user data (replace with database logic later)
 const users = [
   { id: '1', name: 'Test User', email: 'test@example.com', password: 'password', role: 'user' },
-  { id: '2', name: 'Admin User', email: 'admin@example.com', password: 'password', role: 'admin' },
+  { id: '2', name: 'Admin User', email: 'admin@rtry.com', password: 'password1234567', role: 'admin' },
 ];
 
 export const authOptions: NextAuthOptions = {
@@ -25,8 +25,8 @@ export const authOptions: NextAuthOptions = {
         const inputPassword = credentials.password;
 
         // Explicitly check for admin credentials first
-        if (inputEmail === 'admin@example.com' && inputPassword === 'password') {
-          const adminUserDetails = users.find(u => u.email === 'admin@example.com' && u.role === 'admin');
+        if (inputEmail === 'admin@rtry.com' && inputPassword === 'password1234567') {
+          const adminUserDetails = users.find(u => u.email === 'admin@rtry.com' && u.role === 'admin');
           if (adminUserDetails) {
             return { // Return the expected user object structure
               id: adminUserDetails.id,

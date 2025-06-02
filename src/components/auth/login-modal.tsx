@@ -51,7 +51,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
         onOpenChange(false); 
         
         // For testing purposes, redirect to /admin if admin credentials were used
-        if (currentEmail === 'admin@example.com') {
+        if (currentEmail === 'admin@rtry.com') {
           router.push('/admin');
         }
         
@@ -73,8 +73,8 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
   const handleTabChange = (newTabValue: string) => {
     setIsLoading(false); // Reset loading state
     if (newTabValue === 'admin') {
-      setEmail('admin@example.com');
-      setPassword('password');
+      setEmail('admin@rtry.com');
+      setPassword('password1234567');
     } else {
       setEmail('');
       setPassword('');
@@ -171,7 +171,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                 <Input 
                   id="admin-email" 
                   type="email" 
-                  placeholder="admin@example.com" 
+                  placeholder="admin@rtry.com" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)}
                   required 
