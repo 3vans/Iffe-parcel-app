@@ -1,6 +1,7 @@
 
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, MessageSquare, UserCircle, CalendarDays, ChevronDown, ChevronUp } from 'lucide-react';
@@ -18,9 +19,24 @@ export interface IdeaCardProps {
   status: 'New' | 'Under Review' | 'Approved' | 'Implemented';
   onVote: (id: string) => void;
   hasVoted?: boolean;
+  imageUrl?: string;
+  dataAiHint?: string;
 }
 
-const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy, dateSubmitted, votes, commentsCount, status, onVote, hasVoted }) => {
+const IdeaCard: React.FC<IdeaCardProps> = ({ 
+  id, 
+  title, 
+  description, 
+  submittedBy, 
+  dateSubmitted, 
+  votes, 
+  commentsCount, 
+  status, 
+  onVote, 
+  hasVoted,
+  imageUrl,
+  dataAiHint
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -32,13 +48,31 @@ const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy
     'Implemented': 'bg-purple-100 text-purple-700 border-purple-300',
   };
 
-  // Threshold for showing "Continue reading" - adjust as needed
   const longDescriptionThreshold = 180; 
   const isLongDescription = description.length > longDescriptionThreshold;
 
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-      <CardHeader>
+    <Card className={cn(
+      "shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full relative overflow-hidden",
+      imageUrl && "bg-transparent" // Make card transparent if there's an image
+    )}>
+      {imageUrl && (
+        <>
+          <Image
+            src={imageUrl}
+            alt={title || 'Idea background image'}
+            layout="fill"
+            objectFit="cover"
+            className="absolute inset-0 w-full h-full z-0 blur-sm scale-105" // Added scale for better blur coverage at edges
+            data-ai-hint={dataAiHint || 'idea image'}
+          />
+          <div className="absolute inset-0 w-full h-full z-[1] bg-black/20"></div> 
+        </>
+      )}
+      <CardHeader className={cn(
+        "relative z-10",
+        imageUrl && "bg-card/80 backdrop-blur-sm rounded-t-lg"
+      )}>
         <div className="flex justify-between items-start">
           <CardTitle className="font-headline text-xl text-primary">{title}</CardTitle>
           <Badge className={`text-xs px-2 py-1 ${statusColors[status]}`}>{status}</Badge>
@@ -48,7 +82,10 @@ const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy
           <span className="flex items-center"><CalendarDays className="h-3.5 w-3.5 mr-1 text-accent" /> {dateSubmitted}</span>
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col">
+      <CardContent className={cn(
+        "flex-grow flex flex-col relative z-10",
+        imageUrl && "bg-card/80 backdrop-blur-sm"
+      )}>
         <p className={cn(
           "text-sm text-muted-foreground mb-2",
           !isExpanded && isLongDescription && "line-clamp-4"
@@ -68,7 +105,10 @@ const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy
           </Button>
         )}
       </CardContent>
-      <CardFooter className="flex justify-between items-center border-t pt-4 mt-auto">
+      <CardFooter className={cn(
+        "flex justify-between items-center border-t pt-4 mt-auto relative z-10",
+        imageUrl && "bg-card/80 backdrop-blur-sm rounded-b-lg border-transparent"
+      )}>
         <Button
           variant={hasVoted ? "default" : "outline"}
           size="sm"

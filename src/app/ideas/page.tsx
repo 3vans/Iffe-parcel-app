@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -16,14 +17,49 @@ import { Lightbulb, PlusCircle } from 'lucide-react';
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
   description: z.string().min(20, 'Description must be at least 20 characters.'),
+  // Add imageUrl and dataAiHint to schema if you implement image upload in the dialog
+  // imageUrl: z.string().url().optional().or(z.literal('')),
+  // dataAiHint: z.string().optional(),
 });
 type IdeaFormValues = z.infer<typeof ideaSchema>;
 
 // Mock data
 const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
-  { id: '1', title: 'Community Composting Program', description: 'Set up a neighborhood composting system to reduce organic waste and create fertilizer for local gardens.', submittedBy: 'GreenThumb Greta', dateSubmitted: 'Oct 10, 2023', votes: 42, commentsCount: 5, status: 'Approved' },
-  { id: '2', title: 'Plastic Bottle Recycling Art Project', description: 'Collect plastic bottles and transform them into public art installations to raise awareness about plastic pollution.', submittedBy: 'EcoArtist Alex', dateSubmitted: 'Sep 25, 2023', votes: 78, commentsCount: 12, status: 'Under Review' },
-  { id: '3', title: 'Solar-Powered Phone Charging Stations', description: 'Install solar-powered charging stations in public parks and community centers.', submittedBy: 'TechSavvy Tom', dateSubmitted: 'Nov 01, 2023', votes: 15, commentsCount: 2, status: 'New' },
+  { 
+    id: '1', 
+    title: 'Community Composting Program', 
+    description: 'Set up a neighborhood composting system to reduce organic waste and create fertilizer for local gardens. This involves community workshops, distribution of composting bins, and regular collection schedules. The goal is to significantly reduce landfill waste and promote sustainable living practices across several districts.', 
+    submittedBy: 'GreenThumb Greta', 
+    dateSubmitted: 'Oct 10, 2023', 
+    votes: 42, 
+    commentsCount: 5, 
+    status: 'Approved',
+    imageUrl: 'https://placehold.co/600x400.png',
+    dataAiHint: 'compost bins garden',
+  },
+  { 
+    id: '2', 
+    title: 'Plastic Bottle Recycling Art Project', 
+    description: 'Collect plastic bottles and transform them into public art installations to raise awareness about plastic pollution. This initiative will engage local artists and schools, fostering creativity while highlighting an important environmental issue. The final art pieces will be displayed in prominent public spaces.', 
+    submittedBy: 'EcoArtist Alex', 
+    dateSubmitted: 'Sep 25, 2023', 
+    votes: 78, 
+    commentsCount: 12, 
+    status: 'Under Review',
+    imageUrl: 'https://placehold.co/600x400.png',
+    dataAiHint: 'plastic bottles art',
+  },
+  { 
+    id: '3', 
+    title: 'Solar-Powered Phone Charging Stations', 
+    description: 'Install solar-powered charging stations in public parks and community centers, providing a free and sustainable energy source for residents. These stations will also serve as small hubs for information dissemination about renewable energy.', 
+    submittedBy: 'TechSavvy Tom', 
+    dateSubmitted: 'Nov 01, 2023', 
+    votes: 15, 
+    commentsCount: 2, 
+    status: 'New',
+    // No image for this one to test fallback
+  },
 ];
 
 export default function IdeaBoxPage() {
@@ -70,10 +106,12 @@ export default function IdeaBoxPage() {
       id: String(ideas.length + 1 + Date.now()), // More unique ID
       ...data,
       submittedBy: 'CurrentUser', // Replace with actual user
-      dateSubmitted: new Date().toLocaleDateString(),
+      dateSubmitted: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       votes: 0,
       commentsCount: 0,
       status: 'New' as 'New',
+      imageUrl: data.imageUrl || undefined, // If you add imageUrl to form
+      dataAiHint: data.dataAiHint || undefined, // If you add dataAiHint to form
     };
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
     toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
@@ -121,6 +159,18 @@ export default function IdeaBoxPage() {
                 <Textarea id="description" {...register('description')} className="col-span-3 mt-1" rows={4} />
                 {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
               </div>
+              {/* 
+              To add image upload, you would add fields here for imageUrl and dataAiHint
+              <div>
+                <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+                <Input id="imageUrl" {...register('imageUrl')} />
+                {errors.imageUrl && <p>{errors.imageUrl.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="dataAiHint">Image Keywords (Optional)</Label>
+                <Input id="dataAiHint" {...register('dataAiHint')} />
+              </div>
+              */}
               <DialogFooter>
                 <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-primary/90">
                   {isSubmitting ? 'Submitting...' : 'Submit Idea'}
