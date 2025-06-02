@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning style={{ overflowX: 'hidden !important' }}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -29,7 +29,7 @@ export default function RootLayout({
       </head>
       <body 
         className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col h-screen"
-        style={{ overflowX: 'hidden !important', overflowY: 'hidden !important' }}
+        // Removed style={{ overflowX: 'hidden !important', overflowY: 'hidden !important' }}
       >
         <AuthProvider> {/* Wrap with AuthProvider */}
           <ThemeProviderClient>
