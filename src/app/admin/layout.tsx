@@ -9,8 +9,8 @@ import RotarySpinner from '@/components/ui/rotary-spinner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation'; // Corrected import
-import React, { useEffect } from 'react'; // Added React import
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -32,9 +32,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'loading') return; // Wait for session to load
-    if (!session || (session.user as any).role !== 'admin') {
-      router.replace('/'); // Redirect if not admin or not logged in
+    if (status === 'loading') {
+      return; // Wait for session to load
+    }
+
+    if (status === 'unauthenticated') {
+      router.replace('/'); // Not logged in
+      return;
+    }
+
+    // Status is 'authenticated' here
+    if (!session?.user?.role || session.user.role !== 'admin') {
+      router.replace('/'); // Logged in, but not an admin or role is missing
     }
   }, [session, status, router]);
 
@@ -46,9 +55,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  if (!session || (session.user as any).role !== 'admin') {
-    // This will be briefly visible before redirect or if redirect fails.
-    // Or, ideally, the middleware handles this so quickly this isn't seen.
+  // This check ensures that if redirection is slow or fails, "Access Denied" is shown
+  // instead of potentially flashing admin content.
+  if (status === 'unauthenticated' || (status === 'authenticated' && session?.user?.role !== 'admin')) {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground p-4">
             <ShieldAlert className="w-16 h-16 text-destructive mb-4" />
@@ -58,7 +67,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
     );
   }
-
+  
+  // If we reach here, status is 'authenticated' and user.role is 'admin'
   return (
     <div className="flex min-h-screen bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
@@ -93,7 +103,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </ScrollArea>
       </aside>
       <main className="flex flex-1 flex-col sm:gap-4 sm:py-4 sm:pl-72 p-4 md:p-6">
-        {/* Mobile header can be added here if needed */}
         {children}
       </main>
     </div>

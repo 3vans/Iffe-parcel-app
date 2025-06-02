@@ -44,7 +44,6 @@ export const authOptions: NextAuthOptions = {
       // Persist the user ID and role to the JWT
       if (user) {
         token.id = user.id;
-        // @ts-expect-error role might not be on DefaultUser
         token.role = user.role; 
       }
       return token;
@@ -52,9 +51,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       // Send properties to the client, like an access_token and user id from a provider.
       if (session.user) {
-        // @ts-expect-error // NextAuth types can be extended
         session.user.id = token.id as string;
-        // @ts-expect-error
         session.user.role = token.role as string;
       }
       return session;
@@ -71,3 +68,4 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
