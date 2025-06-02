@@ -58,7 +58,8 @@ const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
     votes: 15, 
     commentsCount: 2, 
     status: 'New',
-    // No image for this one to test fallback
+    imageUrl: 'https://placehold.co/600x400.png', // Added imageUrl
+    dataAiHint: 'solar charging station', // Added dataAiHint
   },
 ];
 
@@ -110,8 +111,10 @@ export default function IdeaBoxPage() {
       votes: 0,
       commentsCount: 0,
       status: 'New' as 'New',
-      imageUrl: data.imageUrl || undefined, // If you add imageUrl to form
-      dataAiHint: data.dataAiHint || undefined, // If you add dataAiHint to form
+      // @ts-ignore - this will exist if added to form
+      imageUrl: data.imageUrl || `https://placehold.co/600x400.png?text=New+Idea`, 
+      // @ts-ignore - this will exist if added to form
+      dataAiHint: data.dataAiHint || `idea placeholder`,
     };
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
     toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
@@ -200,3 +203,4 @@ export default function IdeaBoxPage() {
     </div>
   );
 }
+
