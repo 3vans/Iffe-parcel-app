@@ -33,14 +33,16 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: 225 30% 93%;
-    --sidebar-foreground: 221 80% 30%;
-    --sidebar-primary: 221 100% 25%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 39 92% 54%;
-    --sidebar-accent-foreground: 221 100% 25%;
-    --sidebar-border: 225 20% 85%;
-    --sidebar-ring: 39 92% 54%;
+
+    /* Sidebar specific colors, aliased to main theme for active state consistency */
+    --sidebar-background: hsl(var(--card)); /* Use card color for sidebar bg */
+    --sidebar-foreground: hsl(var(--card-foreground));
+    --sidebar-primary: hsl(var(--primary)); /* Not typically used directly by sidebar components */
+    --sidebar-primary-foreground: hsl(var(--primary-foreground)); /* Not typically used directly */
+    --sidebar-accent: hsl(var(--primary)); /* Active item background uses primary color */
+    --sidebar-accent-foreground: hsl(var(--primary-foreground)); /* Active item text uses primary-foreground */
+    --sidebar-border: hsl(var(--border));
+    --sidebar-ring: hsl(var(--ring));
   }
 
   .dark {
@@ -68,14 +70,16 @@ body {
     --chart-3: 221 80% 70%; /* Lighter blue for contrast */
     --chart-4: 39 80% 70%; /* Lighter gold/orange */
     --chart-5: 0 0% 70%; /* Light Gray */
-    --sidebar-background: 0 0% 8%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 45 96% 58%;
-    --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 4 90% 61%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 12%;
-    --sidebar-ring: 45 96% 58%;
+
+    /* Sidebar specific colors for dark theme */
+    --sidebar-background: hsl(var(--card)); /* Use card color for sidebar bg */
+    --sidebar-foreground: hsl(var(--card-foreground));
+    --sidebar-primary: hsl(var(--primary));
+    --sidebar-primary-foreground: hsl(var(--primary-foreground));
+    --sidebar-accent: hsl(var(--primary)); /* Active item background uses primary color */
+    --sidebar-accent-foreground: hsl(var(--primary-foreground)); /* Active item text uses primary-foreground */
+    --sidebar-border: hsl(var(--border));
+    --sidebar-ring: hsl(var(--ring));
   }
 }
 
