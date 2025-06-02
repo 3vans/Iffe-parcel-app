@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { UploadCloud, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface GalleryImage {
   id: string;
@@ -50,6 +51,7 @@ export default function GalleryPage() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<MediaFormValues>({
     resolver: zodResolver(mediaSchema),
@@ -107,6 +109,18 @@ export default function GalleryPage() {
     setIsDialogOpen(false);
   };
 
+  const handleTagClick = (tag: string) => {
+    if (activeTag === tag) {
+      setActiveTag(null); // Clear filter if the same tag is clicked again
+    } else {
+      setActiveTag(tag);
+    }
+  };
+
+  const filteredImages = activeTag
+    ? galleryImages.filter(image => image.tags.includes(activeTag))
+    : galleryImages;
+
   return (
     <div className="space-y-8 animate-fade-in">
       <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
@@ -118,7 +132,16 @@ export default function GalleryPage() {
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium mr-2 self-center">Filter by Tag:</span>
           {availableTags.map(tag => (
-            <Button key={tag} variant="outline" size="sm" className="hover:bg-accent/10 hover:border-accent hover:text-accent">
+            <Button 
+              key={tag} 
+              variant={activeTag === tag ? "default" : "outline"} 
+              size="sm" 
+              onClick={() => handleTagClick(tag)}
+              className={cn(
+                activeTag !== tag && "hover:bg-accent/10 hover:border-accent hover:text-accent",
+                activeTag === tag && "bg-primary text-primary-foreground"
+              )}
+            >
               <Tag className="h-3 w-3 mr-1.5" /> {tag.replace('#','')}
             </Button>
           ))}
@@ -206,7 +229,7 @@ export default function GalleryPage() {
       </section>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {galleryImages.map(image => (
+        {filteredImages.map(image => (
           <Card key={image.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
             <div className="relative w-full aspect-[3/2] group-hover:opacity-90 transition-opacity">
               <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" data-ai-hint={image.dataAiHint} />
@@ -230,11 +253,14 @@ export default function GalleryPage() {
         ))}
       </section>
 
-      {galleryImages.length === 0 && (
+      {filteredImages.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">The gallery is empty. Check back soon or upload new media!</p>
+          <p className="text-xl text-muted-foreground">
+            {activeTag ? `No images found for tag "${activeTag}".` : "The gallery is empty. Check back soon or upload new media!"}
+          </p>
         </div>
       )}
     </div>
   );
 }
+
