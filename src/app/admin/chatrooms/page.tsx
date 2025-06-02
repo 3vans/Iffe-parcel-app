@@ -27,19 +27,19 @@ interface ChatParticipant {
   dataAiHint?: string;
   role: 'user' | 'moderator';
   isMuted?: boolean;
-  isBannedFromRoom?: boolean; // New property
-  isGloballySuspended?: boolean; // New property
+  isBannedFromRoom?: boolean;
+  isGloballySuspended?: boolean;
 }
 
 interface ChatMessage {
   id: string;
   text: string;
-  senderId: string; // Links to ChatParticipant id or 'admin'
+  senderId: string;
   senderName: string;
   senderAvatar: string;
   dataAiHint?: string;
   timestamp: Date;
-  isOwnMessage?: boolean; // True if sent by the current admin
+  isOwnMessage?: boolean;
 }
 
 const mockAdminUser = {
@@ -66,7 +66,7 @@ const mockParticipants: { [chatroomId: string]: ChatParticipant[] } = {
     { id: 'u5', name: 'Edward Scissorhands', avatarUrl: 'https://placehold.co/40x40.png?text=ES', dataAiHint:'man avatar goth', role: 'user' },
   ],
   cr3: [
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png?text=BB', dataAiHint:'man construction', role: 'user' }, // Bob is also here
+    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png?text=BB', dataAiHint:'man construction', role: 'user' },
   ],
 };
 
@@ -96,7 +96,6 @@ export default function AdminChatroomsPage() {
   useEffect(() => {
     if (selectedChatroomId) {
       setCurrentMessages(mockMessages[selectedChatroomId] || []);
-      // Ensure participants are initialized with new properties if they don't exist
       const participantsForRoom = (mockParticipants[selectedChatroomId] || []).map(p => ({
         ...p,
         isMuted: p.isMuted ?? false,
@@ -156,17 +155,16 @@ export default function AdminChatroomsPage() {
         if (action === 'Kick') {
           toastDescription = `${userName} has been kicked from ${selectedChatroom?.name || 'this chat'} for this session. (Simulated)`;
           toastVariant = "destructive";
-          // In a real app, you might remove them from the list or mark them as kicked temporarily
         }
         if (action === 'BanFromRoom') {
           toastDescription = `${userName} has been ${p.isBannedFromRoom ? 'unbanned from' : 'banned from'} ${selectedChatroom?.name || 'this chat'}. (Simulated)`;
           toastVariant = "destructive";
-          return { ...p, isBannedFromRoom: !p.isBannedFromRoom, isMuted: !p.isBannedFromRoom ? true : p.isMuted }; // Also mute if banning
+          return { ...p, isBannedFromRoom: !p.isBannedFromRoom, isMuted: !p.isBannedFromRoom ? true : p.isMuted };
         }
         if (action === 'SuspendGlobal') {
           toastDescription = `${userName} has been ${p.isGloballySuspended ? 'unsuspended globally' : 'globally suspended from all chats and platform features'}. (Simulated)`;
           toastVariant = "destructive";
-          return { ...p, isGloballySuspended: !p.isGloballySuspended, isMuted: !p.isGloballySuspended ? true : p.isMuted, isBannedFromRoom: !p.isGloballySuspended ? true : p.isBannedFromRoom }; // Also mute/ban from room if globally suspending
+          return { ...p, isGloballySuspended: !p.isGloballySuspended, isMuted: !p.isGloballySuspended ? true : p.isMuted, isBannedFromRoom: !p.isGloballySuspended ? true : p.isBannedFromRoom };
         }
       }
       return p;
@@ -180,7 +178,7 @@ export default function AdminChatroomsPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-var(--header-height,100px)-2rem)]"> {/* Adjust height based on your header */}
+    <div className="flex flex-1 flex-col md:flex-row gap-4"> {/* Ensure this flex-1 to fill parent height */}
       {/* Chatroom List Column */}
       <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col">
         <CardHeader>
@@ -232,7 +230,7 @@ export default function AdminChatroomsPage() {
             
             <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
               {/* Messages Area */}
-              <div className="flex-grow flex flex-col h-[calc(50vh-50px)] lg:h-auto"> {/* Adjusted height for mobile and larger screens */}
+              <div className="flex-grow flex flex-col"> {/* Removed fixed height, relies on flex-grow */}
                 <ScrollArea className="flex-grow bg-muted/10 p-4">
                   <div className="space-y-4">
                     {currentMessages.map((msg) => (
@@ -355,3 +353,4 @@ export default function AdminChatroomsPage() {
   );
 }
 
+    
