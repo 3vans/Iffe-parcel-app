@@ -197,7 +197,7 @@ export default function AdminChatroomsPage() {
                 onClick={() => handleSelectChatroom(room.id)}
               >
                 <div>
-                  <p className="font-semibold">{room.name} <Badge variant="outline" className="ml-2">{room.userCount}</Badge></p>
+                  <div className="font-semibold flex items-center">{room.name} <Badge variant="outline" className="ml-2">{room.userCount}</Badge></div>
                   <p className="text-xs text-muted-foreground">{room.topic}</p>
                   <p className="text-xs text-muted-foreground/70">Last active: {room.lastActivity}</p>
                 </div>
