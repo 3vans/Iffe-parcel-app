@@ -20,14 +20,15 @@ const ideaSchema = z.object({
 type IdeaFormValues = z.infer<typeof ideaSchema>;
 
 // Mock data
-const initialIdeas: IdeaCardProps[] = [
-  { id: '1', title: 'Community Composting Program', description: 'Set up a neighborhood composting system to reduce organic waste and create fertilizer for local gardens.', submittedBy: 'GreenThumb Greta', dateSubmitted: 'Oct 10, 2023', votes: 42, commentsCount: 5, status: 'Approved', onVote: () => {} },
-  { id: '2', title: 'Plastic Bottle Recycling Art Project', description: 'Collect plastic bottles and transform them into public art installations to raise awareness about plastic pollution.', submittedBy: 'EcoArtist Alex', dateSubmitted: 'Sep 25, 2023', votes: 78, commentsCount: 12, status: 'Under Review', onVote: () => {} },
-  { id: '3', title: 'Solar-Powered Phone Charging Stations', description: 'Install solar-powered charging stations in public parks and community centers.', submittedBy: 'TechSavvy Tom', dateSubmitted: 'Nov 01, 2023', votes: 15, commentsCount: 2, status: 'New', onVote: () => {} },
+const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
+  { id: '1', title: 'Community Composting Program', description: 'Set up a neighborhood composting system to reduce organic waste and create fertilizer for local gardens.', submittedBy: 'GreenThumb Greta', dateSubmitted: 'Oct 10, 2023', votes: 42, commentsCount: 5, status: 'Approved' },
+  { id: '2', title: 'Plastic Bottle Recycling Art Project', description: 'Collect plastic bottles and transform them into public art installations to raise awareness about plastic pollution.', submittedBy: 'EcoArtist Alex', dateSubmitted: 'Sep 25, 2023', votes: 78, commentsCount: 12, status: 'Under Review' },
+  { id: '3', title: 'Solar-Powered Phone Charging Stations', description: 'Install solar-powered charging stations in public parks and community centers.', submittedBy: 'TechSavvy Tom', dateSubmitted: 'Nov 01, 2023', votes: 15, commentsCount: 2, status: 'New' },
 ];
 
 export default function IdeaBoxPage() {
-  const [ideas, setIdeas] = useState<Omit<IdeaCardProps, 'onVote'>[]>(initialIdeas);
+  const [ideas, setIdeas] = useState<Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[]>(initialIdeas);
+  const [votedIdeas, setVotedIdeas] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -38,11 +39,27 @@ export default function IdeaBoxPage() {
 
   const handleVote = (id: string) => {
     setIdeas(prevIdeas =>
-      prevIdeas.map(idea =>
-        idea.id === id ? { ...idea, votes: idea.votes + 1 } : idea
-      )
+      prevIdeas.map(idea => {
+        if (idea.id === id) {
+          if (votedIdeas.has(id)) {
+            // Unvoting
+            setVotedIdeas(prevVoted => {
+              const newVoted = new Set(prevVoted);
+              newVoted.delete(id);
+              return newVoted;
+            });
+            toast({ title: "Vote Removed.", description: `Your vote for "${idea.title}" has been removed.`});
+            return { ...idea, votes: idea.votes - 1 };
+          } else {
+            // Voting
+            setVotedIdeas(prevVoted => new Set(prevVoted).add(id));
+            toast({ title: "Vote Cast!", description: `Thank you for voting for "${idea.title}".`});
+            return { ...idea, votes: idea.votes + 1 };
+          }
+        }
+        return idea;
+      })
     );
-    toast({ title: "Vote Cast!", description: "Thank you for your feedback."});
   };
 
   const onSubmitIdea: SubmitHandler<IdeaFormValues> = async (data) => {
@@ -50,7 +67,7 @@ export default function IdeaBoxPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     const newIdea = {
-      id: String(ideas.length + 1),
+      id: String(ideas.length + 1 + Date.now()), // More unique ID
       ...data,
       submittedBy: 'CurrentUser', // Replace with actual user
       dateSubmitted: new Date().toLocaleDateString(),
@@ -116,7 +133,12 @@ export default function IdeaBoxPage() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {ideas.map(idea => (
-          <IdeaCard key={idea.id} {...idea} onVote={handleVote} />
+          <IdeaCard 
+            key={idea.id} 
+            {...idea} 
+            onVote={handleVote} 
+            hasVoted={votedIdeas.has(idea.id)}
+          />
         ))}
       </section>
 

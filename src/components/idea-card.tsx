@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, MessageSquare, UserCircle, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export interface IdeaCardProps {
   id: string;
@@ -13,9 +14,10 @@ export interface IdeaCardProps {
   commentsCount: number;
   status: 'New' | 'Under Review' | 'Approved' | 'Implemented';
   onVote: (id: string) => void;
+  hasVoted?: boolean;
 }
 
-const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy, dateSubmitted, votes, commentsCount, status, onVote }) => {
+const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy, dateSubmitted, votes, commentsCount, status, onVote, hasVoted }) => {
   
   const statusColors = {
     'New': 'bg-blue-100 text-blue-700 border-blue-300',
@@ -40,8 +42,17 @@ const IdeaCard: React.FC<IdeaCardProps> = ({ id, title, description, submittedBy
         <p className="text-sm text-muted-foreground line-clamp-4">{description}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center border-t pt-4">
-        <Button variant="outline" size="sm" onClick={() => onVote(id)} className="hover:bg-accent/10 hover:border-accent">
-          <ThumbsUp className="h-4 w-4 mr-2" /> Vote ({votes})
+        <Button 
+          variant={hasVoted ? "default" : "outline"} 
+          size="sm" 
+          onClick={() => onVote(id)} 
+          className={cn(
+            !hasVoted && "hover:bg-accent/10 hover:border-accent hover:text-accent",
+            hasVoted && "bg-primary text-primary-foreground hover:bg-primary/90"
+          )}
+        >
+          <ThumbsUp className={cn("h-4 w-4 mr-2", hasVoted ? "text-primary-foreground" : "")} /> 
+          {hasVoted ? 'Voted' : 'Vote'} ({votes})
         </Button>
         <div className="flex items-center text-sm text-muted-foreground">
           <MessageSquare className="h-4 w-4 mr-1" /> {commentsCount} Comments
