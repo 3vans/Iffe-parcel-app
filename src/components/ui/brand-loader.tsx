@@ -2,20 +2,22 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import RotaryWheelIcon from './rotary-wheel-icon'; // Import the new icon
 
 export default function BrandLoader() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center md:flex-col bg-background z-[100] p-4 relative">
-      {/* Spinner */}
-      <div
+    <div className="fixed inset-0 flex items-center justify-center bg-background z-[100] p-4 relative md:flex-col">
+      {/* Spinner using RotaryWheelIcon */}
+      <RotaryWheelIcon
+        size={100} // Default medium size, will be overridden by responsive classes
         className={cn(
-          "animate-spin rounded-full border-primary",
+          "animate-spin text-primary", // Base color and animation
           // Mobile: Full-size, behind, blurred, semi-transparent
-          "absolute inset-0 m-auto h-48 w-48 border-t-8 blur-md z-10 opacity-40", 
+          "absolute inset-0 m-auto !h-48 !w-48 blur-md z-10 opacity-40", 
           // Tablet/Small Desktop: Relative, above text, standard size
-          "md:relative md:inset-auto md:m-0 md:h-32 md:w-32 md:border-t-[6px] md:blur-none md:z-auto md:opacity-100 md:mb-6",
+          "md:relative md:inset-auto md:m-0 md:!h-32 md:!w-32 md:blur-none md:z-auto md:opacity-100 md:mb-6",
           // Large Desktop: Larger spinner
-          "lg:h-40 lg:w-40 lg:border-t-[8px]"
+          "lg:!h-40 lg:!w-40"
         )}
         aria-label="Loading..."
       />

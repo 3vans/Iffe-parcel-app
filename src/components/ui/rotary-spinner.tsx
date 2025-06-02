@@ -1,8 +1,8 @@
 
 'use client';
 
-import { Cog } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import RotaryWheelIcon from './rotary-wheel-icon'; // Import the new icon
 
 interface RotarySpinnerProps {
   size?: number | string;
@@ -16,8 +16,8 @@ const RotarySpinner: React.FC<RotarySpinnerProps> = ({
   'aria-label': ariaLabel = "Loading..." 
 }) => {
   return (
-    <Cog
-      className={cn('animate-spin text-accent', className)}
+    <RotaryWheelIcon
+      className={cn('animate-spin', className)} // Apply animate-spin here
       size={size}
       aria-label={ariaLabel}
     />
