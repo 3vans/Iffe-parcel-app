@@ -20,19 +20,39 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) {
           return null;
         }
-        const user = users.find(u => u.email === credentials.email);
+        
+        const inputEmail = credentials.email;
+        const inputPassword = credentials.password;
 
-        // IMPORTANT: In a real application, you MUST hash and compare passwords securely.
-        // This is a simplified example using plain text passwords for demonstration.
-        if (user && user.password === credentials.password) {
-          // Return a user object that NextAuth can use
-          // Add any other user properties you want in the session here
-          return { id: user.id, name: user.name, email: user.email, role: user.role };
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null;
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+        // Explicitly check for admin credentials first
+        if (inputEmail === 'admin@example.com' && inputPassword === 'password') {
+          const adminUserDetails = users.find(u => u.email === 'admin@example.com' && u.role === 'admin');
+          if (adminUserDetails) {
+            return { // Return the expected user object structure
+              id: adminUserDetails.id,
+              name: adminUserDetails.name,
+              email: adminUserDetails.email,
+              role: adminUserDetails.role,
+            };
+          } else {
+            // This case implies an issue with the predefined 'users' array if admin credentials are correct but user isn't found.
+            return null; 
+          }
         }
+
+        // Fallback logic for other users based on credentials provided
+        const regularUser = users.find(u => u.email === inputEmail);
+        if (regularUser && regularUser.password === inputPassword) {
+          return {
+            id: regularUser.id,
+            name: regularUser.name,
+            email: regularUser.email,
+            role: regularUser.role,
+          };
+        }
+        
+        // If no credentials match (admin or regular user)
+        return null;
       },
     }),
   ],
@@ -68,4 +88,3 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
