@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, Video as VideoIcon } from "lucide-react"; // Changed LinkIcon to VideoIcon
+import { UploadCloud, Video as VideoIcon } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
@@ -30,14 +30,14 @@ interface GalleryImage {
 // Mock data structure for video items
 interface AdminVideoItem {
   id: string;
-  url: string; // Can be actual URL or "Uploaded: <filename>"
+  url: string; 
   title: string;
   description?: string;
   tags: string[];
   submittedDate: string;
   thumbnailUrl?: string; 
   dataAiHint?: string; 
-  sourceType?: 'url' | 'upload'; // To distinguish source
+  sourceType?: 'url' | 'upload'; 
 }
 
 const imageMediaSchema = z.object({
@@ -69,7 +69,7 @@ const videoMediaSchema = z.object({
   }
   if (data.videoFile && data.videoFile.length > 0) {
     const file = data.videoFile[0];
-    if (file.size > 100 * 1024 * 1024) { // Example: 100MB limit
+    if (file.size > 100 * 1024 * 1024) { 
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Video file is too large (max 100MB for this demo).",
@@ -90,7 +90,6 @@ type VideoMediaFormValues = z.infer<typeof videoMediaSchema>;
 
 export default function AdminMediaPage() {
   const [isUploadImageDialogOpen, setIsUploadImageDialogOpen] = useState(false);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isSubmittingImage, setIsSubmittingImage] = useState(false);
   
   const [isAddVideoDialogOpen, setIsAddVideoDialogOpen] = useState(false);
@@ -121,13 +120,7 @@ export default function AdminMediaPage() {
     }
   });
 
-  const currentImageUrlValue = imageForm.watch('imageUrl');
-
-  useEffect(() => {
-    if (!isUploadImageDialogOpen || (currentImageUrlValue && !currentImageUrlValue.startsWith('data:image') && imagePreviewUrl?.startsWith('data:image') )) {
-      setImagePreviewUrl(null);
-    }
-  }, [isUploadImageDialogOpen, currentImageUrlValue, imagePreviewUrl]);
+  const watchedImageUrl = imageForm.watch('imageUrl');
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -135,15 +128,11 @@ export default function AdminMediaPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        setImagePreviewUrl(result); 
         imageForm.setValue('imageUrl', result, { shouldValidate: true }); 
       };
       reader.readAsDataURL(file);
     } else {
-      if (imageForm.watch('imageUrl').startsWith('data:image')) {
-        imageForm.setValue('imageUrl', '', { shouldValidate: true });
-      }
-      setImagePreviewUrl(null);
+      imageForm.setValue('imageUrl', '', { shouldValidate: true });
     }
   };
 
@@ -163,14 +152,13 @@ export default function AdminMediaPage() {
     setAdminGalleryImages(prev => [newMedia, ...prev]);
     toast({ title: "Image Uploaded!", description: "The image has been added to the gallery (simulated)." });
     imageForm.reset();
-    setImagePreviewUrl(null);
     setIsSubmittingImage(false);
     setIsUploadImageDialogOpen(false);
   };
 
   const onSubmitVideoMedia: SubmitHandler<VideoMediaFormValues> = async (data) => {
     setIsSubmittingVideo(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
     console.log("Admin submitted video:", data);
     
     let videoSourceUrl = data.videoUrl || '';
@@ -201,7 +189,6 @@ export default function AdminMediaPage() {
       }
       sourceType = 'url';
     } else {
-      // This should be caught by validation, but defensive check
       toast({ title: "Submission Error", description: "No video source (file or URL) provided.", variant: "destructive"});
       setIsSubmittingVideo(false);
       return;
@@ -242,7 +229,6 @@ export default function AdminMediaPage() {
               setIsUploadImageDialogOpen(isOpen);
               if (!isOpen) {
                 imageForm.reset();
-                setImagePreviewUrl(null);
               }
             }}>
               <DialogTrigger asChild>
@@ -267,14 +253,14 @@ export default function AdminMediaPage() {
                       onChange={handleImageFileChange} 
                       className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                     />
-                     {imageForm.formState.errors.imageUrl && !imageForm.watch('imageUrl') && <p className="text-sm text-destructive mt-1">{imageForm.formState.errors.imageUrl.message}</p>}
+                     {imageForm.formState.errors.imageUrl && !watchedImageUrl && <p className="text-sm text-destructive mt-1">{imageForm.formState.errors.imageUrl.message}</p>}
                   </div>
 
-                  {(imagePreviewUrl || (imageForm.watch('imageUrl') && imageForm.watch('imageUrl').startsWith('data:image'))) && (
+                  {watchedImageUrl && (
                     <div className="mt-2 col-span-3">
                       <Label className="font-semibold">Image Preview:</Label>
                       <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
-                        <Image src={imagePreviewUrl || imageForm.watch('imageUrl') || ''} alt="Image preview" layout="fill" objectFit="contain" />
+                        <Image src={watchedImageUrl} alt="Image preview" layout="fill" objectFit="contain" />
                       </div>
                     </div>
                   )}
@@ -286,10 +272,8 @@ export default function AdminMediaPage() {
                         {...imageForm.register('imageUrl')} 
                         className="col-span-3 mt-1" 
                         placeholder="https://example.com/image.png"
-                        onFocus={() => { 
-                            if (imagePreviewUrl && imageForm.watch('imageUrl').startsWith('data:image')) {
-                                setImagePreviewUrl(null);
-                            }
+                        onChange={(e) => {
+                           imageForm.setValue('imageUrl', e.target.value, {shouldValidate: true});
                         }}
                     />
                     {imageForm.formState.errors.imageUrl && <p className="text-sm text-destructive mt-1">{imageForm.formState.errors.imageUrl.message}</p>}
@@ -358,7 +342,7 @@ export default function AdminMediaPage() {
               <DialogTrigger asChild>
                 <Button><VideoIcon className="mr-2 h-4 w-4" /> Add Video</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-xl"> {/* Made dialog wider */}
+              <DialogContent className="sm:max-w-xl"> 
                 <DialogHeader>
                   <DialogTitle className="font-headline text-2xl text-primary">Add Video to Library</DialogTitle>
                   <DialogDescription>
@@ -378,7 +362,7 @@ export default function AdminMediaPage() {
                       onChange={(e) => {
                         videoForm.setValue('videoFile', e.target.files);
                         if (e.target.files && e.target.files.length > 0) {
-                          videoForm.setValue('videoUrl', '', { shouldValidate: true }); // Clear URL if file is chosen
+                          videoForm.setValue('videoUrl', '', { shouldValidate: true }); 
                         }
                       }}
                     />
@@ -398,8 +382,7 @@ export default function AdminMediaPage() {
                         placeholder="https://youtube.com/watch?v=..." 
                         onFocus={() => {
                             if (videoForm.getValues('videoFile') && videoForm.getValues('videoFile')?.length > 0) {
-                                videoForm.setValue('videoFile', undefined, {shouldValidate: true}); // Clear file if URL is focused
-                                // Clear the actual file input element too
+                                videoForm.setValue('videoFile', undefined, {shouldValidate: true}); 
                                 const fileInput = document.getElementById('videoFileAdmin') as HTMLInputElement;
                                 if (fileInput) fileInput.value = '';
                             }
