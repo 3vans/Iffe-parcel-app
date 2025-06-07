@@ -22,14 +22,14 @@ interface ChatMessage {
 const currentUser = {
   id: 'currentUser',
   name: 'You',
-  avatarUrl: 'https://placehold.co/40x40.png?text=U',
+  avatarUrl: 'https://placehold.co/40x40.png',
   dataAiHint: 'user avatar',
 };
 
 const otherUserMock = {
   id: 'otherUser1',
   name: 'Bot Assistant',
-  avatarUrl: 'https://placehold.co/40x40.png?text=B',
+  avatarUrl: 'https://placehold.co/40x40.png',
   dataAiHint: 'bot avatar',
 };
 
@@ -176,3 +176,5 @@ export default function ChatPage() {
     </div>
   );
 }
+
+    

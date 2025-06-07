@@ -139,8 +139,8 @@ export default function IdeaBoxPage() {
       votes: 0,
       commentsCount: 0,
       status: 'New' as 'New',
-      imageUrl: data.imageUrl || `https://placehold.co/600x400.png?text=New+Idea`, 
-      dataAiHint: data.dataAiHint || `idea placeholder`,
+      imageUrl: data.imageUrl || 'https://placehold.co/600x400.png', 
+      dataAiHint: data.dataAiHint || 'idea placeholder',
     };
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
     toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
@@ -266,3 +266,5 @@ export default function IdeaBoxPage() {
   );
 }
 
+
+    

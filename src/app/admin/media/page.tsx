@@ -169,7 +169,7 @@ export default function AdminMediaPage() {
     if (data.videoFile && data.videoFile.length > 0) {
       const file = data.videoFile[0];
       videoSourceUrl = `Uploaded: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
-      thumbnailUrl = 'https://placehold.co/320x180.png?text=Uploaded+Video';
+      thumbnailUrl = 'https://placehold.co/320x180.png';
       dataAiHint = 'uploaded video';
       sourceType = 'upload';
       toast({ title: "Video File Selected", description: `Simulating upload for "${file.name}".`});
@@ -457,4 +457,6 @@ export default function AdminMediaPage() {
     </div>
   );
 }
+    
+
     

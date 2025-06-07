@@ -45,7 +45,7 @@ interface ChatMessage {
 const mockAdminUser = {
   id: 'admin',
   name: 'Admin',
-  avatarUrl: 'https://placehold.co/40x40.png?text=A',
+  avatarUrl: 'https://placehold.co/40x40.png',
   dataAiHint: 'admin avatar',
 };
 
@@ -57,27 +57,27 @@ const mockChatrooms: Chatroom[] = [
 
 const mockParticipants: { [chatroomId: string]: ChatParticipant[] } = {
   cr1: [
-    { id: 'u1', name: 'Alice Wonderland', avatarUrl: 'https://placehold.co/40x40.png?text=AW', dataAiHint:'woman avatar', role: 'user' },
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png?text=BB', dataAiHint:'man avatar construction', role: 'user' },
-    { id: 'u3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/40x40.png?text=CC', dataAiHint:'man avatar classic', role: 'moderator' },
+    { id: 'u1', name: 'Alice Wonderland', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar', role: 'user' },
+    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar construction', role: 'user' },
+    { id: 'u3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar classic', role: 'moderator' },
   ],
   cr2: [
-    { id: 'u4', name: 'Diana Prince', avatarUrl: 'https://placehold.co/40x40.png?text=DP', dataAiHint:'woman avatar hero', role: 'user' },
-    { id: 'u5', name: 'Edward Scissorhands', avatarUrl: 'https://placehold.co/40x40.png?text=ES', dataAiHint:'man avatar goth', role: 'user' },
+    { id: 'u4', name: 'Diana Prince', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar hero', role: 'user' },
+    { id: 'u5', name: 'Edward Scissorhands', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar goth', role: 'user' },
   ],
   cr3: [
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png?text=BB', dataAiHint:'man construction', role: 'user' },
+    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man construction', role: 'user' },
   ],
 };
 
 const mockMessages: { [chatroomId: string]: ChatMessage[] } = {
   cr1: [
-    { id: 'm1', text: 'Hello everyone! Welcome to the general chat.', senderId: 'u3', senderName: 'Charlie Chaplin', senderAvatar: 'https://placehold.co/40x40.png?text=CC', dataAiHint:'man classic', timestamp: new Date(Date.now() - 1000 * 60 * 10) },
-    { id: 'm2', text: 'Hi Charlie! Glad to be here.', senderId: 'u1', senderName: 'Alice Wonderland', senderAvatar: 'https://placehold.co/40x40.png?text=AW', dataAiHint:'woman avatar', timestamp: new Date(Date.now() - 1000 * 60 * 8) },
-    { id: 'm3', text: 'What are we discussing today?', senderId: 'u2', senderName: 'Bob The Builder', senderAvatar: 'https://placehold.co/40x40.png?text=BB', dataAiHint:'man construction', timestamp: new Date(Date.now() - 1000 * 60 * 5) },
+    { id: 'm1', text: 'Hello everyone! Welcome to the general chat.', senderId: 'u3', senderName: 'Charlie Chaplin', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'man classic', timestamp: new Date(Date.now() - 1000 * 60 * 10) },
+    { id: 'm2', text: 'Hi Charlie! Glad to be here.', senderId: 'u1', senderName: 'Alice Wonderland', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar', timestamp: new Date(Date.now() - 1000 * 60 * 8) },
+    { id: 'm3', text: 'What are we discussing today?', senderId: 'u2', senderName: 'Bob The Builder', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'man construction', timestamp: new Date(Date.now() - 1000 * 60 * 5) },
   ],
   cr2: [
-    { id: 'm4', text: 'Any new project ideas for this quarter?', senderId: 'u4', senderName: 'Diana Prince', senderAvatar: 'https://placehold.co/40x40.png?text=DP', dataAiHint:'woman hero', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
+    { id: 'm4', text: 'Any new project ideas for this quarter?', senderId: 'u4', senderName: 'Diana Prince', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'woman hero', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
   ],
   cr3: [],
 };
@@ -352,5 +352,7 @@ export default function AdminChatroomsPage() {
     </div>
   );
 }
+
+    
 
     
