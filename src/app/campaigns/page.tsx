@@ -19,10 +19,10 @@ interface CampaignTeaser {
 }
 
 const mockCampaignsData: CampaignTeaser[] = [
-  { id: '1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'water community', shortDescription: 'Providing clean water to Kasese.', goal: 10000, currentAmount: 4500, tags: ['#CleanWater', '#Health'] },
-  { id: '2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'youth education training', shortDescription: 'Equipping youth with essential skills.', goal: 18000, currentAmount: 9200, tags: ['#Youth', '#Education'] },
-  { id: '3', title: 'Reforestation "Green Future"', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'forest trees environment', shortDescription: 'Planting 10,000 trees in Mpigi.', goal: 7500, currentAmount: 6100, tags: ['#Environment', '#ClimateAction'] },
-  { id: '4', title: 'Tech Literacy for Seniors', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'seniors technology', shortDescription: 'Bridging the digital divide for the elderly.', goal: 5000, currentAmount: 1200, tags: ['#DigitalInclusion', '#Seniors'] },
+  { id: '1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'water source', shortDescription: 'Providing clean water to Kasese.', goal: 10000, currentAmount: 4500, tags: ['#CleanWater', '#Health'] },
+  { id: '2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'skill training', shortDescription: 'Equipping youth with essential skills.', goal: 18000, currentAmount: 9200, tags: ['#Youth', '#Education'] },
+  { id: '3', title: 'Reforestation "Green Future"', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'tree planting', shortDescription: 'Planting 10,000 trees in Mpigi.', goal: 7500, currentAmount: 6100, tags: ['#Environment', '#ClimateAction'] },
+  { id: '4', title: 'Tech Literacy for Seniors', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'tech seniors', shortDescription: 'Bridging the digital divide for the elderly.', goal: 5000, currentAmount: 1200, tags: ['#DigitalInclusion', '#Seniors'] },
 ];
 
 

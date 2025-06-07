@@ -149,7 +149,7 @@ const AppHeader = () => {
             ) : session?.user ? (
               <>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? "User"} data-ai-hint="user avatar" />
+                  <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? "User"} data-ai-hint="profile avatar" />
                   <AvatarFallback>{session.user.name?.substring(0,1).toUpperCase() ?? 'U'}</AvatarFallback>
                 </Avatar>
                  <span className="text-sm font-medium mx-2 hidden xl:inline">{session.user.name}</span>

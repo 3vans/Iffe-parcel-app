@@ -14,9 +14,9 @@ import SignupModal from '@/components/auth/signup-modal';
 
 
 const mockCarouselCampaigns = [
-  { id: 'c1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'water nature', shortDescription: 'Bringing clean and safe drinking water to underserved communities in rural Uganda.' },
-  { id: 'c2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'youth education', shortDescription: 'Equipping young people with skills for a brighter future through interactive workshops.' },
-  { id: 'c3', title: 'Reforestation Project "Green Future"', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'forest trees', shortDescription: 'Planting 10,000 trees to combat climate change and restore local ecosystems.' },
+  { id: 'c1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'water access', shortDescription: 'Bringing clean and safe drinking water to underserved communities in rural Uganda.' },
+  { id: 'c2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'youth learning', shortDescription: 'Equipping young people with skills for a brighter future through interactive workshops.' },
+  { id: 'c3', title: 'Reforestation Project "Green Future"', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'tree plantation', shortDescription: 'Planting 10,000 trees to combat climate change and restore local ecosystems.' },
 ];
 
 interface FeedItemBase {
@@ -96,7 +96,7 @@ const feedItems: FeedItem[] = [
       type: 'Online',
       excerpt: 'A platform for young leaders to discuss climate solutions and policy changes. Register to participate!',
       imageUrl: 'https://placehold.co/600x400.png',
-      dataAiHint: 'youth climate meeting',
+      dataAiHint: 'youth climate',
       rsvpLink: '#',
       calendarLink: '#',
     }
@@ -232,4 +232,3 @@ export default function Home() {
     </>
   );
 }
-

@@ -71,7 +71,7 @@ export default function GalleryPage() {
     }
   }, [isDialogOpen]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -174,7 +174,7 @@ export default function GalleryPage() {
                   id="imageUpload" 
                   type="file" 
                   accept="image/*" 
-                  onChange={handleImageChange} 
+                  onChange={handleImageFileChange} 
                   className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                 />
                 {errors.imageUrl && !currentImageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
@@ -263,4 +263,3 @@ export default function GalleryPage() {
     </div>
   );
 }
-

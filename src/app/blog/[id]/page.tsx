@@ -13,7 +13,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     date: new Date().toLocaleDateString(),
     content: `This is placeholder content for blog post with ID ${params.id}. Replace this with actual fetched data. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
     imageUrl: `https://placehold.co/800x400.png`,
-    dataAiHint: "article content",
+    dataAiHint: "Rotary blog",
     tags: ["#Placeholder", `#Post${params.id}`]
   };
 
@@ -57,4 +57,3 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
-

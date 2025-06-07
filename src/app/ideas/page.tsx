@@ -35,7 +35,7 @@ const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
     commentsCount: 5, 
     status: 'Approved',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'compost bins garden',
+    dataAiHint: 'compost garden',
   },
   { 
     id: '2', 
@@ -47,7 +47,7 @@ const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
     commentsCount: 12, 
     status: 'Under Review',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'plastic bottles art',
+    dataAiHint: 'recycle art',
   },
   { 
     id: '3', 
@@ -59,7 +59,7 @@ const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
     commentsCount: 2, 
     status: 'New',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'solar charging station',
+    dataAiHint: 'solar station',
   },
 ];
 
@@ -88,7 +88,7 @@ export default function IdeaBoxPage() {
     }
   }, [isDialogOpen]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -140,7 +140,7 @@ export default function IdeaBoxPage() {
       commentsCount: 0,
       status: 'New' as 'New',
       imageUrl: data.imageUrl || 'https://placehold.co/600x400.png', 
-      dataAiHint: data.dataAiHint || 'idea placeholder',
+      dataAiHint: data.dataAiHint || 'innovative idea',
     };
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
     toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
@@ -204,7 +204,7 @@ export default function IdeaBoxPage() {
                   id="imageUpload" 
                   type="file" 
                   accept="image/*" 
-                  onChange={handleImageChange} 
+                  onChange={handleImageFileChange} 
                   className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                 />
               </div>
@@ -265,6 +265,3 @@ export default function IdeaBoxPage() {
     </div>
   );
 }
-
-
-    

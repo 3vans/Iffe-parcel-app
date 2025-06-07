@@ -23,14 +23,14 @@ const currentUser = {
   id: 'currentUser',
   name: 'You',
   avatarUrl: 'https://placehold.co/40x40.png',
-  dataAiHint: 'user avatar',
+  dataAiHint: 'person avatar',
 };
 
 const otherUserMock = {
   id: 'otherUser1',
   name: 'Bot Assistant',
   avatarUrl: 'https://placehold.co/40x40.png',
-  dataAiHint: 'bot avatar',
+  dataAiHint: 'friendly bot',
 };
 
 export default function ChatPage() {
@@ -176,5 +176,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-    

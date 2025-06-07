@@ -12,7 +12,7 @@ import VerifiedBadge from '@/components/verified-badge'; // New import
 const userData = {
   name: 'Alex Johnson',
   avatarUrl: 'https://placehold.co/100x100.png',
-  dataAiHint: 'person smiling',
+  dataAiHint: 'smiling person',
   email: 'alex.johnson@example.com',
   memberSince: 'January 15, 2023',
   impactPoints: 1250,

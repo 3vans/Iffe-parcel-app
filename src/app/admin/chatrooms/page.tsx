@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Trash2, UserX, ShieldBan, VolumeX, MessageSquare, Users, PowerOff, CornerDownLeft, MessageCircle, ShieldAlert } from "lucide-react";
+import { Send, Trash2, UserX, ShieldBan, VolumeX, MessageSquare, Users, PowerOff, MessageCircle, ShieldAlert } from "lucide-react";
 import { cn } from '@/lib/utils';
 
 interface Chatroom {
@@ -46,7 +46,7 @@ const mockAdminUser = {
   id: 'admin',
   name: 'Admin',
   avatarUrl: 'https://placehold.co/40x40.png',
-  dataAiHint: 'admin avatar',
+  dataAiHint: 'professional avatar',
 };
 
 const mockChatrooms: Chatroom[] = [
@@ -57,27 +57,27 @@ const mockChatrooms: Chatroom[] = [
 
 const mockParticipants: { [chatroomId: string]: ChatParticipant[] } = {
   cr1: [
-    { id: 'u1', name: 'Alice Wonderland', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar', role: 'user' },
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar construction', role: 'user' },
-    { id: 'u3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar classic', role: 'moderator' },
+    { id: 'u1', name: 'Alice Wonderland', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'woman profile', role: 'user' },
+    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'construction worker', role: 'user' },
+    { id: 'u3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'classic film', role: 'moderator' },
   ],
   cr2: [
-    { id: 'u4', name: 'Diana Prince', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar hero', role: 'user' },
-    { id: 'u5', name: 'Edward Scissorhands', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man avatar goth', role: 'user' },
+    { id: 'u4', name: 'Diana Prince', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'heroic woman', role: 'user' },
+    { id: 'u5', name: 'Edward Scissorhands', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'gothic man', role: 'user' },
   ],
   cr3: [
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'man construction', role: 'user' },
+    { id: 'u2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/40x40.png', dataAiHint:'construction worker', role: 'user' },
   ],
 };
 
 const mockMessages: { [chatroomId: string]: ChatMessage[] } = {
   cr1: [
-    { id: 'm1', text: 'Hello everyone! Welcome to the general chat.', senderId: 'u3', senderName: 'Charlie Chaplin', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'man classic', timestamp: new Date(Date.now() - 1000 * 60 * 10) },
-    { id: 'm2', text: 'Hi Charlie! Glad to be here.', senderId: 'u1', senderName: 'Alice Wonderland', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'woman avatar', timestamp: new Date(Date.now() - 1000 * 60 * 8) },
-    { id: 'm3', text: 'What are we discussing today?', senderId: 'u2', senderName: 'Bob The Builder', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'man construction', timestamp: new Date(Date.now() - 1000 * 60 * 5) },
+    { id: 'm1', text: 'Hello everyone! Welcome to the general chat.', senderId: 'u3', senderName: 'Charlie Chaplin', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'classic film', timestamp: new Date(Date.now() - 1000 * 60 * 10) },
+    { id: 'm2', text: 'Hi Charlie! Glad to be here.', senderId: 'u1', senderName: 'Alice Wonderland', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'woman profile', timestamp: new Date(Date.now() - 1000 * 60 * 8) },
+    { id: 'm3', text: 'What are we discussing today?', senderId: 'u2', senderName: 'Bob The Builder', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'construction worker', timestamp: new Date(Date.now() - 1000 * 60 * 5) },
   ],
   cr2: [
-    { id: 'm4', text: 'Any new project ideas for this quarter?', senderId: 'u4', senderName: 'Diana Prince', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'woman hero', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
+    { id: 'm4', text: 'Any new project ideas for this quarter?', senderId: 'u4', senderName: 'Diana Prince', senderAvatar: 'https://placehold.co/40x40.png', dataAiHint:'heroic woman', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
   ],
   cr3: [],
 };
@@ -155,16 +155,18 @@ export default function AdminChatroomsPage() {
         if (action === 'Kick') {
           toastDescription = `${userName} has been kicked from ${selectedChatroom?.name || 'this chat'} for this session. (Simulated)`;
           toastVariant = "destructive";
+          // For kick, we might visually remove them or just show a status. For simulation, we'll keep them but could filter out if needed.
         }
         if (action === 'BanFromRoom') {
           toastDescription = `${userName} has been ${p.isBannedFromRoom ? 'unbanned from' : 'banned from'} ${selectedChatroom?.name || 'this chat'}. (Simulated)`;
           toastVariant = "destructive";
-          return { ...p, isBannedFromRoom: !p.isBannedFromRoom, isMuted: !p.isBannedFromRoom ? true : p.isMuted };
+          return { ...p, isBannedFromRoom: !p.isBannedFromRoom, isMuted: !p.isBannedFromRoom ? true : p.isMuted }; // Banning also mutes
         }
         if (action === 'SuspendGlobal') {
           toastDescription = `${userName} has been ${p.isGloballySuspended ? 'unsuspended globally' : 'globally suspended from all chats and platform features'}. (Simulated)`;
           toastVariant = "destructive";
-          return { ...p, isGloballySuspended: !p.isGloballySuspended, isMuted: !p.isGloballySuspended ? true : p.isMuted, isBannedFromRoom: !p.isGloballySuspended ? true : p.isBannedFromRoom };
+          // Global suspension implies being banned/muted everywhere for this simulation
+          return { ...p, isGloballySuspended: !p.isGloballySuspended, isMuted: true, isBannedFromRoom: true };
         }
       }
       return p;
@@ -178,8 +180,7 @@ export default function AdminChatroomsPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col md:flex-row gap-4"> {/* Ensure this flex-1 to fill parent height */}
-      {/* Chatroom List Column */}
+    <div className="flex flex-1 flex-col md:flex-row gap-4">
       <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col">
         <CardHeader>
           <CardTitle className="font-headline text-xl flex items-center"><MessageSquare className="mr-2 h-5 w-5 text-primary"/>Active Chatrooms</CardTitle>
@@ -206,7 +207,6 @@ export default function AdminChatroomsPage() {
         </ScrollArea>
       </Card>
 
-      {/* Chat Monitoring Column */}
       <Card className="w-full md:w-2/3 lg:w-3/4 flex flex-col">
         {!selectedChatroom ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center p-8">
@@ -229,8 +229,7 @@ export default function AdminChatroomsPage() {
             </CardHeader>
             
             <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
-              {/* Messages Area */}
-              <div className="flex-grow flex flex-col"> {/* Removed fixed height, relies on flex-grow */}
+              <div className="flex-grow flex flex-col">
                 <ScrollArea className="flex-grow bg-muted/10 p-4">
                   <div className="space-y-4">
                     {currentMessages.map((msg) => (
@@ -301,7 +300,6 @@ export default function AdminChatroomsPage() {
                 </CardFooter>
               </div>
 
-              {/* Participants Area (Right sidebar on larger screens) */}
               <Card className="w-full lg:w-1/3 lg:max-w-xs border-0 border-l-0 lg:border-l rounded-none lg:rounded-l-none flex flex-col">
                 <CardHeader className="border-b">
                     <CardTitle className="font-headline text-md flex items-center"><Users className="mr-2 h-5 w-5 text-primary"/>Participants ({currentParticipants.length})</CardTitle>
@@ -352,7 +350,3 @@ export default function AdminChatroomsPage() {
     </div>
   );
 }
-
-    
-
-    

@@ -17,7 +17,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     excerpt: `This is a placeholder description for event ID ${params.id}. Join us for an exciting time! More details will be available soon.`,
     fullDescription: `This is the detailed placeholder content for event with ID ${params.id}. We are planning an amazing event that you won't want to miss. Stay tuned for updates on speakers, agenda, and specific activities. This event aims to bring together community members for learning, networking, and fun.`,
     imageUrl: `https://placehold.co/800x400.png`,
-    dataAiHint: "event placeholder",
+    dataAiHint: "community event",
     organizer: "e-Rotary Hub Team",
     rsvpLink: "#",
   };
@@ -77,4 +77,3 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     </div>
   );
 }
-

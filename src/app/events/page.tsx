@@ -5,9 +5,9 @@ import { CalendarPlus } from 'lucide-react';
 
 // Mock data
 const mockEvents: EventCardProps[] = [
-  { id: '1', title: 'Annual Rotary Youth Summit', date: 'Nov 15, 2023', time: '09:00 AM - 05:00 PM', location: 'Kampala Serena Hotel', type: 'Offline', excerpt: 'Join us for a day of inspiring talks, workshops, and networking opportunities for young leaders.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'conference people', rsvpLink: '#', calendarLink: '#' },
-  { id: '2', title: 'Webinar: Sustainable Practices for SMEs', date: 'Nov 20, 2023', time: '02:00 PM - 03:30 PM', location: 'Online (Zoom)', type: 'Online', excerpt: 'Learn how small and medium enterprises can adopt sustainable practices for long-term success and environmental impact.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'webinar business', rsvpLink: '#', calendarLink: '#' },
-  { id: '3', title: 'Community Cleanup Drive', date: 'Dec 02, 2023', time: '10:00 AM - 01:00 PM', location: 'Makerere Kivulu', type: 'Offline', excerpt: 'Volunteer with us to clean up and beautify our local community spaces. All materials provided.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'community cleanup', rsvpLink: '#', calendarLink: '#' },
+  { id: '1', title: 'Annual Rotary Youth Summit', date: 'Nov 15, 2023', time: '09:00 AM - 05:00 PM', location: 'Kampala Serena Hotel', type: 'Offline', excerpt: 'Join us for a day of inspiring talks, workshops, and networking opportunities for young leaders.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'rotary conference', rsvpLink: '#', calendarLink: '#' },
+  { id: '2', title: 'Webinar: Sustainable Practices for SMEs', date: 'Nov 20, 2023', time: '02:00 PM - 03:30 PM', location: 'Online (Zoom)', type: 'Online', excerpt: 'Learn how small and medium enterprises can adopt sustainable practices for long-term success and environmental impact.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'online seminar', rsvpLink: '#', calendarLink: '#' },
+  { id: '3', title: 'Community Cleanup Drive', date: 'Dec 02, 2023', time: '10:00 AM - 01:00 PM', location: 'Makerere Kivulu', type: 'Offline', excerpt: 'Volunteer with us to clean up and beautify our local community spaces. All materials provided.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'volunteer cleanup', rsvpLink: '#', calendarLink: '#' },
 ];
 
 export default function EventsPage() {

@@ -178,13 +178,13 @@ export default function AdminMediaPage() {
           const videoId = data.videoUrl.split('v=')[1]?.split('&')[0];
           if (videoId) {
               thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-              dataAiHint = 'youtube video';
+              dataAiHint = 'video thumbnail';
           }
       } else if (data.videoUrl.includes('youtu.be/')) {
           const videoId = data.videoUrl.split('youtu.be/')[1]?.split('?')[0];
            if (videoId) {
               thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-              dataAiHint = 'youtube video';
+              dataAiHint = 'video thumbnail';
           }
       }
       sourceType = 'url';
@@ -423,7 +423,7 @@ export default function AdminMediaPage() {
                         {adminVideoItems.map(video => (
                             <Card key={video.id} className="overflow-hidden">
                                 <div className="relative w-full aspect-video bg-muted">
-                                    <Image src={video.thumbnailUrl || 'https://placehold.co/320x180.png'} alt={video.title} layout="fill" objectFit="cover" data-ai-hint={video.dataAiHint || 'video placeholder'} />
+                                    <Image src={video.thumbnailUrl || 'https://placehold.co/320x180.png'} alt={video.title} layout="fill" objectFit="cover" data-ai-hint={video.dataAiHint || 'video content'} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-2">
                                       <VideoIcon className="h-5 w-5 text-white/80 mr-1" />
                                       <p className="text-white text-xs font-medium truncate" title={video.title}>{video.title}</p>
@@ -457,6 +457,3 @@ export default function AdminMediaPage() {
     </div>
   );
 }
-    
-
-    
