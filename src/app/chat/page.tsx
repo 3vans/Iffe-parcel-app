@@ -28,7 +28,7 @@ const currentUser = {
 
 const otherUserMock = {
   id: 'otherUser1',
-  name: 'Bot Assistant',
+  name: 'Travel Bot',
   avatarUrl: 'https://placehold.co/40x40.png',
   dataAiHint: 'friendly bot',
 };
@@ -37,7 +37,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      text: 'Welcome to the e-Rotary Hub community chat! Feel free to share your thoughts or ask questions.',
+      text: 'Welcome to the traveler\'s chat! Have questions about a tour? Ask away!',
       sender: 'other',
       timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
       avatarUrl: otherUserMock.avatarUrl,
@@ -46,7 +46,7 @@ export default function ChatPage() {
     },
     {
       id: '2',
-      text: 'Hello! Great to be here.',
+      text: 'Hello! I\'m interested in the Gorilla Trekking tour.',
       sender: 'user',
       timestamp: new Date(Date.now() - 1000 * 60 * 3), // 3 minutes ago
       avatarUrl: currentUser.avatarUrl,
@@ -91,7 +91,7 @@ export default function ChatPage() {
     setTimeout(() => {
       const botResponse: ChatMessage = {
         id: String(Date.now() + 1),
-        text: `I received your message: "${userMessage.text.substring(0, 30)}${userMessage.text.length > 30 ? "..." : ""}". I am a mock assistant, so I can't truly understand yet!`,
+        text: `Thanks for your message about: "${userMessage.text.substring(0, 30)}${userMessage.text.length > 30 ? "..." : ""}". I am a mock assistant. A real guide will be with you shortly!`,
         sender: 'other',
         timestamp: new Date(),
         avatarUrl: otherUserMock.avatarUrl,
@@ -107,10 +107,10 @@ export default function ChatPage() {
       <div className="p-4 border-b bg-card sticky top-0 z-10">
         <div className="flex items-center">
           <MessageCircle className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-accent" />
-          <h1 className="font-headline text-xl sm:text-2xl text-primary">Community Chat</h1>
+          <h1 className="font-headline text-xl sm:text-2xl text-primary">Traveler Chat</h1>
         </div>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Connect and discuss with other members.
+          Connect with our team and other travelers.
         </p>
       </div>
       

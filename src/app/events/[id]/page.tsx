@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Tv, Info } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Tv, Info, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -9,16 +9,16 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   // In a real app, you would fetch event data based on params.id
   const mockEvent = {
     id: params.id,
-    title: `Event Title for ID: ${params.id}`,
+    title: `Scheduled Departure: Tour ${params.id}`,
     date: 'Dec 31, 2024',
-    time: '10:00 AM - 02:00 PM',
-    location: params.id === 'e1' ? 'Online (Zoom)' : 'Placeholder Venue',
+    time: 'All Day Event',
+    location: params.id === 'e1' ? 'Online (Zoom)' : 'Nairobi, Kenya',
     type: params.id === 'e1' ? 'Online' as const : 'Offline' as const,
-    excerpt: `This is a placeholder description for event ID ${params.id}. Join us for an exciting time! More details will be available soon.`,
-    fullDescription: `This is the detailed placeholder content for event with ID ${params.id}. We are planning an amazing event that you won't want to miss. Stay tuned for updates on speakers, agenda, and specific activities. This event aims to bring together community members for learning, networking, and fun.`,
+    excerpt: `This is a placeholder description for the scheduled departure with ID ${params.id}. Join us for an exciting time!`,
+    fullDescription: `This is the detailed placeholder content for the tour with ID ${params.id}. We are planning an amazing trip that you won't want to miss. Stay tuned for updates on the detailed itinerary, accommodation, and specific activities. This tour aims to bring together like-minded adventurers for an unforgettable experience.`,
     imageUrl: `https://placehold.co/800x400.png`,
-    dataAiHint: "community event",
-    organizer: "e-Rotary Hub Team",
+    dataAiHint: "safari group",
+    organizer: "Wild Plains Safaris",
     rsvpLink: "#",
   };
 
@@ -26,7 +26,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     <div className="space-y-6 animate-slide-up">
       <Button variant="ghost" asChild>
         <Link href="/events">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Events
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Departures
         </Link>
       </Button>
       <Card className="shadow-xl overflow-hidden">
@@ -41,31 +41,31 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-4">
               <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Event</h2>
+                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Departure</h2>
                 <p className="text-muted-foreground leading-relaxed">{mockEvent.fullDescription}</p>
               </section>
               <section>
-                 <h3 className="font-headline text-lg font-semibold text-primary mb-2">Organized by</h3>
+                 <h3 className="font-headline text-lg font-semibold text-primary mb-2">Hosted by</h3>
                  <p className="text-muted-foreground">{mockEvent.organizer}</p>
               </section>
             </div>
             <aside className="space-y-4 md:pt-8">
               <Card className="bg-muted/30">
                 <CardHeader>
-                  <CardTitle className="font-headline text-xl text-primary flex items-center"><Info className="mr-2 h-5 w-5 text-accent" />Event Details</CardTitle>
+                  <CardTitle className="font-headline text-xl text-primary flex items-center"><Info className="mr-2 h-5 w-5 text-accent" />Trip Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-accent" /> {mockEvent.date}</p>
                   <p className="flex items-center"><Clock className="h-4 w-4 mr-2 text-accent" /> {mockEvent.time}</p>
                   <p className="flex items-center">
-                    {mockEvent.type === 'Online' ? <Tv className="h-4 w-4 mr-2 text-accent" /> : <MapPin className="h-4 w-4 mr-2 text-accent" />}
+                    {mockEvent.type === 'Online' ? <Tv className="h-4 w-4 mr-2 text-accent" /> : <Globe className="h-4 w-4 mr-2 text-accent" />}
                     {mockEvent.location} <Badge variant="outline" className="ml-2">{mockEvent.type}</Badge>
                   </p>
                 </CardContent>
                 <CardFooter>
                    <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" asChild>
                     <Link href={mockEvent.rsvpLink || '#'} target={mockEvent.rsvpLink !== '#' ? '_blank' : undefined}>
-                        <Users className="mr-2 h-4 w-4" /> RSVP / Register
+                        <Users className="mr-2 h-4 w-4" /> Book Your Spot
                     </Link>
                   </Button>
                 </CardFooter>

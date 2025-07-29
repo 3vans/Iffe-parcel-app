@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut } from 'lucide-react';
+import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut, MountainSnow, Telescope } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
@@ -78,13 +78,13 @@ const AppHeader = () => {
 
   const mobileNavItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/campaigns', label: 'Campaigns', icon: BarChart3 },
-    { href: '/blog', label: 'Blog', icon: Edit3 },
-    { href: '/events', label: 'Events', icon: CalendarDays },
+    { href: '/campaigns', label: 'Tours', icon: MountainSnow },
+    { href: '/blog', label: 'Journal', icon: Edit3 },
+    { href: '/events', label: 'Departures', icon: CalendarDays },
     { href: '/gallery', label: 'Gallery', icon: ImageIcon },
     { href: '/videos', label: 'Videos', icon: PlayCircle },
-    { href: '/ideas', label: 'Idea Box', icon: Lightbulb },
-    { href: '/dashboard', label: 'Dashboard', icon: UserCircle },
+    { href: '/ideas', label: 'Dream Trips', icon: Lightbulb },
+    { href: '/dashboard', label: 'My Trips', icon: UserCircle },
   ];
 
   return (
@@ -98,8 +98,8 @@ const AppHeader = () => {
       >
         <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 font-headline text-lg md:text-xl font-bold text-primary hover:text-primary/80 transition-colors">
-            <RotarySpinner size={24} className="text-primary" /> 
-            Rotaract e-Hub
+            <Telescope size={24} className="text-primary" /> 
+            Wild Plains Safaris
           </Link>
           
           <div className="hidden lg:flex items-center space-x-1">
@@ -110,17 +110,17 @@ const AppHeader = () => {
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/campaigns">
-                <BarChart3 className="mr-1 h-4 w-4" /> Campaigns
+                <MountainSnow className="mr-1 h-4 w-4" /> Tours
               </Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/blog">
-                <Edit3 className="mr-1 h-4 w-4" /> Blog
+                <Edit3 className="mr-1 h-4 w-4" /> Journal
               </Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/events">
-                <CalendarDays className="mr-1 h-4 w-4" /> Events
+                <CalendarDays className="mr-1 h-4 w-4" /> Departures
               </Link>
             </Button>
              <Button variant="ghost" asChild>
@@ -135,12 +135,12 @@ const AppHeader = () => {
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/ideas">
-                <Lightbulb className="mr-1 h-4 w-4" /> Idea Box
+                <Lightbulb className="mr-1 h-4 w-4" /> Dream Trips
               </Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/dashboard">
-                <UserCircle className="mr-1 h-4 w-4" /> Dashboard
+                <UserCircle className="mr-1 h-4 w-4" /> My Trips
               </Link>
             </Button>
             <Separator orientation="vertical" className="h-6 mx-2 bg-border" />
@@ -182,7 +182,7 @@ const AppHeader = () => {
                 <SheetContent side="left" className="w-[280px] sm:w-[320px] flex flex-col bg-card/95 backdrop-blur-lg p-0">
                   <SheetHeader className="p-4 border-b">
                      <SheetTitle className="flex items-center gap-2 text-primary">
-                       <RotarySpinner size={20} className="text-primary" /> Rotaract e-Hub
+                       <Telescope size={20} className="text-primary" /> Wild Plains Safaris
                     </SheetTitle>
                   </SheetHeader>
                   <nav className="flex-grow overflow-y-auto p-4 space-y-2">

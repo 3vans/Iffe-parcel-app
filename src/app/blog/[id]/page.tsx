@@ -8,20 +8,20 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   // In a real app, you would fetch blog post data based on params.id
   const mockPost = {
     id: params.id,
-    title: `Blog Post Title for ID: ${params.id}`,
-    author: "Mock Author",
+    title: `Amazing Safari Story for ID: ${params.id}`,
+    author: "Mock Explorer",
     date: new Date().toLocaleDateString(),
-    content: `This is placeholder content for blog post with ID ${params.id}. Replace this with actual fetched data. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+    content: `This is placeholder content for the travel journal entry with ID ${params.id}. Replace this with actual fetched data. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
     imageUrl: `https://placehold.co/800x400.png`,
-    dataAiHint: "Rotary blog",
-    tags: ["#Placeholder", `#Post${params.id}`]
+    dataAiHint: "safari landscape",
+    tags: ["#Adventure", `#Trip${params.id}`]
   };
 
   return (
     <div className="space-y-6 animate-slide-up">
       <Button variant="ghost" asChild>
         <Link href="/blog">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Journal
         </Link>
       </Button>
       <Card className="shadow-xl">

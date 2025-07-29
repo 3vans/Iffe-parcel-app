@@ -48,21 +48,21 @@ const Summarizer: React.FC<SummarizerProps> = ({ campaignDescription, campaignTi
       <CardHeader>
         <CardTitle className="font-headline text-2xl text-primary flex items-center">
           <Wand2 className="mr-2 h-6 w-6 text-accent" />
-          AI Content Summarizer
+          AI Tour Highlights
         </CardTitle>
-        <CardDescription>Get a quick highlight of this campaign's key points.</CardDescription>
+        <CardDescription>Get a quick summary of this tour's key features.</CardDescription>
       </CardHeader>
       <CardContent>
         <Button onClick={handleSummarize} disabled={isLoading} className="mb-4 bg-accent text-accent-foreground hover:bg-accent/90">
           {isLoading ? (
             <>
-              <RotarySpinner size={16} className="mr-2 text-accent-foreground" /> {/* Changed color here */}
+              <RotarySpinner size={16} className="mr-2 text-accent-foreground" />
               Generating...
             </>
           ) : (
             <>
              <Wand2 className="mr-2 h-4 w-4" />
-              Summarize Campaign
+              Summarize Tour
             </>
           )}
         </Button>

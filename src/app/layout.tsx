@@ -8,8 +8,8 @@ import { ThemeProviderClient } from '@/components/theme-provider-client';
 import AuthProvider from '@/components/auth-provider'; // Import AuthProvider
 
 export const metadata: Metadata = {
-  title: 'e-Rotary Hub',
-  description: 'A digital headquarters for campaigns, collaboration, and community-led solutions.',
+  title: 'Wild Plains Safaris',
+  description: 'Your adventure into the wild awaits. Book unforgettable safari tours and expeditions.',
   icons: null, // Explicitly tell Next.js not to look for default icons
 };
 

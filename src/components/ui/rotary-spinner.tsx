@@ -2,7 +2,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import RotaryWheelIcon from './rotary-wheel-icon'; // Import the new icon
+import { Telescope } from 'lucide-react'; // Changed to Telescope
 
 interface RotarySpinnerProps {
   size?: number | string;
@@ -16,8 +16,8 @@ const RotarySpinner: React.FC<RotarySpinnerProps> = ({
   'aria-label': ariaLabel = "Loading..." 
 }) => {
   return (
-    <RotaryWheelIcon
-      className={cn('animate-spin', className)} // Apply animate-spin here
+    <Telescope
+      className={cn('animate-pulse-slow', className)} // Changed animation
       size={size}
       aria-label={ariaLabel}
     />

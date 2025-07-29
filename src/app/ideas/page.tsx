@@ -13,13 +13,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { Lightbulb, PlusCircle, UploadCloud } from 'lucide-react';
-import Image from 'next/image'; // Import next/image
+import Image from 'next/image';
 
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
   description: z.string().min(20, 'Description must be at least 20 characters.'),
   imageUrl: z.string().url('Must be a valid URL for the image.').optional().or(z.literal('')),
-  dataAiHint: z.string().max(100, 'Keywords cannot exceed 100 characters.').optional(), // Increased limit
+  dataAiHint: z.string().max(100, 'Keywords cannot exceed 100 characters.').optional(),
 });
 type IdeaFormValues = z.infer<typeof ideaSchema>;
 
@@ -27,39 +27,39 @@ type IdeaFormValues = z.infer<typeof ideaSchema>;
 const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
   { 
     id: '1', 
-    title: 'Community Composting Program', 
-    description: 'Set up a neighborhood composting system to reduce organic waste and create fertilizer for local gardens. This involves community workshops, distribution of composting bins, and regular collection schedules. The goal is to significantly reduce landfill waste and promote sustainable living practices across several districts.', 
-    submittedBy: 'GreenThumb Greta', 
+    title: 'Walking Safari in Zambia', 
+    description: 'Develop a new tour focused on immersive walking safaris in South Luangwa National Park, known for its incredible leopard sightings and on-foot tracking experiences. This would be for more adventurous, fit clients seeking a deeper connection with the bush.', 
+    submittedBy: 'Adventurous Al', 
     dateSubmitted: 'Oct 10, 2023', 
     votes: 42, 
     commentsCount: 5, 
     status: 'Approved',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'compost garden',
+    dataAiHint: 'walking safari zambia',
   },
   { 
     id: '2', 
-    title: 'Plastic Bottle Recycling Art Project', 
-    description: 'Collect plastic bottles and transform them into public art installations to raise awareness about plastic pollution. This initiative will engage local artists and schools, fostering creativity while highlighting an important environmental issue. The final art pieces will be displayed in prominent public spaces.', 
-    submittedBy: 'EcoArtist Alex', 
+    title: 'Family-Friendly Safari Package', 
+    description: 'Create a dedicated package for families with young children, including kid-friendly lodges, special activities like animal tracking for kids, and shorter game drives. The goal is to make safari accessible and fun for all ages.', 
+    submittedBy: 'Family-First Fiona', 
     dateSubmitted: 'Sep 25, 2023', 
     votes: 78, 
     commentsCount: 12, 
     status: 'Under Review',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'recycle art',
+    dataAiHint: 'safari family',
   },
   { 
     id: '3', 
-    title: 'Solar-Powered Phone Charging Stations', 
-    description: 'Install solar-powered charging stations in public parks and community centers, providing a free and sustainable energy source for residents. These stations will also serve as small hubs for information dissemination about renewable energy.', 
-    submittedBy: 'TechSavvy Tom', 
+    title: 'Photographic Hide at a Waterhole', 
+    description: 'Build a permanent photographic hide at a key waterhole, offering photographers a unique, low-angle perspective for stunning wildlife shots, especially during the dry season. This could be an add-on activity.', 
+    submittedBy: 'Shutterbug Sam', 
     dateSubmitted: 'Nov 01, 2023', 
     votes: 15, 
     commentsCount: 2, 
     status: 'New',
     imageUrl: 'https://placehold.co/600x400.png',
-    dataAiHint: 'solar station',
+    dataAiHint: 'photo hide waterhole',
   },
 ];
 
@@ -143,7 +143,7 @@ export default function IdeaBoxPage() {
       dataAiHint: data.dataAiHint || 'innovative idea',
     };
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
-    toast({ title: "Idea Submitted!", description: "Your idea has been added to the box."});
+    toast({ title: "Trip Idea Submitted!", description: "Your suggestion has been added."});
     reset();
     setImagePreviewUrl(null); // Reset preview after submission
     setIsSubmitting(false);
@@ -155,9 +155,9 @@ export default function IdeaBoxPage() {
       <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
         <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center">
           <Lightbulb className="h-10 w-10 mr-3 text-accent" />
-          Idea Box
+          Dream Trips
         </h1>
-        <p className="text-lg text-muted-foreground">Suggest projects and vote on what our community should tackle next!</p>
+        <p className="text-lg text-muted-foreground">Suggest new destinations and vote on where we should go next!</p>
       </section>
 
       <div className="text-center">
@@ -170,20 +170,20 @@ export default function IdeaBoxPage() {
         }}>
           <DialogTrigger asChild>
             <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-              <PlusCircle className="mr-2 h-5 w-5" /> Suggest a New Idea
+              <PlusCircle className="mr-2 h-5 w-5" /> Suggest a Trip Idea
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="font-headline text-2xl text-primary">Submit Your Idea</DialogTitle>
               <DialogDescription>
-                Share your brilliant ideas to help improve our community and platform.
+                Share your brilliant ideas for new tours and destinations.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmitIdea)} className="grid gap-4 py-4">
               <div>
                 <Label htmlFor="title" className="text-right font-semibold">
-                  Idea Title
+                  Trip Idea / Title
                 </Label>
                 <Input id="title" {...register('title')} className="col-span-3 mt-1" />
                 {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
@@ -259,7 +259,7 @@ export default function IdeaBoxPage() {
 
       {ideas.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">The Idea Box is empty. Be the first to suggest something!</p>
+          <p className="text-xl text-muted-foreground">The suggestion box is empty. Be the first to suggest a dream trip!</p>
         </div>
       )}
     </div>

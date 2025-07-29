@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 
@@ -31,23 +31,23 @@ interface Campaign {
 const mockCampaignsData: Campaign[] = [
   {
     id: '1',
-    title: 'Clean Water Initiative',
+    title: 'Serengeti Great Migration',
     imageUrl: 'https://placehold.co/1200x600.png',
-    dataAiHint: 'clean water',
-    description: 'This initiative aims to provide access to clean and safe drinking water for over 5,000 people in the rural community of Kasese. By drilling new boreholes and installing water purification systems, we can significantly reduce waterborne diseases and improve overall health. The project also includes hygiene education workshops to ensure sustainable practices. We believe that access to clean water is a fundamental human right, and with your support, we can make a tangible difference in the lives of many families. This long description serves as a good test for the AI summarizer feature, which will provide a concise overview of these key points.',
-    storyline: 'For years, the Kasese community has struggled with contaminated water sources. Our project directly addresses this by building infrastructure and empowering locals with knowledge. We will work hand-in-hand with community leaders.',
+    dataAiHint: 'wildebeest migration',
+    description: 'This 7-day safari places you in the heart of the action during the Great Migration. You will stay in luxury tented camps, strategically located to maximize wildlife viewing. Daily game drives with expert guides will bring you close to vast herds of wildebeest, zebras, and the predators that follow them. This all-inclusive package covers meals, accommodation, park fees, and guided activities. It is a photographer\'s dream and an unforgettable life experience. This long description serves as a good test for the AI summarizer feature, which will provide a concise overview of these key points.',
+    storyline: 'From the moment you land, every detail is handled. Our expert guides share deep knowledge of the ecosystem, ensuring a rich and immersive experience. We partner with local communities to ensure tourism benefits the region.',
     budget: 15000,
-    goal: 10000,
-    currentAmount: 4500,
-    organizer: 'e-Rotary Club Kampala',
-    tags: ['#CleanWater', '#Health', '#CommunityDevelopment', '#Uganda'],
-    startDate: '2023-09-01',
-    endDate: '2024-03-31',
-    volunteersNeeded: 50,
-    volunteersSignedUp: 22,
+    goal: 100,
+    currentAmount: 92,
+    organizer: 'Wild Plains Safaris',
+    tags: ['#GreatMigration', '#Tanzania', '#BigFive', '#LuxuryCamping'],
+    startDate: '2024-07-15',
+    endDate: '2024-07-22',
+    volunteersNeeded: 12,
+    volunteersSignedUp: 8,
   },
-   { id: '2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/1200x600.png', dataAiHint: 'youth workshop', description: 'Our Youth Empowerment Workshops are designed to equip young individuals aged 16-25 with essential life and vocational skills. The program covers financial literacy, digital skills, entrepreneurship, and leadership development. By investing in our youth, we are investing in the future of our nation. These workshops will be conducted across various regions, ensuring wide accessibility. Participants will receive certificates upon completion and mentorship opportunities to guide their career paths. This initiative is vital for addressing youth unemployment and fostering innovation.', storyline: 'Many young Ugandans lack access to quality skills training. These workshops bridge that gap.', budget: 20000, goal: 18000, currentAmount: 9200, organizer: 'Rotaract Club of Makerere', tags: ['#YouthEmpowerment', '#SkillsDevelopment', '#Education', '#FutureLeaders'], startDate: '2023-10-15', endDate: '2024-06-30', volunteersNeeded: 30, volunteersSignedUp: 15, },
-  { id: '3', title: 'Reforestation Project "Green Future"', imageUrl: 'https://placehold.co/1200x600.png', dataAiHint: 'reforestation effort', description: 'The "Green Future" Reforestation Project is a response to the alarming rate of deforestation in the Mpigi district. We aim to plant 10,000 indigenous trees, restoring vital ecosystems, improving biodiversity, and combating climate change. This community-driven project will involve local schools and volunteers in tree planting and maintenance. Educational sessions on environmental conservation will also be part of the initiative. A greener future is possible with collective effort.', storyline: 'Deforestation threatens our environment. We are taking action by planting trees and educating communities.', budget: 8000, goal: 7500, currentAmount: 6100, organizer: 'Obutonde Initiative', tags: ['#Reforestation', '#ClimateAction', '#Environment', '#Sustainability'], startDate: '2023-11-01', endDate: '2024-05-31', volunteersNeeded: 100, volunteersSignedUp: 45, },
+   { id: '2', title: 'Gorilla Trekking Adventure', imageUrl: 'https://placehold.co/1200x600.png', dataAiHint: 'mountain gorilla', description: 'A once-in-a-lifetime opportunity to trek through the Bwindi Impenetrable Forest and spend time with a family of mountain gorillas. This 3-day package includes permits, expert local trackers, and comfortable lodging near the park. The trek can be challenging, but the reward is an unparalleled wildlife encounter that directly supports conservation efforts. We are committed to responsible tourism.', storyline: 'Our local guides have generations of experience in this forest. Your journey supports their families and the vital work of the park rangers protecting these magnificent creatures.', budget: 20000, goal: 100, currentAmount: 98, organizer: 'Wild Plains Safaris', tags: ['#GorillaTrekking', '#Uganda', '#Conservation', '#Primates'], startDate: '2024-09-01', endDate: '2024-09-04', volunteersNeeded: 8, volunteersSignedUp: 6, },
+  { id: '3', title: 'Okavango Delta Mokoro Trip', imageUrl: 'https://placehold.co/1200x600.png', dataAiHint: 'mokoro canoe delta', description: 'Silently glide through the crystal-clear waterways of the Okavango Delta in a traditional mokoro (dugout canoe). This 5-day tour offers a unique perspective on wildlife, from elephants drinking at the water\'s edge to vibrant birdlife. You will camp on remote islands under the stars, guided by experienced local polers. This is an immersive, eco-friendly way to experience one of Africa\'s last great wildernesses.', storyline: 'Disconnect from the world and reconnect with nature. Our guides share their deep understanding of this unique ecosystem, passed down through generations. This is a low-impact, high-immersion adventure.', budget: 8000, goal: 100, currentAmount: 95, organizer: 'Wild Plains Safaris', tags: ['#OkavangoDelta', '#Botswana', '#Mokoro', '#EcoTourism'], startDate: '2024-10-05', endDate: '2024-10-10', volunteersNeeded: 10, volunteersSignedUp: 10, },
 ];
 
 async function getCampaign(id: string): Promise<Campaign | undefined> {
@@ -66,7 +66,7 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     <div className="space-y-8 animate-slide-up">
       <Button variant="ghost" asChild className="mb-2">
         <Link href="/campaigns">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Campaigns
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
         </Link>
       </Button>
 
@@ -81,16 +81,16 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
           <div className="grid md:grid-cols-3 gap-6 mb-6">
             <div className="md:col-span-2 space-y-6">
               <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Campaign</h2>
+                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Tour</h2>
                 <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
               </section>
               <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">Our Story</h2>
+                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">The Experience</h2>
                 <p className="text-muted-foreground leading-relaxed">{campaign.storyline}</p>
               </section>
               {campaign.tags && campaign.tags.length > 0 && (
                 <section>
-                   <h3 className="font-headline text-lg font-semibold text-primary mb-2">Tags</h3>
+                   <h3 className="font-headline text-lg font-semibold text-primary mb-2">Highlights</h3>
                   <div className="flex flex-wrap gap-2">
                     {campaign.tags.map(tag => (
                       <Badge key={tag} variant="secondary"><Tag className="h-3 w-3 mr-1" />{tag.replace('#', '')}</Badge>
@@ -110,7 +110,7 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
               />
               <Card className="bg-muted/30">
                 <CardHeader>
-                  <CardTitle className="font-headline text-xl text-primary">Organizer</CardTitle>
+                  <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-foreground">{campaign.organizer}</p>
@@ -125,12 +125,12 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
         </CardContent>
         <CardFooter className="border-t p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
            <div className="flex space-x-2">
-            <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Comments (0)</Button>
+            <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Reviews (32)</Button>
             <Button variant="outline"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
           </div>
           <Button variant="link" asChild className="text-accent hover:text-accent/80">
             <Link href={`/campaigns/${campaign.id}/updates`}>
-              View Timeline Updates <ExternalLink className="ml-2 h-4 w-4" />
+              View Full Itinerary <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </CardFooter>

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -14,7 +15,7 @@ import Link from 'next/link';
 
 const blogPostSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long'),
-  content: z.string().min(50, 'Content must be at least 50 characters long'),
+  content: z.string().min(50, 'Story must be at least 50 characters long'),
   tags: z.string().optional(), // Comma-separated tags
   imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
@@ -35,8 +36,8 @@ export default function SubmitBlogPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     console.log('Blog post submitted:', data);
     toast({
-      title: "Post Submitted!",
-      description: "Your blog post has been sent for review.",
+      title: "Story Submitted!",
+      description: "Your travel story has been sent for review.",
       variant: "default",
     });
     reset();
@@ -47,13 +48,13 @@ export default function SubmitBlogPage() {
     <div className="max-w-2xl mx-auto py-8 animate-slide-up">
       <Button variant="ghost" asChild className="mb-6">
         <Link href="/blog">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Travel Journal
         </Link>
       </Button>
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle className="font-headline text-3xl text-primary">Submit a Blog Post</CardTitle>
-          <CardDescription>Share your insights and stories with the community. Posts will be reviewed before publishing.</CardDescription>
+          <CardTitle className="font-headline text-3xl text-primary">Share a Travel Story</CardTitle>
+          <CardDescription>Share your adventures and photos with the community. Stories will be reviewed before publishing.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -64,14 +65,14 @@ export default function SubmitBlogPage() {
             </div>
 
             <div>
-              <Label htmlFor="content" className="font-semibold">Content</Label>
-              <Textarea id="content" {...register('content')} rows={10} className="mt-1" placeholder="Write your article here... Supports Markdown." />
+              <Label htmlFor="content" className="font-semibold">Your Story</Label>
+              <Textarea id="content" {...register('content')} rows={10} className="mt-1" placeholder="Write your story here... Supports Markdown." />
               {errors.content && <p className="text-sm text-destructive mt-1">{errors.content.message}</p>}
             </div>
 
             <div>
               <Label htmlFor="tags" className="font-semibold">Tags (comma-separated)</Label>
-              <Input id="tags" {...register('tags')} placeholder="e.g., #Environment, #YouthVoices" className="mt-1" />
+              <Input id="tags" {...register('tags')} placeholder="e.g., #Serengeti, #BigFive" className="mt-1" />
               {errors.tags && <p className="text-sm text-destructive mt-1">{errors.tags.message}</p>}
             </div>
             

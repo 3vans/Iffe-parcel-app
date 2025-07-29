@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -13,15 +14,15 @@ export default function ProfilePage() {
           </div>
           <CardTitle className="font-headline text-3xl text-primary">Your Profile</CardTitle>
           <CardDescription className="text-lg text-muted-foreground">
-            Manage your account and track your contributions.
+            Manage your account and track your trips.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Your personal space in the e-Rotary Hub is under construction. Soon you'll be able to view your activity, manage settings, and more.
+            Your personal dashboard for all your adventures with Wild Plains Safaris. View your trip history, manage settings, and more.
           </p>
           <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link href="/dashboard">Go to Dashboard</Link>
+            <Link href="/dashboard">Go to My Trips</Link>
           </Button>
         </CardContent>
       </Card>

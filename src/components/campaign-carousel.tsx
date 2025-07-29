@@ -41,7 +41,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
     return (
       <Card className="bg-muted/50">
         <CardContent className="p-6 text-center text-muted-foreground">
-          No active campaigns at the moment.
+          No featured tours at the moment.
         </CardContent>
       </Card>
     );
@@ -65,11 +65,11 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
             <h3 className="font-headline text-2xl md:text-4xl font-bold text-primary-foreground mb-2">
               {currentCampaign.title}
             </h3>
-            <p className="text-sm md:text-lg text-primary-foreground/90 mb-4">
+            <p className="text-sm md:text-lg text-primary-foreground/90 mb-4 max-w-3xl">
               {currentCampaign.shortDescription}
             </p>
             <Button variant="secondary" size="lg" asChild className="self-start bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href={`/campaigns/${currentCampaign.id}`}>Learn More</Link>
+              <Link href={`/campaigns/${currentCampaign.id}`}>Explore Tour</Link>
             </Button>
           </div>
         </div>
@@ -82,7 +82,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
             size="icon"
             className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-card/80 hover:bg-card text-primary opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={prevSlide}
-            aria-label="Previous campaign"
+            aria-label="Previous tour"
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
@@ -91,7 +91,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
             size="icon"
             className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-card/80 hover:bg-card text-primary opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={nextSlide}
-            aria-label="Next campaign"
+            aria-label="Next tour"
           >
             <ChevronRight className="h-6 w-6" />
           </Button>
@@ -103,7 +103,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
                 className={`h-2 w-2 rounded-full transition-all ${
                   currentIndex === index ? 'bg-accent p-1' : 'bg-primary-foreground/50 hover:bg-primary-foreground/80'
                 }`}
-                aria-label={`Go to campaign ${index + 1}`}
+                aria-label={`Go to tour ${index + 1}`}
               />
             ))}
           </div>

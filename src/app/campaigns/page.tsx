@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tag, ArrowRight, PlusCircle } from 'lucide-react';
+import { Tag, ArrowRight, PlusCircle, MountainSnow } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface CampaignTeaser {
@@ -19,10 +19,10 @@ interface CampaignTeaser {
 }
 
 const mockCampaignsData: CampaignTeaser[] = [
-  { id: '1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'water source', shortDescription: 'Providing clean water to Kasese.', goal: 10000, currentAmount: 4500, tags: ['#CleanWater', '#Health'] },
-  { id: '2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'skill training', shortDescription: 'Equipping youth with essential skills.', goal: 18000, currentAmount: 9200, tags: ['#Youth', '#Education'] },
-  { id: '3', title: 'Reforestation "Green Future"', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'tree planting', shortDescription: 'Planting 10,000 trees in Mpigi.', goal: 7500, currentAmount: 6100, tags: ['#Environment', '#ClimateAction'] },
-  { id: '4', title: 'Tech Literacy for Seniors', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'tech seniors', shortDescription: 'Bridging the digital divide for the elderly.', goal: 5000, currentAmount: 1200, tags: ['#DigitalInclusion', '#Seniors'] },
+  { id: '1', title: 'Serengeti Great Migration', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'wildebeest serengeti', shortDescription: 'Witness the epic annual migration of wildebeest.', goal: 100, currentAmount: 85, tags: ['#BigFive', '#Tanzania'] },
+  { id: '2', title: 'Gorilla Trekking Adventure', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'mountain gorilla jungle', shortDescription: 'An unforgettable encounter with mountain gorillas.', goal: 100, currentAmount: 92, tags: ['#Primates', '#Uganda'] },
+  { id: '3', title: 'Okavango Delta Mokoro Trip', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of Botswana.', goal: 100, currentAmount: 61, tags: ['#Wetlands', '#Botswana'] },
+  { id: '4', title: 'Luxury Safari in Kruger Park', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'safari lodge sunset', shortDescription: 'Experience the wild in comfort and style.', goal: 100, currentAmount: 45, tags: ['#Luxury', '#SouthAfrica'] },
 ];
 
 
@@ -32,8 +32,8 @@ export default async function CampaignsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2">Our Campaigns</h1>
-        <p className="text-lg text-muted-foreground">Discover and support initiatives making a difference.</p>
+        <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><MountainSnow className="mr-3 h-10 w-10"/>Our Safari Tours</h1>
+        <p className="text-lg text-muted-foreground">Discover and book adventures that make a difference.</p>
       </section>
 
       {/* Add filtering/sorting options here in the future */}
@@ -56,8 +56,8 @@ export default async function CampaignsPage() {
                 <CardContent className="flex-grow space-y-3">
                   <div>
                     <div className="flex justify-between text-xs font-medium mb-1">
-                      <span className="text-primary">${campaign.currentAmount.toLocaleString()} raised</span>
-                      <span className="text-muted-foreground">of ${campaign.goal.toLocaleString()}</span>
+                      <span className="text-primary">{campaign.currentAmount.toLocaleString()}% Traveller Rating</span>
+                      <span className="text-muted-foreground">based on {campaign.goal.toLocaleString()} reviews</span>
                     </div>
                     <Progress value={progressPercentage} className="h-2" aria-label={`${progressPercentage}% funded`} />
                   </div>
@@ -74,7 +74,7 @@ export default async function CampaignsPage() {
                 <CardFooter className="border-t pt-4">
                   <Button asChild className="w-full bg-primary hover:bg-primary/90 whitespace-normal h-auto text-center">
                     <Link href={`/campaigns/${campaign.id}`}>
-                      View Details <ArrowRight className="ml-2 h-4 w-4" />
+                      View Itinerary <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardFooter>
@@ -84,15 +84,15 @@ export default async function CampaignsPage() {
         </section>
       ) : (
         <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">No campaigns found. Check back later or start your own!</p>
+          <p className="text-xl text-muted-foreground">No tours found. Check back later or suggest a new one!</p>
         </div>
       )}
        <div className="text-center mt-12">
         <Button size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10 hover:text-accent whitespace-normal text-center h-auto" asChild>
           <Link href="/create?action=campaign" className="flex items-center justify-center">
             <PlusCircle className="mr-0 md:mr-2 h-5 w-5" />
-            <span className="md:hidden">New Campaign</span>
-            <span className="hidden md:inline">Start Your Own Campaign</span>
+            <span className="md:hidden">New Tour</span>
+            <span className="hidden md:inline">Plan a Custom Tour</span>
           </Link>
         </Button>
       </div>

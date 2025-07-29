@@ -5,7 +5,7 @@ import Image from 'next/image';
 import CampaignCarousel from '@/components/campaign-carousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart3, Edit3, Lightbulb, MessageCircle, UserPlus, ArrowRight, ExternalLink, ShieldCheck } from 'lucide-react';
+import { BarChart3, Edit3, Lightbulb, MessageCircle, UserPlus, ArrowRight, ExternalLink, ShieldCheck, MountainSnow, Binoculars } from 'lucide-react';
 import BlogCard, { type BlogCardProps } from '@/components/blog-card';
 import EventCard, { type EventCardProps } from '@/components/event-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,9 +14,9 @@ import SignupModal from '@/components/auth/signup-modal';
 
 
 const mockCarouselCampaigns = [
-  { id: 'c1', title: 'Clean Water Initiative', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'water access', shortDescription: 'Bringing clean and safe drinking water to underserved communities in rural Uganda.' },
-  { id: 'c2', title: 'Youth Empowerment Workshops', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'youth learning', shortDescription: 'Equipping young people with skills for a brighter future through interactive workshops.' },
-  { id: 'c3', title: 'Reforestation Project "Green Future"', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'tree plantation', shortDescription: 'Planting 10,000 trees to combat climate change and restore local ecosystems.' },
+  { id: 'c1', title: 'Serengeti Great Migration Safari', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'wildebeest migration', shortDescription: 'Witness the breathtaking Great Migration in the vast plains of the Serengeti.' },
+  { id: 'c2', title: 'Gorilla Trekking in Bwindi', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'mountain gorilla', shortDescription: 'An intimate and unforgettable encounter with the majestic mountain gorillas of Uganda.' },
+  { id: 'c3', title: 'Okavango Delta Mokoro Expedition', imageUrl: 'https://placehold.co/1200x500.png', dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of the Okavango Delta by traditional mokoro canoe.' },
 ];
 
 interface FeedItemBase {
@@ -56,47 +56,47 @@ const feedItems: FeedItem[] = [
   {
     id: 'creator-1',
     type: 'creator',
-    name: 'Eco Warriors Uganda',
+    name: 'Safari Jane',
     avatarUrl: 'https://placehold.co/100x100.png',
-    dataAiHint: 'activist group',
-    specialty: 'Waste Management & Advocacy',
-    profileLink: '/dashboard', // Changed from /profile/eco-warriors
+    dataAiHint: 'safari guide',
+    specialty: 'Expert Guide & Wildlife Photographer',
+    profileLink: '/dashboard',
   },
   {
     id: 'blog-1',
     type: 'blog',
     post: {
-      id: 'b1', // This ID will be used for /blog/b1
-      title: 'The Urban Garden Revolution',
-      author: 'Jane Doe',
+      id: 'b1', 
+      title: 'A Lion\'s Tale: A Close Encounter',
+      author: 'David Attenborough',
       date: 'Nov 05, 2023',
-      excerpt: 'Discover how communities are transforming urban spaces into thriving green havens, one rooftop and balcony at a time.',
+      excerpt: 'The story of a thrilling and humbling afternoon spent observing a pride of lions in their natural habitat.',
       imageUrl: 'https://placehold.co/600x400.png',
-      dataAiHint: 'urban garden',
-      tags: ['#UrbanFarming', '#Community'],
+      dataAiHint: 'lion pride',
+      tags: ['#BigCats', '#Serengeti'],
       commentCount: 18,
     }
   },
   {
     id: 'room-1',
     type: 'room',
-    name: 'Sustainable Agriculture Now',
-    topic: 'Share tips & challenges in eco-friendly farming practices globally.',
+    name: 'Photography Tips & Tricks',
+    topic: 'Share your best wildlife shots and get advice from fellow photographers.',
     chatLink: '/chat', 
   },
   {
     id: 'event-1',
     type: 'event',
     event: {
-      id: 'e1', // This ID will be used for /events/e1
-      title: 'Climate Action Dialogue: Youth Edition',
-      date: 'Nov 28, 2023',
-      time: '03:00 PM - 04:30 PM',
-      location: 'Online (Zoom)',
-      type: 'Online',
-      excerpt: 'A platform for young leaders to discuss climate solutions and policy changes. Register to participate!',
+      id: 'e1', 
+      title: 'Kenya Big Five Safari - Group Departure',
+      date: 'Feb 15, 2025',
+      time: 'All Day Event',
+      location: 'Nairobi, Kenya',
+      type: 'Offline',
+      excerpt: 'Join our special group departure to track the Big Five in the Maasai Mara. Limited spots available!',
       imageUrl: 'https://placehold.co/600x400.png',
-      dataAiHint: 'youth climate',
+      dataAiHint: 'safari jeep',
       rsvpLink: '#',
       calendarLink: '#',
     }
@@ -104,11 +104,11 @@ const feedItems: FeedItem[] = [
   {
     id: 'creator-2',
     type: 'creator',
-    name: 'TechForGood Innovators',
+    name: 'Ranger Tom',
     avatarUrl: 'https://placehold.co/100x100.png',
-    dataAiHint: 'tech team',
-    specialty: 'Developing Solutions for Social Impact',
-    profileLink: '/dashboard', // Changed from /profile/techforgood
+    dataAiHint: 'park ranger',
+    specialty: 'Conservation & Tracking Specialist',
+    profileLink: '/dashboard', 
   },
 ];
 
@@ -132,34 +132,34 @@ export default function Home() {
       <section>
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl text-primary">Ready to Make an Impact?</CardTitle>
-            <CardDescription>Your voice and actions can shape a better future. Get started:</CardDescription>
+            <CardTitle className="font-headline text-2xl text-primary">Your Adventure Starts Here</CardTitle>
+            <CardDescription>Ready to explore the wild? Let's get started:</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <Button size="lg" className="w-full py-6 text-base bg-primary hover:bg-primary/90" asChild>
-              <Link href="/create?action=campaign">
-                <BarChart3 className="mr-2 h-5 w-5" /> Start a Campaign
+              <Link href="/campaigns">
+                <MountainSnow className="mr-2 h-5 w-5" /> Browse All Tours
               </Link>
             </Button>
             <Button size="lg" variant="secondary" className="w-full py-6 text-base bg-accent text-accent-foreground hover:bg-accent/90" asChild>
-              <Link href="/blog/submit">
-                <Edit3 className="mr-2 h-5 w-5" /> Share Your Story
+              <Link href="/blog">
+                <Edit3 className="mr-2 h-5 w-5" /> Read Travel Stories
               </Link>
             </Button>
              <Button size="lg" className="w-full py-6 text-base bg-primary hover:bg-primary/90" asChild>
                <Link href="/ideas">
-                <Lightbulb className="mr-2 h-5 w-5" /> Pitch an Idea
+                <Lightbulb className="mr-2 h-5 w-5" /> Suggest a Destination
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="w-full py-6 text-base border-accent text-accent hover:bg-accent/10 hover:text-accent" onClick={openSignupModalForERotaract}>
-              <UserPlus className="mr-2 h-5 w-5" /> Join e-Rotaract Online
+              <UserPlus className="mr-2 h-5 w-5" /> Join Explorer's Club
             </Button>
           </CardContent>
         </Card>
       </section>
       
       <section>
-        <h2 className="font-headline text-3xl font-bold text-primary mb-6">What's Happening</h2>
+        <h2 className="font-headline text-3xl font-bold text-primary mb-6">From the Wild</h2>
         <div className="space-y-8">
           {feedItems.map((item) => {
             if (item.type === 'creator') {
@@ -178,7 +178,7 @@ export default function Home() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">Discover content and initiatives from {item.name}.</p>
+                    <p className="text-sm text-muted-foreground mb-3">Discover stories and photos from {item.name}.</p>
                      <Button variant="outline" asChild size="sm">
                        <Link href={item.profileLink}>
                          View Profile <ArrowRight className="ml-2 h-4 w-4" />
@@ -205,7 +205,7 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-3">{item.topic}</p>
                     <Button variant="default" asChild size="sm" className="bg-primary hover:bg-primary/90">
                        <Link href={item.chatLink}>
-                         Join Chat <ArrowRight className="ml-2 h-4 w-4" />
+                         Join Discussion <ArrowRight className="ml-2 h-4 w-4" />
                        </Link>
                      </Button>
                   </CardContent>
