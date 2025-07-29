@@ -92,7 +92,7 @@ const AppHeader = () => {
       <header 
         ref={headerRef}
         className={cn(
-          "bg-card/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-transform duration-300 ease-in-out",
+          "bg-card/75 backdrop-blur-lg border-b border-white/10 shadow-lg sticky top-0 z-50 transition-transform duration-300 ease-in-out",
           showNavbar ? "translate-y-0" : "-translate-y-full"
         )}
       >
