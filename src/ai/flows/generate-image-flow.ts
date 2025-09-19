@@ -35,13 +35,18 @@ const generateImageFlow = ai.defineFlow(
     outputSchema: GenerateImageOutputSchema,
   },
   async (input) => {
-    const {media} = await ai.generate({
+    const response = await ai.generate({
       model: 'googleai/imagen-4.0-fast-generate-001',
       prompt: input.prompt,
     });
 
+    const media = response.media;
+
     if (!media?.url) {
-      throw new Error('Image generation failed or returned no media URL.');
+      // Throw a more descriptive error if generation fails
+      const errorMessage = `Image generation failed. Response: ${JSON.stringify(response, null, 2)}`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     return { imageDataUri: media.url };
