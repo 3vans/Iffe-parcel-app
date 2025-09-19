@@ -8,7 +8,7 @@ import { ThemeProviderClient } from '@/components/theme-provider-client';
 import AuthProvider from '@/components/auth-provider'; // Import AuthProvider
 
 export const metadata: Metadata = {
-  title: 'i-TRAVELS',
+  title: 'iffe-travels',
   description: 'Your adventure into the wild awaits. Book unforgettable safari tours and expeditions.',
   icons: null, // Explicitly tell Next.js not to look for default icons
 };

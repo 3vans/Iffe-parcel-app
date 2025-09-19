@@ -91,14 +91,14 @@ const AppHeader = () => {
       <header 
         ref={headerRef}
         className={cn(
-          "bg-card/75 backdrop-blur-lg border-b border-white/10 shadow-lg sticky top-0 z-50 transition-transform duration-300 ease-in-out",
+          "bg-card/75 backdrop-blur-lg border-b shadow-lg sticky top-0 z-50 transition-transform duration-300 ease-in-out",
           showNavbar ? "translate-y-0" : "-translate-y-full"
         )}
       >
         <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 font-headline text-lg md:text-xl font-bold text-primary hover:text-primary/80 transition-colors">
             <Globe size={24} className="text-primary" /> 
-            i-TRAVELS
+            iffe-travels
           </Link>
           
           <div className="hidden lg:flex items-center space-x-1">
@@ -181,7 +181,7 @@ const AppHeader = () => {
                 <SheetContent side="left" className="w-[280px] sm:w-[320px] flex flex-col bg-card/95 backdrop-blur-lg p-0">
                   <SheetHeader className="p-4 border-b">
                      <SheetTitle className="flex items-center gap-2 text-primary">
-                       <Globe size={20} className="text-primary" /> i-TRAVELS
+                       <Globe size={20} className="text-primary" /> iffe-travels
                     </SheetTitle>
                   </SheetHeader>
                   <nav className="flex-grow overflow-y-auto p-4 space-y-2">
