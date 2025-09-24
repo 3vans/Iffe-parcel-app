@@ -16,6 +16,11 @@ const navItems = [
 const BottomNav = () => {
   const pathname = usePathname();
 
+  // Hide nav on admin pages
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-t-lg z-50">
       <div className="flex justify-around items-center h-16">
