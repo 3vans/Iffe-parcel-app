@@ -2,14 +2,14 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageCircle, BarChart3, PlusSquare, UserCircle, Image as ImageIcon, PlayCircle, MountainSnow, Package, CalendarDays, Mail, Info } from 'lucide-react';
+import { Home, MessageCircle, BarChart3, PlusSquare, UserCircle, Image as ImageIcon, PlayCircle, MountainSnow, Package, CalendarDays, Mail, Info, Edit3, Compass } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/about', label: 'About', icon: Info },
+  { href: '/packages', label: 'Tours', icon: Compass },
+  { href: '/blog', label: 'Journal', icon: Edit3 },
   { href: '/gallery', label: 'Gallery', icon: ImageIcon },
-  { href: '/packages', label: 'Packages', icon: Package },
   { href: '/profile', label: 'Profile', icon: UserCircle },
 ];
 
