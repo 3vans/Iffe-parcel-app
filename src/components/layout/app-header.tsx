@@ -1,8 +1,7 @@
-
 'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut, MountainSnow, Telescope, Globe, ChevronDown, User, LogInIcon, LogOutIcon } from 'lucide-react';
+import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut, MountainSnow, Telescope, Globe, ChevronDown, User, LogInIcon, LogOutIcon, Package } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
@@ -71,6 +70,7 @@ const AppHeader = () => {
   const mobileNavItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/campaigns', label: 'Tours', icon: MountainSnow },
+    { href: '/packages', label: 'Packages', icon: Package },
     { href: '/blog', label: 'Journal', icon: Edit3 },
     { href: '/events', label: 'Departures', icon: CalendarDays },
     { href: '/gallery', label: 'Gallery', icon: ImageIcon },
@@ -105,6 +105,11 @@ const AppHeader = () => {
                 <MountainSnow className="mr-1 h-4 w-4" /> Tours
               </Link>
             </Button>
+             <Button variant="ghost" asChild>
+              <Link href="/packages">
+                <Package className="mr-1 h-4 w-4" /> Packages
+              </Link>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href="/blog">
                 <Edit3 className="mr-1 h-4 w-4" /> Journal
@@ -115,16 +120,26 @@ const AppHeader = () => {
                 <CalendarDays className="mr-1 h-4 w-4" /> Departures
               </Link>
             </Button>
-             <Button variant="ghost" asChild>
-              <Link href="/gallery">
-                <ImageIcon className="mr-1 h-4 w-4" /> Gallery
-              </Link>
-            </Button>
-             <Button variant="ghost" asChild>
-              <Link href="/videos">
-                <PlayCircle className="mr-1 h-4 w-4" /> Videos
-              </Link>
-            </Button>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">
+                        Media <ChevronDown className="ml-1 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                        <Link href="/gallery">
+                            <ImageIcon className="mr-2 h-4 w-4" /> Gallery
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/videos">
+                            <PlayCircle className="mr-2 h-4 w-4" /> Videos
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

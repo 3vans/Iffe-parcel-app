@@ -33,6 +33,7 @@ export default function AppFooter() {
             <h3 className="font-headline text-lg font-semibold text-primary mb-3">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/campaigns" className="text-muted-foreground hover:text-primary">Tours</Link></li>
+              <li><Link href="/packages" className="text-muted-foreground hover:text-primary">Packages</Link></li>
               <li><Link href="/blog" className="text-muted-foreground hover:text-primary">Journal</Link></li>
               <li><Link href="/gallery" className="text-muted-foreground hover:text-primary">Gallery</Link></li>
               <li><Link href="/events" className="text-muted-foreground hover:text-primary">Departures</Link></li>
