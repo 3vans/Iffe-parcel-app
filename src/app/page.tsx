@@ -160,7 +160,7 @@ export default async function Home() {
   );
 
   return (
-    <div className="relative">
+    <>
       <AnimatedBackground />
       <div className="relative z-10 space-y-12 animate-fade-in">
         <section>
@@ -270,6 +270,6 @@ export default async function Home() {
           )}
         </section>
       </div>
-    </div>
+    </>
   );
 }
