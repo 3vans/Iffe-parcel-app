@@ -3,14 +3,15 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import AppHeader from '@/components/layout/app-header';
+import AppFooter from '@/components/layout/app-footer'; // Import the new footer
 import BottomNav from '@/components/layout/bottom-nav';
 import { ThemeProviderClient } from '@/components/theme-provider-client';
-import AuthProvider from '@/components/auth-provider'; // Import AuthProvider
+import AuthProvider from '@/components/auth-provider';
 
 export const metadata: Metadata = {
   title: 'iffe-travels',
   description: 'Your adventure into the wild awaits. Book unforgettable safari tours and expeditions.',
-  icons: null, // Explicitly tell Next.js not to look for default icons
+  icons: null,
 };
 
 export default function RootLayout({
@@ -29,9 +30,8 @@ export default function RootLayout({
       </head>
       <body 
         className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col h-screen"
-        // Removed style={{ overflowX: 'hidden !important', overflowY: 'hidden !important' }}
       >
-        <AuthProvider> {/* Wrap with AuthProvider */}
+        <AuthProvider>
           <ThemeProviderClient>
             <AppHeader />
             <main 
@@ -41,6 +41,7 @@ export default function RootLayout({
             >
               {children}
             </main>
+            <AppFooter /> {/* Add the footer here */}
             <BottomNav />
             <Toaster />
           </ThemeProviderClient>
