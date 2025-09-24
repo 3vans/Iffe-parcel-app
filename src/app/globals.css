@@ -9,17 +9,17 @@ body {
 @layer base {
   :root {
     --background: 225 33% 91%; /* #E5E8EF - Desaturated Rotary Royal Blue */
-    --foreground: 220 20% 25%; /* Dark Cool Gray/Blue for text */
+    --foreground: 220 25% 15%; /* Darker Cool Gray/Blue for text */
     --card: 0 0% 100%; /* #FFFFFF - Rotary White */
-    --card-foreground: 220 20% 25%; /* Dark Cool Gray/Blue for text on cards */
+    --card-foreground: 220 25% 15%; /* Darker Cool Gray/Blue for text on cards */
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 25%;
+    --popover-foreground: 220 25% 15%;
     --primary: 221 100% 25%; /* #002B7F - Rotary Royal Blue */
     --primary-foreground: 0 0% 100%; /* Rotary White */
     --secondary: 225 25% 80%; /* Lighter, more neutral blue/gray #BEC4D6 */
     --secondary-foreground: 221 80% 30%; /* Brighter blue on secondary #143DA8 */
     --muted: 225 30% 96%; /* Very light gray/blue #F2F3F7 */
-    --muted-foreground: 220 15% 55%; /* Lighter gray #7E8599 */
+    --muted-foreground: 220 15% 45%; /* Darker Muted Gray for better contrast */
     --accent: 39 92% 54%; /* #F7A31B - Rotary Gold */
     --accent-foreground: 221 100% 25%; /* Rotary Royal Blue for text on accent */
     --destructive: 0 84.2% 60.2%;
