@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut, MountainSnow, Telescope, Globe, ChevronDown, User, LogInIcon, LogOutIcon, Package, Mail, Info, Compass } from 'lucide-react';
+import { Home, MessageCircle, CalendarDays, PlusCircle, UserCircle, BarChart3, Edit3, Lightbulb, Image as ImageIcon, PlayCircle, LogIn, UserPlus, Menu, X, LogOut, MountainSnow, Telescope, Globe, ChevronDown, User, LogInIcon, LogOutIcon, Package, Mail, Info, Compass, CalendarClock } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import LoginModal from '@/components/auth/login-modal';
 import SignupModal from '@/components/auth/signup-modal';
@@ -70,9 +70,11 @@ const AppHeader = () => {
 
   const mobileNavItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/packages', label: 'Tours', icon: Package },
+    { href: '/packages', label: 'Packages', icon: Package },
+    { href: '/events', label: 'Events', icon: CalendarClock },
     { href: '/blog', label: 'Journal', icon: Edit3 },
     { href: '/gallery', label: 'Gallery', icon: ImageIcon },
+    { href: '/ideas', label: 'Dream Trips', icon: Lightbulb },
     { href: '/about', label: 'About', icon: Info },
     { href: '/contact', label: 'Contact', icon: Mail },
     { href: '/profile', label: 'My Trips', icon: UserCircle },
@@ -99,56 +101,46 @@ const AppHeader = () => {
                 <Home className="mr-1 h-4 w-4" /> Home
               </Link>
             </Button>
-            
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost">
-                        Tours <ChevronDown className="ml-1 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                        <Link href="/packages">
-                            <Package className="mr-2 h-4 w-4" /> All Packages
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                        <Link href="/events">
-                            <CalendarDays className="mr-2 h-4 w-4" /> Departures
-                        </Link>
-                    </DropdownMenuItem>
-                     <DropdownMenuItem asChild>
-                        <Link href="/ideas">
-                            <Lightbulb className="mr-2 h-4 w-4" /> Dream Trips
-                        </Link>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-
+            <Button variant="ghost" asChild>
+              <Link href="/packages">
+                <Package className="mr-1 h-4 w-4" /> Packages
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/events">
+                <CalendarClock className="mr-1 h-4 w-4" /> Events
+              </Link>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href="/blog">
                 <Edit3 className="mr-1 h-4 w-4" /> Journal
               </Link>
             </Button>
-
             <Button variant="ghost" asChild>
               <Link href="/gallery">
                 <ImageIcon className="mr-1 h-4 w-4" /> Gallery
               </Link>
             </Button>
-
+            <Button variant="ghost" asChild>
+              <Link href="/ideas">
+                <Lightbulb className="mr-1 h-4 w-4" /> Dream Trips
+              </Link>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href="/about">
                 <Info className="mr-1 h-4 w-4" /> About
               </Link>
             </Button>
-
             <Button variant="ghost" asChild>
               <Link href="/contact">
                 <Mail className="mr-1 h-4 w-4" /> Contact
               </Link>
             </Button>
-            
+            <Button variant="ghost" asChild>
+              <Link href="/profile">
+                <UserCircle className="mr-1 h-4 w-4" /> My Trips
+              </Link>
+            </Button>
 
             <Separator orientation="vertical" className="h-6 mx-2 bg-border" />
             {status === 'loading' ? (
