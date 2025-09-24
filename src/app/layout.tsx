@@ -7,6 +7,7 @@ import AppFooter from '@/components/layout/app-footer'; // Import the new footer
 import BottomNav from '@/components/layout/bottom-nav';
 import { ThemeProviderClient } from '@/components/theme-provider-client';
 import AuthProvider from '@/components/auth-provider';
+import WhatsAppCTA from '@/components/layout/whatsapp-cta';
 
 export const metadata: Metadata = {
   title: 'iffe-travels',
@@ -40,6 +41,7 @@ export default function RootLayout({
               </main>
               <AppFooter />
               <BottomNav />
+              <WhatsAppCTA />
             </div>
             <Toaster />
           </ThemeProviderClient>
