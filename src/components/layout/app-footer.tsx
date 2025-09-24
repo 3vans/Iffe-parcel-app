@@ -9,7 +9,7 @@ export default function AppFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-card border-t mt-auto text-card-foreground hidden md:block">
+    <footer className="bg-card border-t mt-auto text-card-foreground">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
           
