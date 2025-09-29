@@ -1,4 +1,6 @@
 
+
+'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
@@ -8,6 +10,8 @@ import Image from 'next/image';
 import { Award, BarChart3, Bookmark, CalendarCheck2, Edit, ExternalLink, Eye, HandHeart, MessageSquare, Settings, ShieldCheck as ShieldCheckIcon, Star, UserPlus, UserCircle, Mountain, MapPin } from 'lucide-react';
 import VerifiedBadge from '@/components/verified-badge'; 
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 // Mock data
 const userData = {
@@ -49,12 +53,23 @@ const volunteeringRecord = [
   { activity: 'Okavango Delta Trip', hours: 5, date: 'July 22, 2023', campaign: '5 Days' },
 ];
 
+const AnimatedCard = ({ children, className, ...props }: { children: React.ReactNode, className?: string;[key: string]: any }) => {
+    const [ref, isVisible] = useScrollAnimation();
+    return (
+        <Card ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in', className)} {...props}>
+            {children}
+        </Card>
+    );
+};
+
 export default function DashboardPage() {
   const progressToNextLevel = (userData.impactPoints / userData.nextLevelPoints) * 100;
+  const [headerRef, isHeaderVisible] = useScrollAnimation();
+
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="bg-card p-6 rounded-lg shadow-lg">
+      <section ref={headerRef} className={cn('scroll-animate bg-card p-6 rounded-lg shadow-lg', isHeaderVisible && 'scroll-animate-in')}>
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <Avatar className="h-24 w-24 border-4 border-accent">
             <AvatarImage asChild src={userData.avatarUrl} alt={userData.name}>
@@ -85,7 +100,7 @@ export default function DashboardPage() {
 
       {userData.isERotaractMember && (
         <section>
-          <Card className="shadow-md">
+          <AnimatedCard className="shadow-md">
             <CardHeader>
               <CardTitle className="font-headline text-xl text-primary flex items-center"><Award className="mr-2 h-5 w-5 text-accent"/>Explorer Level</CardTitle>
             </CardHeader>
@@ -102,12 +117,12 @@ export default function DashboardPage() {
                   <Progress value={progressToNextLevel} aria-label="Progress to next level" />
               </div>
             </CardContent>
-          </Card>
+          </AnimatedCard>
         </section>
       )}
 
       <div className="grid md:grid-cols-2 gap-8">
-        <Card className="shadow-md">
+        <AnimatedCard className="shadow-md">
           <CardHeader>
             <CardTitle className="font-headline text-xl text-primary flex items-center"><Mountain className="mr-2 h-5 w-5 text-accent"/>My Trips</CardTitle>
             <CardDescription>Keep track of your past and upcoming adventures.</CardDescription>
@@ -130,9 +145,9 @@ export default function DashboardPage() {
                     <Link href="/campaigns">Explore Tours <ExternalLink className="ml-1.5 h-4 w-4" /></Link>
                 </Button>
             </CardFooter>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="shadow-md">
+        <AnimatedCard className="shadow-md">
           <CardHeader>
             <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheckIcon className="mr-2 h-5 w-5 text-accent"/>Travel Milestones</CardTitle>
             <CardDescription>Celebrate your achievements as an explorer.</CardDescription>
@@ -148,10 +163,10 @@ export default function DashboardPage() {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
       
-      <Card className="shadow-md">
+      <AnimatedCard className="shadow-md">
           <CardHeader>
             <CardTitle className="font-headline text-xl text-primary flex items-center"><MapPin className="mr-2 h-5 w-5 text-accent"/>My Trip Log</CardTitle>
             <CardDescription>A summary of your adventures with us.</CardDescription>
@@ -176,9 +191,9 @@ export default function DashboardPage() {
            <CardFooter>
                 <Button variant="outline">Request Full Trip History</Button>
             </CardFooter>
-        </Card>
+        </AnimatedCard>
 
-      <Card className="shadow-md">
+      <AnimatedCard className="shadow-md">
         <CardHeader>
           <CardTitle className="font-headline text-xl text-primary flex items-center"><Bookmark className="mr-2 h-5 w-5 text-accent"/>My Watchlist</CardTitle>
           <CardDescription>Quick access to your favorite guides, discussions, and stories.</CardDescription>
@@ -197,9 +212,7 @@ export default function DashboardPage() {
           ))}
           {followedContent.length === 0 && <p className="text-muted-foreground text-sm col-span-full">You are not following any content yet.</p>}
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }
-
-    

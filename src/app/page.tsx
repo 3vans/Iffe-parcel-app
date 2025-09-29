@@ -1,4 +1,7 @@
 
+
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import CampaignCarousel from '@/components/campaign-carousel';
@@ -12,6 +15,9 @@ import { generateImage } from '@/ai/flows/generate-image-flow';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import SignupModal from '@/components/auth/signup-modal';
 import AnimatedBackground from '@/components/layout/animated-background';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 
 const mockCarouselCampaigns = [
@@ -55,7 +61,7 @@ interface EventFeedItem extends FeedItemBase {
 
 type FeedItem = CreatorFeedItem | RoomFeedItem | BlogFeedItem | EventFeedItem;
 
-const feedItems: FeedItem[] = [
+const initialFeedItems: FeedItem[] = [
   {
     id: 'creator-1',
     type: 'creator',
@@ -120,44 +126,64 @@ const feedItems: FeedItem[] = [
 ];
 
 
-export default async function Home() {
-  const processedFeedItems = await Promise.all(
-    feedItems.map(async (item) => {
-      if (item.type === 'creator' && item.dataAiHint) {
-        try {
-          const { imageDataUri } = await generateImage({ prompt: item.dataAiHint });
-          return { ...item, avatarUrl: imageDataUri };
-        } catch (error) { console.error('Error generating image for creator:', error); }
-      }
-      if (item.type === 'blog' && item.post.dataAiHint) {
-        try {
-          const { imageDataUri } = await generateImage({ prompt: item.post.dataAiHint });
-          return { ...item, post: { ...item.post, imageUrl: imageDataUri } };
-        } catch (error) { console.error('Error generating image for blog:', error); }
-      }
-      if (item.type === 'event' && item.event.dataAiHint) {
-         try {
-          const { imageDataUri } = await generateImage({ prompt: item.event.dataAiHint });
-          return { ...item, event: { ...item.event, imageUrl: imageDataUri } };
-        } catch (error) { console.error('Error generating image for event:', error); }
-      }
-      return item;
-    })
-  );
+export default function Home() {
+    const [processedFeedItems, setProcessedFeedItems] = useState<FeedItem[]>(initialFeedItems);
+    const [processedCarouselCampaigns, setProcessedCarouselCampaigns] = useState(mockCarouselCampaigns);
 
-  const processedCarouselCampaigns = await Promise.all(
-    mockCarouselCampaigns.map(async (campaign) => {
-      if (campaign.dataAiHint) {
-        try {
-          const { imageDataUri } = await generateImage({ prompt: campaign.dataAiHint });
-          return { ...campaign, imageUrl: imageDataUri };
-        } catch (error) {
-          console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
-        }
-      }
-      return campaign;
-    })
-  );
+    useEffect(() => {
+        const processItems = async () => {
+            const feed = await Promise.all(
+                initialFeedItems.map(async (item) => {
+                    if (item.type === 'creator' && item.dataAiHint) {
+                        try {
+                            const { imageDataUri } = await generateImage({ prompt: item.dataAiHint });
+                            return { ...item, avatarUrl: imageDataUri };
+                        } catch (error) { console.error('Error generating image for creator:', error); }
+                    }
+                    if (item.type === 'blog' && item.post.dataAiHint) {
+                        try {
+                            const { imageDataUri } = await generateImage({ prompt: item.post.dataAiHint });
+                            return { ...item, post: { ...item.post, imageUrl: imageDataUri } };
+                        } catch (error) { console.error('Error generating image for blog:', error); }
+                    }
+                    if (item.type === 'event' && item.event.dataAiHint) {
+                        try {
+                            const { imageDataUri } = await generateImage({ prompt: item.event.dataAiHint });
+                            return { ...item, event: { ...item.event, imageUrl: imageDataUri } };
+                        } catch (error) { console.error('Error generating image for event:', error); }
+                    }
+                    return item;
+                })
+            );
+            setProcessedFeedItems(feed);
+
+            const carousel = await Promise.all(
+                mockCarouselCampaigns.map(async (campaign) => {
+                    if (campaign.dataAiHint) {
+                        try {
+                            const { imageDataUri } = await generateImage({ prompt: campaign.dataAiHint });
+                            return { ...campaign, imageUrl: imageDataUri };
+                        } catch (error) {
+                            console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
+                        }
+                    }
+                    return campaign;
+                })
+            );
+            setProcessedCarouselCampaigns(carousel);
+        };
+
+        processItems();
+    }, []);
+
+    const AnimatedCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+        const [ref, isVisible] = useScrollAnimation();
+        return (
+            <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in', className)}>
+                {children}
+            </div>
+        );
+    };
 
   return (
     <>
@@ -168,6 +194,7 @@ export default async function Home() {
         </section>
 
         <section>
+          <AnimatedCard>
           <Card className="shadow-lg bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary">Your Adventure Starts Here</CardTitle>
@@ -196,6 +223,7 @@ export default async function Home() {
               </Button>
             </CardContent>
           </Card>
+          </AnimatedCard>
         </section>
         
         <section>
@@ -204,7 +232,8 @@ export default async function Home() {
             {processedFeedItems.map((item) => {
               if (item.type === 'creator') {
                 return (
-                  <Card key={item.id} className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
+                  <AnimatedCard key={item.id}>
+                  <Card className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12">
@@ -228,11 +257,13 @@ export default async function Home() {
                        </Button>
                     </CardContent>
                   </Card>
+                  </AnimatedCard>
                 );
               }
               if (item.type === 'room') {
                 return (
-                  <Card key={item.id} className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
+                  <AnimatedCard key={item.id}>
+                  <Card className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                        <div className="flex items-center space-x-3">
                           <div className="p-2 bg-accent/20 rounded-full">
@@ -252,18 +283,27 @@ export default async function Home() {
                        </Button>
                     </CardContent>
                   </Card>
+                  </AnimatedCard>
                 );
               }
               if (item.type === 'blog') {
-                return <BlogCard key={item.id} {...item.post} />;
+                return (
+                    <AnimatedCard key={item.id}>
+                        <BlogCard {...item.post} />
+                    </AnimatedCard>
+                );
               }
               if (item.type === 'event') {
-                return <EventCard key={item.id} {...item.event} />;
+                 return (
+                    <AnimatedCard key={item.id}>
+                        <EventCard {...item.event} />
+                    </AnimatedCard>
+                );
               }
               return null;
             })}
           </div>
-          {feedItems.length === 0 && (
+          {processedFeedItems.length === 0 && (
               <div className="text-center py-12">
                   <p className="text-xl text-muted-foreground">The feed is quiet right now... Why not start something?</p>
               </div>

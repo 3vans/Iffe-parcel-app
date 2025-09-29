@@ -1,4 +1,6 @@
 
+
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +9,9 @@ import { Progress } from '@/components/ui/progress';
 import { Tag, ArrowRight, PlusCircle, MountainSnow } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { generateImage } from '@/ai/flows/generate-image-flow';
+import { useEffect, useState } from 'react';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 interface CampaignTeaser {
   id: string;
@@ -27,20 +32,73 @@ const mockCampaignsData: CampaignTeaser[] = [
 ];
 
 
-export default async function CampaignsPage() {
-  const campaigns = await Promise.all(
-    mockCampaignsData.map(async (campaign) => {
-      if (campaign.dataAiHint) {
-        try {
-          const { imageDataUri } = await generateImage({ prompt: campaign.dataAiHint });
-          return { ...campaign, imageUrl: imageDataUri };
-        } catch (error) {
-          console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
-        }
-      }
-      return campaign;
-    })
-  );
+export default function CampaignsPage() {
+  const [campaigns, setCampaigns] = useState<CampaignTeaser[]>(mockCampaignsData);
+
+  useEffect(() => {
+    const processCampaigns = async () => {
+      const processed = await Promise.all(
+        mockCampaignsData.map(async (campaign) => {
+          if (campaign.dataAiHint) {
+            try {
+              const { imageDataUri } = await generateImage({ prompt: campaign.dataAiHint });
+              return { ...campaign, imageUrl: imageDataUri };
+            } catch (error) {
+              console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
+            }
+          }
+          return campaign;
+        })
+      );
+      setCampaigns(processed);
+    };
+    processCampaigns();
+  }, []);
+
+  const AnimatedCard = ({ campaign }: { campaign: CampaignTeaser }) => {
+    const [ref, isVisible] = useScrollAnimation();
+    const progressPercentage = campaign.goal > 0 ? (campaign.currentAmount / campaign.goal) * 100 : 0;
+    return (
+        <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+            <Card key={campaign.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+            <div className="relative w-full h-48">
+                <Image src={campaign.imageUrl} alt={campaign.title} layout="fill" objectFit="cover" data-ai-hint={campaign.dataAiHint} />
+            </div>
+            <CardHeader>
+                <CardTitle className="font-headline text-xl hover:text-primary transition-colors">
+                <Link href={`/campaigns/${campaign.id}`}>{campaign.title}</Link>
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground line-clamp-2 h-8">{campaign.shortDescription}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow space-y-3">
+                <div>
+                <div className="flex justify-between text-xs font-medium mb-1">
+                    <span className="text-primary">{campaign.currentAmount.toLocaleString()}% Traveller Rating</span>
+                    <span className="text-muted-foreground">based on {campaign.goal.toLocaleString()} reviews</span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" aria-label={`${progressPercentage}% funded`} />
+                </div>
+                {campaign.tags && campaign.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                    {campaign.tags.slice(0, 2).map(tag => ( // Show max 2 tags
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                        <Tag className="h-3 w-3 mr-1" /> {tag.replace('#', '')}
+                    </Badge>
+                    ))}
+                </div>
+                )}
+            </CardContent>
+            <CardFooter className="border-t pt-4">
+                <Button asChild className="w-full bg-primary hover:bg-primary/90 whitespace-normal h-auto text-center">
+                <Link href={`/campaigns/${campaign.id}`}>
+                    View Itinerary <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                </Button>
+            </CardFooter>
+            </Card>
+        </div>
+    );
+    };
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -53,47 +111,9 @@ export default async function CampaignsPage() {
 
       {campaigns.length > 0 ? (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {campaigns.map(campaign => {
-            const progressPercentage = campaign.goal > 0 ? (campaign.currentAmount / campaign.goal) * 100 : 0;
-            return (
-              <Card key={campaign.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
-                <div className="relative w-full h-48">
-                  <Image src={campaign.imageUrl} alt={campaign.title} layout="fill" objectFit="cover" data-ai-hint={campaign.dataAiHint} />
-                </div>
-                <CardHeader>
-                  <CardTitle className="font-headline text-xl hover:text-primary transition-colors">
-                    <Link href={`/campaigns/${campaign.id}`}>{campaign.title}</Link>
-                  </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground line-clamp-2 h-8">{campaign.shortDescription}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-3">
-                  <div>
-                    <div className="flex justify-between text-xs font-medium mb-1">
-                      <span className="text-primary">{campaign.currentAmount.toLocaleString()}% Traveller Rating</span>
-                      <span className="text-muted-foreground">based on {campaign.goal.toLocaleString()} reviews</span>
-                    </div>
-                    <Progress value={progressPercentage} className="h-2" aria-label={`${progressPercentage}% funded`} />
-                  </div>
-                  {campaign.tags && campaign.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {campaign.tags.slice(0, 2).map(tag => ( // Show max 2 tags
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          <Tag className="h-3 w-3 mr-1" /> {tag.replace('#', '')}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-                <CardFooter className="border-t pt-4">
-                  <Button asChild className="w-full bg-primary hover:bg-primary/90 whitespace-normal h-auto text-center">
-                    <Link href={`/campaigns/${campaign.id}`}>
-                      View Itinerary <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            );
-          })}
+          {campaigns.map(campaign => (
+            <AnimatedCard key={campaign.id} campaign={campaign} />
+          ))}
         </section>
       ) : (
         <div className="text-center py-12">
