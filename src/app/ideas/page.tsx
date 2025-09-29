@@ -15,6 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Lightbulb, PlusCircle, UploadCloud } from 'lucide-react';
 import Image from 'next/image';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
@@ -71,6 +73,7 @@ export default function IdeaBoxPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const [headerRef, isHeaderVisible] = useScrollAnimation();
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<IdeaFormValues>({
     resolver: zodResolver(ideaSchema),
@@ -150,10 +153,24 @@ export default function IdeaBoxPage() {
     setIsSubmitting(false);
     setIsDialogOpen(false);
   };
+  
+    const AnimatedIdeaCard = ({ idea }: { idea: Omit<IdeaCardProps, 'onVote' | 'hasVoted'> }) => {
+        const [ref, isVisible] = useScrollAnimation();
+        return (
+            <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+                <IdeaCard 
+                    key={idea.id} 
+                    {...idea} 
+                    onVote={handleVote} 
+                    hasVoted={votedIdeas.has(idea.id)}
+                />
+            </div>
+        );
+    };
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
         <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center">
           <Lightbulb className="h-10 w-10 mr-3 text-accent" />
           Dream Trips
@@ -249,12 +266,7 @@ export default function IdeaBoxPage() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {ideas.map(idea => (
-          <IdeaCard 
-            key={idea.id} 
-            {...idea} 
-            onVote={handleVote} 
-            hasVoted={votedIdeas.has(idea.id)}
-          />
+          <AnimatedIdeaCard key={idea.id} idea={idea} />
         ))}
       </section>
 

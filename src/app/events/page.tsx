@@ -1,8 +1,11 @@
 
+'use client';
 import Link from 'next/link';
 import EventCard, { type EventCardProps } from '@/components/event-card';
 import { Button } from '@/components/ui/button';
 import { CalendarPlus, CalendarClock } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 // Mock data
 const mockEvents: EventCardProps[] = [
@@ -12,16 +15,28 @@ const mockEvents: EventCardProps[] = [
 ];
 
 export default function EventsPage() {
+    const AnimatedEventCard = ({ event }: { event: EventCardProps }) => {
+        const [ref, isVisible] = useScrollAnimation();
+        return (
+            <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+                <EventCard {...event} />
+            </div>
+        );
+    };
+    const [headerRef, isHeaderVisible] = useScrollAnimation();
+    const [footerRef, isFooterVisible] = useScrollAnimation();
+
+
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
         <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><CalendarClock className="mr-3 h-10 w-10"/>Scheduled Departures</h1>
         <p className="text-lg text-muted-foreground">Join our group tours, webinars, and special events. Your adventure awaits!</p>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {mockEvents.map(event => (
-          <EventCard key={event.id} {...event} />
+          <AnimatedEventCard key={event.id} event={event} />
         ))}
       </section>
 
@@ -31,7 +46,7 @@ export default function EventsPage() {
         </div>
       )}
 
-      <section className="mt-12 p-6 bg-card rounded-lg shadow-lg">
+      <section ref={footerRef} className={cn('mt-12 p-6 bg-card rounded-lg shadow-lg scroll-animate', isFooterVisible && 'scroll-animate-in')}>
         <h2 className="font-headline text-2xl font-bold text-primary mb-4">Past Trip Highlight: Gorilla Trekking</h2>
         <p className="text-muted-foreground mb-4">Watch the highlights from our last gorilla trekking expedition.</p>
         <div className="aspect-video bg-muted rounded-md flex items-center justify-center">

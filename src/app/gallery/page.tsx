@@ -43,5 +43,9 @@ async function processInitialImages(images: GalleryImage[]): Promise<GalleryImag
 export default async function GalleryPage() {
   const processedGalleryImages = await processInitialImages(initialMockGalleryImages);
 
-  return <GalleryClientContent initialImages={processedGalleryImages} />;
+  return (
+    <div className="animate-fade-in">
+        <GalleryClientContent initialImages={processedGalleryImages} />
+    </div>
+  );
 }

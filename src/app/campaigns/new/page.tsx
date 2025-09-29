@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, BarChart3, Map } from 'lucide-react';
 import { useState } from 'react';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 const campaignSchema = z.object({
   title: z.string().min(5, 'Tour title must be at least 5 characters long.'),
@@ -28,6 +30,7 @@ type CampaignFormValues = z.infer<typeof campaignSchema>;
 export default function NewCampaignPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ref, isVisible] = useScrollAnimation();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<CampaignFormValues>({
     resolver: zodResolver(campaignSchema),
@@ -49,7 +52,7 @@ export default function NewCampaignPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 animate-slide-up">
+    <div ref={ref} className={cn('max-w-3xl mx-auto py-8 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-6">
         <Link href="/campaigns">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours

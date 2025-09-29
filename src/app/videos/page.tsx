@@ -1,8 +1,11 @@
 
+'use client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlayCircle, UploadCloud, ListFilter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 interface VideoItem {
   id: string;
@@ -27,18 +30,48 @@ const mockVideoData: VideoItem[] = [
 const availableCategories = ['Events', 'Trainings', 'Campaigns', 'Testimonials', 'All'];
 
 export default function VideoLibraryPage() {
-  // TODO: Implement actual filtering logic
-  // TODO: Implement lightbox for video playback
-  // TODO: Implement actual upload logic (admin/community members only)
+  const [headerRef, isHeaderVisible] = useScrollAnimation();
+  const [filterRef, isFilterVisible] = useScrollAnimation();
+
+  const AnimatedVideoCard = ({ video }: { video: VideoItem }) => {
+    const [ref, isVisible] = useScrollAnimation();
+    return (
+      <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+        <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+          <div className="relative w-full aspect-video bg-muted">
+            <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover" data-ai-hint={video.dataAiHint} />
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <PlayCircle className="h-16 w-16 text-white/80" />
+            </div>
+            {video.duration && (
+              <Badge variant="secondary" className="absolute bottom-2 right-2 text-xs bg-black/70 text-white border-none">{video.duration}</Badge>
+            )}
+          </div>
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors h-14">{video.title}</CardTitle>
+            <Badge variant="outline" className="w-fit mt-1">{video.category}</Badge>
+          </CardHeader>
+          <CardContent className="p-4 pt-0">
+            <CardDescription className="text-sm line-clamp-3 h-[60px]">{video.description}</CardDescription>
+          </CardContent>
+          <CardFooter className="p-4">
+            <Button variant="default" className="w-full bg-primary hover:bg-primary/90">
+              <PlayCircle className="mr-2 h-5 w-5" /> Watch Video
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
         <h1 className="font-headline text-4xl font-bold text-primary mb-2">Video Library</h1>
         <p className="text-lg text-muted-foreground">Watch highlights, trainings, testimonials, and more.</p>
       </section>
 
-      <section className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow">
+      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium mr-2 self-center">Filter by Category:</span>
           {availableCategories.map(category => (
@@ -54,30 +87,7 @@ export default function VideoLibraryPage() {
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockVideoData.map(video => (
-          <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
-            <div className="relative w-full aspect-video bg-muted">
-              {/* Placeholder for actual YouTube embed or custom player */}
-              <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover" data-ai-hint={video.dataAiHint} />
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <PlayCircle className="h-16 w-16 text-white/80" />
-              </div>
-              {video.duration && (
-                <Badge variant="secondary" className="absolute bottom-2 right-2 text-xs bg-black/70 text-white border-none">{video.duration}</Badge>
-              )}
-            </div>
-            <CardHeader className="p-4">
-              <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors h-14">{video.title}</CardTitle>
-              <Badge variant="outline" className="w-fit mt-1">{video.category}</Badge>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <CardDescription className="text-sm line-clamp-3 h-[60px]">{video.description}</CardDescription>
-            </CardContent>
-            <CardFooter className="p-4">
-              <Button variant="default" className="w-full bg-primary hover:bg-primary/90">
-                <PlayCircle className="mr-2 h-5 w-5" /> Watch Video
-              </Button>
-            </CardFooter>
-          </Card>
+          <AnimatedVideoCard key={video.id} video={video} />
         ))}
       </section>
 

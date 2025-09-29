@@ -1,12 +1,16 @@
 
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
+import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
+  const [ref, isVisible] = useScrollAnimation();
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center animate-fade-in p-4">
+    <div ref={ref} className={cn("flex flex-col items-center justify-center min-h-[60vh] text-center p-4 scroll-animate", isVisible && 'scroll-animate-in')}>
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
           <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">

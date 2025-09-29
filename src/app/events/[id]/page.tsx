@@ -1,4 +1,5 @@
 
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,8 @@ import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Tv, Info, Globe } from '
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
   // In a real app, you would fetch event data based on params.id
@@ -26,8 +29,10 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     rsvpLink: "#",
   };
 
+  const [ref, isVisible] = useScrollAnimation();
+
   return (
-    <div className="space-y-6 animate-slide-up">
+    <div ref={ref} className={cn('space-y-6 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild>
         <Link href="/events">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Departures

@@ -1,10 +1,14 @@
 
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
   // In a real app, you would fetch blog post data based on params.id
@@ -21,8 +25,10 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     tags: ["#Adventure", `#Trip${params.id}`]
   };
 
+  const [ref, isVisible] = useScrollAnimation();
+
   return (
-    <div className="space-y-6 animate-slide-up">
+    <div ref={ref} className={cn('space-y-6 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild>
         <Link href="/blog">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Journal

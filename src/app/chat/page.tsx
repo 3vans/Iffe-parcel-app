@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Smile, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 interface ChatMessage {
   id: string;
@@ -61,6 +62,7 @@ export default function ChatPage() {
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [clientReady, setClientReady] = useState(false);
+  const [ref, isVisible] = useScrollAnimation();
 
   useEffect(() => {
     setClientReady(true);
@@ -103,7 +105,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background animate-fade-in">
+    <div ref={ref} className={cn('flex flex-col h-full bg-background scroll-animate', isVisible && 'scroll-animate-in')}>
       <div className="p-4 border-b bg-card sticky top-0 z-10">
         <div className="flex items-center">
           <MessageCircle className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-accent" />

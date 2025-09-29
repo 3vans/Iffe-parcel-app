@@ -1,4 +1,5 @@
 
+'use client';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { generateImage } from '@/ai/flows/generate-image-flow';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 // Mock data - replace with actual data fetching logic
 interface Campaign {
@@ -95,27 +99,40 @@ const mockCampaignsData: Campaign[] = [
 async function getCampaign(id: string): Promise<Campaign | undefined> {
   // Simulate API call
   const campaign = mockCampaignsData.find(campaign => campaign.id === id);
-  if (campaign && campaign.dataAiHint) {
-    try {
+  if (!campaign) return undefined;
+
+  try {
+    if (campaign.dataAiHint) {
       const { imageDataUri } = await generateImage({ prompt: campaign.dataAiHint });
       campaign.imageUrl = imageDataUri;
-    } catch (error) {
-      console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
-      // Fallback to placeholder is already handled by the mock data
     }
+  } catch (error) {
+    console.error(`Failed to generate image for campaign ${campaign.id}:`, error);
   }
   return campaign;
 }
 
-export default async function CampaignDetailPage({ params }: { params: { id: string } }) {
-  const campaign = await getCampaign(params.id);
+export default function CampaignDetailPage({ params }: { params: { id: string } }) {
+  const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [ref, isVisible] = useScrollAnimation();
+
+  useEffect(() => {
+    getCampaign(params.id).then(data => {
+        if(data) {
+            setCampaign(data);
+        } else {
+            notFound();
+        }
+    });
+  }, [params.id]);
 
   if (!campaign) {
-    notFound();
+    // You might want to show a loader here
+    return null;
   }
 
   return (
-    <div className="space-y-8 animate-slide-up">
+    <div ref={ref} className={cn('space-y-8 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-2">
         <Link href="/campaigns">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours

@@ -15,6 +15,7 @@ import { UploadCloud, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 // This type must match the one in `gallery/page.tsx`
 interface GalleryImage {
@@ -47,6 +48,8 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [headerRef, isHeaderVisible] = useScrollAnimation();
+  const [filterRef, isFilterVisible] = useScrollAnimation();
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<MediaFormValues>({
     resolver: zodResolver(mediaSchema),
@@ -114,14 +117,42 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
     ? galleryImages.filter(image => image.tags.includes(activeTag))
     : galleryImages;
 
+  const AnimatedImageCard = ({ image }: { image: GalleryImage }) => {
+    const [ref, isVisible] = useScrollAnimation();
+    return (
+      <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+        <Card key={image.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+          <div className="relative w-full aspect-[3/2] group-hover:opacity-90 transition-opacity">
+            <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" data-ai-hint={image.dataAiHint} />
+          </div>
+          <CardHeader className="p-4">
+            {image.caption && <CardTitle className="text-base font-semibold line-clamp-1">{image.caption}</CardTitle>}
+            {image.date && <CardDescription className="text-xs">{image.date}</CardDescription>}
+          </CardHeader>
+          {image.tags.length > 0 && (
+            <CardFooter className="p-4 pt-0">
+              <div className="flex flex-wrap gap-1.5">
+                {image.tags.map(tag => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                     {tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardFooter>
+          )}
+        </Card>
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+    <div className="space-y-8">
+      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
         <h1 className="font-headline text-4xl font-bold text-primary mb-2">Safari Gallery</h1>
         <p className="text-lg text-muted-foreground">Moments from our tours, captured by guides and travelers.</p>
       </section>
 
-      <section className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow">
+      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium mr-2 self-center">Filter by Tag:</span>
           {availableTags.map(tag => (
@@ -222,26 +253,7 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredImages.map(image => (
-          <Card key={image.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
-            <div className="relative w-full aspect-[3/2] group-hover:opacity-90 transition-opacity">
-              <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" data-ai-hint={image.dataAiHint} />
-            </div>
-            <CardHeader className="p-4">
-              {image.caption && <CardTitle className="text-base font-semibold line-clamp-1">{image.caption}</CardTitle>}
-              {image.date && <CardDescription className="text-xs">{image.date}</CardDescription>}
-            </CardHeader>
-            {image.tags.length > 0 && (
-              <CardFooter className="p-4 pt-0">
-                <div className="flex flex-wrap gap-1.5">
-                  {image.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                       {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </CardFooter>
-            )}
-          </Card>
+          <AnimatedImageCard key={image.id} image={image} />
         ))}
       </section>
 

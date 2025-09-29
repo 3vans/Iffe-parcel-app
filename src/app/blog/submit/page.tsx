@@ -12,6 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { cn } from '@/lib/utils';
 
 const blogPostSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long'),
@@ -25,6 +27,7 @@ type BlogPostFormValues = z.infer<typeof blogPostSchema>;
 export default function SubmitBlogPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ref, isVisible] = useScrollAnimation();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<BlogPostFormValues>({
     resolver: zodResolver(blogPostSchema),
@@ -45,7 +48,7 @@ export default function SubmitBlogPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-8 animate-slide-up">
+    <div ref={ref} className={cn('max-w-2xl mx-auto py-8 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-6">
         <Link href="/blog">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Travel Journal
