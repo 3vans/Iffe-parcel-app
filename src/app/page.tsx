@@ -18,6 +18,7 @@ import AnimatedBackground from '@/components/layout/animated-background';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import FifaCardCarousel from '@/components/fifa-card-carousel';
 
 
 const mockCarouselCampaigns = [
@@ -308,6 +309,11 @@ export default function Home() {
                   <p className="text-xl text-muted-foreground">The feed is quiet right now... Why not start something?</p>
               </div>
           )}
+        </section>
+
+        <section>
+          <h2 className="font-headline text-3xl font-bold text-primary mb-6 text-center">Featured Expeditions</h2>
+          <FifaCardCarousel />
         </section>
       </div>
     </>

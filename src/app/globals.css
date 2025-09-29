@@ -111,4 +111,10 @@ body {
       transition: none;
     }
   }
+  .fifa-card-bg {
+    background:
+      radial-gradient(circle at 50% 0, hsl(var(--primary) / 0.5), transparent 70%),
+      linear-gradient(190deg, hsl(var(--primary)), hsl(var(--accent))),
+      radial-gradient(circle at 100% 100%, hsl(var(--secondary)), transparent 70%);
+  }
 }
