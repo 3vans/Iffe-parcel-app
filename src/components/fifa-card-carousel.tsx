@@ -68,51 +68,34 @@ export default function FifaCardCarousel() {
     } else if (offset < -totalCards / 2) {
       offset += totalCards;
     }
-
+    
     let transform = 'scale(0)';
     let zIndex = 0;
-    let opacity = 0;
-    
-    // Position definitions based on offset from currentIndex
-    // 0: foreground
-    // 1: right middle ground
-    // -1: left middle ground
-    // 2: right background
-    // -2: left background
+    let opacity = 1;
+    let filter = 'grayscale(0)';
 
-    // Apply styles based on the strict rotation rules
-    // Rule: Right Middle (offset 1) moves to Foreground (offset 0)
-    // Rule: Foreground (offset 0) moves to Left Background (offset -2)
-    // Rule: Left Middle (offset -1) moves to Right Background (offset 2)
-    // Rule: Left Background (offset -2) moves to Left Middle (offset -1)
-    // Rule: Right Background (offset 2) moves to Right Middle (offset 1)
-
-    // Simplified direct mapping based on final desired visual positions
     switch (offset) {
       case 0: // Foreground
         transform = 'translateX(0%) scale(1)';
         zIndex = 5;
         opacity = 1;
+        filter = 'grayscale(0)';
         break;
       case 1: // Right Middle Ground
-        transform = 'translateX(40%) scale(0.5)';
+        transform = 'translateX(35%) scale(0.6)';
         zIndex = 4;
-        opacity = 0.6;
         break;
       case -1: // Left Middle Ground
-        transform = 'translateX(-40%) scale(0.5)';
+        transform = 'translateX(-35%) scale(0.6)';
         zIndex = 4;
-        opacity = 0.6;
         break;
       case 2: // Right Background
-        transform = 'translateX(65%) scale(0.25)';
+        transform = 'translateX(55%) scale(0.4)';
         zIndex = 3;
-        opacity = 0.3;
         break;
       case -2: // Left Background
-        transform = 'translateX(-65%) scale(0.25)';
+        transform = 'translateX(-55%) scale(0.4)';
         zIndex = 3;
-        opacity = 0.3;
         break;
       default:
         transform = 'scale(0)';
@@ -125,7 +108,8 @@ export default function FifaCardCarousel() {
       transform,
       zIndex,
       opacity,
-      transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
+      filter,
+      transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out, filter 0.5s ease-in-out',
     };
   };
   
@@ -134,6 +118,25 @@ export default function FifaCardCarousel() {
 
   return (
     <div className="relative w-full h-[550px] flex flex-col items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
+            {cards.map((card, index) => (
+                <div
+                    key={`bg-${card.id}`}
+                    className="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
+                    style={{ opacity: index === currentIndex ? 1 : 0 }}
+                >
+                    <Image
+                        src={card.imageUrl}
+                        alt={`${card.title} background`}
+                        layout="fill"
+                        objectFit="cover"
+                        className="transform scale-125 blur-lg"
+                        data-ai-hint={card.dataAiHint}
+                    />
+                    <div className="absolute inset-0 bg-black/50" />
+                </div>
+            ))}
+        </div>
       <div className="relative w-full h-[450px]" style={{ perspective: '1000px' }}>
         {cards.map((card, index) => (
           <div
