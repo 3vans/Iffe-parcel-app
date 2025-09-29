@@ -71,46 +71,61 @@ export default function FifaCardCarousel() {
 
     let transform = 'scale(0)';
     let zIndex = 0;
-    let opacity = 1;
+    let opacity = 0;
     
-    switch(offset) {
-        case 0:
-            transform = 'translateX(0) scale(1)';
-            zIndex = 5;
-            break;
-        case 1:
-            transform = 'translateX(50%) scale(0.9)';
-            zIndex = 4;
-            break;
-        case -1:
-            transform = 'translateX(-50%) scale(0.9)';
-            zIndex = 4;
-            break;
-        case 2:
-            transform = 'translateX(75%) scale(0.8)';
-            zIndex = 3;
-            break;
-        case -2:
-            transform = 'translateX(-75%) scale(0.8)';
-            zIndex = 3;
-            break;
-        default:
-            // For cards further away, hide them but keep them in a ready position for smooth transition
-            if (offset > 2) {
-                transform = 'translateX(100%) scale(0.7)';
-            } else {
-                transform = 'translateX(-100%) scale(0.7)';
-            }
-            opacity = 0;
-            zIndex = 0;
-            break;
+    // Position definitions based on offset from currentIndex
+    // 0: foreground
+    // 1: right middle ground
+    // -1: left middle ground
+    // 2: right background
+    // -2: left background
+
+    // Apply styles based on the strict rotation rules
+    // Rule: Right Middle (offset 1) moves to Foreground (offset 0)
+    // Rule: Foreground (offset 0) moves to Left Background (offset -2)
+    // Rule: Left Middle (offset -1) moves to Right Background (offset 2)
+    // Rule: Left Background (offset -2) moves to Left Middle (offset -1)
+    // Rule: Right Background (offset 2) moves to Right Middle (offset 1)
+
+    // Simplified direct mapping based on final desired visual positions
+    switch (offset) {
+      case 0: // Foreground
+        transform = 'translateX(0%) scale(1)';
+        zIndex = 5;
+        opacity = 1;
+        break;
+      case 1: // Right Middle Ground
+        transform = 'translateX(50%) scale(0.5)';
+        zIndex = 4;
+        opacity = 0.6;
+        break;
+      case -1: // Left Middle Ground
+        transform = 'translateX(-50%) scale(0.5)';
+        zIndex = 4;
+        opacity = 0.6;
+        break;
+      case 2: // Right Background
+        transform = 'translateX(75%) scale(0.25)';
+        zIndex = 3;
+        opacity = 0.3;
+        break;
+      case -2: // Left Background
+        transform = 'translateX(-75%) scale(0.25)';
+        zIndex = 3;
+        opacity = 0.3;
+        break;
+      default:
+        transform = 'scale(0)';
+        opacity = 0;
+        zIndex = 0;
+        break;
     }
 
     return {
       transform,
       zIndex,
       opacity,
-      transition: 'transform 0.5s ease, opacity 0.5s ease',
+      transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
     };
   };
   
