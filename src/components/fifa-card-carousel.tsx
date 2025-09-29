@@ -56,105 +56,66 @@ export default function FifaCardCarousel() {
     
     let transform = 'scale(0.5)';
     let zIndex = 0;
-    let opacity = 0;
-    let filter = 'grayscale(100%)';
-
-    const visibleSlots = Math.min(totalCards, 5); // e.g., 5 positions: center, left, right, far-left, far-right
-    const centerIndex = Math.floor(visibleSlots / 2);
-
-    let displayOffset = (offset + centerIndex) % totalCards;
-    if (displayOffset > centerIndex) {
-        displayOffset = displayOffset - totalCards;
-    }
+    let opacity = 1; // All cards are opaque
+    let filter = 'grayscale(0%)'; // No grayscale effect
 
     if (totalCards === 1) {
       transform = 'translateX(0) scale(1)';
-      zIndex = 30;
-      opacity = 1;
-      filter = 'grayscale(0%)';
+      zIndex = 5;
     } else if (totalCards === 2) {
         if(offset === 0) { // center
             transform = 'translateX(0) scale(1)';
-            zIndex = 30;
-            opacity = 1;
-            filter = 'grayscale(0%)';
+            zIndex = 5;
         } else { // right
             transform = 'translateX(55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            zIndex = 4;
         }
     } else if (totalCards === 3) {
         if (offset === 0) { // center
             transform = 'translateX(0) scale(1)';
-            zIndex = 30;
-            opacity = 1;
-            filter = 'grayscale(0%)';
+            zIndex = 5;
         } else if (offset === 1) { // right
-            transform = 'translateX(55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(50%) scale(0.9)';
+            zIndex = 4;
         } else if (offset === 2) { // left
-            transform = 'translateX(-55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(-50%) scale(0.9)';
+            zIndex = 4;
         }
     } else if (totalCards === 4) {
         if (offset === 0) { // center
             transform = 'translateX(0) scale(1)';
-            zIndex = 30;
-            opacity = 1;
-            filter = 'grayscale(0%)';
+            zIndex = 5;
         } else if (offset === 1) { // right
-            transform = 'translateX(55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(50%) scale(0.9)';
+            zIndex = 4;
         } else if (offset === 2) { // far item (shown on left)
             transform = 'translateX(-75%) scale(0.8)';
-            zIndex = 10;
-            opacity = 0.5;
-            filter = 'grayscale(75%)';
+            zIndex = 3;
         } else if (offset === 3) { // left
-            transform = 'translateX(-55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(-50%) scale(0.9)';
+            zIndex = 4;
         }
     }
     else { // 5 or more cards
         if (offset === 0) { // Center card
             transform = 'translateX(0) scale(1)';
-            zIndex = 30;
-            opacity = 1;
-            filter = 'grayscale(0%)';
+            zIndex = 5;
         } else if (offset === 1) { // Right card
-            transform = 'translateX(55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(45%) scale(0.9)';
+            zIndex = 4;
         } else if (offset === totalCards - 1) { // Left card
-            transform = 'translateX(-55%) scale(0.9)';
-            zIndex = 20;
-            opacity = 0.8;
-            filter = 'grayscale(50%)';
+            transform = 'translateX(-45%) scale(0.9)';
+            zIndex = 4;
         } else if (offset === 2) { // Far right card
-            transform = 'translateX(75%) scale(0.8)';
-            zIndex = 10;
-            opacity = 0.5;
-            filter = 'grayscale(75%)';
+            transform = 'translateX(65%) scale(0.8)';
+            zIndex = 3;
         } else if (offset === totalCards - 2) { // Far left card
-            transform = 'translateX(-75%) scale(0.8)';
-            zIndex = 10;
-            opacity = 0.5;
-            filter = 'grayscale(75%)';
+            transform = 'translateX(-65%) scale(0.8)';
+            zIndex = 3;
         } else { // Hidden cards
             transform = 'scale(0.7)';
             opacity = 0;
             zIndex = 0;
-            filter = 'grayscale(100%)';
         }
     }
 
