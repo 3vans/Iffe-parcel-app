@@ -82,19 +82,19 @@ export default function FifaCardCarousel() {
         filter = 'grayscale(0)';
         break;
       case 1: // Right Middle Ground
-        transform = 'translateX(35%) scale(0.6)';
+        transform = 'translateX(50%) scale(0.6)';
         zIndex = 4;
         break;
       case -1: // Left Middle Ground
-        transform = 'translateX(-35%) scale(0.6)';
+        transform = 'translateX(-50%) scale(0.6)';
         zIndex = 4;
         break;
       case 2: // Right Background
-        transform = 'translateX(55%) scale(0.4)';
+        transform = 'translateX(75%) scale(0.4)';
         zIndex = 3;
         break;
       case -2: // Left Background
-        transform = 'translateX(-55%) scale(0.4)';
+        transform = 'translateX(-75%) scale(0.4)';
         zIndex = 3;
         break;
       default:
@@ -196,14 +196,12 @@ export default function FifaCardCarousel() {
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-4 mt-8">
-        <Button variant="outline" size="icon" onClick={handlePrev} className="rounded-full h-12 w-12 bg-card/80">
+        <Button variant="outline" size="icon" onClick={handlePrev} className="absolute left-4 md:left-16 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 bg-card/80 z-10">
           <ChevronLeft />
         </Button>
-        <Button variant="outline" size="icon" onClick={handleNext} className="rounded-full h-12 w-12 bg-card/80">
+        <Button variant="outline" size="icon" onClick={handleNext} className="absolute right-4 md:right-16 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 bg-card/80 z-10">
           <ChevronRight />
         </Button>
-      </div>
     </div>
   );
 }
