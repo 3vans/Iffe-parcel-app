@@ -200,46 +200,6 @@ body {
     .carousel-container {
       padding: 1rem 0 0;
     }
-    .carousel {
-      height: auto;
-      perspective: none;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* For Firefox */
-    }
-    .carousel::-webkit-scrollbar {
-        display: none; /* For Chrome, Safari, and Opera */
-    }
-    .carousel-track {
-      position: static;
-      display: flex;
-      padding: 0 1rem;
-      gap: 1rem;
-      width: max-content;
-      height: auto;
-      transform: none;
-      transform-style: flat;
-    }
-    .card,
-    .card-left, .card-right,
-    .card-far-left, .card-far-right,
-    .card-center, .card-hidden {
-      position: static;
-      transform: none;
-      filter: none;
-      opacity: 1;
-      pointer-events: auto;
-      width: 280px;
-      height: auto;
-      flex-shrink: 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    .carousel-nav {
-      display: none; /* Hide next/prev buttons on mobile */
-    }
-    .card-indicators {
-      display: none; /* Hide dot indicators on mobile */
-    }
   }
 
   @media (max-width: 480px) {

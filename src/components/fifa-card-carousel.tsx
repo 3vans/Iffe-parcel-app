@@ -67,8 +67,6 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
   }, [currentIndex, cards, handleNext, onActiveCardChange]);
   
   const getCardPositionClass = (index: number): string => {
-    if (isMobile) return ''; // No special classes needed for mobile scroll
-
     const offset = index - currentIndex;
     const totalCards = cards.length;
     let diff = (offset + totalCards) % totalCards;
@@ -105,7 +103,7 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
                         key={card.id} 
                         className={cn("card", getCardPositionClass(index))}
                         onClick={() => {
-                            if (!isMobile && index !== currentIndex) {
+                            if (index !== currentIndex) {
                                 setCurrentIndex(index);
                             }
                         }}
