@@ -73,22 +73,22 @@ export default function FifaCardCarousel() {
         pointerEvents = 'auto';
         break;
       case 1: // Middle-right
-        transform = 'translateX(50%) scale(0.5)';
+        transform = 'translateX(30%) scale(0.8)';
         zIndex = 4;
         opacity = 0.6;
         break;
       case 2: // Background-right
-        transform = 'translateX(75%) scale(0.25)';
+        transform = 'translateX(45%) scale(0.6)';
         zIndex = 3;
         opacity = 0.3;
         break;
       case (cards.length - 1): // Middle-left
-        transform = 'translateX(-50%) scale(0.5)';
+        transform = 'translateX(-30%) scale(0.8)';
         zIndex = 4;
         opacity = 0.6;
         break;
       case (cards.length - 2): // Background-left
-        transform = 'translateX(-75%) scale(0.25)';
+        transform = 'translateX(-45%) scale(0.6)';
         zIndex = 2;
         opacity = 0.3;
         break;
