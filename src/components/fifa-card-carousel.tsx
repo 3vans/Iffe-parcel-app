@@ -64,7 +64,7 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
 
     const interval = setInterval(handleNext, 4000);
     return () => clearInterval(interval);
-  }, [currentIndex, cards, handleNext, onActiveCardChange, isMobile]);
+  }, [currentIndex, cards, handleNext, onActiveCardChange]);
   
   const getCardPositionClass = (index: number): string => {
     if (isMobile) return ''; // No special classes needed for mobile scroll
