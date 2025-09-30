@@ -129,7 +129,7 @@ body {
       position: relative;
       height: 500px;
       perspective: 1200px;
-      overflow: visible; /* Allow seeing cards outside */
+      overflow: hidden; /* Changed from visible to hidden */
   }
   .carousel-track {
     position: absolute;
