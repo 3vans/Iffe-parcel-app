@@ -62,8 +62,6 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
         onActiveCardChange(cards[currentIndex]);
     }
 
-    if (isMobile) return; // Disable auto-scroll on mobile
-
     const interval = setInterval(handleNext, 4000);
     return () => clearInterval(interval);
   }, [currentIndex, cards, handleNext, onActiveCardChange, isMobile]);
