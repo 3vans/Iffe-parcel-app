@@ -8,16 +8,13 @@ import Link from 'next/link';
 import cardData from '@/app/lib/fifa-card-data.json';
 import { cn } from '@/lib/utils';
 
-
 interface CardData {
   id: string;
   title: string;
   country: string;
   rating: string;
-  speed: string; // Changed to represent days
-  days: string;   // Explicitly adding for clarity
-  skill: string; // Changed to represent activities
-  activities: string; // Explicitly adding for clarity
+  speed: string; // Represents days
+  skill: string; // Represents activities
   image: string;
   dataAiHint: string;
   link: string;
@@ -27,9 +24,8 @@ interface FifaCardCarouselProps {
     onActiveCardChange?: (card: CardData | null) => void;
 }
 
-
 export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouselProps) {
-  const [cards] = useState<CardData[]>(cardData.map(c => ({...c, days: c.speed, activities: c.skill})));
+  const [cards] = useState<CardData[]>(() => cardData.map(c => ({ ...c, days: c.speed, activities: c.skill })));
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = useCallback(() => {
@@ -45,48 +41,78 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
   };
 
   useEffect(() => {
-    if (onActiveCardChange) {
+    if (onActiveCardChange && cards.length > 0) {
         onActiveCardChange(cards[currentIndex]);
     }
 
-    const interval = setInterval(() => {
-      handleNext();
-    }, 4000);
+    const interval = setInterval(handleNext, 4000);
     return () => clearInterval(interval);
   }, [currentIndex, cards, handleNext, onActiveCardChange]);
   
-  const getCardPositionClass = (cardIndex: number) => {
+  const getCardStyle = (cardIndex: number): React.CSSProperties => {
       const totalCards = cards.length;
       let diff = cardIndex - currentIndex;
 
-      // Handle wrapping around the array
-      if (diff > totalCards / 2) {
-          diff -= totalCards;
+      if (diff > totalCards / 2) diff -= totalCards;
+      if (diff < -totalCards / 2) diff += totalCards;
+
+      let transform = 'scale(0.5)';
+      let zIndex = 5;
+      let filter = 'brightness(0.5)';
+      let pointerEvents: 'auto' | 'none' = 'none';
+
+      switch (diff) {
+          case 0: // Center
+              transform = 'translateX(0) scale(1)';
+              zIndex = 30;
+              filter = 'brightness(1)';
+              pointerEvents = 'auto';
+              break;
+          case 1: // Right
+              transform = 'translateX(80%) scale(0.85)';
+              zIndex = 20;
+              filter = 'brightness(0.75)';
+              break;
+          case -1: // Left
+              transform = 'translateX(-80%) scale(0.85)';
+              zIndex = 20;
+              filter = 'brightness(0.75)';
+              break;
+          case 2: // Far Right
+              transform = 'translateX(160%) scale(0.7)';
+              zIndex = 10;
+              filter = 'brightness(0.5)';
+              break;
+          case -2: // Far Left
+              transform = 'translateX(-160%) scale(0.7)';
+              zIndex = 10;
+              filter = 'brightness(0.5)';
+              break;
+          default: // Hidden
+              transform = 'scale(0.5)';
+              zIndex = 5;
+              filter = 'brightness(0.5)';
+              break;
       }
-      if (diff < -totalCards / 2) {
-          diff += totalCards;
-      }
+      
+       if (Math.abs(diff) > 2) {
+            return { display: 'none' };
+       }
 
-
-      if (diff === 0) return 'card-center';
-      if (diff === 1) return 'card-right';
-      if (diff === -1) return 'card-left';
-      if (diff === 2) return 'card-far-right';
-      if (diff === -2) return 'card-far-left';
-
-      return 'card-hidden';
+      return { transform, zIndex, filter, pointerEvents, transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)' };
   };
 
   return (
      <div className="carousel-container">
-        <h2 className="font-headline text-3xl font-bold text-primary mb-6 text-center">Featured Expeditions</h2>
+        <h2 className="font-headline text-3xl font-bold text-white mb-6 text-center">Featured Expeditions</h2>
         
         <div className="carousel">
             <div className="carousel-track">
                 {cards.map((card, index) => (
                     <div 
                         key={card.id} 
-                        className={cn("card", getCardPositionClass(index))}
+                        className="card"
+                        style={getCardStyle(index)}
                         onClick={() => {
                             if (index !== currentIndex) {
                                 setCurrentIndex(index);
