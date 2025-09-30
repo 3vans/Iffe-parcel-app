@@ -131,7 +131,7 @@ export default {
         'fade-in': 'fade-in 0.5s ease-out forwards',
         'slide-up': 'slide-up 0.5s ease-out forwards',
         'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
-        'slow-bounce': 'slow-bounce 2s infinite',
+        'slow-bounce': 'slow-bounce 3s infinite',
         'background-fade': 'background-fade 7s ease-in-out infinite',
       },
     },
