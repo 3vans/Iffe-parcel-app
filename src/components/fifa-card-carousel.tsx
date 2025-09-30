@@ -63,35 +63,31 @@ export default function FifaCardCarousel() {
 
     let transform = 'scale(0)';
     let zIndex = 0;
-    let opacity = 0;
-    let filter = 'grayscale(50%)';
+    let opacity = 1;
+    let pointerEvents: 'auto' | 'none' = 'none';
 
     switch (offset) {
       case 0: // Foreground card
         transform = 'translateX(0) scale(1)';
-        zIndex = 20;
+        zIndex = 30; // Increased zIndex
         opacity = 1;
-        filter = 'grayscale(0%)';
+        pointerEvents = 'auto';
         break;
       case 1: // Right middle card
-        transform = 'translateX(40%) scale(0.7)';
+        transform = 'translateX(30%) scale(0.7)';
         zIndex = 2;
-        opacity = 0.6;
         break;
       case -1: // Left middle card
-        transform = 'translateX(-40%) scale(0.7)';
+        transform = 'translateX(-30%) scale(0.7)';
         zIndex = 2;
-        opacity = 0.6;
         break;
       case 2: // Right background card
-        transform = 'translateX(65%) scale(0.5)';
+        transform = 'translateX(50%) scale(0.5)';
         zIndex = 1;
-        opacity = 0.3;
         break;
       case -2: // Left background card
-        transform = 'translateX(-65%) scale(0.5)';
+        transform = 'translateX(-50%) scale(0.5)';
         zIndex = 1;
-        opacity = 0.3;
         break;
       default:
         transform = `translateX(${offset > 0 ? 100 : -100}%) scale(0)`;
@@ -104,8 +100,8 @@ export default function FifaCardCarousel() {
       transform,
       zIndex,
       opacity,
-      filter,
-      transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out, filter 0.5s ease-in-out',
+      pointerEvents,
+      transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
     };
   };
 
