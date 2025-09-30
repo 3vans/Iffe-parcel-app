@@ -1,4 +1,5 @@
 
+
 'use client';
 import Link from 'next/link';
 import EventCard, { type EventCardProps } from '@/components/event-card';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CalendarPlus, CalendarClock } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
 // Mock data
 const mockEvents: EventCardProps[] = [
@@ -41,7 +43,7 @@ export default function EventsPage() {
       </section>
 
       {mockEvents.length === 0 && (
-         <div className="text-center py-12">
+         <div ref={footerRef} className={cn("text-center py-12 scroll-animate", isFooterVisible && "scroll-animate-in")}>
           <p className="text-xl text-muted-foreground">No upcoming scheduled departures yet. Check back soon!</p>
         </div>
       )}

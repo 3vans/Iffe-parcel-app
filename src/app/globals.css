@@ -98,11 +98,12 @@ body {
   .scroll-animate {
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow 0.3s ease-out;
   }
   .scroll-animate-in {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-1px);
+    @apply shadow-md;
   }
   @media (prefers-reduced-motion: reduce) {
     .scroll-animate {
@@ -123,7 +124,7 @@ body {
       width: 100%;
       max-width: 1200px;
       position: relative;
-      padding: 2rem 0 0;
+      padding: 2rem 2rem 0;
       margin: auto;
   }
   .carousel {
