@@ -123,14 +123,14 @@ body {
       width: 100%;
       max-width: 1200px;
       position: relative;
-      padding: 2rem 1.25rem;
+      padding: 2rem 0 0;
       margin: auto;
   }
   .carousel {
       position: relative;
-      height: 500px;
+      height: 480px;
       perspective: 1200px;
-      overflow: hidden; /* Changed from visible to hidden */
+      overflow: hidden;
   }
   .carousel-track {
     position: absolute;
@@ -285,7 +285,7 @@ body {
   .carousel-nav {
       display: flex;
       justify-content: center;
-      margin-top: 1.25rem;
+      margin-top: 0.5rem;
       gap: 15px;
   }
   .nav-button {
