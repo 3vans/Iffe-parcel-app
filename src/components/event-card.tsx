@@ -30,7 +30,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, location, 
   const [ref, isVisible] = useScrollAnimation();
   
   return (
-    <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+    <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
       <Card className={cn(
           "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full",
           "bg-card/80 backdrop-blur-sm"
@@ -89,3 +89,5 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, location, 
 };
 
 export default EventCard;
+
+    

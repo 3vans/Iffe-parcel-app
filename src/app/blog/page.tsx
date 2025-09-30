@@ -1,5 +1,6 @@
 
 
+'use client';
 import Link from 'next/link';
 import BlogCard, { type BlogCardProps } from '@/components/blog-card';
 import { Button } from '@/components/ui/button';
@@ -9,12 +10,13 @@ import { PlusCircle, Search, ListFilter, Edit } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import placeholderImages from '@/app/lib/placeholder-images.json';
 
 // Mock data
 const mockBlogPosts: BlogCardProps[] = [
-  { id: '1', title: 'The Thrill of the Hunt: Spotting Leopards in the Wild', author: 'Safari Jane', date: 'Oct 26, 2023', excerpt: 'Patience is key when tracking the elusive leopard. A story of a week-long pursuit that ended in a magical sighting.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'leopard tree', tags: ['#BigCats', '#Leopard'], commentCount: 12 },
-  { id: '2', title: 'Birdwatcher\'s Paradise: The Shoebill of Mabamba Swamp', author: 'Ranger Tom', date: 'Oct 22, 2023', excerpt: 'Journey into the swamps of Uganda to find one of the world\'s most prehistoric and sought-after birds.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'shoebill stork', tags: ['#Birdwatching', '#Uganda'], commentCount: 8 },
-  { id: '3', title: 'A Guide to Ethical Wildlife Photography', author: 'Ethical Explorer', date: 'Oct 18, 2023', excerpt: 'Learn how to capture stunning wildlife photos without disturbing the animals or their habitats. Our top tips for responsible photography.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'camera wildlife', tags: ['#Photography', '#Conservation'], commentCount: 25 },
+  { id: '1', title: 'The Thrill of the Hunt: Spotting Leopards in the Wild', author: 'Safari Jane', date: 'Oct 26, 2023', excerpt: 'Patience is key when tracking the elusive leopard. A story of a week-long pursuit that ended in a magical sighting.', imageUrl: placeholderImages.galleryLioness.src, dataAiHint: 'leopard tree', tags: ['#BigCats', '#Leopard'], commentCount: 12 },
+  { id: '2', title: 'Birdwatcher\'s Paradise: The Shoebill of Mabamba Swamp', author: 'Ranger Tom', date: 'Oct 22, 2023', excerpt: 'Journey into the swamps of Uganda to find one of the world\'s most prehistoric and sought-after birds.', imageUrl: 'https://picsum.photos/seed/shoebill/600/400', dataAiHint: 'shoebill stork', tags: ['#Birdwatching', '#Uganda'], commentCount: 8 },
+  { id: '3', title: 'A Guide to Ethical Wildlife Photography', author: 'Ethical Explorer', date: 'Oct 18, 2023', excerpt: 'Learn how to capture stunning wildlife photos without disturbing the animals or their habitats. Our top tips for responsible photography.', imageUrl: 'https://picsum.photos/seed/photographer/600/400', dataAiHint: 'camera wildlife', tags: ['#Photography', '#Conservation'], commentCount: 25 },
 ];
 
 const availableTags = ['#BigCats', '#Leopard', '#Birdwatching', '#Uganda', '#Photography', '#Conservation', '#Serengeti', '#Okavango'];
@@ -39,7 +41,7 @@ export default function BlogPage() {
       </AnimatedSection>
 
       <AnimatedSection>
-        <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow">
+        <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow">
             <div className="relative w-full md:w-1/2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input type="search" placeholder="Search articles..." className="pl-10 w-full" />
@@ -81,3 +83,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+    

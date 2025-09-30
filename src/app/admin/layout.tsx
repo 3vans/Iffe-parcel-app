@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/sidebar';
 import AdminMobileTopNav from '@/components/admin/admin-mobile-top-nav';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ const adminNavItems = [
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const [ref, isVisible] = useScrollAnimation();
 
   if (isMobile) {
     return (
@@ -93,7 +95,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </Sidebar>
 
       <SidebarInset>
-        <main className="flex-1 overflow-y-auto p-6">
+        <main ref={ref} className={cn('flex-1 overflow-y-auto p-6 scroll-animate', isVisible && 'scroll-animate-in')}>
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 my-6 rounded-md" role="alert">
             <p className="font-bold">Developer Note:</p>
             <p>Admin authentication is currently bypassed for testing. Remember to re-enable security checks.</p>
@@ -104,3 +106,5 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </SidebarProvider>
   );
 }
+
+    

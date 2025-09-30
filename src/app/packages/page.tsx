@@ -67,7 +67,10 @@ export default function PackagesPage() {
 
         return (
             <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
-                <Card key={pkg.id} className={`shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full ${pkg.isFeatured ? 'border-accent border-2 -translate-y-2' : ''}`}>
+                <Card key={pkg.id} className={cn(
+                    "shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full bg-card/80 backdrop-blur-sm",
+                     pkg.isFeatured ? 'border-accent border-2 -translate-y-2' : ''
+                     )}>
                     {pkg.imageUrl && (
                         <div className="relative w-full h-56">
                             <Image 
@@ -124,13 +127,13 @@ export default function PackagesPage() {
         <p className="text-lg text-muted-foreground">Choose the perfect adventure that suits your style and budget.</p>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
         {mockPackages.map(pkg => (
             <AnimatedPackageCard key={pkg.id} pkg={pkg} />
         ))}
       </section>
 
-       <section ref={footerRef} className={cn('text-center mt-12 p-8 bg-card rounded-lg shadow-inner scroll-animate', isFooterVisible && 'scroll-animate-in')}>
+       <section ref={footerRef} className={cn('text-center mt-12 p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner scroll-animate', isFooterVisible && 'scroll-animate-in')}>
           <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>
           <Button size="lg" asChild>
@@ -143,3 +146,5 @@ export default function PackagesPage() {
     </div>
   );
 }
+
+    

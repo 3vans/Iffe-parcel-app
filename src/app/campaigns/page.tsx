@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tag, ArrowRight, PlusCircle, MountainSnow } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useEffect, useState } from 'react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useState } from 'react';
 
 interface CampaignTeaser {
   id: string;
@@ -24,10 +25,10 @@ interface CampaignTeaser {
 }
 
 const mockCampaignsData: CampaignTeaser[] = [
-  { id: '1', title: 'Serengeti Great Migration', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'wildebeest serengeti', shortDescription: 'Witness the epic annual migration of wildebeest.', goal: 100, currentAmount: 85, tags: ['#BigFive', '#Tanzania'] },
-  { id: '2', title: 'Gorilla Trekking Adventure', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'mountain gorilla jungle', shortDescription: 'An unforgettable encounter with mountain gorillas.', goal: 100, currentAmount: 92, tags: ['#Primates', '#Uganda'] },
-  { id: '3', title: 'Okavango Delta Mokoro Trip', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of Botswana.', goal: 100, currentAmount: 61, tags: ['#Wetlands', '#Botswana'] },
-  { id: '4', title: 'Luxury Safari in Kruger Park', imageUrl: 'https://placehold.co/600x350.png', dataAiHint: 'safari lodge sunset', shortDescription: 'Experience the wild in comfort and style.', goal: 100, currentAmount: 45, tags: ['#Luxury', '#SouthAfrica'] },
+  { id: '1', title: 'Serengeti Great Migration', imageUrl: placeholderImages.campaignDetailWildebeest.src, dataAiHint: 'wildebeest serengeti', shortDescription: 'Witness the epic annual migration of wildebeest.', goal: 100, currentAmount: 85, tags: ['#BigFive', '#Tanzania'] },
+  { id: '2', title: 'Gorilla Trekking Adventure', imageUrl: placeholderImages.campaignDetailGorilla.src, dataAiHint: 'mountain gorilla jungle', shortDescription: 'An unforgettable encounter with mountain gorillas.', goal: 100, currentAmount: 92, tags: ['#Primates', '#Uganda'] },
+  { id: '3', title: 'Okavango Delta Mokoro Trip', imageUrl: placeholderImages.campaignDetailMokoro.src, dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of Botswana.', goal: 100, currentAmount: 61, tags: ['#Wetlands', '#Botswana'] },
+  { id: '4', title: 'Luxury Safari in Kruger Park', imageUrl: 'https://picsum.photos/seed/kruger/600/350', dataAiHint: 'safari lodge sunset', shortDescription: 'Experience the wild in comfort and style.', goal: 100, currentAmount: 45, tags: ['#Luxury', '#SouthAfrica'] },
 ];
 
 
@@ -37,11 +38,20 @@ export default function CampaignsPage() {
   const AnimatedCard = ({ campaign }: { campaign: CampaignTeaser }) => {
     const [ref, isVisible] = useScrollAnimation();
     const progressPercentage = campaign.goal > 0 ? (campaign.currentAmount / campaign.goal) * 100 : 0;
+    const [imgSrc, setImgSrc] = useState(campaign.imageUrl);
+
     return (
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-            <Card key={campaign.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+            <Card key={campaign.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full bg-card/80 backdrop-blur-sm">
             <div className="relative w-full h-48">
-                <Image src={campaign.imageUrl} alt={campaign.title} layout="fill" objectFit="cover" data-ai-hint={campaign.dataAiHint} />
+                <Image 
+                    src={imgSrc} 
+                    alt={campaign.title} 
+                    layout="fill" 
+                    objectFit="cover" 
+                    data-ai-hint={campaign.dataAiHint} 
+                    onError={() => setImgSrc(placeholderImages.campaignDetailWildebeest.src)}
+                />
             </div>
             <CardHeader>
                 <CardTitle className="font-headline text-xl hover:text-primary transition-colors">
@@ -78,15 +88,15 @@ export default function CampaignsPage() {
         </div>
     );
     };
+    
+    const [headerRef, isHeaderVisible] = useScrollAnimation();
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
         <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><MountainSnow className="mr-3 h-10 w-10"/>Our Safari Tours</h1>
         <p className="text-lg text-muted-foreground">Discover and book adventures that make a difference.</p>
       </section>
-
-      {/* Add filtering/sorting options here in the future */}
 
       {campaigns.length > 0 ? (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -111,3 +121,5 @@ export default function CampaignsPage() {
     </div>
   );
 }
+
+    

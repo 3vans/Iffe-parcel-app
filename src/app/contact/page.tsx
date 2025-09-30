@@ -32,10 +32,20 @@ const teamMembers = [
   },
 ];
 
+function AnimatedCard({ children, className }: { children: React.ReactNode, className?:string }) {
+    const [ref, isVisible] = useScrollAnimation();
+    return (
+        <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+           <Card className={cn("bg-card/80 backdrop-blur-sm", className)}>
+                {children}
+            </Card>
+        </div>
+    );
+}
+
 export default function ContactPage() {
   const { toast } = useToast();
   const [ref1, isVisible1] = useScrollAnimation();
-  const [ref2, isVisible2] = useScrollAnimation();
 
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,8 +68,8 @@ export default function ContactPage() {
         <p className="text-lg text-muted-foreground mt-2">We'd love to hear from you. Whether you have a question about our tours, or anything else, our team is ready to answer all your questions.</p>
       </section>
       
-      <div ref={ref2} className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 scroll-animate', isVisible2 && 'scroll-animate-in')}>
-        <Card className="bg-card/80 backdrop-blur-sm">
+      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12')}>
+        <AnimatedCard>
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary flex items-center"><Send className="mr-2 h-6 w-6 text-accent"/>Send Us a Message</CardTitle>
           </CardHeader>
@@ -80,13 +90,13 @@ export default function ContactPage() {
               <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Send Message</Button>
             </form>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
         <div className="space-y-4">
             <h2 className="font-headline text-2xl font-bold text-primary flex items-center"><Users className="mr-2 h-6 w-6 text-accent"/>Meet Our Team</h2>
             <div className="space-y-4">
             {teamMembers.map((member) => (
-                <Card key={member.name} className="bg-card/80 backdrop-blur-sm p-4 flex items-center space-x-4">
+                <AnimatedCard key={member.name} className="p-4 flex items-center space-x-4">
                     <Avatar className="h-16 w-16">
                         <AvatarImage asChild src={member.avatar.src}>
                             <Image src={member.avatar.src} alt={member.name} width={member.avatar.width} height={member.avatar.height} data-ai-hint={member.avatar.hint}/>
@@ -97,7 +107,7 @@ export default function ContactPage() {
                         <h3 className="text-lg font-bold text-primary">{member.name}</h3>
                         <p className="text-sm text-muted-foreground">{member.role}</p>
                     </div>
-                </Card>
+                </AnimatedCard>
             ))}
             </div>
         </div>
@@ -105,3 +115,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+    
