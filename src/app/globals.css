@@ -132,12 +132,13 @@ body {
       overflow: visible; /* Allow seeing cards outside */
   }
   .carousel-track {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px; /* Width of the center card */
+    height: 420px; /* Height of the center card */
+    transform-style: preserve-3d;
   }
   .card {
       position: absolute;
@@ -209,9 +210,13 @@ body {
     }
     .card-far-left {
       transform: translateX(-130%) scale(0.6);
+      filter: brightness(0.5) blur(1px);
+      opacity: 0;
     }
     .card-far-right {
       transform: translateX(130%) scale(0.6);
+      filter: brightness(0.5) blur(1px);
+      opacity: 0;
     }
   }
 
@@ -228,9 +233,11 @@ body {
     }
     .card-far-left {
       transform: translateX(-110%) scale(0.5);
+      opacity: 0;
     }
     .card-far-right {
       transform: translateX(110%) scale(0.5);
+      opacity: 0;
     }
   }
 
