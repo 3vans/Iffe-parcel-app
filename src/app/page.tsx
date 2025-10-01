@@ -3,7 +3,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import CampaignCarousel from '@/components/campaign-carousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Edit3, Lightbulb, MessageCircle, ArrowRight, MountainSnow, ShieldCheck } from 'lucide-react';
@@ -17,13 +16,8 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import FifaCardCarousel from '@/components/fifa-card-carousel';
+import Hero from '@/components/layout/hero';
 
-
-const mockCarouselCampaigns = [
-  { id: 'c1', title: 'Serengeti Great Migration Safari', imageUrl: placeholderImages.campaignDetailWildebeest.src, dataAiHint: 'wildebeest migration', shortDescription: 'Witness the breathtaking Great Migration in the vast plains of the Serengeti.' },
-  { id: 'c2', title: 'Gorilla Trekking in Bwindi', imageUrl: placeholderImages.campaignDetailGorilla.src, dataAiHint: 'mountain gorilla', shortDescription: 'An intimate and unforgettable encounter with the majestic mountain gorillas of Uganda.' },
-  { id: 'c3', title: 'Okavango Delta Mokoro Expedition', imageUrl: placeholderImages.campaignDetailMokoro.src, dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of the Okavango Delta by traditional mokoro canoe.' },
-];
 
 interface FeedItemBase {
   id: string;
@@ -127,7 +121,6 @@ const initialFeedItems: FeedItem[] = [
 
 export default function Home() {
     const [feedItems] = useState<FeedItem[]>(initialFeedItems);
-    const [carouselCampaigns] = useState(mockCarouselCampaigns);
     const [activeCarouselImage, setActiveCarouselImage] = useState<string | null>(null);
 
     const AnimatedCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
@@ -144,7 +137,7 @@ export default function Home() {
       <AnimatedBackground />
       <div className="relative z-10 space-y-12 animate-fade-in">
         <section>
-          <CampaignCarousel campaigns={carouselCampaigns} />
+          <Hero />
         </section>
 
         <section>
