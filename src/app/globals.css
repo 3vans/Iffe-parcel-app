@@ -33,6 +33,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --old-paper: 45 60% 95%; /* Cream/light yellow for light mode hero panel */
 
     /* Sidebar specific colors, aliased to main theme for active state consistency */
     --sidebar-background: hsl(var(--card)); /* Use card color for sidebar bg */
@@ -70,6 +71,7 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --old-paper: hsl(var(--background)); /* In dark mode, old paper color is just the background */
 
     /* Sidebar specific colors for dark theme */
     --sidebar-background: hsl(var(--card)); /* Use card color for sidebar bg */
@@ -322,5 +324,3 @@ body {
     z-index: 3;
   }
 }
-
-    
