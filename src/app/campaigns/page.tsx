@@ -12,6 +12,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useState } from 'react';
+import HeroSection from '@/components/layout/hero-section';
 
 interface CampaignTeaser {
   id: string;
@@ -89,14 +90,15 @@ export default function CampaignsPage() {
     );
     };
     
-    const [headerRef, isHeaderVisible] = useScrollAnimation();
-
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><MountainSnow className="mr-3 h-10 w-10"/>Our Safari Tours</h1>
-        <p className="text-lg text-muted-foreground">Discover and book adventures that make a difference.</p>
-      </section>
+      <HeroSection 
+        title="Our Safari Tours"
+        subtitle="Discover and book adventures that make a difference."
+        Icon={MountainSnow}
+        imageUrl={placeholderImages.campaignDetailWildebeest.src}
+        dataAiHint={placeholderImages.campaignDetailWildebeest.hint}
+      />
 
       {campaigns.length > 0 ? (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -121,5 +123,3 @@ export default function CampaignsPage() {
     </div>
   );
 }
-
-    

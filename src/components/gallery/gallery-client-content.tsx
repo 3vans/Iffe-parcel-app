@@ -86,7 +86,6 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [headerRef, isHeaderVisible] = useScrollAnimation();
   const [filterRef, isFilterVisible] = useScrollAnimation();
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<MediaFormValues>({
@@ -156,12 +155,7 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
     : galleryImages;
 
   return (
-    <div className="space-y-8">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2">Safari Gallery</h1>
-        <p className="text-lg text-muted-foreground">Moments from our tours, captured by guides and travelers.</p>
-      </section>
-
+    <>
       <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium mr-2 self-center">Filter by Tag:</span>
@@ -274,6 +268,6 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 }

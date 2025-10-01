@@ -17,6 +17,7 @@ import Image from 'next/image';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import HeroSection from '@/components/layout/hero-section';
 
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
@@ -73,7 +74,6 @@ export default function IdeaBoxPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
-  const [headerRef, isHeaderVisible] = useScrollAnimation();
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<IdeaFormValues>({
     resolver: zodResolver(ideaSchema),
@@ -170,13 +170,13 @@ export default function IdeaBoxPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center">
-          <Lightbulb className="h-10 w-10 mr-3 text-accent" />
-          Dream Trips
-        </h1>
-        <p className="text-lg text-muted-foreground">Suggest new destinations and vote on where we should go next!</p>
-      </section>
+      <HeroSection 
+        title="Dream Trips"
+        subtitle="Suggest new destinations and vote on where we should go next!"
+        Icon={Lightbulb}
+        imageUrl={placeholderImages.ideaFamilySafari.src}
+        dataAiHint={placeholderImages.ideaFamilySafari.hint}
+      />
 
       <div className="text-center">
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {

@@ -2,22 +2,31 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe } from "lucide-react";
+import { Globe, Info } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
+import HeroSection from "@/components/layout/hero-section";
+import placeholderImages from '@/app/lib/placeholder-images.json';
 
 export default function AboutPage() {
   const [ref, isVisible] = useScrollAnimation();
 
   return (
-    <div className="container mx-auto max-w-3xl py-8 px-4">
-      <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+    <div className="space-y-8">
+       <HeroSection
+        title="About iffe-travels"
+        subtitle="Your adventure into the wild begins with a story."
+        Icon={Info}
+        imageUrl={placeholderImages.gallerySafariGroup.src}
+        dataAiHint={placeholderImages.gallerySafariGroup.hint}
+      />
+      <div ref={ref} className={cn('container mx-auto max-w-3xl py-8 px-4 scroll-animate', isVisible && 'scroll-animate-in')}>
         <Card className="bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
-            <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
+             <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
               <Globe className="h-12 w-12 text-accent" />
             </div>
-            <CardTitle className="font-headline text-3xl text-primary">About iffe-travels</CardTitle>
+            <CardTitle className="font-headline text-3xl text-primary">Our Mission</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>

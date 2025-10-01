@@ -8,6 +8,7 @@ import { CalendarPlus, CalendarClock } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import HeroSection from '@/components/layout/hero-section';
 
 // Mock data
 const mockEvents: EventCardProps[] = [
@@ -17,15 +18,17 @@ const mockEvents: EventCardProps[] = [
 ];
 
 export default function EventsPage() {
-    const [headerRef, isHeaderVisible] = useScrollAnimation();
     const [footerRef, isFooterVisible] = useScrollAnimation();
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><CalendarClock className="mr-3 h-10 w-10"/>Scheduled Departures</h1>
-        <p className="text-lg text-muted-foreground">Join our group tours, webinars, and special events. Your adventure awaits!</p>
-      </section>
+      <HeroSection
+        title="Scheduled Departures"
+        subtitle="Join our group tours, webinars, and special events. Your adventure awaits!"
+        Icon={CalendarClock}
+        imageUrl={placeholderImages.eventDetailDefault.src}
+        dataAiHint={placeholderImages.eventDetailDefault.hint}
+      />
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {mockEvents.map(event => (
@@ -52,5 +55,3 @@ export default function EventsPage() {
     </div>
   );
 }
-
-    

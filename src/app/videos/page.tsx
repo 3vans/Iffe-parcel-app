@@ -6,6 +6,7 @@ import { PlayCircle, UploadCloud, ListFilter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import HeroSection from '@/components/layout/hero-section';
 
 interface VideoItem {
   id: string;
@@ -30,7 +31,6 @@ const mockVideoData: VideoItem[] = [
 const availableCategories = ['Events', 'Trainings', 'Campaigns', 'Testimonials', 'All'];
 
 export default function VideoLibraryPage() {
-  const [headerRef, isHeaderVisible] = useScrollAnimation();
   const [filterRef, isFilterVisible] = useScrollAnimation();
 
   const AnimatedVideoCard = ({ video }: { video: VideoItem }) => {
@@ -66,10 +66,13 @@ export default function VideoLibraryPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2">Video Library</h1>
-        <p className="text-lg text-muted-foreground">Watch highlights, trainings, testimonials, and more.</p>
-      </section>
+      <HeroSection 
+        title="Video Library"
+        subtitle="Watch highlights, trainings, testimonials, and more."
+        Icon={PlayCircle}
+        imageUrl={'https://placehold.co/1200x400.png'}
+        dataAiHint={'video library'}
+      />
 
       <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">

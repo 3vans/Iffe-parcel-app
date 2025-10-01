@@ -9,6 +9,7 @@ import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import placeholderImages from "@/app/lib/placeholder-images.json";
+import HeroSection from "@/components/layout/hero-section";
 
 interface PackageTier {
     id: string;
@@ -114,18 +115,17 @@ export default function PackagesPage() {
         );
     };
 
-    const [headerRef, isHeaderVisible] = useScrollAnimation();
     const [footerRef, isFooterVisible] = useScrollAnimation();
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
-        <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center">
-          <Package className="mr-3 h-10 w-10" />
-          Our Safari Packages
-        </h1>
-        <p className="text-lg text-muted-foreground">Choose the perfect adventure that suits your style and budget.</p>
-      </section>
+       <HeroSection
+        title="Our Safari Packages"
+        subtitle="Choose the perfect adventure that suits your style and budget."
+        Icon={Package}
+        imageUrl={'https://picsum.photos/seed/pkg2/1200/400'}
+        dataAiHint={'luxury safari tent'}
+      />
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
         {mockPackages.map(pkg => (
@@ -146,5 +146,3 @@ export default function PackagesPage() {
     </div>
   );
 }
-
-    

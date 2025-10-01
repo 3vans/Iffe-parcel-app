@@ -1,6 +1,8 @@
 
 import GalleryClientContent from '@/components/gallery/gallery-client-content';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import HeroSection from '@/components/layout/hero-section';
+import { ImageIcon } from 'lucide-react';
 
 // Define the type here for server-side processing
 interface GalleryImage {
@@ -27,7 +29,14 @@ export default async function GalleryPage() {
   const processedGalleryImages = initialMockGalleryImages;
 
   return (
-    <div className="animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
+        <HeroSection 
+          title="Safari Gallery"
+          subtitle="Moments from our tours, captured by guides and travelers."
+          Icon={ImageIcon}
+          imageUrl={placeholderImages.gallerySafariGroup.src}
+          dataAiHint={placeholderImages.gallerySafariGroup.hint}
+        />
         <GalleryClientContent initialImages={processedGalleryImages} />
     </div>
   );

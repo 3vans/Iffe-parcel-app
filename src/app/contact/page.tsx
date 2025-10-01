@@ -13,6 +13,7 @@ import Image from "next/image";
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
+import HeroSection from "@/components/layout/hero-section";
 
 const teamMembers = [
   {
@@ -45,8 +46,6 @@ function AnimatedCard({ children, className }: { children: React.ReactNode, clas
 
 export default function ContactPage() {
   const { toast } = useToast();
-  const [ref1, isVisible1] = useScrollAnimation();
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,16 +58,16 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-8 px-4 space-y-12">
-      <section ref={ref1} className={cn('text-center scroll-animate', isVisible1 && 'scroll-animate-in')}>
-        <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
-            <Mail className="h-12 w-12 text-accent" />
-        </div>
-        <h1 className="font-headline text-4xl font-bold text-primary">Get in Touch</h1>
-        <p className="text-lg text-muted-foreground mt-2">We'd love to hear from you. Whether you have a question about our tours, or anything else, our team is ready to answer all your questions.</p>
-      </section>
+    <div className="space-y-12">
+      <HeroSection 
+        title="Get in Touch"
+        subtitle="We'd love to hear from you. Whether you have a question about our tours, or anything else, our team is ready to answer all your questions."
+        Icon={Mail}
+        imageUrl={placeholderImages.teamJane.src}
+        dataAiHint={placeholderImages.teamJane.hint}
+      />
       
-      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12')}>
+      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl')}>
         <AnimatedCard>
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary flex items-center"><Send className="mr-2 h-6 w-6 text-accent"/>Send Us a Message</CardTitle>
@@ -115,5 +114,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-    

@@ -11,6 +11,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import HeroSection from '@/components/layout/hero-section';
 
 // Mock data
 const mockBlogPosts: BlogCardProps[] = [
@@ -33,12 +34,13 @@ function AnimatedSection({ children }: { children: React.ReactNode }) {
 export default function BlogPage() {
   return (
     <div className="space-y-8 animate-fade-in">
-      <AnimatedSection>
-        <div className="text-center py-8 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
-          <h1 className="font-headline text-4xl font-bold text-primary mb-2 flex items-center justify-center"><Edit className="mr-3 h-10 w-10"/>Travel Journal</h1>
-          <p className="text-lg text-muted-foreground">Stories, tips, and updates from our adventures in the wild.</p>
-        </div>
-      </AnimatedSection>
+      <HeroSection
+        title="Travel Journal"
+        subtitle="Stories, tips, and updates from our adventures in the wild."
+        Icon={Edit}
+        imageUrl={placeholderImages.blogPostDefault.src}
+        dataAiHint={placeholderImages.blogPostDefault.hint}
+      />
 
       <AnimatedSection>
         <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow">
@@ -83,5 +85,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-    
