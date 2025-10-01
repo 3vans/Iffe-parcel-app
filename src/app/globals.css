@@ -200,13 +200,13 @@ body {
     .carousel-container {
       padding: 1rem 0 0;
     }
+    .carousel {
+        perspective: none;
+    }
   }
 
   @media (max-width: 480px) {
-     .card,
-    .card-left, .card-right,
-    .card-far-left, .card-far-right,
-    .card-center, .card-hidden {
+     .card {
       width: 260px;
     }
   }
@@ -261,14 +261,14 @@ body {
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: hsla(var(--card), 0.2);
-      border-color: hsl(var(--card));
-      color: hsl(var(--card));
+      background: hsla(var(--primary), 0.5);
+      border-color: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
   }
   .nav-button:hover {
-      background: hsla(var(--card), 0.3);
+      background: hsla(var(--primary), 0.7);
       transform: scale(1.1);
-      color: hsl(var(--card));
+      color: hsl(var(--primary-foreground));
   }
   .card-indicators {
       display: flex;
@@ -322,3 +322,5 @@ body {
     z-index: 3;
   }
 }
+
+    
