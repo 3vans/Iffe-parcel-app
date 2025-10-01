@@ -12,7 +12,6 @@ const backgroundImages = [
   placeholderImages.campaignDetailMokoro,
   placeholderImages.galleryElephant,
   placeholderImages.galleryGiraffe,
-  placeholderImages.galleryLioness,
 ];
 
 export default function AnimatedBackground() {
@@ -36,7 +35,7 @@ export default function AnimatedBackground() {
           layout="fill"
           objectFit="cover"
           className={cn(
-            'absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out blur-md scale-110',
+            'absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out',
             index === currentIndex ? 'opacity-30' : 'opacity-0'
           )}
           data-ai-hint={image.hint}

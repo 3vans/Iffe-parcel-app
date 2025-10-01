@@ -37,20 +37,8 @@ export default function Hero() {
 
   return (
     <div ref={ref} className={cn('relative w-full h-[60vh] min-h-[400px] md:min-h-[500px] overflow-hidden rounded-lg shadow-2xl scroll-animate', isVisible && 'scroll-animate-in')}>
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={placeholderImages.campaignDetailWildebeest.src}
-          alt="Wildebeest migration"
-          layout="fill"
-          objectFit="cover"
-          className="w-full h-full"
-          data-ai-hint={placeholderImages.campaignDetailWildebeest.hint}
-          priority
-        />
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
-
+      {/* Background is now handled by AnimatedBackground component */}
+      
       {/* Content Container */}
       <div className="relative h-full flex items-center z-10">
         {/* Left Panel */}
