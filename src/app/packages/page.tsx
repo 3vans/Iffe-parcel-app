@@ -62,11 +62,12 @@ const mockPackages: PackageTier[] = [
 
 const PaintBrushSeparatorSVG = () => (
   <svg
-    className="absolute top-0 right-0 h-full w-[100px] fill-stone-900 z-20 backdrop-blur-sm opacity-70"
+    className="absolute top-0 right-0 h-full w-[100px] z-20 backdrop-blur-sm"
     viewBox="0 0 100 800"
     preserveAspectRatio="none"
     style={{ transform: 'translateX(50%)' }}
     filter="url(#brush-shadow)"
+    fill="currentColor"
   >
     <defs>
       <filter id="brush-shadow" x="-50%" y="0" width="200%" height="100%">
@@ -76,7 +77,6 @@ const PaintBrushSeparatorSVG = () => (
     <g transform="translate(2.5, 0)">
     <path
       d="M 50 0 L 40 15 C 60 25, 40 35, 50 50 L 35 60 C 55 70, 35 80, 45 95 L 55 105 C 35 115, 55 125, 50 140 L 40 155 C 60 165, 40 175, 50 190 L 35 200 C 55 210, 35 220, 45 235 L 55 245 C 35 255, 55 265, 50 280 L 40 295 C 60 305, 40 315, 50 330 L 35 340 C 55 350, 35 360, 45 375 L 55 385 C 35 395, 55 405, 50 420 L 40 435 C 60 445, 40 455, 50 470 L 35 480 C 55 490, 35 500, 45 515 L 55 525 C 35 535, 55 545, 50 560 L 40 575 C 60 585, 40 595, 50 610 L 35 620 C 55 630, 35 640, 45 655 L 55 665 C 35 675, 55 685, 50 700 L 40 715 C 60 725, 40 735, 50 750 L 35 760 C 55 770, 35 780, 45 795 L 55 805 C 35 815, 55 825, 50 840 L 40 855 C 60 865, 40 875, 50 890 L 35 900 C 55 910, 35 920, 45 935 L 55 945 C 35 955, 55 965, 50 980 L 40 995 L 50 1000 L 0 1000 L 0 0 Z"
-      fill="currentColor"
     />
     </g>
   </svg>
@@ -156,12 +156,12 @@ export default function PackagesPage() {
         />
         <div className="absolute inset-0 bg-black/30 z-0"></div>
         <div className="absolute inset-0 h-full flex items-center z-10">
-          <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-stone-900/70 backdrop-blur-sm p-8 md:p-12">
-            <div className="text-left">
+          <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-stone-900/70 dark:bg-stone-900/70 text-stone-900 dark:text-stone-900 backdrop-blur-sm p-8 md:p-12">
+            <div className="text-left text-white dark:text-white">
                <div className="bg-white/20 p-3 rounded-full w-fit mb-4">
                   <Package className="h-10 w-10 md:h-12 md:w-12 text-white" />
                 </div>
-              <h1 className="font-headline text-4xl md:text-5xl font-bold text-white mb-2">Our Safari Packages</h1>
+              <h1 className="font-headline text-4xl md:text-5xl font-bold mb-2">Our Safari Packages</h1>
               <p className="text-lg text-white/80 max-w-md">Choose the perfect adventure that suits your style and budget.</p>
             </div>
             <PaintBrushSeparatorSVG />
@@ -188,3 +188,5 @@ export default function PackagesPage() {
     </div>
   );
 }
+
+    
