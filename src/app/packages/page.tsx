@@ -62,7 +62,7 @@ const mockPackages: PackageTier[] = [
 
 const PaintBrushSeparatorSVG = () => (
   <svg
-    className="absolute top-0 right-0 h-full w-[100px] fill-stone-900/70 z-20"
+    className="absolute top-0 right-0 h-full w-[100px] fill-stone-900 opacity-70 z-20"
     viewBox="0 0 100 800"
     preserveAspectRatio="none"
     style={{ transform: 'translateX(50%)' }}
@@ -72,55 +72,10 @@ const PaintBrushSeparatorSVG = () => (
       <filter id="brush-shadow" x="-50%" y="0" width="200%" height="100%">
         <feDropShadow dx="2" dy="1" stdDeviation="2" floodColor="#000" floodOpacity="0.25" />
       </filter>
-      <linearGradient id="brushstroke-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="white" stopOpacity="0.5" />
-        <stop offset="50%" stopColor="white" stopOpacity="0.9" />
-        <stop offset="100%" stopColor="white" stopOpacity="0.5" />
-      </linearGradient>
-      <mask id="brushstroke-mask">
-        <path
-          d="M 50 0 
-             C 40 50, 60 80, 50 120
-             S 45 180, 52 220
-             C 60 270, 40 300, 50 350
-             S 55 420, 48 480
-             C 40 550, 60 580, 50 630
-             S 45 700, 53 750
-             L 53 800
-             L 100 800
-             L 100 0
-             Z"
-          fill="url(#brushstroke-gradient)"
-        />
-        <path
-          d="M 50 50 
-             C 55 100, 45 130, 50 180 
-             M 50 250 
-             C 45 300, 55 330, 50 380
-             M 50 450 
-             C 55 500, 45 530, 50 580
-             M 50 650
-             C 45 700, 55 730, 50 780"
-          fill="black"
-          stroke="black"
-          strokeWidth="5"
-        />
-      </mask>
     </defs>
     <path
-      d="M 50 0 
-         C 40 50, 60 80, 50 120
-         S 45 180, 52 220
-         C 60 270, 40 300, 50 350
-         S 55 420, 48 480
-         C 40 550, 60 580, 50 630
-         S 45 700, 53 750
-         L 53 800
-         L 0 800
-         L 0 0
-         Z"
+      d="M 50 0 L 40 15 C 60 25, 40 35, 50 50 L 35 60 C 55 70, 35 80, 45 95 L 55 105 C 35 115, 55 125, 50 140 L 40 155 C 60 165, 40 175, 50 190 L 35 200 C 55 210, 35 220, 45 235 L 55 245 C 35 255, 55 265, 50 280 L 40 295 C 60 305, 40 315, 50 330 L 35 340 C 55 350, 35 360, 45 375 L 55 385 C 35 395, 55 405, 50 420 L 40 435 C 60 445, 40 455, 50 470 L 35 480 C 55 490, 35 500, 45 515 L 55 525 C 35 535, 55 545, 50 560 L 40 575 C 60 585, 40 595, 50 610 L 35 620 C 55 630, 35 640, 45 655 L 55 665 C 35 675, 55 685, 50 700 L 40 715 C 60 725, 40 735, 50 750 L 35 760 C 55 770, 35 780, 45 795 L 55 805 C 35 815, 55 825, 50 840 L 40 855 C 60 865, 40 875, 50 890 L 35 900 C 55 910, 35 920, 45 935 L 55 945 C 35 955, 55 965, 50 980 L 40 995 L 50 1000 L 0 1000 L 0 0 Z"
       fill="currentColor"
-      mask="url(#brushstroke-mask)"
     />
   </svg>
 );
