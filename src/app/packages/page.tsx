@@ -146,7 +146,7 @@ export default function PackagesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
+       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex', isHeaderVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
           alt="Safari Packages"
@@ -158,7 +158,7 @@ export default function PackagesPage() {
         />
         <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
         
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex">
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
             <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/80 text-white backdrop-blur-md p-8 md:p-12 rounded-lg md:rounded-l-lg md:rounded-r-none">
               <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">Tour Travel & Adventure Camping</p>
               <h1 className="font-headline text-4xl md:text-5xl font-extrabold mb-4 pb-4 relative bg-gradient-to-r from-white to-yellow-300 bg-clip-text text-transparent">
@@ -204,5 +204,3 @@ export default function PackagesPage() {
     </div>
   );
 }
-
-    
