@@ -73,11 +73,15 @@ const PaintBrushSeparatorSVG = () => (
           <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise"/>
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
+        <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style={{stopColor: 'currentColor', stopOpacity: 0.8}} />
+          <stop offset="100%" style={{stopColor: 'currentColor', stopOpacity: 1}} />
+        </linearGradient>
       </defs>
       <g transform="translate(2.5, 0)">
         <path
             d="M 50 0 L 40 15 C 60 25, 40 35, 50 50 L 35 60 C 55 70, 35 80, 45 95 L 55 105 C 35 115, 55 125, 50 140 L 40 155 C 60 165, 40 175, 50 190 L 35 200 C 55 210, 35 220, 45 235 L 55 245 C 35 255, 55 265, 50 280 L 40 295 C 60 305, 40 315, 50 330 L 35 340 C 55 350, 35 360, 45 375 L 55 385 C 35 395, 55 405, 50 420 L 40 435 C 60 445, 40 455, 50 470 L 35 480 C 55 490, 35 500, 45 515 L 55 525 C 35 535, 55 545, 50 560 L 40 575 C 60 585, 40 595, 50 610 L 35 620 C 55 630, 35 640, 45 655 L 55 665 C 35 675, 55 685, 50 700 L 40 715 C 60 725, 40 735, 50 750 L 35 760 C 55 770, 35 780, 45 795 L 55 805 C 35 815, 55 825, 50 840 L 40 855 C 60 865, 40 875, 50 890 L 35 900 C 55 910, 35 920, 45 935 L 55 945 C 35 955, 55 965, 50 980 L 40 995 L 50 1000 L 0 1000 L 0 0 Z"
-            fill="currentColor"
+            fill="url(#fadeGradient)"
             filter="url(#brush-edge-texture)"
         />
       </g>
@@ -146,7 +150,7 @@ export default function PackagesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex', isHeaderVisible && 'scroll-animate-in')}>
+       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
           alt="Safari Packages"
@@ -158,7 +162,7 @@ export default function PackagesPage() {
         />
         <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
         
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+        <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
             <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/80 text-white backdrop-blur-md p-8 md:p-12 rounded-lg md:rounded-l-lg md:rounded-r-none">
               <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">Tour Travel & Adventure Camping</p>
               <h1 className="font-headline text-4xl md:text-5xl font-extrabold mb-4 pb-4 relative bg-gradient-to-r from-white to-yellow-300 bg-clip-text text-transparent">
@@ -204,3 +208,5 @@ export default function PackagesPage() {
     </div>
   );
 }
+
+    
