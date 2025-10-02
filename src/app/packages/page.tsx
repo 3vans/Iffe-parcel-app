@@ -9,7 +9,6 @@ import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import placeholderImages from "@/app/lib/placeholder-images.json";
-import HeroSection from "@/components/layout/hero-section";
 
 interface PackageTier {
     id: string;
@@ -61,25 +60,69 @@ const mockPackages: PackageTier[] = [
     }
 ];
 
-const BrushStrokeSeparator = () => (
-    <div className="w-full -mt-8 md:-mt-12 mb-8 relative z-10">
-        <svg width="100%" height="100" viewBox="0 0 1200 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="brushGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="hsl(var(--primary))" />
-                <stop offset="100%" stopColor="hsl(var(--accent))" />
-                </linearGradient>
-                <filter id="brushTexture">
-                <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise"/>
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
-                </filter>
-            </defs>
-            <path d="M-50,50 C100,30 200,80 350,50 C500,20 600,90 750,50 C900,10 1000,70 1150,50 L1250,50 L1250,80 C1100,100 950,20 800,70 C650,100 500,10 350,70 C200,100 50,20 -50,70 Z"
-                fill="url(#brushGradient)"
-                filter="url(#brushTexture)"
-                opacity="0.85"/>
-        </svg>
-    </div>
+const PaintBrushSeparatorSVG = () => (
+  <svg
+    className="absolute top-0 right-0 h-full w-[100px] text-background/80 backdrop-blur-sm z-20"
+    viewBox="0 0 100 800"
+    preserveAspectRatio="none"
+    style={{ transform: 'translateX(50%)' }}
+    filter="url(#brush-shadow)"
+  >
+    <defs>
+      <filter id="brush-shadow" x="-20%" y="-5%" width="140%" height="110%">
+        <feDropShadow dx="5" dy="5" stdDeviation="5" floodColor="#000000" floodOpacity="0.2" />
+      </filter>
+      <linearGradient id="brushstroke-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+        <stop offset="50%" stopColor="white" stopOpacity="0.9" />
+        <stop offset="100%" stopColor="white" stopOpacity="0.5" />
+      </linearGradient>
+      <mask id="brushstroke-mask">
+        <path
+          d="M 50 0 
+             C 40 50, 60 80, 50 120
+             S 45 180, 52 220
+             C 60 270, 40 300, 50 350
+             S 55 420, 48 480
+             C 40 550, 60 580, 50 630
+             S 45 700, 53 750
+             L 53 800
+             L 100 800
+             L 100 0
+             Z"
+          fill="url(#brushstroke-gradient)"
+        />
+        <path
+          d="M 50 50 
+             C 55 100, 45 130, 50 180 
+             M 50 250 
+             C 45 300, 55 330, 50 380
+             M 50 450 
+             C 55 500, 45 530, 50 580
+             M 50 650
+             C 45 700, 55 730, 50 780"
+          fill="black"
+          stroke="black"
+          strokeWidth="5"
+        />
+      </mask>
+    </defs>
+    <path
+      d="M 50 0 
+         C 40 50, 60 80, 50 120
+         S 45 180, 52 220
+         C 60 270, 40 300, 50 350
+         S 55 420, 48 480
+         C 40 550, 60 580, 50 630
+         S 45 700, 53 750
+         L 53 800
+         L 0 800
+         L 0 0
+         Z"
+      fill="currentColor"
+      mask="url(#brushstroke-mask)"
+    />
+  </svg>
 );
 
 
@@ -137,21 +180,40 @@ export default function PackagesPage() {
         );
     };
 
+    const [headerRef, isHeaderVisible] = useScrollAnimation();
     const [footerRef, isFooterVisible] = useScrollAnimation();
+    const heroImage = 'https://picsum.photos/seed/pkg2/1200/400';
+    const heroDataAiHint = 'luxury safari tent';
 
   return (
     <div className="space-y-8 animate-fade-in">
-       <HeroSection
-        title="Our Safari Packages"
-        subtitle="Choose the perfect adventure that suits your style and budget."
-        Icon={Package}
-        imageUrl={'https://picsum.photos/seed/pkg2/1200/400'}
-        dataAiHint={'luxury safari tent'}
-      />
-      
-      <BrushStrokeSeparator />
+       <section ref={headerRef} className={cn('relative w-full min-h-[400px] overflow-hidden rounded-lg shadow-lg scroll-animate', isHeaderVisible && 'scroll-animate-in')}>
+        <Image
+          src={heroImage}
+          alt="Safari Packages"
+          layout="fill"
+          objectFit="cover"
+          className="z-0"
+          data-ai-hint={heroDataAiHint}
+          priority
+        />
+        <div className="absolute inset-0 bg-black/30 z-0"></div>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="relative h-full flex items-center z-10 min-h-[400px]">
+          <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-background/80 backdrop-blur-sm p-8 md:p-12 min-h-[400px]">
+            <div className="text-left">
+               <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
+                  <Package className="h-10 w-10 md:h-12 md:w-12 text-accent" />
+                </div>
+              <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary mb-2">Our Safari Packages</h1>
+              <p className="text-lg text-muted-foreground max-w-md">Choose the perfect adventure that suits your style and budget.</p>
+            </div>
+            <PaintBrushSeparatorSVG />
+          </div>
+        </div>
+      </section>
+      
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
         {mockPackages.map(pkg => (
             <AnimatedPackageCard key={pkg.id} pkg={pkg} />
         ))}
@@ -170,3 +232,5 @@ export default function PackagesPage() {
     </div>
   );
 }
+
+    
