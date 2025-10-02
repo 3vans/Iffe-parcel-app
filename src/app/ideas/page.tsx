@@ -168,15 +168,121 @@ export default function IdeaBoxPage() {
         );
     };
 
+    const [headerRef, isHeaderVisible] = useScrollAnimation();
+    const heroImage = placeholderImages.ideaFamilySafari.src;
+    const heroDataAiHint = placeholderImages.ideaFamilySafari.hint;
+
+
   return (
     <div className="space-y-8 animate-fade-in">
-      <HeroSection 
-        title="Dream Trips"
-        subtitle="Suggest new destinations and vote on where we should go next!"
-        Icon={Lightbulb}
-        imageUrl={placeholderImages.ideaFamilySafari.src}
-        dataAiHint={placeholderImages.ideaFamilySafari.hint}
-      />
+      <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
+        <Image
+          src={heroImage}
+          alt="Dream Trips"
+          layout="fill"
+          objectFit="cover"
+          className="z-0"
+          data-ai-hint={heroDataAiHint}
+          priority
+        />
+        <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
+        
+        <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
+            <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-gradient-to-r from-stone-900/80 via-stone-900/80 to-transparent text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
+              <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">Community Wishlist</p>
+              <h1 className="font-headline text-4xl md:text-5xl font-extrabold mb-4 pb-4 relative bg-gradient-to-r from-white to-yellow-300 bg-clip-text text-transparent">
+                Dream Trips
+                 <span className="absolute bottom-0 left-0 w-20 h-0.5 bg-gradient-to-r from-yellow-400 to-transparent"></span>
+              </h1>
+              <p className="text-lg text-slate-300 max-w-md mb-8">
+                Suggest new destinations and vote on where we should go next!
+              </p>
+              <div className="flex flex-wrap items-center gap-4">
+                 <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+                     setIsDialogOpen(isOpen);
+                     if (!isOpen) {
+                        reset();
+                        setImagePreviewUrl(null);
+                     }
+                }}>
+                  <DialogTrigger asChild>
+                    <Button size="lg" className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105">
+                        <PlusCircle className="mr-2 h-5 w-5" /> Suggest a Trip Idea
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="font-headline text-2xl text-primary">Submit Your Idea</DialogTitle>
+                      <DialogDescription>
+                        Share your brilliant ideas for new tours and destinations.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit(onSubmitIdea)} className="grid gap-4 py-4">
+                      <div>
+                        <Label htmlFor="title" className="text-right font-semibold">
+                          Trip Idea / Title
+                        </Label>
+                        <Input id="title" {...register('title')} className="col-span-3 mt-1" />
+                        {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
+                      </div>
+                      <div>
+                        <Label htmlFor="description" className="text-right font-semibold">
+                          Description
+                        </Label>
+                        <Textarea id="description" {...register('description')} className="col-span-3 mt-1" rows={4} />
+                        {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="imageUpload" className="text-right font-semibold flex items-center">
+                          <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Image (Optional)
+                        </Label>
+                        <Input 
+                          id="imageUpload" 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={handleImageFileChange} 
+                          className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                        />
+                      </div>
+
+                      {(imagePreviewUrl || (currentImageUrl && currentImageUrl.startsWith('data:image'))) && (
+                        <div className="mt-2 col-span-3">
+                          <Label className="font-semibold">Image Preview:</Label>
+                          <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
+                            <Image src={imagePreviewUrl || currentImageUrl || ''} alt="Idea preview" fill objectFit="contain" />
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div>
+                        <Label htmlFor="imageUrl" className="text-right font-semibold">Or Paste Image URL (Optional)</Label>
+                        <Input 
+                            id="imageUrl" 
+                            {...register('imageUrl')} 
+                            className="col-span-3 mt-1" 
+                            placeholder="https://example.com/image.png"
+                        />
+                        {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
+                      </div>
+
+                      <div>
+                        <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (for AI)</Label>
+                        <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., nature community (max 2 words)" />
+                        {errors.dataAiHint && <p className="text-sm text-destructive mt-1">{errors.dataAiHint.message}</p>}
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-primary/90">
+                          {isSubmitting ? 'Submitting...' : 'Submit Idea'}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </div>
+      </section>
 
       <div className="text-center">
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
@@ -187,7 +293,7 @@ export default function IdeaBoxPage() {
              }
         }}>
           <DialogTrigger asChild>
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 sr-only">
               <PlusCircle className="mr-2 h-5 w-5" /> Suggest a Trip Idea
             </Button>
           </DialogTrigger>
