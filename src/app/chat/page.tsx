@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Smile, MessageCircle } from 'lucide-react';
+import { Send, Smile } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -110,7 +110,7 @@ export default function ChatPage() {
       <HeroSection 
         title="Traveler Chat"
         subtitle="Connect with our team and other travelers."
-        Icon={MessageCircle}
+        iconName="MessageCircle"
       />
       <div ref={ref} className={cn('flex flex-col h-[60vh] bg-background scroll-animate border rounded-lg shadow-lg', isVisible && 'scroll-animate-in')}>
         <ScrollArea className="flex-grow bg-muted/20">

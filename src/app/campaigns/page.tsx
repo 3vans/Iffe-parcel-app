@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tag, ArrowRight, PlusCircle, MountainSnow } from 'lucide-react';
+import { Tag, ArrowRight, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
@@ -95,7 +95,7 @@ export default function CampaignsPage() {
       <HeroSection 
         title="Our Safari Tours"
         subtitle="Discover and book adventures that make a difference."
-        Icon={MountainSnow}
+        iconName="MountainSnow"
         imageUrl={placeholderImages.campaignDetailWildebeest.src}
         dataAiHint={placeholderImages.campaignDetailWildebeest.hint}
       />

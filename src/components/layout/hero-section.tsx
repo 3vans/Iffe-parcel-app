@@ -3,21 +3,21 @@
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { type LucideIcon } from 'lucide-react';
+import { type LucideIcon, icons } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import placeholderImages from '@/app/lib/placeholder-images.json';
 
 interface HeroSectionProps {
   title: string;
   subtitle?: string;
   imageUrl?: string;
   dataAiHint?: string;
-  Icon?: LucideIcon;
+  iconName?: keyof typeof icons;
   className?: string;
 }
 
-export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, Icon, className }: HeroSectionProps) {
+export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, iconName, className }: HeroSectionProps) {
   const [ref, isVisible] = useScrollAnimation();
+  const Icon = iconName ? icons[iconName] : null;
 
   return (
     <section ref={ref} className={cn('relative text-center py-12 md:py-20 rounded-lg overflow-hidden bg-gradient-to-r from-primary/10 to-accent/10 scroll-animate', isVisible && 'scroll-animate-in', className)}>

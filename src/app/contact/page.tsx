@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Users, Send } from "lucide-react";
+import { Users, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
@@ -62,7 +62,7 @@ export default function ContactPage() {
       <HeroSection 
         title="Get in Touch"
         subtitle="We'd love to hear from you. Whether you have a question about our tours, or anything else, our team is ready to answer all your questions."
-        Icon={Mail}
+        iconName="Mail"
         imageUrl={placeholderImages.teamJane.src}
         dataAiHint={placeholderImages.teamJane.hint}
       />

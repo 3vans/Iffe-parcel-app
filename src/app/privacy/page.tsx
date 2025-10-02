@@ -2,7 +2,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import HeroSection from "@/components/layout/hero-section";
@@ -14,7 +13,7 @@ export default function PrivacyPage() {
     <div className="space-y-8">
       <HeroSection 
         title="Privacy Policy"
-        Icon={Shield}
+        iconName="Shield"
       />
       <div className="container mx-auto max-w-3xl py-8 px-4">
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>

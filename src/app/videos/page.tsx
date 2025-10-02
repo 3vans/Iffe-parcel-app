@@ -69,7 +69,7 @@ export default function VideoLibraryPage() {
       <HeroSection 
         title="Video Library"
         subtitle="Watch highlights, trainings, testimonials, and more."
-        Icon={PlayCircle}
+        iconName="PlayCircle"
         imageUrl={'https://placehold.co/1200x400.png'}
         dataAiHint={'video library'}
       />

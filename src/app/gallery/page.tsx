@@ -2,7 +2,6 @@
 import GalleryClientContent from '@/components/gallery/gallery-client-content';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import HeroSection from '@/components/layout/hero-section';
-import { ImageIcon } from 'lucide-react';
 
 // Define the type here for server-side processing
 interface GalleryImage {
@@ -33,7 +32,7 @@ export default async function GalleryPage() {
         <HeroSection 
           title="Safari Gallery"
           subtitle="Moments from our tours, captured by guides and travelers."
-          Icon={ImageIcon}
+          iconName="Image"
           imageUrl={placeholderImages.gallerySafariGroup.src}
           dataAiHint={placeholderImages.gallerySafariGroup.hint}
         />

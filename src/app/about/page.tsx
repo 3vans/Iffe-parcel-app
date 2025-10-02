@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, Info } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import HeroSection from "@/components/layout/hero-section";
@@ -16,7 +16,7 @@ export default function AboutPage() {
        <HeroSection
         title="About iffe-travels"
         subtitle="Your adventure into the wild begins with a story."
-        Icon={Info}
+        iconName="Info"
         imageUrl={placeholderImages.gallerySafariGroup.src}
         dataAiHint={placeholderImages.gallerySafariGroup.hint}
       />
