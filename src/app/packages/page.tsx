@@ -62,15 +62,15 @@ const mockPackages: PackageTier[] = [
 
 const PaintBrushSeparatorSVG = () => (
   <svg
-    className="absolute top-0 right-0 h-full w-[100px] text-background/80 backdrop-blur-sm z-20"
+    className="absolute top-0 right-0 h-full w-[100px] fill-stone-900/70 z-20"
     viewBox="0 0 100 800"
     preserveAspectRatio="none"
     style={{ transform: 'translateX(50%)' }}
     filter="url(#brush-shadow)"
   >
     <defs>
-      <filter id="brush-shadow" x="-20%" y="-5%" width="140%" height="110%">
-        <feDropShadow dx="5" dy="5" stdDeviation="5" floodColor="#000000" floodOpacity="0.2" />
+      <filter id="brush-shadow" x="-50%" y="0" width="200%" height="100%">
+        <feDropShadow dx="2" dy="1" stdDeviation="2" floodColor="#000" floodOpacity="0.25" />
       </filter>
       <linearGradient id="brushstroke-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="white" stopOpacity="0.5" />
@@ -199,13 +199,13 @@ export default function PackagesPage() {
         />
         <div className="absolute inset-0 bg-black/30 z-0"></div>
         <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
-          <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-background/80 backdrop-blur-sm p-8 md:p-12 min-h-[400px]">
+          <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-stone-900/70 backdrop-blur-sm p-8 md:p-12 min-h-[400px]">
             <div className="text-left">
-               <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
-                  <Package className="h-10 w-10 md:h-12 md:w-12 text-accent" />
+               <div className="bg-white/20 p-3 rounded-full w-fit mb-4">
+                  <Package className="h-10 w-10 md:h-12 md:w-12 text-white" />
                 </div>
-              <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary mb-2">Our Safari Packages</h1>
-              <p className="text-lg text-muted-foreground max-w-md">Choose the perfect adventure that suits your style and budget.</p>
+              <h1 className="font-headline text-4xl md:text-5xl font-bold text-white mb-2">Our Safari Packages</h1>
+              <p className="text-lg text-white/80 max-w-md">Choose the perfect adventure that suits your style and budget.</p>
             </div>
             <PaintBrushSeparatorSVG />
           </div>
@@ -231,5 +231,3 @@ export default function PackagesPage() {
     </div>
   );
 }
-
-    
