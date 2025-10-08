@@ -323,4 +323,20 @@ body {
     position: relative;
     z-index: 3;
   }
+
+  /* Sailing Boat Preloader Animations */
+  .boat-rock {
+    animation: rock-boat 4s ease-in-out infinite;
+  }
+  .waves-move {
+    animation: move-waves 8s linear infinite;
+  }
+  @keyframes rock-boat {
+    0%, 100% { transform: rotate(0deg); transform-origin: bottom center; }
+    50% { transform: rotate(1.5deg); transform-origin: bottom center; }
+  }
+  @keyframes move-waves {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100px); }
+  }
 }
