@@ -116,8 +116,8 @@ const AppHeader = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuGroup>
-                    <DropdownMenuLabel>Our Tours</DropdownMenuLabel>
+                 <DropdownMenuGroup>
+                    <DropdownMenuLabel>Packages & Tours</DropdownMenuLabel>
                     <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />All Packages</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/events"><CalendarClock className="mr-2 h-4 w-4" />Scheduled Departures</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -127,8 +127,6 @@ const AppHeader = () => {
                     <DropdownMenuItem asChild><Link href="/discover-jinja"><Waves className="mr-2 h-4 w-4" />Discover Jinja</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/sipi-falls"><MountainSnow className="mr-2 h-4 w-4" />Sipi Falls Experience</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
-                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link href="/ideas"><Lightbulb className="mr-2 h-4 w-4" />Suggest a Dream Trip</Link></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -150,16 +148,17 @@ const AppHeader = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" asChild>
-              <Link href="/about">
-                <Info className="mr-1 h-4 w-4" /> About
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/contact">
-                <Mail className="mr-1 h-4 w-4" /> Contact
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                  <PlusCircle className="mr-1 h-4 w-4" /> Create <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild><Link href="/ideas"><Lightbulb className="mr-2 h-4 w-4" />Suggest a Dream Trip</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link href="/blog/submit"><Edit3 className="mr-2 h-4 w-4" />Share a Story</Link></DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Separator orientation="vertical" className="h-6 mx-2 bg-border" />
             {status === 'loading' ? (
@@ -212,82 +211,81 @@ const AppHeader = () => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             )}
+            <ThemeToggleButton />
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 lg:hidden">
             <ThemeToggleButton />
             
-            <div className="lg:hidden">
-              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Open menu">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[280px] sm:w-[320px] flex flex-col bg-card/95 backdrop-blur-lg p-0">
-                  <SheetHeader className="p-4 border-b">
-                     <SheetTitle className="flex items-center gap-2 text-primary">
-                       <Globe size={20} className="text-primary" /> iffe-travels
-                    </SheetTitle>
-                  </SheetHeader>
-                  <nav className="flex-grow overflow-y-auto p-4 space-y-2">
-                    {mobileNavItems.map((item) => (
-                      <SheetClose asChild key={item.href}>
-                        <Link
-                          href={item.href}
-                          className="flex items-center p-3 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
-                        >
-                          <item.icon className="mr-3 h-5 w-5 text-accent" />
-                          {item.label}
-                        </Link>
-                      </SheetClose>
-                    ))}
-                    {session?.user && (
-                        <>
-                         <Separator className="my-4" />
-                          <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">My Account</p>
-                          {mobileProfileItems.map((item) => (
-                              <SheetClose asChild key={item.href}>
-                                <Link
-                                  href={item.href}
-                                  className="flex items-center p-3 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
-                                >
-                                  <item.icon className="mr-3 h-5 w-5 text-accent" />
-                                  {item.label}
-                                </Link>
-                              </SheetClose>
-                          ))}
-                        </>
-                    )}
-                  </nav>
-                  <Separator className="my-2" />
-                  <div className="p-4 space-y-3 border-t">
-                    {status === 'loading' ? (
-                      <Button variant="outline" className="w-full justify-start p-3 text-base" disabled>Loading...</Button>
-                    ) : session?.user ? (
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open menu">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] sm:w-[320px] flex flex-col bg-card/95 backdrop-blur-lg p-0">
+                <SheetHeader className="p-4 border-b">
+                   <SheetTitle className="flex items-center gap-2 text-primary">
+                     <Globe size={20} className="text-primary" /> iffe-travels
+                  </SheetTitle>
+                </SheetHeader>
+                <nav className="flex-grow overflow-y-auto p-4 space-y-2">
+                  {mobileNavItems.map((item) => (
+                    <SheetClose asChild key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="flex items-center p-3 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
+                      >
+                        <item.icon className="mr-3 h-5 w-5 text-accent" />
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  {session?.user && (
+                      <>
+                       <Separator className="my-4" />
+                        <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">My Account</p>
+                        {mobileProfileItems.map((item) => (
+                            <SheetClose asChild key={item.href}>
+                              <Link
+                                href={item.href}
+                                className="flex items-center p-3 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
+                              >
+                                <item.icon className="mr-3 h-5 w-5 text-accent" />
+                                {item.label}
+                              </Link>
+                            </SheetClose>
+                        ))}
+                      </>
+                  )}
+                </nav>
+                <Separator className="my-2" />
+                <div className="p-4 space-y-3 border-t">
+                  {status === 'loading' ? (
+                    <Button variant="outline" className="w-full justify-start p-3 text-base" disabled>Loading...</Button>
+                  ) : session?.user ? (
+                    <SheetClose asChild>
+                      <Button variant="outline" className="w-full justify-start p-3 text-base" onClick={handleSignOut}>
+                        <LogOut className="mr-3 h-5 w-5 text-accent"/> Sign Out
+                      </Button>
+                    </SheetClose>
+                  ) : (
+                    <>
                       <SheetClose asChild>
-                        <Button variant="outline" className="w-full justify-start p-3 text-base" onClick={handleSignOut}>
-                          <LogOut className="mr-3 h-5 w-5 text-accent"/> Sign Out
+                        <Button variant="outline" className="w-full justify-start p-3 text-base" onClick={openLoginModalDirectly}>
+                          <LogIn className="mr-3 h-5 w-5 text-accent"/> Login
                         </Button>
                       </SheetClose>
-                    ) : (
-                      <>
-                        <SheetClose asChild>
-                          <Button variant="outline" className="w-full justify-start p-3 text-base" onClick={openLoginModalDirectly}>
-                            <LogIn className="mr-3 h-5 w-5 text-accent"/> Login
-                          </Button>
-                        </SheetClose>
-                        <SheetClose asChild>
-                          <Button className="w-full justify-start p-3 text-base bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => openSignupModal()}>
-                            <UserPlus className="mr-3 h-5 w-5"/> Sign Up
-                          </Button>
-                        </SheetClose>
-                      </>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+                      <SheetClose asChild>
+                        <Button className="w-full justify-start p-3 text-base bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => openSignupModal()}>
+                          <UserPlus className="mr-3 h-5 w-5"/> Sign Up
+                        </Button>
+                      </SheetClose>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
       </header>
@@ -298,4 +296,3 @@ const AppHeader = () => {
 };
 
 export default AppHeader;
-
