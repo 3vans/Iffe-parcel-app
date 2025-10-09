@@ -67,7 +67,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <SidebarContent className="flex flex-col justify-center flex-grow">
           <SidebarMenu className="px-2 pb-2 pt-0 space-y-1">
             {adminNavItems.map((item) => {
-              const isActive = pathname === item.href || (pathname.startsWith(item.href + '/') && item.href !== '/admin');
+              const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
               return (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton
@@ -106,5 +106,3 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </SidebarProvider>
   );
 }
-
-    

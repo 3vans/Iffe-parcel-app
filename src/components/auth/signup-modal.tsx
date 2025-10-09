@@ -16,7 +16,7 @@ interface SignupModalProps {
   initialStep?: AccountType | null;
 }
 
-type AccountType = "user" | "community" | "erotaract";
+type AccountType = "user" | "erotaract";
 
 export default function SignupModal({ open, onOpenChange, initialStep = null }: SignupModalProps) {
   const [step, setStep] = useState(initialStep ? 2 : 1);
@@ -92,15 +92,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
       password,
       accountType: selectedAccountType,
     };
-
-    if (selectedAccountType === 'community') {
-      if (!clubName.trim()) {
-        toast({ title: "Club Name Required", description: "Please enter your Rotaract club name.", variant: "destructive" });
-        setIsLoading(false);
-        return;
-      }
-      requestBody.clubName = clubName;
-    }
     
     // Basic validation for common fields
     if (!name.trim() || !email.trim() || !password.trim()) {
@@ -112,13 +103,10 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
 
     try {
       // NOTE: In a real app, you would have a dedicated API route like '/api/auth/register'.
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      });
-
-      const result = await response.json();
+      // For this mock, we'll just simulate success.
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = { message: "Your account has been created." };
+      const response = { ok: true };
 
 
       if (response.ok) {
@@ -126,13 +114,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
           title: "Registration Successful!",
           description: result.message || "Your account has been created.",
         });
-        if (selectedAccountType === 'community') {
-             toast({
-                title: "Application Submitted",
-                description: "Your community membership application is pending admin approval.",
-                duration: 5000,
-            });
-        }
         handleCloseModal();
       } else {
         toast({
@@ -178,7 +159,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
           <DialogDescription>
             {step === 1 && "Choose the type of account you'd like to create."}
             {step === 2 && currentAccountType === "user" && "Sign up for a free user account."}
-            {step === 2 && currentAccountType === "community" && "Apply to link your existing local Rotaract club membership."}
             {step === 2 && currentAccountType === "erotaract" && "Join the Explorer's Club (Paid Membership)."}
           </DialogDescription>
         </DialogHeader>
@@ -222,32 +202,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
             <DialogFooter>
               <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
                 {isLoading ? 'Creating Account...' : 'Create Free Account'}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
-
-        {step === 2 && currentAccountType === "community" && (
-           <form onSubmit={(e) => { e.preventDefault(); handleApiSubmit('community'); }} className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="community-name">Full Name</Label>
-              <Input id="community-name" value={name} onChange={(e) => setName(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div>
-              <Label htmlFor="community-email">Email</Label>
-              <Input id="community-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div>
-              <Label htmlFor="community-password">Password</Label>
-              <Input id="community-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} />
-            </div>
-             <div>
-              <Label htmlFor="community-club">Rotaract Club Name</Label>
-              <Input id="community-club" value={clubName} onChange={(e) => setClubName(e.target.value)} required disabled={isLoading} placeholder="E.g., Rotaract Club of Kampala South" />
-            </div>
-            <DialogFooter>
-              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-                {isLoading ? 'Submitting...' : 'Submit Community Application'}
               </Button>
             </DialogFooter>
           </form>

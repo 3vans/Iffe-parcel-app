@@ -7,7 +7,7 @@
     "rating": "92",
     "speed": "8 Days",
     "skill": "5 Activities",
-    "image": "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    "image": "fifaCardGorilla",
     "dataAiHint": "mountain gorilla",
     "link": "/campaigns/2"
   },
@@ -18,7 +18,7 @@
     "rating": "93",
     "speed": "9 Days",
     "skill": "6 Activities",
-    "image": "https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    "image": "fifaCardMasai",
     "dataAiHint": "safari group sunset",
     "link": "/campaigns/1"
   },
@@ -29,7 +29,7 @@
     "rating": "91",
     "speed": "7 Days",
     "skill": "4 Activities",
-    "image": "https://images.unsplash.com/photo-1598894595350-70d01b93b6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    "image": "fifaCardOkavango",
     "dataAiHint": "mokoro canoe delta",
     "link": "/campaigns/3"
   },
@@ -40,9 +40,9 @@
     "rating": "89",
     "speed": "10 Days",
     "skill": "8 Activities",
-    "image": "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    "image": "fifaCardNile",
     "dataAiHint": "nile river cruise",
-    "link": "/campaigns/2"
+    "link": "/discover-jinja"
   },
   {
     "id": "5",
@@ -51,7 +51,7 @@
     "rating": "94",
     "speed": "12 Days",
     "skill": "3 Activities",
-    "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    "image": "fifaCardKili",
     "dataAiHint": "mount kilimanjaro",
     "link": "/campaigns/1"
   }

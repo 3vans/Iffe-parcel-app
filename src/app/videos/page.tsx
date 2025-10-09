@@ -6,7 +6,7 @@ import { PlayCircle, UploadCloud, ListFilter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
-import HeroSection from '@/components/layout/hero-section';
+import placeholderImages from '@/app/lib/placeholder-images.json';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -22,12 +22,12 @@ interface VideoItem {
 }
 
 const mockVideoData: VideoItem[] = [
-  { id: 'v1', title: 'Rotary International Convention Highlights', description: 'Relive the best moments from the annual convention.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'conference stage', youtubeVideoId: 'dQw4w9WgXcQ', category: 'Events', duration: '5:20' },
-  { id: 'v2', title: 'Leadership Training Workshop Part 1', description: 'Essential skills for aspiring leaders in our community.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'training presentation', category: 'Trainings', duration: '45:12' },
-  { id: 'v3', title: 'Clean Water Campaign Impact Story', description: 'See how your contributions are changing lives.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'water pump', youtubeVideoId: 'rokGy0huYEA', category: 'Campaigns', duration: '3:15' },
-  { id: 'v4', title: 'A Rotaractor\'s Journey: Testimonial', description: 'Hear from a member about their experiences.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'person interview', category: 'Testimonials', duration: '7:45' },
-  { id: 'v5', title: 'Youth Summit 2023 Recap', description: 'Highlights from the inspiring sessions at the Youth Summit.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'youth event', category: 'Events', duration: '8:03' },
-  { id: 'v6', title: 'Project Management Basics', description: 'A quick guide to managing successful Rotary projects.', thumbnailUrl: 'https://placehold.co/600x338.png', dataAiHint: 'planning board', category: 'Trainings', duration: '22:50' },
+  { id: 'v1', title: 'Rotary International Convention Highlights', description: 'Relive the best moments from the annual convention.', thumbnailUrl: placeholderImages.videoThumbConference.src, dataAiHint: placeholderImages.videoThumbConference.hint, youtubeVideoId: 'dQw4w9WgXcQ', category: 'Events', duration: '5:20' },
+  { id: 'v2', title: 'Leadership Training Workshop Part 1', description: 'Essential skills for aspiring leaders in our community.', thumbnailUrl: placeholderImages.videoThumbTraining.src, dataAiHint: placeholderImages.videoThumbTraining.hint, category: 'Trainings', duration: '45:12' },
+  { id: 'v3', title: 'Clean Water Campaign Impact Story', description: 'See how your contributions are changing lives.', thumbnailUrl: placeholderImages.videoThumbWater.src, dataAiHint: placeholderImages.videoThumbWater.hint, youtubeVideoId: 'rokGy0huYEA', category: 'Campaigns', duration: '3:15' },
+  { id: 'v4', title: 'A Rotaractor\'s Journey: Testimonial', description: 'Hear from a member about their experiences.', thumbnailUrl: placeholderImages.videoThumbTestimonial.src, dataAiHint: placeholderImages.videoThumbTestimonial.hint, category: 'Testimonials', duration: '7:45' },
+  { id: 'v5', title: 'Youth Summit 2023 Recap', description: 'Highlights from the inspiring sessions at the Youth Summit.', thumbnailUrl: placeholderImages.videoThumbYouth.src, dataAiHint: placeholderImages.videoThumbYouth.hint, category: 'Events', duration: '8:03' },
+  { id: 'v6', title: 'Project Management Basics', description: 'A quick guide to managing successful Rotary projects.', thumbnailUrl: placeholderImages.videoThumbPlanning.src, dataAiHint: placeholderImages.videoThumbPlanning.hint, category: 'Trainings', duration: '22:50' },
 ];
 
 const availableCategories = ['Events', 'Trainings', 'Campaigns', 'Testimonials', 'All'];
@@ -35,7 +35,7 @@ const availableCategories = ['Events', 'Trainings', 'Campaigns', 'Testimonials',
 export default function VideoLibraryPage() {
   const [headerRef, isHeaderVisible] = useScrollAnimation();
   const [filterRef, isFilterVisible] = useScrollAnimation();
-  const heroImage = 'https://placehold.co/1200x400.png';
+  const heroImage = placeholderImages.videoPlaceholder.src;
   const heroDataAiHint = 'video library';
 
 
@@ -45,7 +45,7 @@ export default function VideoLibraryPage() {
       <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
         <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
           <div className="relative w-full aspect-video bg-muted">
-            <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover" data-ai-hint={video.dataAiHint} />
+            <Image src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover" data-ai-hint={video.dataAiHint} layout="fill" />
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <PlayCircle className="h-16 w-16 text-white/80" />
             </div>

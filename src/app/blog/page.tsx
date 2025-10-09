@@ -16,8 +16,8 @@ import Image from 'next/image';
 // Mock data
 const mockBlogPosts: BlogCardProps[] = [
   { id: '1', title: 'The Thrill of the Hunt: Spotting Leopards in the Wild', author: 'Safari Jane', date: 'Oct 26, 2023', excerpt: 'Patience is key when tracking the elusive leopard. A story of a week-long pursuit that ended in a magical sighting.', imageUrl: placeholderImages.galleryLioness.src, dataAiHint: 'leopard tree', tags: ['#BigCats', '#Leopard'], commentCount: 12 },
-  { id: '2', title: 'Birdwatcher\'s Paradise: The Shoebill of Mabamba Swamp', author: 'Ranger Tom', date: 'Oct 22, 2023', excerpt: 'Journey into the swamps of Uganda to find one of the world\'s most prehistoric and sought-after birds.', imageUrl: 'https://picsum.photos/seed/shoebill/600/400', dataAiHint: 'shoebill stork', tags: ['#Birdwatching', '#Uganda'], commentCount: 8 },
-  { id: '3', title: 'A Guide to Ethical Wildlife Photography', author: 'Ethical Explorer', date: 'Oct 18, 2023', excerpt: 'Learn how to capture stunning wildlife photos without disturbing the animals or their habitats. Our top tips for responsible photography.', imageUrl: 'https://picsum.photos/seed/photographer/600/400', dataAiHint: 'camera wildlife', tags: ['#Photography', '#Conservation'], commentCount: 25 },
+  { id: '2', title: 'Birdwatcher\'s Paradise: The Shoebill of Mabamba Swamp', author: 'Ranger Tom', date: 'Oct 22, 2023', excerpt: 'Journey into the swamps of Uganda to find one of the world\'s most prehistoric and sought-after birds.', imageUrl: placeholderImages.blogShoebill.src, dataAiHint: 'shoebill stork', tags: ['#Birdwatching', '#Uganda'], commentCount: 8 },
+  { id: '3', title: 'A Guide to Ethical Wildlife Photography', author: 'Ethical Explorer', date: 'Oct 18, 2023', excerpt: 'Learn how to capture stunning wildlife photos without disturbing the animals or their habitats. Our top tips for responsible photography.', imageUrl: placeholderImages.blogPhotographer.src, dataAiHint: 'camera wildlife', tags: ['#Photography', '#Conservation'], commentCount: 25 },
 ];
 
 const availableTags = ['#BigCats', '#Leopard', '#Birdwatching', '#Uganda', '#Photography', '#Conservation', '#Serengeti', '#Okavango'];
@@ -37,7 +37,7 @@ export default function BlogPage() {
   const heroDataAiHint = placeholderImages.blogPostDefault.hint;
   return (
     <div className="space-y-8 animate-fade-in">
-      <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
+       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
           alt="Travel Journal"

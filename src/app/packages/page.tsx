@@ -32,8 +32,8 @@ const mockPackages: PackageTier[] = [
         features: ['5-Day Group Tour', 'Standard Accommodations', 'Key Highlight Visits', 'Community Support'],
         buttonText: 'Learn More',
         buttonLink: '/campaigns/1',
-        imageUrl: 'https://picsum.photos/seed/pkg1/600/400',
-        dataAiHint: 'safari group happy',
+        imageUrl: placeholderImages.pkgExplorer.src,
+        dataAiHint: placeholderImages.pkgExplorer.hint,
     },
     {
         id: 'pkg_adventurer',
@@ -44,8 +44,8 @@ const mockPackages: PackageTier[] = [
         buttonText: 'Book Now',
         buttonLink: '/campaigns/2',
         isFeatured: true,
-        imageUrl: 'https://picsum.photos/seed/pkg2/600/400',
-        dataAiHint: 'luxury safari tent',
+        imageUrl: placeholderImages.pkgAdventurer.src,
+        dataAiHint: placeholderImages.pkgAdventurer.hint,
     },
     {
         id: 'pkg_ultimate',
@@ -55,8 +55,8 @@ const mockPackages: PackageTier[] = [
         features: ['10-Day Custom Itinerary', 'Fly-in Safari Options', 'Premium Lodges & Camps', 'Conservation Experiences', 'Private Photographer'],
         buttonText: 'Plan Your Trip',
         buttonLink: '/campaigns/new',
-        imageUrl: 'https://picsum.photos/seed/pkg3/600/400',
-        dataAiHint: 'safari sunset view',
+        imageUrl: placeholderImages.pkgUltimate.src,
+        dataAiHint: placeholderImages.pkgUltimate.hint,
     }
 ];
 

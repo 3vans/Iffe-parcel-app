@@ -19,7 +19,7 @@ interface CardData {
   rating: string;
   speed: string; // Represents days
   skill: string; // Represents activities
-  image: string;
+  image: keyof typeof placeholderImages;
   dataAiHint: string;
   link: string;
 }
@@ -29,7 +29,8 @@ interface FifaCardCarouselProps {
 }
 
 const CardImage = ({ card }: { card: CardData }) => {
-    const [imgSrc, setImgSrc] = useState(card.image);
+    const imageData = placeholderImages[card.image] || placeholderImages.campaignDetailWildebeest;
+    const [imgSrc, setImgSrc] = useState(imageData.src);
     return (
         <Image 
             src={imgSrc} 
@@ -42,7 +43,7 @@ const CardImage = ({ card }: { card: CardData }) => {
 };
 
 export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouselProps) {
-  const [cards] = useState<CardData[]>(cardData);
+  const [cards] = useState<CardData[]>(cardData as CardData[]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isMobile = useIsMobile();
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -85,7 +86,9 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
 
   useEffect(() => {
     if (onActiveCardChange && cards.length > 0) {
-        onActiveCardChange(cards[currentIndex]);
+        const activeCard = cards[currentIndex];
+        const activeImageData = placeholderImages[activeCard.image];
+        onActiveCardChange({ ...activeCard, image: activeImageData.src as any });
     }
 
     const interval = setInterval(handleNext, 4000);

@@ -42,6 +42,36 @@
     "height": 400,
     "hint": "safari landscape"
   },
+  "blogShoebill": {
+    "src": "https://picsum.photos/seed/shoebill/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "shoebill stork"
+  },
+  "blogPhotographer": {
+    "src": "https://picsum.photos/seed/photographer/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "camera wildlife"
+  },
+  "blogLionPride": {
+    "src": "https://picsum.photos/seed/lionPride/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "lion pride"
+  },
+  "eventSafariJeep": {
+    "src": "https://picsum.photos/seed/safariJeep/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "safari jeep"
+  },
+  "eventWebinar": {
+    "src": "https://picsum.photos/seed/webinar/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "online seminar"
+  },
   "campaignDetailWildebeest": {
     "src": "https://picsum.photos/seed/campaignWildebeest/1200/600",
     "width": 1200,
@@ -58,7 +88,13 @@
     "src": "https://picsum.photos/seed/campaignMokoro/1200/600",
     "width": 1200,
     "height": 600,
-    "hint": "mokoro canoe delta"
+    "hint": "mokoro canoe"
+  },
+  "campaignKruger": {
+    "src": "https://picsum.photos/seed/kruger/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "safari lodge"
   },
   "dashboardAvatar": {
     "src": "https://picsum.photos/seed/dashboardAvatar/100/100",
@@ -76,7 +112,7 @@
     "src": "https://picsum.photos/seed/gallerySafariGroup/600/400",
     "width": 600,
     "height": 400,
-    "hint": "safari group sunset"
+    "hint": "safari group"
   },
   "galleryElephant": {
     "src": "https://picsum.photos/seed/galleryElephant/400/600",
@@ -112,7 +148,7 @@
     "src": "https://picsum.photos/seed/ideaWalkingSafari/600/400",
     "width": 600,
     "height": 400,
-    "hint": "walking safari zambia"
+    "hint": "walking safari"
   },
   "ideaFamilySafari": {
     "src": "https://picsum.photos/seed/ideaFamilySafari/600/400",
@@ -124,7 +160,7 @@
     "src": "https://picsum.photos/seed/ideaPhotoHide/600/400",
     "width": 600,
     "height": 400,
-    "hint": "photo hide waterhole"
+    "hint": "photo hide"
   },
   "homeCreatorJane": {
     "src": "https://picsum.photos/seed/homeCreatorJane/100/100",
@@ -179,5 +215,89 @@
     "width": 64,
     "height": 64,
     "hint": "person smiling"
+  },
+  "fifaCardGorilla": {
+    "src": "https://picsum.photos/seed/fifaGorilla/800/800",
+    "width": 800,
+    "height": 800,
+    "hint": "mountain gorilla"
+  },
+  "fifaCardMasai": {
+    "src": "https://picsum.photos/seed/fifaMasai/800/800",
+    "width": 800,
+    "height": 800,
+    "hint": "safari group"
+  },
+  "fifaCardOkavango": {
+    "src": "https://picsum.photos/seed/fifaOkavango/800/800",
+    "width": 800,
+    "height": 800,
+    "hint": "mokoro canoe"
+  },
+  "fifaCardNile": {
+    "src": "https://picsum.photos/seed/fifaNile/800/800",
+    "width": 800,
+    "height": 800,
+    "hint": "nile river"
+  },
+  "fifaCardKili": {
+    "src": "https://picsum.photos/seed/fifaKili/800/800",
+    "width": 800,
+    "height": 800,
+    "hint": "mount kilimanjaro"
+  },
+  "pkgExplorer": {
+    "src": "https://picsum.photos/seed/pkg1/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "safari group"
+  },
+  "pkgAdventurer": {
+    "src": "https://picsum.photos/seed/pkg2/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "luxury tent"
+  },
+  "pkgUltimate": {
+    "src": "https://picsum.photos/seed/pkg3/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "safari sunset"
+  },
+  "videoThumbConference": {
+    "src": "https://picsum.photos/seed/vidConf/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "conference stage"
+  },
+  "videoThumbTraining": {
+    "src": "https://picsum.photos/seed/vidTrain/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "training presentation"
+  },
+  "videoThumbWater": {
+    "src": "https://picsum.photos/seed/vidWater/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "water pump"
+  },
+  "videoThumbTestimonial": {
+    "src": "https://picsum.photos/seed/vidTest/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "person interview"
+  },
+  "videoThumbYouth": {
+    "src": "https://picsum.photos/seed/vidYouth/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "youth event"
+  },
+  "videoThumbPlanning": {
+    "src": "https://picsum.photos/seed/vidPlan/600/338",
+    "width": 600,
+    "height": 338,
+    "hint": "planning board"
   }
 }
