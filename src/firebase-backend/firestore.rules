@@ -1,69 +1,56 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-
-    // Helper function to check if user is an admin
-    function isAdmin() {
-      return request.auth.token.role == 'admin';
-    }
-
-    // Helper function to check if the user is the owner of the document
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    // Users Collection
-    // - Users can read and update their own profile.
-    // - Admins can read/write any user profile.
+    
+    // USERS COLLECTION
     match /users/{userId} {
-      allow read, update: if isAuthenticated() && (isOwner(userId) || isAdmin());
-      allow create: if isAuthenticated(); // onUserCreate function handles this
-      allow delete: if isAdmin();
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+      
+      // Admin override
+      allow read, write: if request.auth != null && request.auth.token.role == "admin";
     }
 
-    // Bookings Collection
-    // - Users can create bookings for themselves.
-    // - Users can read their own bookings.
-    // - Admins can read/write all bookings.
+    // BOOKINGS COLLECTION
     match /bookings/{bookingId} {
-      allow create: if isAuthenticated() && request.resource.data.userID == request.auth.uid;
-      allow read: if isAuthenticated() && (isOwner(resource.data.userID) || isAdmin());
-      allow update, delete: if isAdmin();
+      allow create: if request.auth != null && request.resource.data.userID == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.userID == request.auth.uid;
+
+      // Admin override
+      allow read, write: if request.auth != null && request.auth.token.role == "admin";
     }
-    
-    // Payments Collection
-    // - Payments are created by server-side functions only.
-    // - Users can read their own payment records.
-    // - Admins can read all payment records.
+
+    // PAYMENTS COLLECTION
     match /payments/{paymentId} {
-      allow create: if false; // Only functions can create
-      allow read: if isAuthenticated() && (isOwner(resource.data.userID) || isAdmin());
-      allow update, delete: if false; // Immutable
+      // Only admins and backend functions can write payments
+      allow create, update, delete: if request.auth != null && request.auth.token.role == "admin";
+      
+      // Users can only read their own payment records
+      allow read: if request.auth != null && resource.data.userID == request.auth.uid;
+
+      // Admin override
+      allow read, write: if request.auth != null && request.auth.token.role == "admin";
     }
-    
-    // Destinations & Packages (Static Content)
-    // - Anyone can read destinations and packages.
-    // - Only admins can create/update them.
-    match /destinations/{destinationId} {
-      allow read: if true;
-      allow write: if isAdmin();
+
+    // DESTINATIONS COLLECTION
+    match /destinations/{destId} {
+      allow read: if true; // Everyone can view destinations
+      allow write: if request.auth != null && request.auth.token.role == "admin";
     }
-    
+
+    // PACKAGES COLLECTION
     match /packages/{packageId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read: if true; // Everyone can view packages
+      allow write: if request.auth != null && request.auth.token.role == "admin";
     }
-    
-    // Email Templates
-    // - Only readable/writable by server-side functions (admins).
-    match /email_templates/{templateId} {
-        allow read, write: if isAdmin();
+
+    // EMAIL TEMPLATES COLLECTION
+    match /emails/{templateId} {
+      allow read: if request.auth != null && request.auth.token.role == "admin";
+      allow write: if request.auth != null && request.auth.token.role == "admin";
     }
   }
 }
