@@ -43,6 +43,16 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                     objectFit="cover"
                     data-ai-hint={imageHint}
                     priority
+                    className="md:hidden"
+                />
+                <Image
+                    src={imageUrl}
+                    alt={description}
+                    layout="fill"
+                    objectFit="cover"
+                    data-ai-hint={imageHint}
+                    priority
+                    className="hidden md:block"
                     style={{
                         maskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
                         WebkitMaskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
@@ -55,14 +65,36 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                     objectFit="cover"
                     data-ai-hint={imageHint}
                     priority
+                    className="hidden md:block"
                     style={{
                         clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)'
                     }}
                 />
             </div>
         )}
-      {/* Content Container */}
-      <div className="relative h-full flex items-center z-10">
+      
+      {/* Mobile Content Container */}
+      <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden">
+        <div className="bg-black/20 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 text-center text-white">
+            <p className="font-semibold text-yellow-400 uppercase tracking-widest text-xs mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
+            <h1 className="font-headline text-3xl font-extrabold mb-3">
+              Explore the world
+            </h1>
+            <p className="text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500" key={description}>
+                {description}
+            </p>
+            <div className="space-y-4">
+               <Button size="lg" asChild className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold">
+                <Link href="/contact">
+                  LET'S GET STARTED
+                </Link>
+              </Button>
+            </div>
+        </div>
+      </div>
+
+      {/* Desktop Content Container */}
+      <div className="relative h-full hidden md:flex items-center z-10">
         {/* Left Panel */}
         <div 
           className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-old-paper/70 dark:bg-background/70 md:bg-old-paper/50 md:dark:bg-background/50 p-8 md:p-12"
