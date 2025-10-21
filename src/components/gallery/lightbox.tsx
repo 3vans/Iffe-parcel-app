@@ -72,7 +72,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm animate-in fade-in-0"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background animate-in fade-in-0"
       onClick={onClose}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -81,7 +81,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-4 right-4 z-[52] text-white hover:bg-white/10 hover:text-white h-12 w-12 rounded-full"
+        className="absolute top-4 right-4 z-[52] text-foreground hover:bg-muted/50 hover:text-foreground h-12 w-12 rounded-full"
         onClick={onClose}
       >
         <X className="h-8 w-8" />
@@ -92,7 +92,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
         <div className="relative w-full max-w-5xl h-full max-h-[80vh]">
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <RotarySpinner size={48} className="text-white" />
+              <RotarySpinner size={48} className="text-foreground" />
             </div>
           )}
           {currentImage && (
@@ -108,7 +108,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
           )}
         </div>
         {currentImage?.caption && !isLoading && (
-            <div className="text-center text-white mt-4 p-2 bg-black/30 rounded-md">
+            <div className="text-center text-foreground mt-4 p-2 bg-muted/30 rounded-md">
                 <p>{currentImage.caption}</p>
             </div>
         )}
@@ -118,7 +118,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-[52] text-white hover:bg-white/10 hover:text-white h-12 w-12 rounded-full"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-[52] text-foreground hover:bg-muted/50 hover:text-foreground h-12 w-12 rounded-full"
         onClick={(e) => { e.stopPropagation(); prevImage(); }}
       >
         <ChevronLeft className="h-8 w-8" />
@@ -127,7 +127,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose }) => {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-[52] text-white hover:bg-white/10 hover:text-white h-12 w-12 rounded-full"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-[52] text-foreground hover:bg-muted/50 hover:text-foreground h-12 w-12 rounded-full"
         onClick={(e) => { e.stopPropagation(); nextImage(); }}
       >
         <ChevronRight className="h-8 w-8" />
