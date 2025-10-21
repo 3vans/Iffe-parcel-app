@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,12 +11,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Tag } from 'lucide-react';
+import { UploadCloud, Tag, Layers, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // This type must match the one in `gallery/page.tsx`
 interface GalleryImage {
@@ -28,8 +29,6 @@ interface GalleryImage {
   date?: string;
   tags: string[];
 }
-
-const availableTags = ['#Sunsets', '#Kenya', '#Elephants', '#Botswana', '#BigCats', '#Tanzania', '#Balloons', '#Gorillas', '#Uganda'];
 
 const mediaSchema = z.object({
   caption: z.string().max(100, "Caption cannot exceed 100 characters.").optional(),
@@ -78,15 +77,80 @@ const GalleryImageCard = ({ image }: { image: GalleryImage }) => {
         </Card>
       </div>
     );
-  };
+};
+
+interface GalleryCategoryProps {
+  category: string;
+  images: GalleryImage[];
+}
+
+const GalleryCategory = ({ category, images }: GalleryCategoryProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isMobile = useIsMobile();
+
+  const displayedImages = isMobile && !isExpanded ? images.slice(0, 4) : images;
+  const showViewMoreButton = isMobile && images.length > 4 && !isExpanded;
+  const [ref, isVisible] = useScrollAnimation();
+
+  if (!isMobile) {
+    return (
+      <>
+        {images.map(image => (
+          <GalleryImageCard key={image.id} image={image} />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
+      <Card className="md:hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center text-xl font-headline text-primary">
+            <Layers className="mr-2 h-5 w-5 text-accent"/>
+            {category.replace('#','')}
+          </CardTitle>
+          <CardDescription>A collection of moments from {category.replace('#','').toLowerCase()}.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-2">
+            {displayedImages.map(image => (
+              <div key={image.id} className="relative aspect-square w-full rounded-md overflow-hidden group">
+                  <Image
+                      src={image.src}
+                      alt={image.alt}
+                      layout="fill"
+                      objectFit="cover"
+                      data-ai-hint={image.dataAiHint}
+                      className="transition-transform duration-300 group-hover:scale-105"
+                  />
+                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                    <p className="text-white text-xs line-clamp-2">{image.caption}</p>
+                   </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+        {showViewMoreButton && (
+          <CardFooter>
+            <Button variant="outline" className="w-full" onClick={() => setIsExpanded(true)}>
+              View More <ChevronDown className="ml-2 h-4 w-4"/>
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
+    </div>
+  );
+}
+
 
 export default function GalleryClientContent({ initialImages }: GalleryClientContentProps) {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(initialImages);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [filterRef, isFilterVisible] = useScrollAnimation();
+  const isMobile = useIsMobile();
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<MediaFormValues>({
     resolver: zodResolver(mediaSchema),
@@ -101,11 +165,23 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
   const watchedImageUrl = watch('imageUrl');
 
   useEffect(() => {
-    // When the dialog is closed, ensure the imageUrl in the form is reset.
     if (!isDialogOpen) {
        setValue('imageUrl', '', { shouldValidate: false });
     }
   }, [isDialogOpen, setValue]);
+  
+  const imageCategories = useMemo(() => {
+    const categories: Record<string, GalleryImage[]> = {};
+    galleryImages.forEach(image => {
+        image.tags.forEach(tag => {
+            if (!categories[tag]) {
+                categories[tag] = [];
+            }
+            categories[tag].push(image);
+        });
+    });
+    return categories;
+  }, [galleryImages]);
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -123,7 +199,7 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
 
   const onSubmitMedia: SubmitHandler<MediaFormValues> = async (data) => {
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const newMedia: GalleryImage = {
       id: `g${galleryImages.length + 1}-${Date.now()}`,
@@ -142,129 +218,110 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
     setIsDialogOpen(false);
   };
 
-  const handleTagClick = (tag: string) => {
-    if (activeTag === tag) {
-      setActiveTag(null); // Clear filter if the same tag is clicked again
-    } else {
-      setActiveTag(tag);
-    }
-  };
-
-  const filteredImages = activeTag
-    ? galleryImages.filter(image => image.tags.includes(activeTag))
-    : galleryImages;
-
   return (
     <>
       <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">
-          <span className="text-sm font-medium mr-2 self-center">Filter by Tag:</span>
-          {availableTags.map(tag => (
-            <Button 
-              key={tag} 
-              variant={activeTag === tag ? "default" : "outline"} 
-              size="sm" 
-              onClick={() => handleTagClick(tag)}
-              className={cn(
-                activeTag !== tag && "hover:bg-accent/10 hover:border-accent hover:text-accent",
-                activeTag === tag && "bg-primary text-primary-foreground"
-              )}
-            >
-              <Tag className="h-3 w-3 mr-1.5" /> {tag.replace('#','')}
-            </Button>
-          ))}
-        </div>
-        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-          setIsDialogOpen(isOpen);
-          if (!isOpen) {
-            reset();
-          }
-        }}>
-          <DialogTrigger asChild>
-            <Button variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
-              <UploadCloud className="mr-2 h-5 w-5" /> Upload Photo
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle className="font-headline text-2xl text-primary">Upload to Gallery</DialogTitle>
-              <DialogDescription>
-                Share a photo from your device or by pasting a URL. Add a caption and tags.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmitMedia)} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
-              <div>
-                <Label htmlFor="imageUpload" className="text-right font-semibold flex items-center">
-                  <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Image File
-                </Label>
-                <Input 
-                  id="imageUpload" 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleImageFileChange} 
-                  className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                />
-                {errors.imageUrl && !watchedImageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
-              </div>
-
-              {watchedImageUrl && (
-                <div className="mt-2 col-span-3">
-                  <Label className="font-semibold">Image Preview:</Label>
-                  <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
-                    <Image src={watchedImageUrl} alt="Image preview" layout="fill" objectFit="contain" />
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="imageUrl" className="text-right font-semibold">Or Paste Image URL</Label>
-                <Input 
-                    id="imageUrl" 
-                    {...register('imageUrl')} 
-                    className="col-span-3 mt-1" 
-                    placeholder="https://example.com/image.png"
-                />
-                {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="caption" className="text-right font-semibold">Caption (Optional)</Label>
-                <Input id="caption" {...register('caption')} className="col-span-3 mt-1" placeholder="Brief description of the image" />
-                {errors.caption && <p className="text-sm text-destructive mt-1">{errors.caption.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="tags" className="text-right font-semibold">Tags (Optional, comma-separated)</Label>
-                <Input id="tags" {...register('tags')} className="col-span-3 mt-1" placeholder="e.g., #Sunsets, #BigCats" />
-                {errors.tags && <p className="text-sm text-destructive mt-1">{errors.tags.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (Max 2 words for AI)</Label>
-                <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., lioness cubs" />
-                {errors.dataAiHint && <p className="text-sm text-destructive mt-1">{errors.dataAiHint.message}</p>}
-              </div>
-              <DialogFooter className="mt-2 sticky bottom-0 bg-background py-3 -mx-2 px-2 border-t">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
-                <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-                  {isSubmitting ? 'Submitting...' : 'Add to Gallery'}
+           <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+              setIsDialogOpen(isOpen);
+              if (!isOpen) {
+                reset();
+              }
+            }}>
+              <DialogTrigger asChild>
+                <Button variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+                  <UploadCloud className="mr-2 h-5 w-5" /> Upload Photo
                 </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="font-headline text-2xl text-primary">Upload to Gallery</DialogTitle>
+                  <DialogDescription>
+                    Share a photo from your device or by pasting a URL. Add a caption and tags.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmitMedia)} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                  <div>
+                    <Label htmlFor="imageUpload" className="text-right font-semibold flex items-center">
+                      <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Image File
+                    </Label>
+                    <Input 
+                      id="imageUpload" 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImageFileChange} 
+                      className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                    />
+                    {errors.imageUrl && !watchedImageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
+                  </div>
+
+                  {watchedImageUrl && (
+                    <div className="mt-2 col-span-3">
+                      <Label className="font-semibold">Image Preview:</Label>
+                      <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
+                        <Image src={watchedImageUrl} alt="Image preview" layout="fill" objectFit="contain" />
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <Label htmlFor="imageUrl" className="text-right font-semibold">Or Paste Image URL</Label>
+                    <Input 
+                        id="imageUrl" 
+                        {...register('imageUrl')} 
+                        className="col-span-3 mt-1" 
+                        placeholder="https://example.com/image.png"
+                    />
+                    {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="caption" className="text-right font-semibold">Caption (Optional)</Label>
+                    <Input id="caption" {...register('caption')} className="col-span-3 mt-1" placeholder="Brief description of the image" />
+                    {errors.caption && <p className="text-sm text-destructive mt-1">{errors.caption.message}</p>}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="tags" className="text-right font-semibold">Tags (Optional, comma-separated)</Label>
+                    <Input id="tags" {...register('tags')} className="col-span-3 mt-1" placeholder="e.g., #Sunsets, #BigCats" />
+                    {errors.tags && <p className="text-sm text-destructive mt-1">{errors.tags.message}</p>}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (Max 2 words for AI)</Label>
+                    <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., lioness cubs" />
+                    {errors.dataAiHint && <p className="text-sm text-destructive mt-1">{errors.dataAiHint.message}</p>}
+                  </div>
+                  <DialogFooter className="mt-2 sticky bottom-0 bg-background py-3 -mx-2 px-2 border-t">
+                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
+                    <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+                      {isSubmitting ? 'Submitting...' : 'Add to Gallery'}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+        </div>
       </section>
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredImages.map(image => (
-          <GalleryImageCard key={image.id} image={image} />
-        ))}
-      </section>
+      {isMobile ? (
+        <section className="space-y-6">
+          {Object.entries(imageCategories).map(([category, images]) => (
+            <GalleryCategory key={category} category={category} images={images} />
+          ))}
+        </section>
+      ) : (
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {galleryImages.map(image => (
+            <GalleryImageCard key={image.id} image={image} />
+          ))}
+        </section>
+      )}
 
-      {filteredImages.length === 0 && (
+      {galleryImages.length === 0 && (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">
-            {activeTag ? `No images found for tag "${activeTag}".` : "The gallery is empty. Check back soon or upload new media!"}
+            The gallery is empty. Check back soon or upload new media!
           </p>
         </div>
       )}
