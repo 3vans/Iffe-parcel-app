@@ -16,14 +16,14 @@ interface HeroProps {
 
 const TornPaperSVG = () => (
   <svg
-    className="absolute top-0 right-0 h-full w-[60px] text-old-paper/70 dark:text-background/70 z-20"
+    className="absolute top-0 right-0 h-full w-[60px] text-transparent z-20"
     viewBox="0 0 60 1000"
     preserveAspectRatio="none"
     style={{ transform: 'translateX(100%)' }}
   >
     <path
       d="M 50 0 L 40 15 C 60 25, 40 35, 50 50 L 35 60 C 55 70, 35 80, 45 95 L 55 105 C 35 115, 55 125, 50 140 L 40 155 C 60 165, 40 175, 50 190 L 35 200 C 55 210, 35 220, 45 235 L 55 245 C 35 255, 55 265, 50 280 L 40 295 C 60 305, 40 315, 50 330 L 35 340 C 55 350, 35 360, 45 375 L 55 385 C 35 395, 55 405, 50 420 L 40 435 C 60 445, 40 455, 50 470 L 35 480 C 55 490, 35 500, 45 515 L 55 525 C 35 535, 55 545, 50 560 L 40 575 C 60 585, 40 595, 50 610 L 35 620 C 55 630, 35 640, 45 655 L 55 665 C 35 675, 55 685, 50 700 L 40 715 C 60 725, 40 735, 50 750 L 35 760 C 55 770, 35 780, 45 795 L 55 805 C 35 815, 55 825, 50 840 L 40 855 C 60 865, 40 875, 50 890 L 35 900 C 55 910, 35 920, 45 935 L 55 945 C 35 955, 55 965, 50 980 L 40 995 L 50 1000 L 0 1000 L 0 0 Z"
-      fill="currentColor"
+      className="fill-old-paper/70 dark:fill-background/70"
     />
   </svg>
 );
@@ -46,7 +46,6 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                     style={{
                         maskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
                         WebkitMaskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
-                        filter: 'blur(8px)',
                     }}
                 />
                  <Image
