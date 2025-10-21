@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BarChart3, Map } from 'lucide-react';
+import { ArrowLeft, Map } from 'lucide-react';
 import { useState } from 'react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
@@ -36,19 +36,41 @@ export default function NewCampaignPage() {
     resolver: zodResolver(campaignSchema),
   });
 
-  const onSubmit: SubmitHandler<CampaignFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<CampaignFormValues> = (data) => {
     setIsSubmitting(true);
-    // Simulate API call to create campaign
-    console.log('New tour data:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const recipient = 'info@iffe-travels.com';
+    const subject = `Custom Tour Request: ${data.title}`;
+    const body = `
+      New Custom Tour Request
+      --------------------------
+      Title: ${data.title}
+      Short Description: ${data.shortDescription}
+      Detailed Itinerary/Desires:
+      ${data.fullDescription}
+
+      Estimated Budget per Person: $${data.goalAmount}
+      Inspiration Image URL: ${data.imageUrl || 'Not provided'}
+      Keywords: ${data.tags || 'Not provided'}
+    `;
+
+    const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Open the user's email client
+    window.location.href = mailtoLink;
+
     toast({
-      title: "Tour Submitted!",
-      description: "Your new custom tour has been submitted for review.",
+      title: "Opening Email Client",
+      description: "Please complete sending the request from your email app.",
       variant: "default",
     });
-    reset();
-    setIsSubmitting(false);
-    // Optionally redirect user: router.push('/campaigns');
+
+    // We reset the form and state, though the user has now been navigated away.
+    // This is useful if they come back to the page without a full reload.
+    setTimeout(() => {
+        reset();
+        setIsSubmitting(false);
+    }, 1000);
   };
 
   return (
@@ -106,7 +128,7 @@ export default function NewCampaignPage() {
             </div>
 
             <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 py-3 text-base" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting Request...' : 'Submit Custom Tour Request'}
+              {isSubmitting ? 'Preparing Email...' : 'Submit Custom Tour Request'}
             </Button>
           </form>
         </CardContent>
