@@ -44,8 +44,8 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                     data-ai-hint={imageHint}
                     priority
                     style={{
-                        maskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
-                        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
+                        maskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
+                        WebkitMaskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
                         filter: 'blur(8px)',
                     }}
                 />
@@ -65,7 +65,7 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
       {/* Content Container */}
       <div className="relative h-full flex items-center z-10">
         {/* Left Panel */}
-        <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-old-paper/70 dark:bg-background/70 p-8 md:p-12">
+        <div className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-gradient-to-r from-old-paper/30 to-old-paper/70 dark:from-background/30 dark:to-background/70 backdrop-blur-md p-8 md:p-12">
           <div className="text-primary">
             <p className="font-semibold text-accent uppercase tracking-widest text-sm mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
             <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">
