@@ -54,7 +54,7 @@ const CategoryCard = ({ category, images, onSelectCategory }: { category: string
 
     return (
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-            <Card className="group overflow-hidden flex flex-col h-full">
+            <Card className="group overflow-hidden flex flex-col h-full cursor-pointer" onClick={() => onSelectCategory(category)}>
                 <CardHeader>
                     <CardTitle className="flex items-center text-xl font-headline text-primary">
                         <Layers className="mr-2 h-5 w-5 text-accent"/>
@@ -82,9 +82,9 @@ const CategoryCard = ({ category, images, onSelectCategory }: { category: string
                             </Badge>
                         ))}
                     </div>
-                    <Button variant="link" size="sm" onClick={() => onSelectCategory(category)} className="text-accent hover:text-accent/80 p-0 h-auto self-end">
+                    <div className="self-end text-accent hover:text-accent/80 p-0 h-auto text-sm font-semibold flex items-center">
                         View More <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
+                    </div>
                 </CardFooter>
             </Card>
         </div>
