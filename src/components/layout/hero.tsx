@@ -16,7 +16,7 @@ interface HeroProps {
 
 const TornPaperSVG = () => (
   <svg
-    className="absolute top-0 right-0 h-full w-[60px] text-old-paper/70 dark:text-background/70 z-20 drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
+    className="absolute top-0 right-0 h-full w-[60px] text-old-paper/70 dark:text-background/70 z-20"
     viewBox="0 0 60 1000"
     preserveAspectRatio="none"
     style={{ transform: 'translateX(100%)' }}
