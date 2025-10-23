@@ -9,14 +9,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
+  const [formattedDate, setFormattedDate] = useState('');
+  
   // In a real app, you would fetch blog post data based on params.id
   const mockPost = {
     id: params.id,
     title: `Amazing Safari Story for ID: ${params.id}`,
     author: "Mock Explorer",
-    date: new Date().toLocaleDateString(),
+    date: new Date(),
     content: `This is placeholder content for the travel journal entry with ID ${params.id}. Replace this with actual fetched data. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
     imageUrl: placeholderImages.blogPostDefault.src,
     imageWidth: placeholderImages.blogPostDefault.width,
@@ -26,6 +29,10 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   };
 
   const [ref, isVisible] = useScrollAnimation();
+
+  useEffect(() => {
+    setFormattedDate(mockPost.date.toLocaleDateString());
+  }, [mockPost.date]);
 
   return (
     <div ref={ref} className={cn('space-y-6 scroll-animate', isVisible && 'scroll-animate-in')}>
@@ -38,7 +45,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         <CardHeader>
           <CardTitle className="font-headline text-3xl text-primary">{mockPost.title}</CardTitle>
           <CardDescription>
-            By {mockPost.author} on {mockPost.date}
+            By {mockPost.author} on {formattedDate}
           </CardDescription>
         </CardHeader>
         <CardContent>

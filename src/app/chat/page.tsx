@@ -44,22 +44,7 @@ const otherUserMock = {
 };
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      text: 'Welcome to the traveler\'s chat! Have questions about a tour? Ask away!',
-      sender: 'other',
-      timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-      ...otherUserMock,
-    },
-    {
-      id: '2',
-      text: 'Hello! I\'m interested in the Gorilla Trekking tour.',
-      sender: 'user',
-      timestamp: new Date(Date.now() - 1000 * 60 * 3), // 3 minutes ago
-      ...currentUser,
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [clientReady, setClientReady] = useState(false);
@@ -67,6 +52,22 @@ export default function ChatPage() {
 
   useEffect(() => {
     setClientReady(true);
+    setMessages([
+      {
+        id: '1',
+        text: 'Welcome to the traveler\'s chat! Have questions about a tour? Ask away!',
+        sender: 'other',
+        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+        ...otherUserMock,
+      },
+      {
+        id: '2',
+        text: 'Hello! I\'m interested in the Gorilla Trekking tour.',
+        sender: 'user',
+        timestamp: new Date(Date.now() - 1000 * 60 * 3), // 3 minutes ago
+        ...currentUser,
+      },
+    ]);
   }, []);
 
   const scrollToBottom = () => {

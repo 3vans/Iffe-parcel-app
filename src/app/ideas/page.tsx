@@ -1,7 +1,6 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import IdeaCard, { type IdeaCardProps } from '@/components/idea-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,12 +11,11 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, PlusCircle, UploadCloud } from 'lucide-react';
+import { PlusCircle, UploadCloud } from 'lucide-react';
 import Image from 'next/image';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
-import HeroSection from '@/components/layout/hero-section';
 
 const ideaSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
@@ -283,92 +281,6 @@ export default function IdeaBoxPage() {
             </div>
           </div>
       </section>
-
-      <div className="text-center">
-        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-             setIsDialogOpen(isOpen);
-             if (!isOpen) {
-                reset(); // Reset form when closing dialog
-                setImagePreviewUrl(null);
-             }
-        }}>
-          <DialogTrigger asChild>
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 sr-only">
-              <PlusCircle className="mr-2 h-5 w-5" /> Suggest a Trip Idea
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="font-headline text-2xl text-primary">Submit Your Idea</DialogTitle>
-              <DialogDescription>
-                Share your brilliant ideas for new tours and destinations.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmitIdea)} className="grid gap-4 py-4">
-              <div>
-                <Label htmlFor="title" className="text-right font-semibold">
-                  Trip Idea / Title
-                </Label>
-                <Input id="title" {...register('title')} className="col-span-3 mt-1" />
-                {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
-              </div>
-              <div>
-                <Label htmlFor="description" className="text-right font-semibold">
-                  Description
-                </Label>
-                <Textarea id="description" {...register('description')} className="col-span-3 mt-1" rows={4} />
-                {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
-              </div>
-              
-              <div>
-                <Label htmlFor="imageUpload" className="text-right font-semibold flex items-center">
-                  <UploadCloud className="h-4 w-4 mr-2 text-muted-foreground"/> Upload Image (Optional)
-                </Label>
-                <Input 
-                  id="imageUpload" 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleImageFileChange} 
-                  className="col-span-3 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                />
-              </div>
-
-              {(imagePreviewUrl || (currentImageUrl && currentImageUrl.startsWith('data:image'))) && (
-                <div className="mt-2 col-span-3">
-                  <Label className="font-semibold">Image Preview:</Label>
-                  <div className="relative w-full aspect-video mt-1 border rounded-md overflow-hidden bg-muted">
-                    <Image src={imagePreviewUrl || currentImageUrl || ''} alt="Idea preview" fill objectFit="contain" />
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="imageUrl" className="text-right font-semibold">Or Paste Image URL (Optional)</Label>
-                <Input 
-                    id="imageUrl" 
-                    {...register('imageUrl')} 
-                    className="col-span-3 mt-1" 
-                    placeholder="https://example.com/image.png"
-                    // If a file is uploaded, this field is populated by its data URI.
-                    // User can still override by typing/pasting here.
-                />
-                {errors.imageUrl && <p className="text-sm text-destructive mt-1">{errors.imageUrl.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="dataAiHint" className="text-right font-semibold">Image Keywords (for AI)</Label>
-                <Input id="dataAiHint" {...register('dataAiHint')} className="col-span-3 mt-1" placeholder="e.g., nature community (max 2 words)" />
-                {errors.dataAiHint && <p className="text-sm text-destructive mt-1">{errors.dataAiHint.message}</p>}
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-primary/90">
-                  {isSubmitting ? 'Submitting...' : 'Submit Idea'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {ideas.map(idea => (

@@ -50,12 +50,12 @@ export default function TestimonialCarousel() {
 
         return () => clearInterval(timer);
     }, [clientReady]);
+    
+    if (!clientReady) {
+        return null; // Prevent hydration mismatch
+    }
 
     const currentTestimonial = testimonials[testimonialIndex];
-
-    if (!clientReady) {
-        return null;
-    }
 
     return (
         <Card ref={ref} className={cn('scroll-animate bg-transparent w-full border-none shadow-none py-8', isVisible && 'scroll-animate-in')}>

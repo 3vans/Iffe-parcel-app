@@ -103,11 +103,13 @@ async function getCampaign(id: string): Promise<Campaign | undefined> {
 export default function CampaignDetailPage({ params }: { params: { id: string } }) {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [ref, isVisible] = useScrollAnimation();
+  const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
     getCampaign(params.id).then(data => {
         if(data) {
             setCampaign(data);
+            setFormattedDate(new Date(data.endDate).toLocaleDateString())
         } else {
             notFound();
         }
@@ -168,7 +170,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
                 campaignTitle={campaign.title}
                 currentAmount={campaign.currentAmount}
                 goal={campaign.goal}
-                endDate={campaign.endDate}
+                endDate={formattedDate}
                 volunteersSignedUp={campaign.volunteersSignedUp}
                 volunteersNeeded={campaign.volunteersNeeded}
               />

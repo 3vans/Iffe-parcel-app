@@ -285,7 +285,9 @@ export default function Home() {
                 onActiveCardChange={(card) => {
                     if (card) {
                         const imageData = placeholderImages[card.image as keyof typeof placeholderImages];
-                        setActiveCarouselImage(imageData ? imageData.src : null);
+                        if (imageData) {
+                            setActiveCarouselImage(imageData.src);
+                        }
                     }
                 }} 
             />
