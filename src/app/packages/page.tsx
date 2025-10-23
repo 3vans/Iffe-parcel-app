@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -58,6 +58,27 @@ const mockPackages: PackageTier[] = [
         buttonLink: '/campaigns/new',
         imageUrl: placeholderImages.pkgUltimate.src,
         dataAiHint: placeholderImages.pkgUltimate.hint,
+    }
+];
+
+const testimonials = [
+    {
+        name: 'Alice',
+        avatarSrc: placeholderImages.userAlice.src,
+        avatarHint: 'happy traveler',
+        message: "The adventurer package was worth every penny! Our guide was incredibly knowledgeable, and seeing the 'Big Five' was a dream come true. The luxury tents were surprisingly comfortable. Unforgettable!"
+    },
+    {
+        name: 'Bob',
+        avatarSrc: placeholderImages.userBob.src,
+        avatarHint: 'smiling man',
+        message: "I never thought a group tour could feel so personal. The Explorer Package was perfectly organized, and I met some amazing people. Can't wait for my next trip with iffe-travels!"
+    },
+    {
+        name: 'Charlie',
+        avatarSrc: placeholderImages.userCharlie.src,
+        avatarHint: 'adventurous person',
+        message: "We planned a custom Ultimate Safari for our honeymoon, and it exceeded all expectations. The team listened to every detail and crafted a trip that was pure magic. Thank you!"
     }
 ];
 
@@ -126,8 +147,19 @@ export default function PackagesPage() {
 
     const [headerRef, isHeaderVisible] = useScrollAnimation();
     const [footerRef, isFooterVisible] = useScrollAnimation();
+    const [testimonialIndex, setTestimonialIndex] = useState(0);
     const heroImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
     const heroDataAiHint = 'mountain valley landscape';
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTestimonialIndex(prevIndex => (prevIndex + 1) % testimonials.length);
+        }, 7000); // Change testimonial every 7 seconds
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const currentTestimonial = testimonials[testimonialIndex];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -175,25 +207,25 @@ export default function PackagesPage() {
         ))}
       </section>
 
-      <AnimatedSection>
-        <Card className="bg-card/80 backdrop-blur-sm">
+      <AnimatedSection className="h-48 flex items-center">
+        <Card className="bg-card/80 backdrop-blur-sm w-full">
             <CardHeader className="text-center">
                 <MessageSquare className="mx-auto h-8 w-8 text-accent mb-2"/>
                 <CardTitle className="font-headline text-2xl text-primary">From Our Travelers</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 max-w-2xl mx-auto">
+                <div key={testimonialIndex} className="flex flex-col sm:flex-row items-center sm:items-start gap-6 max-w-2xl mx-auto animate-slide-up">
                     <div className="text-center shrink-0">
-                        <Avatar className="h-20 w-20 mx-auto border-2 border-accent" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'}}>
-                            <AvatarImage src={placeholderImages.userAlice.src} alt="Alice" data-ai-hint="happy traveler" />
-                            <AvatarFallback>A</AvatarFallback>
+                        <Avatar className="h-20 w-20 mx-auto" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'}}>
+                            <AvatarImage src={currentTestimonial.avatarSrc} alt={currentTestimonial.name} data-ai-hint={currentTestimonial.avatarHint} />
+                            <AvatarFallback>{currentTestimonial.name.substring(0,1)}</AvatarFallback>
                         </Avatar>
-                        <p className="mt-2 text-sm font-semibold text-primary">Alice</p>
+                        <p className="mt-2 text-sm font-semibold text-primary">{currentTestimonial.name}</p>
                     </div>
                     <div className="relative w-full">
-                        <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-2px 2px 2px rgba(0,0,0,0.05))'}}></div>
-                        <div className="bg-card p-4 rounded-lg" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'}}>
-                            <p className="text-muted-foreground italic">"The adventurer package was worth every penny! Our guide was incredibly knowledgeable, and seeing the 'Big Five' was a dream come true. The luxury tents were surprisingly comfortable. Unforgettable!"</p>
+                        <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-3px 2px 2px rgba(0,0,0,0.1))'}}></div>
+                        <div className="bg-card p-4 rounded-lg" style={{filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))'}}>
+                            <p className="text-muted-foreground italic">"{currentTestimonial.message}"</p>
                         </div>
                     </div>
                 </div>
@@ -214,3 +246,5 @@ export default function PackagesPage() {
     </div>
   );
 }
+
+    
