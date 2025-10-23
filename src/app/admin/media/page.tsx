@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { getMockVideoData, type VideoItem } from '../videos/data';
+import Link from 'next/link';
 
 interface GalleryImage {
   id: string;
