@@ -184,8 +184,8 @@ export default function PackagesPage() {
                 Plan a Custom Tour
             </Link>
           </Button>
-          <TestimonialCarousel />
       </section>
+      <TestimonialCarousel />
     </div>
   );
 }
