@@ -210,8 +210,18 @@ export default function PackagesPage() {
         ))}
       </section>
 
-      <AnimatedSection className="h-48 flex items-center">
-        <Card className="bg-card/80 backdrop-blur-sm w-full">
+      <section ref={footerRef} className={cn('text-center mt-12 p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner scroll-animate', isFooterVisible && 'scroll-animate-in')}>
+          <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>
+          <Button size="lg" asChild>
+            <Link href="/campaigns/new">
+                Plan a Custom Tour
+            </Link>
+          </Button>
+      </section>
+
+      <AnimatedSection className="min-h-[200px] flex items-center py-16">
+        <Card className="bg-transparent w-full border-none shadow-none">
             <CardHeader className="text-center">
                 <MessageSquare className="mx-auto h-8 w-8 text-accent mb-2"/>
                 <CardTitle className="font-headline text-2xl text-primary">From Our Travelers</CardTitle>
@@ -248,19 +258,6 @@ export default function PackagesPage() {
             </CardContent>
         </Card>
       </AnimatedSection>
-
-       <section ref={footerRef} className={cn('text-center mt-12 p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner scroll-animate', isFooterVisible && 'scroll-animate-in')}>
-          <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>
-          <Button size="lg" asChild>
-            <Link href="/campaigns/new">
-                Plan a Custom Tour
-            </Link>
-          </Button>
-      </section>
-
     </div>
   );
 }
-
-    
