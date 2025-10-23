@@ -4,27 +4,29 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, UserCircle } from 'lucide-react';
 import Link from 'next/link';
-import cardData from '@/app/lib/fifa-card-data.json';
+import cardDataFromFile from '@/app/lib/fifa-card-data.json';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 
-interface CardData {
+export interface CardData {
   id: string;
   title: string;
   country: string;
   rating: string;
-  speed: string; // Represents days
-  skill: string; // Represents activities
+  speed: string; // Represents days for trips, experience for people
+  skill: string; // Represents activities for trips, tour count for people
   image: keyof typeof placeholderImages;
   dataAiHint: string;
   link: string;
 }
 
 interface FifaCardCarouselProps {
+    cards?: CardData[];
+    title?: string;
     onActiveCardChange?: (card: CardData | null) => void;
 }
 
@@ -42,8 +44,8 @@ const CardImage = ({ card }: { card: CardData }) => {
     );
 };
 
-export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouselProps) {
-  const [cards] = useState<CardData[]>(cardData as CardData[]);
+export default function FifaCardCarousel({ cards: cardsProp, title = "Featured Expeditions", onActiveCardChange }: FifaCardCarouselProps) {
+  const [cards] = useState<CardData[]>(cardsProp || (cardDataFromFile as CardData[]));
   const [currentIndex, setCurrentIndex] = useState(0);
   const isMobile = useIsMobile();
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -64,7 +66,7 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
   };
   
   const onTouchStart = (e: React.TouchEvent) => {
-      setTouchEnd(null); // otherwise the swipe is fired even with usual touch events
+      setTouchEnd(null);
       setTouchStart(e.targetTouches[0].clientX);
   };
 
@@ -123,7 +125,7 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
 
   return (
      <div className="carousel-container" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-        <h1 className="font-headline text-4xl font-bold text-white mb-6 text-center">Featured Expeditions</h1>
+        <h1 className="font-headline text-4xl font-bold text-white mb-6 text-center">{title}</h1>
         
         <div className="carousel">
             <div className="carousel-track">
@@ -149,8 +151,8 @@ export default function FifaCardCarousel({ onActiveCardChange }: FifaCardCarouse
                             <div className="card-location">{card.country}</div>
                             <Button asChild className="card-button w-full">
                                 <Link href={card.link}>
-                                  <ShoppingCart className="mr-2 h-4 w-4" />
-                                  Select Package
+                                  <UserCircle className="mr-2 h-4 w-4" />
+                                  View Profile
                                 </Link>
                             </Button>
                         </div>

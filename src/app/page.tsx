@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import FifaCardCarousel from '@/components/fifa-card-carousel';
 import Hero from '@/components/layout/hero';
 import ERotaractSignupTrigger from '@/components/auth/erotaract-signup-trigger';
+import fifaCardData from '@/app/lib/fifa-card-data.json';
 
 
 interface FeedItemBase {
@@ -279,7 +280,15 @@ export default function Home() {
                 style={{ backgroundImage: activeCarouselImage ? `url(${activeCarouselImage})` : 'none' }}
             />
             <div className="carousel-background-overlay" />
-            <FifaCardCarousel onActiveCardChange={(card) => setActiveCarouselImage(card ? card.image : null)} />
+            <FifaCardCarousel 
+                cards={fifaCardData as any}
+                onActiveCardChange={(card) => {
+                    if (card) {
+                        const imageData = placeholderImages[card.image as keyof typeof placeholderImages];
+                        setActiveCarouselImage(imageData ? imageData.src : null);
+                    }
+                }} 
+            />
         </section>
       </div>
     </>
