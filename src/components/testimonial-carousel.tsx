@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, MessageSquare } from 'lucide-react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { cn } from '@/lib/utils';
-import AnimatedSection from '@/components/animated-section';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 const testimonials = [
     {
@@ -36,6 +36,7 @@ const testimonials = [
 export default function TestimonialCarousel() {
     const [testimonialIndex, setTestimonialIndex] = useState(0);
     const [clientReady, setClientReady] = useState(false);
+    const [ref, isVisible] = useScrollAnimation();
 
     useEffect(() => {
         setClientReady(true);
@@ -57,8 +58,8 @@ export default function TestimonialCarousel() {
     }
 
     return (
-        <div className="relative mb-[-120px] z-10">
-            <AnimatedSection className="min-h-[200px] flex items-center py-16 relative">
+        <div ref={ref} className={cn('relative mb-[-120px] z-10 scroll-animate py-8', isVisible && 'scroll-animate-in')}>
+            <div className="min-h-[200px] flex items-center py-16 relative">
                 <Card className="bg-transparent w-full border-none shadow-none">
                     <CardHeader className="text-center">
                         <MessageSquare className="mx-auto h-8 w-8 text-accent mb-2"/>
@@ -95,7 +96,7 @@ export default function TestimonialCarousel() {
                         </div>
                     </CardContent>
                 </Card>
-            </AnimatedSection>
+            </div>
         </div>
     );
 }
