@@ -184,15 +184,15 @@ export default function PackagesPage() {
             <CardContent>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 max-w-2xl mx-auto">
                     <div className="text-center shrink-0">
-                        <Avatar className="h-20 w-20 mx-auto border-2 border-accent shadow-lg">
+                        <Avatar className="h-20 w-20 mx-auto border-2 border-accent" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'}}>
                             <AvatarImage src={placeholderImages.userAlice.src} alt="Alice" data-ai-hint="happy traveler" />
                             <AvatarFallback>A</AvatarFallback>
                         </Avatar>
                         <p className="mt-2 text-sm font-semibold text-primary">Alice</p>
                     </div>
                     <div className="relative w-full">
-                        <div className="absolute -left-3 top-4 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-card hidden sm:block"></div>
-                        <div className="bg-card p-4 rounded-lg shadow-lg">
+                        <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-2px 2px 2px rgba(0,0,0,0.05))'}}></div>
+                        <div className="bg-card p-4 rounded-lg" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'}}>
                             <p className="text-muted-foreground italic">"The adventurer package was worth every penny! Our guide was incredibly knowledgeable, and seeing the 'Big Five' was a dream come true. The luxury tents were surprisingly comfortable. Unforgettable!"</p>
                         </div>
                     </div>
