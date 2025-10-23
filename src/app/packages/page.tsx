@@ -149,18 +149,23 @@ export default function PackagesPage() {
     };
 
     const [headerRef, isHeaderVisible] = useScrollAnimation();
-    const [footerRef, isFooterVisible] = useScrollAnimation();
     const [testimonialIndex, setTestimonialIndex] = useState(0);
+    const [clientReady, setClientReady] = useState(false);
     const heroImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
     const heroDataAiHint = 'mountain valley landscape';
 
     useEffect(() => {
+        setClientReady(true);
+    }, []);
+
+    useEffect(() => {
+        if (!clientReady) return;
         const timer = setInterval(() => {
             setTestimonialIndex(prevIndex => (prevIndex + 1) % testimonials.length);
         }, 7000); // Change testimonial every 7 seconds
 
         return () => clearInterval(timer);
-    }, []);
+    }, [clientReady]);
 
     const currentTestimonial = testimonials[testimonialIndex];
 
@@ -210,7 +215,7 @@ export default function PackagesPage() {
         ))}
       </section>
 
-      <section ref={footerRef} className={cn('text-center mt-12 p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner scroll-animate pb-8', isVisible && 'scroll-animate-in')}>
+      <section className={cn('text-center mt-12 p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner pb-8')}>
           <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>
           <Button size="lg" asChild>
@@ -219,45 +224,48 @@ export default function PackagesPage() {
             </Link>
           </Button>
 
-            <AnimatedSection className="min-h-[200px] flex items-center py-16">
-                <Card className="bg-transparent w-full border-none shadow-none">
-                    <CardHeader className="text-center">
-                        <MessageSquare className="mx-auto h-8 w-8 text-accent mb-2"/>
-                        <CardTitle className="font-headline text-2xl text-primary">From Our Travelers</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div key={testimonialIndex} className="flex flex-col sm:flex-row items-center sm:items-start gap-6 max-w-2xl mx-auto animate-slide-up">
-                            <div className="text-center shrink-0">
-                                <Avatar className="h-20 w-20 mx-auto" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'}}>
-                                    <AvatarImage src={currentTestimonial.avatarSrc} alt={currentTestimonial.name} data-ai-hint={currentTestimonial.avatarHint} />
-                                    <AvatarFallback>{currentTestimonial.name.substring(0,1)}</AvatarFallback>
-                                </Avatar>
-                                <p className="mt-2 text-sm font-semibold text-primary">{currentTestimonial.name}</p>
-                                <div className="flex justify-center mt-1">
-                                    {Array.from({ length: 5 }).map((_, i) => (
-                                        <Star
-                                            key={i}
-                                            className={cn(
-                                                "h-4 w-4",
-                                                i < currentTestimonial.rating
-                                                    ? "text-yellow-400 fill-yellow-400"
-                                                    : "text-muted-foreground/50"
-                                            )}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="relative w-full">
-                                <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-3px 2px 2px rgba(0,0,0,0.1))'}}></div>
-                                <div className="bg-card p-4 rounded-lg" style={{filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))'}}>
-                                    <p className="text-muted-foreground italic">"{currentTestimonial.message}"</p>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </AnimatedSection>
+            {clientReady && (
+              <AnimatedSection className="min-h-[200px] flex items-center py-16 relative">
+                  <Card className="bg-transparent w-full border-none shadow-none">
+                      <CardHeader className="text-center">
+                          <MessageSquare className="mx-auto h-8 w-8 text-accent mb-2"/>
+                          <CardTitle className="font-headline text-2xl text-primary">From Our Travelers</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div key={testimonialIndex} className="flex flex-col sm:flex-row items-center sm:items-start gap-6 max-w-2xl mx-auto animate-slide-up">
+                              <div className="text-center shrink-0">
+                                  <Avatar className="h-20 w-20 mx-auto" style={{filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'}}>
+                                      <AvatarImage src={currentTestimonial.avatarSrc} alt={currentTestimonial.name} data-ai-hint={currentTestimonial.avatarHint} />
+                                      <AvatarFallback>{currentTestimonial.name.substring(0,1)}</AvatarFallback>
+                                  </Avatar>
+                                  <p className="mt-2 text-sm font-semibold text-primary">{currentTestimonial.name}</p>
+                                  <div className="flex justify-center mt-1">
+                                      {Array.from({ length: 5 }).map((_, i) => (
+                                          <Star
+                                              key={i}
+                                              className={cn(
+                                                  "h-4 w-4",
+                                                  i < currentTestimonial.rating
+                                                      ? "text-yellow-400 fill-yellow-400"
+                                                      : "text-muted-foreground/50"
+                                              )}
+                                          />
+                                      ))}
+                                  </div>
+                              </div>
+                              <div className="relative w-full">
+                                  <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-3px 2px 2px rgba(0,0,0,0.1))'}}></div>
+                                  <div className="bg-card p-4 rounded-lg" style={{filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))'}}>
+                                      <p className="text-muted-foreground italic">"{currentTestimonial.message}"</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </CardContent>
+                  </Card>
+              </AnimatedSection>
+            )}
       </section>
     </div>
   );
 }
+
