@@ -185,6 +185,7 @@ export default function PackagesPage() {
             </Link>
           </Button>
       </section>
+      
       <TestimonialCarousel />
     </div>
   );
