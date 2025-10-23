@@ -2,7 +2,7 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, ArrowRight, CheckCircle2, MessageSquare } from "lucide-react";
+import { Package, ArrowRight, CheckCircle2, MessageSquare, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
@@ -66,18 +66,21 @@ const testimonials = [
         name: 'Alice',
         avatarSrc: placeholderImages.userAlice.src,
         avatarHint: 'happy traveler',
+        rating: 5,
         message: "The adventurer package was worth every penny! Our guide was incredibly knowledgeable, and seeing the 'Big Five' was a dream come true. The luxury tents were surprisingly comfortable. Unforgettable!"
     },
     {
         name: 'Bob',
         avatarSrc: placeholderImages.userBob.src,
         avatarHint: 'smiling man',
+        rating: 5,
         message: "I never thought a group tour could feel so personal. The Explorer Package was perfectly organized, and I met some amazing people. Can't wait for my next trip with iffe-travels!"
     },
     {
         name: 'Charlie',
         avatarSrc: placeholderImages.userCharlie.src,
         avatarHint: 'adventurous person',
+        rating: 4,
         message: "We planned a custom Ultimate Safari for our honeymoon, and it exceeded all expectations. The team listened to every detail and crafted a trip that was pure magic. Thank you!"
     }
 ];
@@ -221,6 +224,19 @@ export default function PackagesPage() {
                             <AvatarFallback>{currentTestimonial.name.substring(0,1)}</AvatarFallback>
                         </Avatar>
                         <p className="mt-2 text-sm font-semibold text-primary">{currentTestimonial.name}</p>
+                        <div className="flex justify-center mt-1">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                    key={i}
+                                    className={cn(
+                                        "h-4 w-4",
+                                        i < currentTestimonial.rating
+                                            ? "text-yellow-400 fill-yellow-400"
+                                            : "text-muted-foreground/50"
+                                    )}
+                                />
+                            ))}
+                        </div>
                     </div>
                     <div className="relative w-full">
                         <div className="absolute -left-2 top-4 h-0 w-0 border-y-8 border-y-transparent border-r-8 border-r-card hidden sm:block" style={{filter: 'drop-shadow(-3px 2px 2px rgba(0,0,0,0.1))'}}></div>
