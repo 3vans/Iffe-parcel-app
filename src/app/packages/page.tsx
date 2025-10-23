@@ -131,7 +131,7 @@ export default function PackagesPage() {
 
 
   return (
-    <div className="space-y-8 animate-fade-in mb-3">
+    <div className="space-y-8 animate-fade-in mb-[1px]">
        <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
