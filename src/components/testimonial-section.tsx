@@ -2,9 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, Users } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
@@ -77,36 +77,38 @@ export default function TestimonialSection() {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section ref={ref} className="py-12">
-        <div className="max-w-sm mx-auto">
-             <Card
-                className={cn(
-                'relative p-4 rounded-xl shadow-2xl bg-card/80 backdrop-blur-sm transition-all duration-1000',
-                isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-                )}
-            >
-                <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10 border-2 border-accent">
-                    <AvatarFallback className="bg-primary text-primary-foreground">{currentTestimonial.initials}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 bg-background rounded-lg p-3 shadow-md relative">
-                    <div className="absolute -left-2 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-background"></div>
-                    <p className="text-sm text-foreground font-semibold mb-1">{currentTestimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{currentTestimonial.text}</p>
-                    <div className="flex justify-end mt-2">
-                        {[...Array(5)].map((_, i) => (
-                            <Star
-                            key={i}
-                            className={cn(
-                                'h-4 w-4',
-                                i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'
-                            )}
-                            />
-                        ))}
+    <section ref={ref}>
+        <div className="bg-muted/40 py-12">
+            <div className="max-w-sm mx-auto">
+                <Card
+                    className={cn(
+                    'relative p-4 rounded-xl shadow-2xl bg-card/80 backdrop-blur-sm transition-all duration-1000',
+                    isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                    )}
+                >
+                    <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10 border-2 border-accent">
+                        <AvatarFallback className="bg-primary text-primary-foreground">{currentTestimonial.initials}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 bg-background rounded-lg p-3 shadow-md relative">
+                        <div className="absolute -left-2 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-background"></div>
+                        <p className="text-sm text-foreground font-semibold mb-1">{currentTestimonial.name}</p>
+                        <p className="text-sm text-muted-foreground">{currentTestimonial.text}</p>
+                        <div className="flex justify-end mt-2">
+                            {[...Array(5)].map((_, i) => (
+                                <Star
+                                key={i}
+                                className={cn(
+                                    'h-4 w-4',
+                                    i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'
+                                )}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
-                </div>
-            </Card>
+                    </div>
+                </Card>
+            </div>
         </div>
     </section>
   );
