@@ -8,6 +8,7 @@ import { ThemeProviderClient } from '@/components/theme-provider-client';
 import AuthProvider from '@/components/auth-provider';
 import WhatsAppCTA from '@/components/layout/whatsapp-cta';
 import BottomNav from '@/components/layout/bottom-nav';
+import TestimonialPopup from '@/components/testimonial-popup';
 
 export const metadata: Metadata = {
   title: 'iffe-travels',
@@ -42,6 +43,7 @@ export default function RootLayout({
               </main>
               <AppFooter />
               <WhatsAppCTA />
+              <TestimonialPopup />
               <BottomNav />
             </div>
             <Toaster />
