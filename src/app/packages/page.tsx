@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import AnimatedSection from "@/components/animated-section";
+import TestimonialSection from "@/components/testimonial-section";
 
 interface PackageTier {
     id: string;
@@ -180,6 +181,7 @@ export default function PackagesPage() {
         </div>
       </AnimatedSection>
       
+      <TestimonialSection />
     </div>
   );
 }
