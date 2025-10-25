@@ -61,13 +61,14 @@ export default function TestimonialSection() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startAnimation = () => {
+    stopAnimation(); // Clear existing interval before starting a new one
     intervalRef.current = setInterval(() => {
       setIsVisible(false); // Start fade-out
       setTimeout(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
         setIsVisible(true); // Start fade-in for new testimonial
-      }, 500);
-    }, 7000);
+      }, 500); // Wait for fade-out to complete
+    }, 7000); // Change every 7 seconds
   };
 
   const stopAnimation = () => {
@@ -79,13 +80,14 @@ export default function TestimonialSection() {
 
   useEffect(() => {
     if (isSectionVisible) {
-      setIsVisible(true);
+      setIsVisible(true); // Initially visible when it scrolls into view
       startAnimation();
     } else {
-      setIsVisible(false);
+      setIsVisible(false); // Fade out when it scrolls out of view
       stopAnimation();
     }
 
+    // Cleanup on component unmount
     return () => stopAnimation();
   }, [isSectionVisible]);
   
@@ -95,10 +97,10 @@ export default function TestimonialSection() {
 
   return (
     <section ref={ref} className="py-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-4xl px-4">
         <Card
             className={cn(
-            'relative rounded-xl transition-all duration-1000 border-none bg-transparent shadow-none',
+            'relative rounded-xl border-none bg-transparent shadow-none transition-all duration-1000',
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             )}
         >
@@ -116,7 +118,7 @@ export default function TestimonialSection() {
                         key={i}
                         className={cn(
                             'h-4 w-4',
-                            i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-white/30'
+                            i < currentTestimonial.rating ? cn(currentColor.text, 'fill-current') : 'text-current opacity-30'
                         )}
                         />
                     ))}
