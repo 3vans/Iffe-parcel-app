@@ -55,6 +55,7 @@ export default function TestimonialSection() {
   useEffect(() => {
     if (!isSectionVisible) return;
 
+    // Initial fade-in
     const initialTimer = setTimeout(() => setIsVisible(true), 100);
 
     const cycleTestimonials = () => {
@@ -82,7 +83,7 @@ export default function TestimonialSection() {
             <div className="mx-auto max-w-2xl">
                 <Card
                     className={cn(
-                    'relative p-4 rounded-xl transition-all duration-1000 border-none bg-transparent shadow-none',
+                    'relative rounded-xl transition-all duration-1000 border-none bg-transparent shadow-none',
                     isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                     )}
                 >
