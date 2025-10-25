@@ -51,7 +51,7 @@ export default function TestimonialPopup() {
 
   useEffect(() => {
     // Initial appearance
-    const initialTimer = setTimeout(() => setIsVisible(true), 5000); // Delay initial appearance
+    const initialTimer = setTimeout(() => setIsVisible(true), 500); // Appear faster
 
     const cycleTestimonials = () => {
       setIsVisible(false); // Start exit animation
@@ -73,41 +73,43 @@ export default function TestimonialPopup() {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-6 w-80 z-50 pointer-events-none">
+    <div className="w-full flex justify-end p-4 md:p-6 pointer-events-none">
       <div
         className={cn(
-          "flex items-start gap-3 transition-all duration-1000",
+          "w-80 transition-all duration-1000 pointer-events-auto",
           isVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-full"
         )}
       >
-        <Avatar>
-          <AvatarFallback className="bg-primary text-primary-foreground font-bold">
-            {currentTestimonial.initials}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="bg-card p-4 rounded-3xl rounded-bl-lg shadow-2xl">
-            <p className="text-sm text-card-foreground leading-snug">
-              <span className="font-bold">{currentTestimonial.name}</span>
-              <br />
-              {currentTestimonial.text}
-            </p>
-          </div>
-           <div className="flex justify-end items-center mt-1 pr-2">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  "h-4 w-4",
-                  i < currentTestimonial.rating
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-muted-foreground/50"
-                )}
-              />
-            ))}
-          </div>
+        <div className="flex items-start gap-3">
+            <Avatar>
+            <AvatarFallback className="bg-primary text-primary-foreground font-bold">
+                {currentTestimonial.initials}
+            </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+            <div className="bg-card p-4 rounded-3xl rounded-bl-lg shadow-2xl">
+                <p className="text-sm text-card-foreground leading-snug">
+                <span className="font-bold">{currentTestimonial.name}</span>
+                <br />
+                {currentTestimonial.text}
+                </p>
+            </div>
+            <div className="flex justify-end items-center mt-1 pr-2">
+                {[...Array(5)].map((_, i) => (
+                <Star
+                    key={i}
+                    className={cn(
+                    "h-4 w-4",
+                    i < currentTestimonial.rating
+                        ? "text-yellow-400 fill-yellow-400"
+                        : "text-muted-foreground/50"
+                    )}
+                />
+                ))}
+            </div>
+            </div>
         </div>
       </div>
     </div>

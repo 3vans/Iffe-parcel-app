@@ -41,9 +41,9 @@ export default function RootLayout({
               >
                 {children}
               </main>
+              <TestimonialPopup />
               <AppFooter />
               <WhatsAppCTA />
-              <TestimonialPopup />
               <BottomNav />
             </div>
             <Toaster />
