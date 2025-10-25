@@ -78,11 +78,11 @@ export default function TestimonialSection() {
 
   return (
     <section ref={ref}>
-        <div className="bg-muted/40 py-12">
+        <div className="py-12">
             <div className="mx-auto px-4">
                 <Card
                     className={cn(
-                    'relative p-4 rounded-xl shadow-2xl bg-card/80 backdrop-blur-sm transition-all duration-1000 max-w-2xl mx-auto',
+                    'relative p-4 rounded-xl shadow-2xl bg-card/80 backdrop-blur-sm transition-all duration-1000 mx-auto',
                     isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                     )}
                 >
