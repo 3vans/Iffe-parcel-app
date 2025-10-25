@@ -164,27 +164,27 @@ export default function ContactPage() {
         <div className="space-y-4">
             <h2 className="font-headline text-2xl font-bold text-primary flex items-center"><Share2 className="mr-2 h-6 w-6 text-accent"/> Connect With Us</h2>
             <div className="space-y-3">
-                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full">
+                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="#">
                         <i className="fa-brands fa-facebook mr-3 h-6 w-6 text-blue-600"></i> Facebook
                     </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full">
+                <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="#">
                         <i className="fa-brands fa-instagram mr-3 h-6 w-6 text-pink-500"></i> Instagram
                     </Link>
                 </Button>
-                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full">
+                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="#">
                         <i className="fa-brands fa-x-twitter mr-3 h-6 w-6 text-foreground"></i> X (Twitter)
                     </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full">
+                <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="#">
                         <i className="fa-brands fa-linkedin mr-3 h-6 w-6 text-sky-700"></i> LinkedIn
                     </Link>
                 </Button>
-                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full">
+                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="#">
                         <i className="fa-brands fa-tripadvisor mr-3 h-6 w-6 text-green-600"></i> TripAdvisor
                     </Link>
