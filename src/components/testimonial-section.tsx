@@ -53,21 +53,20 @@ export default function TestimonialSection() {
   const [ref, isSectionVisible] = useScrollAnimation();
 
   useEffect(() => {
-    // Start animations only when the section is visible
     if (!isSectionVisible) return;
 
-    const initialTimer = setTimeout(() => setIsVisible(true), 500);
+    const initialTimer = setTimeout(() => setIsVisible(true), 100);
 
     const cycleTestimonials = () => {
-      setIsVisible(false);
+      setIsVisible(false); // Start fade-out
 
       setTimeout(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-        setIsVisible(true);
-      }, 1000);
+        setIsVisible(true); // Start fade-in for new testimonial
+      }, 1000); // Wait for fade-out to complete
     };
 
-    const interval = setInterval(cycleTestimonials, 8000);
+    const interval = setInterval(cycleTestimonials, 8000); // 7s visible + 1s transition
 
     return () => {
       clearTimeout(initialTimer);
@@ -79,47 +78,36 @@ export default function TestimonialSection() {
 
   return (
     <section ref={ref} className="py-12">
-        <Card className="max-w-2xl mx-auto bg-card/80 backdrop-blur-sm text-center shadow-lg">
-            <CardHeader>
-                <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
-                    <Users className="h-10 w-10 md:h-12 md:w-12 text-accent" />
-                </div>
-                <CardTitle className="font-headline text-3xl text-primary">From Our Travelers</CardTitle>
-                <CardDescription>Real stories from real adventurers.</CardDescription>
-            </CardHeader>
-            <CardContent className="relative h-48 flex items-center justify-center">
-                <div
-                    className={cn(
-                    "w-full transition-all duration-1000 absolute",
-                    isVisible
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 -translate-y-8"
-                    )}
-                >
-                    <div className="flex flex-col items-center gap-4">
-                        <p className="text-lg italic text-foreground leading-relaxed max-w-lg">
-                            "{currentTestimonial.text}"
-                        </p>
-                        <div className="text-center">
-                            <p className="font-bold text-primary">{currentTestimonial.name}</p>
-                            <div className="flex justify-center items-center mt-1">
-                                {[...Array(5)].map((_, i) => (
-                                <Star
-                                    key={i}
-                                    className={cn(
-                                    "h-5 w-5",
-                                    i < currentTestimonial.rating
-                                        ? "text-yellow-400 fill-yellow-400"
-                                        : "text-muted-foreground/50"
-                                    )}
-                                />
-                                ))}
-                            </div>
-                        </div>
+        <div className="max-w-sm mx-auto">
+             <Card
+                className={cn(
+                'relative p-4 rounded-xl shadow-2xl bg-card/80 backdrop-blur-sm transition-all duration-1000',
+                isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                )}
+            >
+                <div className="flex items-start gap-3">
+                <Avatar className="h-10 w-10 border-2 border-accent">
+                    <AvatarFallback className="bg-primary text-primary-foreground">{currentTestimonial.initials}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 bg-background rounded-lg p-3 shadow-md relative">
+                    <div className="absolute -left-2 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-background"></div>
+                    <p className="text-sm text-foreground font-semibold mb-1">{currentTestimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{currentTestimonial.text}</p>
+                    <div className="flex justify-end mt-2">
+                        {[...Array(5)].map((_, i) => (
+                            <Star
+                            key={i}
+                            className={cn(
+                                'h-4 w-4',
+                                i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'
+                            )}
+                            />
+                        ))}
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+                </div>
+            </Card>
+        </div>
     </section>
   );
 }
