@@ -47,67 +47,76 @@ const testimonials = [
   },
 ];
 
+const colorClasses = [
+    { bg: 'bg-primary/50', border: 'border-r-primary/50', text: 'text-primary-foreground' },
+    { bg: 'bg-accent/50', border: 'border-r-accent/50', text: 'text-accent-foreground' },
+    { bg: 'bg-secondary/50', border: 'border-r-secondary/50', text: 'text-secondary-foreground' },
+];
+
+
 export default function TestimonialSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [ref, isSectionVisible] = useScrollAnimation();
+  const [ref, isSectionVisible] = useScrollAnimation({ triggerOnce: false });
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    let animationInterval: NodeJS.Timeout;
-
-    const runAnimation = () => {
+  const startAnimation = () => {
+    intervalRef.current = setInterval(() => {
       setIsVisible(false); // Start fade-out
-
-      animationInterval = setTimeout(() => {
+      setTimeout(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
         setIsVisible(true); // Start fade-in for new testimonial
-      }, 500); // Wait for fade-out to complete
-    };
+      }, 500);
+    }, 7000);
+  };
 
-    if (isSectionVisible) {
-      // Initial fade-in
-      const initialTimer = setTimeout(() => setIsVisible(true), 100);
-      
-      // Start cycling
-      const mainInterval = setInterval(runAnimation, 7000); // 6.5s visible + 0.5s transition
-
-      return () => {
-        clearTimeout(initialTimer);
-        clearInterval(mainInterval);
-        if (animationInterval) clearTimeout(animationInterval);
-        if (intervalRef.current) clearTimeout(intervalRef.current);
-      };
+  const stopAnimation = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-  }, [isSectionVisible]);
+  };
 
+  useEffect(() => {
+    if (isSectionVisible) {
+      setIsVisible(true);
+      startAnimation();
+    } else {
+      setIsVisible(false);
+      stopAnimation();
+    }
+
+    return () => stopAnimation();
+  }, [isSectionVisible]);
+  
 
   const currentTestimonial = testimonials[currentIndex];
+  const currentColor = colorClasses[currentIndex % colorClasses.length];
 
   return (
     <section ref={ref} className="py-8">
-      <div className="mx-auto max-w-2xl">
+      <div className="container mx-auto">
         <Card
             className={cn(
-            'relative rounded-xl transition-all duration-500 border-none bg-transparent shadow-none',
-            isSectionVisible && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            'relative rounded-xl transition-all duration-1000 border-none bg-transparent shadow-none',
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             )}
         >
             <div className="flex items-start gap-3">
             <Avatar className="h-10 w-10 border-2 border-accent shadow-lg">
                 <AvatarFallback className="bg-primary text-primary-foreground shadow-lg">{currentTestimonial.initials}</AvatarFallback>
             </Avatar>
-            <div className="flex-1 bg-primary text-primary-foreground rounded-lg p-3 shadow-2xl relative">
-                <div className="absolute -left-2 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-primary"></div>
-                <p className="text-sm font-semibold mb-1">{currentTestimonial.name}</p>
-                <p className="text-sm text-primary-foreground/90">{currentTestimonial.text}</p>
+            <div className={cn("flex-1 rounded-lg p-3 shadow-2xl relative", currentColor.bg)}>
+                <div className={cn("absolute -left-2 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8", currentColor.border)}></div>
+                <p className={cn("text-sm font-semibold mb-1", currentColor.text)}>{currentTestimonial.name}</p>
+                <p className={cn("text-sm", currentColor.text, "opacity-90")}>{currentTestimonial.text}</p>
                 <div className="flex justify-end mt-2">
                     {[...Array(5)].map((_, i) => (
                         <Star
                         key={i}
                         className={cn(
                             'h-4 w-4',
-                            i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-primary-foreground/30'
+                            i < currentTestimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-white/30'
                         )}
                         />
                     ))}
