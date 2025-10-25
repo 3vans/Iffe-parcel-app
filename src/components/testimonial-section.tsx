@@ -48,9 +48,9 @@ const testimonials = [
 ];
 
 const colorClasses = [
-    { bg: 'bg-primary/50', border: 'border-r-primary/50', text: 'text-primary-foreground' },
-    { bg: 'bg-accent/50', border: 'border-r-accent/50', text: 'text-accent-foreground' },
-    { bg: 'bg-secondary/50', border: 'border-r-secondary/50', text: 'text-secondary-foreground' },
+    { bg: 'bg-primary/70', border: 'border-r-primary/70', text: 'text-primary-foreground' },
+    { bg: 'bg-accent/70', border: 'border-r-accent/70', text: 'text-accent-foreground' },
+    { bg: 'bg-secondary/70', border: 'border-r-secondary/70', text: 'text-secondary-foreground' },
 ];
 
 
