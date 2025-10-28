@@ -123,6 +123,7 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 color: 'transparent',
+                WebkitTextStroke: '3px hsl(var(--primary))',
               }}
             >
                 <span className="block">Explore the</span>
