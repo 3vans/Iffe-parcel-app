@@ -78,13 +78,13 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
         <div className="bg-black/20 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 text-center text-white">
             <p className="font-semibold text-yellow-400 uppercase tracking-widest text-xs mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
             <h1
-              className="font-poppins text-3xl font-extrabold mb-3 tracking-wider"
+              className="font-montserrat text-3xl font-black mb-3 tracking-widest uppercase"
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
                 color: 'transparent',
                 WebkitTextStroke: '0.5px hsl(var(--primary))',
               }}
@@ -115,14 +115,14 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
           <div className="mix-blend-multiply dark:mix-blend-screen">
             <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
             <h1
-              className="font-poppins text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-wider"
+              className="font-montserrat text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-[3px] uppercase"
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundAttachment: 'fixed',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
                 color: 'transparent',
                 WebkitTextStroke: '0.5px hsl(var(--primary))',
               }}
