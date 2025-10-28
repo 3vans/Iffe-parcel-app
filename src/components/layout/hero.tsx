@@ -101,11 +101,11 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
           className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-old-paper/70 dark:bg-background/70 md:bg-old-paper/50 md:dark:bg-background/50 p-8 md:p-12"
           style={{backdropFilter: 'blur(8px)'}}
         >
-          <div className="text-primary">
+          <div className="text-primary mix-blend-multiply dark:mix-blend-screen">
             <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
-            <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Explore the</span>
-                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">PEARL</span>
+            <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 text-white">
+                <span className="block">Explore the</span>
+                <span className="block">PEARL</span>
             </h1>
             <div className="w-24 h-1 bg-accent mb-6"></div>
              <p className="text-muted-foreground max-w-md mb-8 h-20 transition-opacity duration-500" key={description}>
