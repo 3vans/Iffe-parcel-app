@@ -78,7 +78,7 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
         <div className="bg-black/20 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 text-center text-white">
             <p className="font-semibold text-yellow-400 uppercase tracking-widest text-xs mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
             <h1 className="font-headline text-3xl font-extrabold mb-3">
-              <span className="text-yellow-400 block">Explore the</span>
+              <span className="block">Explore the</span>
               <span className="block">PEARL</span>
             </h1>
             <p className="text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500" key={description}>
@@ -104,7 +104,7 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
           <div className="text-primary">
             <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">TOUR TRAVEL & ADVENTURE CAMPING</p>
             <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">
-                <span className="text-accent block">Explore the</span>
+                <span className="block">Explore the</span>
                 <span className="block">PEARL</span>
             </h1>
             <div className="w-24 h-1 bg-accent mb-6"></div>
