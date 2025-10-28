@@ -93,7 +93,7 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
                 color: 'transparent',
-                WebkitTextStroke: '0.5px hsl(var(--primary))',
+                WebkitTextStroke: '1px hsl(var(--primary))',
               }}
             >
                 <span className="block">Explore the</span>
