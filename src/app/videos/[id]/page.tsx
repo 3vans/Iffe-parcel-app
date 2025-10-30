@@ -22,6 +22,7 @@ export default function VideoPlayerPage() {
     const [video, setVideo] = useState<VideoItem | null>(null);
     const [otherVideos, setOtherVideos] = useState<VideoItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isPlayerActive, setIsPlayerActive] = useState(false);
     
     const [showPip, setShowPip] = useState(false);
     const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +30,7 @@ export default function VideoPlayerPage() {
 
     useEffect(() => {
         setIsLoading(true);
+        setIsPlayerActive(false); // Reset player state on video change
         const allVideos = getMockVideoData();
         const currentVideo = allVideos.find(v => v.id === id);
 
@@ -49,8 +51,8 @@ export default function VideoPlayerPage() {
     useEffect(() => {
         const handleScroll = () => {
             if (playerContainerRef.current) {
-                const { bottom } = playerContainerref.current.getBoundingClientRect();
-                if (bottom < 0 && !showPip) {
+                const { bottom } = playerContainerRef.current.getBoundingClientRect();
+                if (bottom < 0 && !showPip && isPlayerActive) {
                     setShowPip(true);
                 } else if (bottom >= 0 && showPip) {
                     setShowPip(false);
@@ -62,11 +64,11 @@ export default function VideoPlayerPage() {
           window.addEventListener('scroll', handleScroll, { passive: true });
           return () => window.removeEventListener('scroll', handleScroll);
         }
-    }, [showPip]);
+    }, [showPip, isPlayerActive]);
 
     const [ref, isVisible] = useScrollAnimation();
 
-    if (isLoading) {
+    if (isLoading || !video) {
         return (
             <div className="flex justify-center items-center h-[60vh]">
                 <RotarySpinner size={48} />
@@ -75,11 +77,7 @@ export default function VideoPlayerPage() {
         );
     }
     
-    if (!video) {
-        return null;
-    }
-
-    const youtubeEmbedUrl = `https://www.youtube.com/embed/${video.youtubeVideoId}?autoplay=1`;
+    const youtubeEmbedUrl = `https://www.youtube-nocookie.com/embed/${video.youtubeVideoId}?autoplay=1&rel=0`;
 
     const handleClosePip = () => {
       setShowPip(false);
@@ -89,17 +87,43 @@ export default function VideoPlayerPage() {
     };
 
     const VideoPlayer = () => (
-        <div className="aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black">
-            <iframe
-                className="w-full h-full"
-                src={youtubeEmbedUrl}
-                title={video.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-            ></iframe>
-        </div>
+      <div className="aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black relative">
+        {!isPlayerActive ? (
+          <>
+            <Image
+              src={video.thumbnailUrl}
+              alt={video.title}
+              layout="fill"
+              objectFit="cover"
+              className="cursor-pointer"
+              data-ai-hint={video.dataAiHint}
+              priority
+            />
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-20 w-20 text-white/80 hover:text-white hover:bg-white/10 rounded-full"
+                onClick={() => setIsPlayerActive(true)}
+                aria-label={`Play video: ${video.title}`}
+              >
+                <PlayCircle className="h-full w-full" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <iframe
+            className="w-full h-full"
+            src={youtubeEmbedUrl}
+            title={video.title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        )}
+      </div>
     );
+
 
      const PipPlayer = () => (
         <div className="fixed bottom-4 right-4 z-50 w-[320px] aspect-video rounded-lg overflow-hidden shadow-2xl bg-black animate-pip-in">
