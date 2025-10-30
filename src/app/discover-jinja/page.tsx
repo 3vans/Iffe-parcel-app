@@ -7,7 +7,6 @@ import PageHero from '@/components/layout/page-hero';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import AnimatedSection from '@/components/animated-section';
 import BookingForm from '@/components/booking-form';
-import WhatsAppCTA from '@/components/layout/whatsapp-cta';
 import { Metadata } from 'next';
 import Script from 'next/script';
 import Link from 'next/link';
