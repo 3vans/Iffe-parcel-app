@@ -52,7 +52,7 @@ export default function BlogPage() {
         <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
             <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-gradient-to-r from-stone-900/80 via-stone-900/80 to-transparent text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
               <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">FROM THE WILD</p>
-              <h1 className="font-headline text-4xl md:text-5xl font-extrabold mb-4 pb-4 relative bg-gradient-to-r from-white to-yellow-300 bg-clip-text text-transparent">
+              <h1 className="font-headline text-4xl md:text-5xl font-black mb-4 pb-4 relative uppercase tracking-widest" style={{ WebkitTextStroke: '1px white', color: 'transparent' }}>
                 Travel Journal
                  <span className="absolute bottom-0 left-0 w-20 h-0.5 bg-gradient-to-r from-yellow-400 to-transparent"></span>
               </h1>
