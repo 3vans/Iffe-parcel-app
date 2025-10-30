@@ -60,8 +60,8 @@ export default function PageHero({ title, subtitle, imageUrl, dataAiHint, primar
               <h1
                 className="font-headline text-4xl md:text-5xl font-black mb-4 pb-4 relative uppercase tracking-widest"
                 style={{
-                  color: 'transparent',
-                  WebkitTextStroke: '1px white',
+                  color: 'hsl(var(--primary-foreground))',
+                  WebkitTextStroke: '1px hsl(var(--primary))',
                 }}
               >
                  {title}

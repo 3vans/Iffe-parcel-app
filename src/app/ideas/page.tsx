@@ -67,12 +67,17 @@ const initialIdeas: Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[] = [
 ];
 
 export default function IdeaBoxPage() {
-  const [ideas, setIdeas] = useState<Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[]>(initialIdeas);
+  const [ideas, setIdeas] = useState<Omit<IdeaCardProps, 'onVote' | 'hasVoted'>[]>([]);
   const [votedIdeas, setVotedIdeas] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // This client-side effect populates the ideas
+    setIdeas(initialIdeas);
+  }, []);
 
   const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<IdeaFormValues>({
     resolver: zodResolver(ideaSchema),
