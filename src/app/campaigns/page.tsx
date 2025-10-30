@@ -43,7 +43,7 @@ export default function CampaignsPage() {
 
     return (
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-            <Card key={campaign.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full bg-card/80 backdrop-blur-sm">
+            <Card key={campaign.id} className="overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 flex flex-col h-full bg-card/80 backdrop-blur-sm">
             <div className="relative w-full h-48">
                 <Image 
                     src={imgSrc} 

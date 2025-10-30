@@ -22,7 +22,7 @@ export default function CampaignUpdatesPage({ params }: { params: { id: string }
         </Link>
       </Button>
 
-      <Card className="shadow-xl">
+      <Card className="shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-3xl text-primary flex items-center">
             <Rss className="mr-3 h-7 w-7 text-accent" />
@@ -35,7 +35,7 @@ export default function CampaignUpdatesPage({ params }: { params: { id: string }
         <CardContent className="space-y-6">
           {mockUpdates.length > 0 ? (
             mockUpdates.map(update => (
-              <Card key={update.id} className="bg-muted/30 p-0">
+              <Card key={update.id} className="bg-muted/30 p-0 transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-0.5">
                 <CardHeader className="pb-2">
                   <CardTitle className="font-headline text-xl text-primary">{update.title}</CardTitle>
                   <CardDescription className="text-xs">{update.date}</CardDescription>

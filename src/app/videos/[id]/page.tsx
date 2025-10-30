@@ -68,13 +68,17 @@ export default function VideoPlayerPage() {
 
     const [ref, isVisible] = useScrollAnimation();
 
-    if (isLoading || !video) {
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[60vh]">
                 <RotarySpinner size={48} />
                 <p className="ml-4 text-muted-foreground">Loading video...</p>
             </div>
         );
+    }
+    
+    if (!video) {
+        return <div className="text-center py-10">Video not found.</div>;
     }
     
     const youtubeEmbedUrl = `https://www.youtube-nocookie.com/embed/${video.youtubeVideoId}?autoplay=1&rel=0`;
@@ -152,7 +156,7 @@ export default function VideoPlayerPage() {
         <h2 className="font-headline text-2xl font-bold text-primary">More Videos</h2>
         <div className="grid grid-cols-1 gap-4">
           {otherVideos.map(otherVideo => (
-            <Card key={otherVideo.id} className="overflow-hidden shadow-md hover:shadow-lg transition-shadow group flex items-center">
+            <Card key={otherVideo.id} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group flex items-center">
               <Link href={`/videos/${otherVideo.id}`} className="flex-shrink-0">
                 <div className="relative w-32 h-20 bg-muted">
                   <Image src={otherVideo.thumbnailUrl} alt={otherVideo.title} className="object-cover" data-ai-hint={otherVideo.dataAiHint} layout="fill" />
@@ -192,7 +196,7 @@ export default function VideoPlayerPage() {
               "grid-cols-1 lg:grid-cols-3"
             )}>
               <div className="lg:col-span-2 space-y-6">
-                <Card>
+                <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
                         <CardTitle className="font-headline text-3xl text-primary">{video.title}</CardTitle>
                         <div className="flex gap-2 pt-2">

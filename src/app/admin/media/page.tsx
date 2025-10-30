@@ -136,7 +136,7 @@ export default function AdminMediaPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-2xl">Media Library Management</CardTitle>
           <CardDescription>Manage images and videos for your website.</CardDescription>
@@ -213,7 +213,7 @@ export default function AdminMediaPage() {
                     <h4 className="font-semibold text-md mb-3">Video Library:</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {adminVideoItems.map(video => (
-                            <Card key={video.id} className="overflow-hidden">
+                            <Card key={video.id} className="overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                                 <div className="relative w-full aspect-video bg-muted">
                                     <Image src={video.thumbnailUrl} alt={video.title} fill objectFit="cover" data-ai-hint={video.dataAiHint || 'video content'} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-2 pointer-events-none">

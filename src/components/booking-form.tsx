@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, Send } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -57,7 +57,7 @@ export default function BookingForm({ destination }: BookingFormProps) {
   };
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
       <CardHeader className="text-center">
         <CardTitle className="font-headline text-3xl text-primary">Book Your {destination} Adventure</CardTitle>
         <CardDescription>Fill out the form below to start your journey.</CardDescription>

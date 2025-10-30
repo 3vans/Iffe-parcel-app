@@ -34,7 +34,7 @@ export default function VideoLibraryPage() {
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+        <Card key={video.id} className="overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 group">
           <Link href={`/videos/${video.id}`} className="block">
             <div className="relative w-full aspect-video bg-muted">
               {isHovering && video.previewVideoUrl ? (
@@ -122,7 +122,7 @@ export default function VideoLibraryPage() {
             </div>
         </section>
 
-      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
+      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1', isFilterVisible && 'scroll-animate-in')}>
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium mr-2 self-center">Filter by Category:</span>
           {availableCategories.map(category => (

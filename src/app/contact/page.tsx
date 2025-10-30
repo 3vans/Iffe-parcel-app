@@ -4,7 +4,7 @@
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ import placeholderImages from "@/app/lib/placeholder-images.json";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import HeroSection from "@/components/layout/hero-section";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TestimonialSection from '@/components/testimonial-section';
 import Link from 'next/link';
 
@@ -52,7 +52,7 @@ function AnimatedCard({ children, className }: { children: React.ReactNode, clas
     const [ref, isVisible] = useScrollAnimation();
     return (
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-           <Card className={cn("bg-card/80 backdrop-blur-sm", className)}>
+           <Card className={cn("bg-card/80 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1", className)}>
                 {children}
             </Card>
         </div>

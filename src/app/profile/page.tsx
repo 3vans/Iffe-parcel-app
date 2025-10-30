@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const [ref, isVisible] = useScrollAnimation();
   return (
     <div ref={ref} className={cn("flex flex-col items-center justify-center min-h-[60vh] text-center p-4 scroll-animate", isVisible && 'scroll-animate-in')}>
-      <Card className="w-full max-w-md shadow-xl">
+      <Card className="w-full max-w-md shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <CardHeader>
           <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
             <UserCircle2 className="h-12 w-12 text-accent" />

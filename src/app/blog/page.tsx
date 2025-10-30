@@ -82,7 +82,7 @@ export default function BlogPage() {
       </section>
 
       <AnimatedSection>
-        <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow">
+        <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
             <div className="relative w-full md:w-1/2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input type="search" placeholder="Search articles..." className="pl-10 w-full" />

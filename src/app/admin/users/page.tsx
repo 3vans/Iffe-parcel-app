@@ -52,7 +52,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-2xl">User Management</CardTitle>
           <CardDescription>View, filter, and manage all platform users.</CardDescription>

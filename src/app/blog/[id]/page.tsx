@@ -32,7 +32,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     // This runs only on the client, after hydration
-    setFormattedDate(mockPost.date.toLocaleDateString());
+    if (mockPost.date) {
+      setFormattedDate(new Date(mockPost.date).toLocaleDateString());
+    }
   }, [mockPost.date]);
 
   return (
@@ -42,7 +44,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Journal
         </Link>
       </Button>
-      <Card className="shadow-xl">
+      <Card className="shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-3xl text-primary">{mockPost.title}</CardTitle>
           <CardDescription>

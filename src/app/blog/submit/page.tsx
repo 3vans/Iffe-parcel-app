@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -54,7 +54,7 @@ export default function SubmitBlogPage() {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Travel Journal
         </Link>
       </Button>
-      <Card className="shadow-xl">
+      <Card className="shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-3xl text-primary">Share a Travel Story</CardTitle>
           <CardDescription>Share your adventures and photos with the community. Stories will be reviewed before publishing.</CardDescription>

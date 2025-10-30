@@ -79,7 +79,7 @@ export default function EventsPage() {
         </div>
       )}
 
-      <section ref={footerRef} className={cn('mt-12 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-lg scroll-animate', isFooterVisible && 'scroll-animate-in')}>
+      <section ref={footerRef} className={cn('mt-12 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-lg scroll-animate transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1', isFooterVisible && 'scroll-animate-in')}>
         <h2 className="font-headline text-2xl font-bold text-primary mb-4">Past Trip Highlight: Gorilla Trekking</h2>
         <p className="text-muted-foreground mb-4">Watch the highlights from our last gorilla trekking expedition.</p>
         <div className="aspect-video bg-muted rounded-md flex items-center justify-center">

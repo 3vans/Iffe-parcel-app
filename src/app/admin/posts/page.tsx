@@ -97,7 +97,7 @@ export default function AdminPostsPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-2xl">Content Moderation</CardTitle>
           <CardDescription>
@@ -113,7 +113,7 @@ export default function AdminPostsPage() {
             </TabsList>
 
             <TabsContent value="posts">
-              <Card className="mt-4">
+              <Card className="mt-4 border-0 shadow-none">
                 <CardHeader>
                   <CardTitle>Post List</CardTitle>
                   <CardDescription>Filter and manage published or reported blog posts.</CardDescription>
@@ -197,7 +197,7 @@ export default function AdminPostsPage() {
             </TabsContent>
 
             <TabsContent value="comments">
-              <Card className="mt-4">
+              <Card className="mt-4 border-0 shadow-none">
                 <CardHeader>
                   <CardTitle>Comment List</CardTitle>
                   <CardDescription>Filter and moderate comments from various posts.</CardDescription>
@@ -280,4 +280,3 @@ export default function AdminPostsPage() {
     </div>
   );
 }
-

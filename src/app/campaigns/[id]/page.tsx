@@ -103,7 +103,7 @@ async function getCampaign(id: string): Promise<Campaign | undefined> {
 export default function CampaignDetailPage({ params }: { params: { id: string } }) {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [ref, isVisible] = useScrollAnimation();
-  const [formattedDate, setFormattedDate] = useState('');
+  const [formattedEndDate, setFormattedEndDate] = useState('');
 
   useEffect(() => {
     getCampaign(params.id).then(data => {
@@ -118,7 +118,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
   useEffect(() => {
     if (campaign?.endDate) {
       // This runs only on the client, after hydration
-      setFormattedDate(new Date(campaign.endDate).toLocaleDateString())
+      setFormattedEndDate(new Date(campaign.endDate).toLocaleDateString())
     }
   }, [campaign?.endDate]);
 
@@ -135,7 +135,7 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
         </Link>
       </Button>
 
-      <Card className="overflow-hidden shadow-xl">
+      <Card className="overflow-hidden shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <div className="relative w-full h-[300px] md:h-[400px]">
           <Image 
             src={campaign.imageUrl} 
@@ -176,11 +176,11 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
                 campaignTitle={campaign.title}
                 currentAmount={campaign.currentAmount}
                 goal={campaign.goal}
-                endDate={formattedDate}
+                endDate={formattedEndDate}
                 volunteersSignedUp={campaign.volunteersSignedUp}
                 volunteersNeeded={campaign.volunteersNeeded}
               />
-              <Card className="bg-muted/30">
+              <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
                 </CardHeader>

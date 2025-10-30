@@ -55,7 +55,7 @@ const IdeaCard: React.FC<IdeaCardProps> = ({
 
   return (
     <Card className={cn(
-        "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full",
+        "overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 flex flex-col h-full",
         "bg-card/80 backdrop-blur-sm"
         )}>
       {imageUrl && (

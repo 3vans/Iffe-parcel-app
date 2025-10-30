@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Map } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 
@@ -80,7 +80,7 @@ export default function NewCampaignPage() {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
         </Link>
       </Button>
-      <Card className="shadow-xl">
+      <Card className="shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-3xl text-primary flex items-center">
             <Map className="mr-3 h-7 w-7 text-accent" /> Plan a Custom Tour

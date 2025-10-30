@@ -26,7 +26,7 @@ export default function AdminOverviewPage() {
         <StatCard title="Pending Approvals" value={mockStats.pendingApprovals.toLocaleString()} icon={Hourglass} description="Memberships & posts awaiting review" />
       </div>
 
-      <Card>
+      <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
           <CardDescription>A log of recent important actions will appear here.</CardDescription>

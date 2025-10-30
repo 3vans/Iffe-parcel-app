@@ -163,7 +163,7 @@ export default function Home() {
 
         <section>
           <AnimatedCard>
-          <Card className="shadow-lg bg-card/80 backdrop-blur-sm">
+          <Card className="shadow-lg bg-card/80 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary">Your Adventure Starts Here</CardTitle>
               <CardDescription>Ready to explore the wild? Let's get started:</CardDescription>
@@ -197,7 +197,7 @@ export default function Home() {
               if (item.type === 'creator') {
                 return (
                   <AnimatedCard key={item.id}>
-                  <Card className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
+                  <Card className="shadow-md transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12">
@@ -227,7 +227,7 @@ export default function Home() {
               if (item.type === 'room') {
                 return (
                   <AnimatedCard key={item.id}>
-                  <Card className="shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm">
+                  <Card className="shadow-md transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                        <div className="flex items-center space-x-3">
                           <div className="p-2 bg-accent/20 rounded-full">

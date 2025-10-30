@@ -38,7 +38,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Departures
         </Link>
       </Button>
-      <Card className="shadow-xl overflow-hidden">
+      <Card className="shadow-xl overflow-hidden transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         {mockEvent.imageUrl && (
           <div className="relative w-full bg-muted rounded-t-lg overflow-hidden aspect-[2/1]">
             <Image 
@@ -66,7 +66,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
               </section>
             </div>
             <aside className="space-y-4 md:pt-8">
-              <Card className="bg-muted/30">
+              <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl text-primary flex items-center"><Info className="mr-2 h-5 w-5 text-accent" />Trip Details</CardTitle>
                 </CardHeader>

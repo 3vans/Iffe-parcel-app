@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import AnimatedSection from "@/components/animated-section";
 import TestimonialSection from "@/components/testimonial-section";
@@ -70,7 +70,7 @@ export default function PackagesPage() {
         return (
             <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
                 <Card key={pkg.id} className={cn(
-                    "shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full bg-card/80 backdrop-blur-sm",
+                    "shadow-lg transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1 flex flex-col h-full bg-card/80 backdrop-blur-sm",
                      pkg.isFeatured ? 'border-accent border-2 -translate-y-2' : ''
                      )}>
                     {pkg.imageUrl && (
@@ -176,7 +176,7 @@ export default function PackagesPage() {
       </section>
 
       <AnimatedSection>
-        <div className={cn('text-center p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner')}>
+        <div className={cn('text-center p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1')}>
             <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>
             <Button size="lg" asChild>

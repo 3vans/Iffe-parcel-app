@@ -44,7 +44,7 @@ const Summarizer: React.FC<SummarizerProps> = ({ campaignDescription, campaignTi
   };
 
   return (
-    <Card className="mt-8 shadow-lg">
+    <Card className="mt-8 shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
       <CardHeader>
         <CardTitle className="font-headline text-2xl text-primary flex items-center">
           <Wand2 className="mr-2 h-6 w-6 text-accent" />

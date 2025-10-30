@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription }
 import { Button } from '@/components/ui/button';
 import { CalendarDays, Clock, MapPin, Users, Tv, CalendarPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
@@ -32,7 +32,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, location, 
   return (
     <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
       <Card className={cn(
-          "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full",
+          "overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 flex flex-col h-full",
           "bg-card/80 backdrop-blur-sm"
           )}>
         {imageUrl && (

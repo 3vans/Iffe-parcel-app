@@ -65,7 +65,7 @@ export default function AdminApprovalsPage() {
         </TabsList>
         
         <TabsContent value="members" className="w-full">
-          <Card>
+          <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Pending Community Member Applications</CardTitle>
               <CardDescription>Review and approve or reject new community member sign-ups.</CardDescription>
@@ -112,7 +112,7 @@ export default function AdminApprovalsPage() {
         </TabsContent>
         
         <TabsContent value="posts" className="w-full">
-          <Card>
+          <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Pending Community Post Approvals</CardTitle>
               <CardDescription>Review and approve or reject submitted blog posts or other content.</CardDescription>

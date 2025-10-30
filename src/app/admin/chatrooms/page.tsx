@@ -188,7 +188,7 @@ export default function AdminChatroomsPage() {
 
   return (
     <div className="flex flex-1 flex-col md:flex-row gap-4">
-      <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col">
+      <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-xl flex items-center"><MessageSquare className="mr-2 h-5 w-5 text-primary"/>Active Chatrooms</CardTitle>
           <CardDescription>Select a room to monitor.</CardDescription>
@@ -214,7 +214,7 @@ export default function AdminChatroomsPage() {
         </ScrollArea>
       </Card>
 
-      <Card className="w-full md:w-2/3 lg:w-3/4 flex flex-col">
+      <Card className="w-full md:w-2/3 lg:w-3/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         {!selectedChatroom ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center p-8">
             <MessageCircle className="h-16 w-16 text-muted-foreground mb-4" />

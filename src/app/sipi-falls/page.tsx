@@ -111,7 +111,7 @@ export default function SipiFallsPage() {
       />
 
       <AnimatedSection className="container mx-auto max-w-5xl">
-        <Card className="bg-card/80 backdrop-blur-sm">
+        <Card className="bg-card/80 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
           <CardHeader className="text-center">
             <CardTitle className="font-headline text-3xl text-primary">About Sipi Falls</CardTitle>
           </CardHeader>
@@ -127,7 +127,7 @@ export default function SipiFallsPage() {
         <h2 className="font-headline text-3xl font-bold text-primary mb-6 text-center">Main Activities</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {mainActivities.map((activity) => (
-            <Card key={activity.title} className="overflow-hidden group">
+            <Card key={activity.title} className="overflow-hidden group transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
               <div className="relative h-48 w-full">
                 <Image src={activity.image.src} alt={activity.title} layout="fill" objectFit="cover" data-ai-hint={activity.image.hint} className="transition-transform duration-300 group-hover:scale-105"/>
               </div>
@@ -144,7 +144,7 @@ export default function SipiFallsPage() {
 
       <AnimatedSection className="container mx-auto max-w-5xl">
           <h3 className="font-headline text-2xl font-bold text-primary mb-4 text-center">Other Experiences</h3>
-          <Card className="bg-muted/50">
+          <Card className="bg-muted/50 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
             <CardContent className="p-6">
               <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 {otherActivities.map(activity => (
@@ -164,7 +164,7 @@ export default function SipiFallsPage() {
         <h2 className="font-headline text-3xl font-bold text-primary mb-6 text-center">Sipi Falls Packages</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {packages.map(pkg => (
-                <Card key={pkg.id} className="text-center">
+                <Card key={pkg.id} className="text-center transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
                     <CardHeader>
                         <CardTitle className="font-headline text-2xl text-accent">{pkg.title}</CardTitle>
                     </CardHeader>

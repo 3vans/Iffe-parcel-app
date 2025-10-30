@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, Users, HeartHandshake, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface CampaignActionsCardProps {
   campaignTitle: string;
@@ -25,6 +26,13 @@ export default function CampaignActionsCard({
   volunteersNeeded,
 }: CampaignActionsCardProps) {
   const { toast } = useToast();
+  const [formattedEndDate, setFormattedEndDate] = useState(endDate);
+
+  useEffect(() => {
+      if(endDate) {
+          setFormattedEndDate(new Date(endDate).toLocaleDateString());
+      }
+  }, [endDate]);
 
   const progressPercentage = goal > 0 ? (currentAmount / goal) * 100 : 0;
   const spotsLeft = volunteersNeeded - volunteersSignedUp;
@@ -46,7 +54,7 @@ export default function CampaignActionsCard({
   };
 
   return (
-    <Card className="bg-muted/30">
+    <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
       <CardHeader>
         <CardTitle className="font-headline text-xl text-primary">Tour Details</CardTitle>
       </CardHeader>
@@ -57,7 +65,7 @@ export default function CampaignActionsCard({
         <Progress value={progressPercentage} aria-label={`${progressPercentage.toFixed(0)}% traveller rating`} />
         <div className="flex items-center text-sm text-muted-foreground">
           <CalendarDays className="h-4 w-4 mr-2 text-accent" />
-          <span>Tour Dates: {new Date(endDate).toLocaleDateString()}</span>
+          <span>Tour Dates: {formattedEndDate}</span>
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
           <Users className="h-4 w-4 mr-2 text-accent" />

@@ -80,25 +80,28 @@ export default function ChatPage() {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
-
+  
+    const sentTime = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  
     const userMessage: ChatMessage = {
       id: String(Date.now()),
       text: newMessage,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+      timestamp: sentTime,
       ...currentUser,
     };
-
+  
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setNewMessage('');
-
+  
     // Simulate a bot response for demo purposes
     setTimeout(() => {
+      const responseTime = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       const botResponse: ChatMessage = {
         id: String(Date.now() + 1),
         text: `Thanks for your message about: "${userMessage.text.substring(0, 30)}${userMessage.text.length > 30 ? "..." : ""}". I am a mock assistant. A real guide will be with you shortly!`,
         sender: 'other',
-        timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+        timestamp: responseTime,
         ...otherUserMock,
       };
       setMessages((prevMessages) => [...prevMessages, botResponse]);
@@ -112,7 +115,7 @@ export default function ChatPage() {
         subtitle="Connect with our team and other travelers."
         iconName="MessageCircle"
       />
-      <div ref={ref} className={cn('flex flex-col h-[60vh] bg-background scroll-animate border rounded-lg shadow-lg', isVisible && 'scroll-animate-in')}>
+      <div ref={ref} className={cn('flex flex-col h-[60vh] bg-background scroll-animate border rounded-lg shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1', isVisible && 'scroll-animate-in')}>
         <ScrollArea className="flex-grow bg-muted/20">
           <div className="p-4 space-y-4">
             {messages.map((msg) => (

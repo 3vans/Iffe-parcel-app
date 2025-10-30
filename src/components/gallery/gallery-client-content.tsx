@@ -54,7 +54,7 @@ const CategoryCard = ({ category, images, onSelectCategory }: { category: string
 
     return (
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-            <Card className="group overflow-hidden flex flex-col h-full cursor-pointer" onClick={() => onSelectCategory(category)}>
+            <Card className="group overflow-hidden flex flex-col h-full cursor-pointer transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1" onClick={() => onSelectCategory(category)}>
                 <CardHeader>
                     <CardTitle className="flex items-center text-xl font-headline text-primary">
                         <Layers className="mr-2 h-5 w-5 text-accent"/>
@@ -187,7 +187,7 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
 
   return (
     <>
-      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate', isFilterVisible && 'scroll-animate-in')}>
+      <section ref={filterRef} className={cn('flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card rounded-lg shadow scroll-animate transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1', isFilterVisible && 'scroll-animate-in')}>
           <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
               setIsDialogOpen(isOpen);
               if (!isOpen) {
@@ -257,7 +257,7 @@ export default function GalleryClientContent({ initialImages }: GalleryClientCon
         // Expanded Grid View
         <section className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
             {imagesToShow.map((image, index) => (
-                <div key={image.id} className="relative aspect-square w-full rounded-md overflow-hidden group cursor-pointer" onClick={() => openLightbox(index)}>
+                <div key={image.id} className="relative aspect-square w-full rounded-md overflow-hidden group cursor-pointer transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1" onClick={() => openLightbox(index)}>
                     <Image
                         src={image.src}
                         alt={image.alt}

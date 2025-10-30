@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       />
       <div className="container mx-auto max-w-3xl py-8 px-4">
         <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>
-          <Card className="bg-card/80 backdrop-blur-sm">
+          <Card className="bg-card/80 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
             <CardHeader className="text-center">
               <CardTitle className="font-headline text-3xl text-primary">Our Commitment to Your Privacy</CardTitle>
             </CardHeader>
