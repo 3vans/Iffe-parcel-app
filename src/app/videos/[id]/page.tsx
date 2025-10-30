@@ -20,7 +20,7 @@ export default function VideoPlayerPage() {
     const [video, setVideo] = useState<VideoItem | null>(null);
     const [otherVideos, setOtherVideos] = useState<VideoItem[]>([]);
     
-    const [isPip, setIsPip] = useState(false);
+    const [showPip, setShowPip] = useState(false);
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile(1024);
 
@@ -33,7 +33,7 @@ export default function VideoPlayerPage() {
             const relatedVideos = allVideos.filter(v => v.id !== id);
             setOtherVideos(relatedVideos);
             // Reset PiP state when video changes
-            setIsPip(false);
+            setShowPip(false);
             window.scrollTo(0, 0);
         } else {
             notFound();
@@ -45,18 +45,18 @@ export default function VideoPlayerPage() {
             if (playerContainerRef.current) {
                 const { bottom } = playerContainerRef.current.getBoundingClientRect();
                 // Activate PiP only if the user has scrolled past the player
-                if (bottom < 0 && !isPip) {
-                    setIsPip(true);
+                if (bottom < 0 && !showPip) {
+                    setShowPip(true);
                 // Deactivate PiP if the player is back in view
-                } else if (bottom >= 0 && isPip) {
-                    setIsPip(false);
+                } else if (bottom >= 0 && showPip) {
+                    setShowPip(false);
                 }
             }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [isPip]);
+    }, [showPip]);
 
     const [ref, isVisible] = useScrollAnimation();
 
@@ -67,18 +67,17 @@ export default function VideoPlayerPage() {
     const youtubeEmbedUrl = `https://www.youtube.com/embed/${video.youtubeVideoId}?autoplay=1`;
 
     const handleClosePip = () => {
-      setIsPip(false);
+      setShowPip(false);
       // Optional: Scroll back to the top of the player when closing PiP
       if(playerContainerRef.current) {
         playerContainerRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     };
 
-    const VideoPlayer = ({ isPipMode }: { isPipMode: boolean }) => (
+    const VideoPlayer = () => (
         <div
             className={cn(
-                "aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black transition-all duration-500",
-                isPipMode && "fixed bottom-4 right-4 z-50 w-[320px] animate-pip-in"
+                "aspect-video w-full rounded-lg overflow-hidden shadow-lg bg-black transition-all duration-300",
             )}
         >
             <iframe
@@ -89,17 +88,32 @@ export default function VideoPlayerPage() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
             ></iframe>
-            {isPipMode && (
-              <Button
+        </div>
+    );
+
+     const PipPlayer = () => (
+        <div
+            className={cn(
+                "fixed bottom-4 right-4 z-50 w-[320px] aspect-video rounded-lg overflow-hidden shadow-2xl bg-black animate-pip-in",
+            )}
+        >
+            <iframe
+                className="w-full h-full"
+                src={youtubeEmbedUrl}
+                title={video.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+            ></iframe>
+            <Button
                 variant="ghost"
                 size="icon"
                 className="absolute -top-3 -right-2 z-10 bg-background/80 hover:bg-background h-8 w-8 rounded-full text-foreground"
                 onClick={handleClosePip}
                 aria-label="Close Picture-in-Picture"
-              >
-                  <X className="h-5 w-5" />
-              </Button>
-            )}
+            >
+                <X className="h-5 w-5" />
+            </Button>
         </div>
     );
     
@@ -137,14 +151,18 @@ export default function VideoPlayerPage() {
                 </Link>
             </Button>
             
-            <div ref={playerContainerRef} className={cn("transition-all duration-500", isPip ? "aspect-video" : "")}>
-                {!isPip && <VideoPlayer isPipMode={false} />}
+            <div ref={playerContainerRef} className={cn("transition-all duration-300", showPip ? "aspect-video" : "")}>
+                 {/* This container preserves space. The player inside is always rendered. */}
+                <div className={cn(showPip ? "opacity-0" : "opacity-100")}>
+                    <VideoPlayer />
+                </div>
             </div>
-            {isPip && <VideoPlayer isPipMode={true} />}
+
+            {showPip && <PipPlayer />}
 
             <div className={cn(
               "grid gap-8 transition-all duration-300",
-              !isPip || isMobile ? "grid-cols-1" : "lg:grid-cols-3"
+              "grid-cols-1 lg:grid-cols-3" // Always use 3-column layout on desktop
             )}>
               <div className="lg:col-span-2 space-y-6">
                 <Card>
@@ -165,10 +183,7 @@ export default function VideoPlayerPage() {
               
               {/* Desktop-only sidebar for related videos */}
               {!isMobile && (
-                <aside className={cn(
-                  "transition-opacity duration-500",
-                   isPip ? "opacity-100" : "opacity-100" // Always visible now on desktop
-                )}>
+                <aside>
                   <RelatedVideosList />
                 </aside>
               )}
