@@ -50,6 +50,11 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
   const isMobile = useIsMobile();
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [clientRendered, setClientRendered] = useState(false);
+
+  useEffect(() => {
+    setClientRendered(true);
+  }, []);
 
   const minSwipeDistance = 50;
 
@@ -104,6 +109,11 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
   
     if (diff > Math.floor(totalCards / 2)) {
       diff -= totalCards;
+    }
+    
+    // On mobile, only show the center card clearly
+    if (clientRendered && isMobile) {
+        return diff === 0 ? 'card-center' : 'card-hidden';
     }
   
     switch (diff) {
