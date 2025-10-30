@@ -61,7 +61,7 @@ export default function VideoLibraryPage() {
             </div>
           </Link>
           <CardHeader className="p-4">
-            <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors h-14">
+            <CardTitle className="font-headline text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors h-14">
               <Link href={`/videos/${video.id}`}>{video.title}</Link>
             </CardTitle>
             <Badge variant="outline" className="w-fit mt-1">{video.category}</Badge>
