@@ -30,6 +30,13 @@ const mockCampaignsData: CampaignTeaser[] = [
   { id: '2', title: 'Gorilla Trekking Adventure', imageUrl: placeholderImages.campaignDetailGorilla.src, dataAiHint: 'mountain gorilla jungle', shortDescription: 'An unforgettable encounter with mountain gorillas.', goal: 100, currentAmount: 92, tags: ['#Primates', '#Uganda'] },
   { id: '3', title: 'Okavango Delta Mokoro Trip', imageUrl: placeholderImages.campaignDetailMokoro.src, dataAiHint: 'mokoro canoe delta', shortDescription: 'Explore the serene waterways of Botswana.', goal: 100, currentAmount: 61, tags: ['#Wetlands', '#Botswana'] },
   { id: '4', title: 'Luxury Safari in Kruger Park', imageUrl: 'https://picsum.photos/seed/kruger/600/350', dataAiHint: 'safari lodge sunset', shortDescription: 'Experience the wild in comfort and style.', goal: 100, currentAmount: 45, tags: ['#Luxury', '#SouthAfrica'] },
+  { id: '5', title: 'Source of the Nile - Jinja', imageUrl: placeholderImages.campaignSourceNile.src, dataAiHint: 'source of nile', shortDescription: 'Discover the legendary source of the world\'s longest river.', goal: 100, currentAmount: 90, tags: ['#Jinja', '#RiverNile'] },
+  { id: '6', title: 'White-Water Rafting Jinja', imageUrl: placeholderImages.campaignRafting.src, dataAiHint: 'white water rafting', shortDescription: 'Experience the thrill of Grade 5 rapids on the Nile.', goal: 100, currentAmount: 95, tags: ['#Adventure', '#Jinja'] },
+  { id: '7', title: 'Murchison Falls Safari', imageUrl: placeholderImages.campaignMurchison.src, dataAiHint: 'murchison falls', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', goal: 100, currentAmount: 88, tags: ['#Wildlife', '#Waterfalls'] },
+  { id: '8', title: 'Bujagali Falls Adventure', imageUrl: placeholderImages.campaignBujagali.src, dataAiHint: 'bujagali falls', shortDescription: 'Explore the scenic Bujagali area and its cultural sites.', goal: 100, currentAmount: 76, tags: ['#Jinja', '#Culture'] },
+  { id: '9', title: 'Itanda Falls Challenge', imageUrl: placeholderImages.campaignItanda.src, dataAiHint: 'itanda falls', shortDescription: 'Tackle the challenging rapids of Itanda Falls.', goal: 100, currentAmount: 82, tags: ['#Adventure', '#Kayaking'] },
+  { id: '10', title: 'Kalagala Falls Exploration', imageUrl: placeholderImages.campaignKalagala.src, dataAiHint: 'kalagala falls', shortDescription: 'Discover the beauty and power of Kalagala Falls.', goal: 100, currentAmount: 79, tags: ['#Nature', '#Waterfalls'] },
+  { id: '11', title: 'Karuma Falls Wildlife Tour', imageUrl: placeholderImages.campaignKaruma.src, dataAiHint: 'karuma falls', shortDescription: 'Spot wildlife near the stunning Karuma Falls.', goal: 100, currentAmount: 85, tags: ['#Wildlife', '#NationalPark'] },
 ];
 
 

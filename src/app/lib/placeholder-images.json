@@ -341,5 +341,47 @@
     "width": 600,
     "height": 400,
     "hint": "coffee beans uganda"
+  },
+  "campaignSourceNile": {
+    "src": "https://picsum.photos/seed/sourceNile/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "source of nile"
+  },
+  "campaignRafting": {
+    "src": "https://picsum.photos/seed/nileRafting/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "white water rafting"
+  },
+  "campaignMurchison": {
+    "src": "https://picsum.photos/seed/murchison/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "murchison falls"
+  },
+  "campaignBujagali": {
+    "src": "https://picsum.photos/seed/bujagali/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "bujagali falls"
+  },
+  "campaignItanda": {
+    "src": "https://picsum.photos/seed/itanda/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "itanda falls"
+  },
+  "campaignKalagala": {
+    "src": "https://picsum.photos/seed/kalagala/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "kalagala falls"
+  },
+  "campaignKaruma": {
+    "src": "https://picsum.photos/seed/karuma/600/350",
+    "width": 600,
+    "height": 350,
+    "hint": "karuma falls"
   }
 }
