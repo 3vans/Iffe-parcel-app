@@ -58,7 +58,7 @@ const initialFeedItems: FeedItem[] = [
   {
     id: 'creator-1',
     type: 'creator',
-    name: 'Safari Jane',
+    name: 'Ian Ivan',
     avatarUrl: placeholderImages.homeCreatorJane.src,
     avatarWidth: placeholderImages.homeCreatorJane.width,
     avatarHeight: placeholderImages.homeCreatorJane.height,
@@ -125,8 +125,10 @@ export default function Home() {
     const AnimatedCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
         const [ref, isVisible] = useScrollAnimation();
         return (
-            <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in', className)}>
-                {children}
+            <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in', className)}>
+                <Card className={cn("overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 flex flex-col h-full", className)}>
+                    {children}
+                </Card>
             </div>
         );
     };
