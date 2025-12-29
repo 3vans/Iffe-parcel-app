@@ -64,7 +64,7 @@ const initialFeedItems: FeedItem[] = [
     avatarHeight: placeholderImages.homeCreatorJane.height,
     dataAiHint: placeholderImages.homeCreatorJane.hint,
     specialty: 'Expert Guide & Wildlife Photographer',
-    profileLink: '/profile',
+    profileLink: '/profile/ian-ivan',
   },
   {
     id: 'blog-1',
@@ -114,7 +114,7 @@ const initialFeedItems: FeedItem[] = [
     avatarHeight: placeholderImages.homeCreatorTom.height,
     dataAiHint: placeholderImages.homeCreatorTom.hint,
     specialty: 'Conservation & Tracking Specialist',
-    profileLink: '/profile', 
+    profileLink: '/profile/ranger-ben', 
   },
 ];
 
