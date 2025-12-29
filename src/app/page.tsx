@@ -118,26 +118,9 @@ const initialFeedItems: FeedItem[] = [
   },
 ];
 
-const backgroundContent = [
-  { image: placeholderImages.campaignDetailWildebeest, description: 'Witness the epic annual migration of over a million wildebeest across the Serengeti plains.' },
-  { image: placeholderImages.campaignDetailGorilla, description: 'Experience a once-in-a-lifetime encounter with a family of majestic mountain gorillas in their natural habitat.' },
-  { image: placeholderImages.campaignDetailMokoro, description: 'Glide silently through the crystal-clear waters of the Okavango Delta in a traditional mokoro canoe.' },
-  { image: placeholderImages.galleryBalloon, description: 'Soar above the Maasai Mara at sunrise in a hot air balloon for a breathtaking perspective of the savanna.' },
-  { image: placeholderImages.galleryGiraffe, description: 'Watch the silhouette of a graceful giraffe against a stunning African sunset.' },
-];
-
-
 export default function Home() {
     const [feedItems] = useState<FeedItem[]>(initialFeedItems);
     const [activeCarouselImage, setActiveCarouselImage] = useState<string | null>(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-          setCurrentIndex(prevIndex => (prevIndex + 1) % backgroundContent.length);
-        }, 7000);
-        return () => clearInterval(interval);
-      }, []);
 
     const AnimatedCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
         const [ref, isVisible] = useScrollAnimation();
@@ -148,17 +131,12 @@ export default function Home() {
         );
     };
   
-    const currentBg = backgroundContent[currentIndex];
 
   return (
     <>
       <div className="relative z-10 space-y-12 animate-fade-in">
         <section>
-          <Hero 
-            description={currentBg.description}
-            imageUrl={currentBg.image.src}
-            imageHint={currentBg.image.hint}
-          />
+          <Hero />
         </section>
 
         <section>

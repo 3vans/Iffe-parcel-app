@@ -1,18 +1,21 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import placeholderImages from '@/app/lib/placeholder-images.json';
 
-interface HeroProps {
-  description: string;
-  imageUrl?: string;
-  imageHint?: string;
-}
+const backgroundContent = [
+  { image: placeholderImages.campaignDetailWildebeest, description: 'Witness the epic annual migration of over a million wildebeest across the Serengeti plains.' },
+  { image: placeholderImages.campaignDetailGorilla, description: 'Experience a once-in-a-lifetime encounter with a family of majestic mountain gorillas in their natural habitat.' },
+  { image: placeholderImages.campaignDetailMokoro, description: 'Glide silently through the crystal-clear waters of the Okavango Delta in a traditional mokoro canoe.' },
+  { image: placeholderImages.galleryBalloon, description: 'Soar above the Maasai Mara at sunrise in a hot air balloon for a breathtaking perspective of the savanna.' },
+  { image: placeholderImages.galleryGiraffe, description: 'Watch the silhouette of a graceful giraffe against a stunning African sunset.' },
+];
 
 const TornPaperSVG = () => (
   <svg
@@ -29,20 +32,31 @@ const TornPaperSVG = () => (
 );
 
 
-export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
+export default function Hero() {
   const [ref, isVisible] = useScrollAnimation();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex(prevIndex => (prevIndex + 1) % backgroundContent.length);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  const currentBg = backgroundContent[currentIndex];
 
   return (
     <div ref={ref} className={cn('relative w-full h-[60vh] min-h-[400px] md:min-h-[500px] overflow-hidden rounded-lg shadow-2xl scroll-animate bg-background', isVisible && 'scroll-animate-in')}>
-        {imageUrl && (
+        {currentBg.image.src && (
             <div className="absolute inset-0 z-0">
                 <Image
-                    src={imageUrl}
-                    alt={description}
+                    src={currentBg.image.src}
+                    alt={currentBg.description}
                     layout="fill"
                     objectFit="cover"
-                    data-ai-hint={imageHint}
+                    data-ai-hint={currentBg.image.hint}
                     priority
+                    key={currentIndex} 
                 />
             </div>
         )}
@@ -61,8 +75,8 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
               <span className="block">Explore the</span>
               <span className="block">PEARL</span>
             </h1>
-            <p className="text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500" key={description}>
-                {description}
+            <p className="text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500" key={currentBg.description}>
+                {currentBg.description}
             </p>
             <div className="space-y-4">
                <Button size="lg" asChild className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold">
@@ -94,8 +108,8 @@ export default function Hero({ description, imageUrl, imageHint }: HeroProps) {
                 <span className="block font-headline">PEARL</span>
             </h1>
             <div className="w-24 h-1 bg-accent mb-6"></div>
-             <p className="text-muted-foreground max-w-md mb-8 h-20 transition-opacity duration-500" key={description}>
-                {description}
+             <p className="text-muted-foreground max-w-md mb-8 h-20 transition-opacity duration-500" key={currentBg.description}>
+                {currentBg.description}
             </p>
             <div className="space-y-4">
                <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg py-7 px-8">
