@@ -13,7 +13,7 @@ import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import { notFound, useParams } from 'next/navigation';
 
-interface Ranger {
+interface Profile {
   id: string;
   name: string;
   title: string;
@@ -25,7 +25,7 @@ interface Ranger {
   guidedTours: { id: string; title: string; shortDescription: string; image: keyof typeof placeholderImages }[];
 }
 
-const rangersData: Ranger[] = [
+const profilesData: Profile[] = [
   {
     id: 'ranger-ben',
     name: 'Ranger Ben',
@@ -65,6 +65,81 @@ const rangersData: Ranger[] = [
       { id: '1', title: 'Serengeti Great Migration', shortDescription: 'Witness the epic annual migration of over a million wildebeest across the Serengeti plains.', image: 'campaignDetailWildebeest' },
     ],
   },
+  {
+    id: 'jane-doe',
+    name: 'Jane Doe',
+    title: 'Founder & Lead Guide',
+    avatar: 'teamJane',
+    bio: `Jane founded iffe-travels with a singular vision: to share the magic of Africa with the world in a responsible and authentic way. With 15 years of guiding experience, her knowledge of the continent's ecosystems is unparalleled. She is passionate about community-based tourism and works tirelessly to ensure that local communities benefit from every tour.`,
+    stats: [
+      { label: 'Experience', value: '15 Yrs' },
+      { label: 'Tours Guided', value: '300+' },
+      { label: 'Specialty', value: 'Community Tourism' },
+    ],
+    isVerified: true,
+    blogPosts: [],
+    guidedTours: [],
+  },
+  {
+    id: 'john-smith',
+    name: 'John Smith',
+    title: 'Head of Operations',
+    avatar: 'teamJohn',
+    bio: `John is the logistical mastermind behind every seamless iffe-travels journey. With a decade in operations, he ensures that every detail, from airport transfers to lodge bookings, is perfectly coordinated. His dedication to excellence allows our guests to relax and immerse themselves fully in their adventure.`,
+    stats: [
+      { label: 'Experience', value: '10 Yrs' },
+      { label: 'Tours Managed', value: '500+' },
+      { label: 'Specialty', value: 'Logistics' },
+    ],
+    isVerified: true,
+    blogPosts: [],
+    guidedTours: [],
+  },
+  {
+    id: 'alice-green',
+    name: 'Alice Green',
+    title: 'Customer Relations',
+    avatar: 'teamAlice',
+    bio: `Alice is the friendly voice and first point of contact for many of our travelers. She excels at understanding our clients' dreams and helping them choose the perfect safari. Her warmth and dedication ensure that every traveler feels supported from their first inquiry to their return home.`,
+    stats: [
+      { label: 'Experience', value: '8 Yrs' },
+      { label: 'Clients Assisted', value: '1000+' },
+      { label: 'Specialty', value: 'Customer Happiness' },
+    ],
+    isVerified: true,
+    blogPosts: [],
+    guidedTours: [],
+  },
+  {
+    id: 'david-lee',
+    name: 'David Lee',
+    title: 'Lead Photographer',
+    avatar: 'teamDavid',
+    bio: `David is our resident photography guru. He not only captures stunning images for our gallery but also leads specialized photographic tours. His patience and artistic eye help aspiring photographers capture the moments of a lifetime.`,
+    stats: [
+      { label: 'Experience', value: '7 Yrs' },
+      { label: 'Photos Taken', value: '10,000+' },
+      { label: 'Specialty', value: 'Wildlife Photography' },
+    ],
+    isVerified: true,
+    blogPosts: [],
+    guidedTours: [],
+  },
+  {
+    id: 'emily-white',
+    name: 'Emily White',
+    title: 'Logistics Coordinator',
+    avatar: 'teamEmily',
+    bio: `Emily is a key part of our operations team, specializing in coordinating ground transport and local accommodations. Her meticulous planning ensures that every part of the journey is smooth, safe, and comfortable for our guests.`,
+    stats: [
+      { label: 'Experience', value: '5 Yrs' },
+      { label: 'Trips Coordinated', value: '200+' },
+      { label: 'Specialty', value: 'Ground Operations' },
+    ],
+    isVerified: true,
+    blogPosts: [],
+    guidedTours: [],
+  },
 ];
 
 
@@ -82,16 +157,16 @@ const AnimatedCard = ({ children, className }: { children: React.ReactNode, clas
 
 export default function RangerProfilePage() {
     const params = useParams();
-    const rangerId = params.id as string;
-    const rangerData = rangersData.find(r => r.id === rangerId);
+    const profileId = params.id as string;
+    const profileData = profilesData.find(r => r.id === profileId);
     
     const [headerRef, isHeaderVisible] = useScrollAnimation();
 
-    if (!rangerData) {
+    if (!profileData) {
         return notFound();
     }
     
-    const rangerAvatar = placeholderImages[rangerData.avatar];
+    const profileAvatar = placeholderImages[profileData.avatar];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -103,16 +178,16 @@ export default function RangerProfilePage() {
         <section ref={headerRef} className={cn('scroll-animate bg-card p-6 rounded-lg shadow-lg', isHeaderVisible && 'scroll-animate-in')}>
             <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
               <Avatar className="h-24 w-24 border-4 border-accent">
-                <AvatarImage asChild src={rangerAvatar.src} alt={rangerData.name}>
-                  <Image src={rangerAvatar.src} alt={rangerData.name} width={rangerAvatar.width} height={rangerAvatar.height} data-ai-hint={rangerAvatar.hint} />
+                <AvatarImage asChild src={profileAvatar.src} alt={profileData.name}>
+                  <Image src={profileAvatar.src} alt={profileData.name} width={profileAvatar.width} height={profileAvatar.height} data-ai-hint={profileAvatar.hint} />
                 </AvatarImage>
-                <AvatarFallback>{rangerData.name.substring(0,2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{profileData.name.substring(0,2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
                 <h1 className="font-headline text-3xl font-bold text-primary flex items-center justify-center sm:justify-start">
-                  {rangerData.name} {rangerData.isVerified && <VerifiedBadge className="ml-2" size={24} />}
+                  {profileData.name} {profileData.isVerified && <VerifiedBadge className="ml-2" size={24} />}
                 </h1>
-                <p className="text-muted-foreground">{rangerData.title}</p>
+                <p className="text-muted-foreground">{profileData.title}</p>
                 <div className="mt-3 flex gap-2 flex-wrap justify-center sm:justify-start">
                     <Button className="bg-accent text-accent-foreground hover:bg-accent/90"><UserPlus className="w-4 h-4 mr-2" /> Follow</Button>
                     <Button variant="outline"><MessageSquare className="w-4 h-4 mr-2" /> Message</Button>
@@ -122,7 +197,7 @@ export default function RangerProfilePage() {
         </section>
 
         <div className="grid md:grid-cols-3 gap-8">
-            {rangerData.stats.map(stat => (
+            {profileData.stats.map(stat => (
                 <AnimatedCard key={stat.label}>
                     <CardHeader className="text-center p-4">
                         <CardTitle className="text-sm font-semibold text-muted-foreground">{stat.label}</CardTitle>
@@ -134,25 +209,25 @@ export default function RangerProfilePage() {
 
         <AnimatedCard>
             <CardHeader>
-                <CardTitle className="font-headline text-xl text-primary">About {rangerData.name}</CardTitle>
+                <CardTitle className="font-headline text-xl text-primary">About {profileData.name}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground whitespace-pre-line">{rangerData.bio}</p>
+                <p className="text-muted-foreground whitespace-pre-line">{profileData.bio}</p>
             </CardContent>
         </AnimatedCard>
 
         <section>
             <h2 className="font-headline text-2xl font-bold text-primary mb-4">Travel Journal</h2>
             <div className="grid md:grid-cols-2 gap-8">
-                {rangerData.blogPosts.map(post => <BlogCard key={post.id} {...post} />)}
-                 {rangerData.blogPosts.length === 0 && <p className="text-muted-foreground">No journal entries yet.</p>}
+                {profileData.blogPosts.map(post => <BlogCard key={post.id} {...post} />)}
+                 {profileData.blogPosts.length === 0 && <p className="text-muted-foreground">No journal entries yet.</p>}
             </div>
         </section>
         
         <section>
             <h2 className="font-headline text-2xl font-bold text-primary mb-4">Guided Tours</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {rangerData.guidedTours.map(tour => {
+                {profileData.guidedTours.map(tour => {
                     const tourImage = placeholderImages[tour.image];
                     return (
                         <AnimatedCard key={tour.id}>
@@ -176,7 +251,7 @@ export default function RangerProfilePage() {
                     );
                 })}
             </div>
-             {rangerData.guidedTours.length === 0 && <p className="text-muted-foreground">No guided tours listed currently.</p>}
+             {profileData.guidedTours.length === 0 && <p className="text-muted-foreground">No guided tours listed currently.</p>}
         </section>
 
     </div>

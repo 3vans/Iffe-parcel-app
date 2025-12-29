@@ -21,7 +21,7 @@ const teamMembers = [
     skill: "300+ Tours",
     image: "teamJane" as keyof typeof placeholderImages,
     dataAiHint: "safari guide portrait",
-    link: "/about"
+    link: "/profile/jane-doe"
   },
   {
     id: "team2",
@@ -32,7 +32,7 @@ const teamMembers = [
     skill: "500+ Tours",
     image: "teamJohn" as keyof typeof placeholderImages,
     dataAiHint: "operations manager portrait",
-    link: "/about"
+    link: "/profile/john-smith"
   },
   {
     id: "team3",
@@ -43,7 +43,7 @@ const teamMembers = [
     skill: "450+ Tours",
     image: "teamAlice" as keyof typeof placeholderImages,
     dataAiHint: "customer relations portrait",
-    link: "/about"
+    link: "/profile/alice-green"
   },
   {
     id: "team4",
@@ -54,7 +54,7 @@ const teamMembers = [
     skill: "1000+ Photos",
     image: "teamDavid" as keyof typeof placeholderImages,
     dataAiHint: "photographer portrait",
-    link: "/about"
+    link: "/profile/david-lee"
   },
   {
     id: "team5",
@@ -65,7 +65,7 @@ const teamMembers = [
     skill: "200+ Trips",
     image: "teamEmily" as keyof typeof placeholderImages,
     dataAiHint: "logistics coordinator portrait",
-    link: "/about"
+    link: "/profile/emily-white"
   }
 ];
 
