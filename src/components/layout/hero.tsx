@@ -63,9 +63,10 @@ export default function Hero() {
     <div 
         ref={ref} 
         className={cn(
-            'relative w-full overflow-hidden shadow-2xl scroll-animate bg-background transition-all duration-700 ease-in-out -mt-[68px]', // Negative margin to pull it up
+            'relative w-full overflow-hidden shadow-2xl scroll-animate bg-background transition-all duration-700 ease-in-out',
             hasScrolled ? 'h-[60vh] min-h-[500px] rounded-b-lg' : 'h-screen min-h-[600px] rounded-none',
-            isVisible && 'scroll-animate-in'
+            isVisible && 'scroll-animate-in',
+            '-mt-[68px]'
         )}
     >
       <div className="absolute inset-0 z-0">
@@ -89,9 +90,9 @@ export default function Hero() {
       {/* Mobile Content Container */}
       <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden pt-[68px]">
         <div className="bg-black/20 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 text-center text-white">
-            <p className="font-semibold text-primary uppercase tracking-widest text-sm mb-2">Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
+            <p className={cn("font-semibold text-primary uppercase tracking-widest text-sm mb-2 transition-all duration-500", hasScrolled && "text-xs")}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
-              className="font-headline text-3xl font-black mb-3 tracking-widest uppercase"
+              className={cn("font-headline font-black mb-3 tracking-widest uppercase transition-all duration-500", hasScrolled ? "text-2xl" : "text-3xl")}
                style={{
                 WebkitTextStroke: '0.5px white',
                 color: 'transparent'
@@ -100,11 +101,11 @@ export default function Hero() {
               <span className="block">Explore the</span>
               <span className="block">PEARL</span>
             </h1>
-            <p className="text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500" key={currentBg.description}>
+            <p className={cn("text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500", hasScrolled ? "h-12 line-clamp-2" : "h-16")} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="space-y-4">
-               <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full">
+               <Button size={hasScrolled ? 'default' : 'lg'} asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full transition-all duration-500">
                 <Link href="/contact">
                   LET'S GET STARTED
                 </Link>
@@ -117,13 +118,16 @@ export default function Hero() {
       <div className="relative h-full hidden md:flex items-center z-10 pt-[68px]">
         {/* Left Panel */}
         <div 
-          className="relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-old-paper/70 dark:bg-background/70 md:bg-old-paper/50 md:dark:bg-background/50 p-8 md:p-12"
+          className={cn(
+            "relative w-full md:w-1/2 lg:w-2/5 h-full flex flex-col justify-center bg-old-paper/70 dark:bg-background/70 md:bg-old-paper/50 md:dark:bg-background/50 transition-all duration-500",
+             hasScrolled ? 'p-6 md:p-8' : 'p-8 md:p-12'
+          )}
           style={{backdropFilter: 'blur(8px)'}}
         >
           <div className="mix-blend-multiply dark:mix-blend-screen">
-            <p className="font-semibold text-primary uppercase tracking-widest text-sm mb-2">Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
+            <p className={cn("font-semibold text-primary uppercase tracking-widest text-sm mb-2 transition-all duration-500", hasScrolled && 'text-xs')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-[3px] uppercase"
+              className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl")}
               style={{
                 color: 'hsl(var(--primary-foreground))',
                 WebkitTextStroke: '1px hsl(var(--primary))',
@@ -132,17 +136,17 @@ export default function Hero() {
                 <span className="block font-headline">Explore the</span>
                 <span className="block font-headline">PEARL</span>
             </h1>
-            <div className="w-24 h-1 bg-accent mb-6"></div>
-             <p className="text-muted-foreground max-w-md mb-8 h-20 transition-opacity duration-500" key={currentBg.description}>
+            <div className={cn("h-1 bg-accent mb-6 transition-all duration-500", hasScrolled ? "w-16" : "w-24")}></div>
+             <p className={cn("text-muted-foreground max-w-md mb-8 h-20 transition-all duration-500", hasScrolled && 'text-sm h-16')} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex items-center gap-4 mb-4">
-               <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 text-md py-6 px-8 rounded-full">
+               <Button size={hasScrolled ? 'default' : 'lg'} asChild className={cn("bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full transition-all duration-500", hasScrolled ? "py-5 px-6 text-sm" : "text-md py-6 px-8")}>
                 <Link href="/contact">
                   LET'S GET STARTED
                 </Link>
               </Button>
-               <Button variant="outline" asChild className="rounded-full px-6 py-6 text-sm border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
+               <Button variant="outline" asChild className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary transition-all duration-500", hasScrolled ? "px-5 py-5 text-xs" : "px-6 py-6 text-sm")}>
                 <Link href="/about">Who we are</Link>
               </Button>
             </div>
