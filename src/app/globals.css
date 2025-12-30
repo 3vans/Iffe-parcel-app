@@ -358,4 +358,14 @@ body {
       opacity: 1;
     }
   }
+
+  /* Dock Text Effect */
+  .dock-text-container {
+    -webkit-text-stroke: 1px hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  .dock-text-container > span {
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+  }
 }

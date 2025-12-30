@@ -8,6 +8,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import DockTextEffect from '@/components/dock-text-effect';
 
 const backgroundContent = [
   { image: placeholderImages.campaignDetailWildebeest, description: 'Witness the epic annual migration of over a million wildebeest across the Serengeti plains.' },
@@ -82,7 +83,7 @@ export default function Hero() {
                   className={cn(
                       'transition-all duration-1000 ease-in-out',
                       index === currentIndex ? 'opacity-100' : 'opacity-0',
-                      !hasScrolled && 'scale-105'
+                      !hasScrolled ? 'scale-105' : 'scale-100'
                   )}
               />
           ))}
@@ -127,16 +128,10 @@ export default function Hero() {
         >
           <div className="mix-blend-multiply dark:mix-blend-screen">
             <p className={cn("font-semibold text-primary uppercase tracking-widest mb-2 transition-all duration-500", hasScrolled ? 'text-xs' : 'text-sm')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
-            <h1
-              className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl")}
-              style={{
-                color: 'hsl(var(--primary-foreground))',
-                WebkitTextStroke: '1px hsl(var(--primary))',
-              }}
-            >
-                <span className="block font-headline">Explore the</span>
-                <span className="block font-headline">PEARL</span>
-            </h1>
+             <div className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl")}>
+                <DockTextEffect text="Explore the" className="font-headline dock-text-container" />
+                <DockTextEffect text="PEARL" className="font-headline dock-text-container" />
+            </div>
             <div className={cn("h-1 bg-accent mb-6 transition-all duration-500", hasScrolled ? "w-16" : "w-24")}></div>
              <p className={cn("text-muted-foreground max-w-md transition-all duration-500", hasScrolled ? 'text-sm h-16' : 'h-20 mb-8')} key={currentBg.description}>
                 {currentBg.description}
@@ -158,4 +153,3 @@ export default function Hero() {
     </div>
   );
 }
-
