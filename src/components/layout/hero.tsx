@@ -26,6 +26,19 @@ export default function Hero() {
   const [animationTrigger, setAnimationTrigger] = useState<'idle' | 'forward' | 'backward'>('idle');
 
   useEffect(() => {
+    // Trigger animation on page load
+    const loadTimer = setTimeout(() => {
+        setAnimationTrigger('forward');
+        // Reset to idle so scroll animations can take over later
+        const resetTimer = setTimeout(() => setAnimationTrigger('idle'), 1600);
+        return () => clearTimeout(resetTimer);
+    }, 100);
+
+    return () => clearTimeout(loadTimer);
+  }, []);
+
+
+  useEffect(() => {
     let lastScrollY = window.scrollY;
     let ticking = false;
 
