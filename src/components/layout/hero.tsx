@@ -80,8 +80,9 @@ export default function Hero() {
                   data-ai-hint={bg.image.hint}
                   priority={index === 0}
                   className={cn(
-                      'transition-opacity duration-1000 ease-in-out',
-                      index === currentIndex ? 'opacity-100' : 'opacity-0'
+                      'transition-all duration-1000 ease-in-out',
+                      index === currentIndex ? 'opacity-100' : 'opacity-0',
+                      !hasScrolled && 'scale-105'
                   )}
               />
           ))}
@@ -101,7 +102,7 @@ export default function Hero() {
               <span className="block">Explore the</span>
               <span className="block">PEARL</span>
             </h1>
-            <p className={cn("text-white/90 text-sm max-w-md mb-6 transition-opacity duration-500", hasScrolled ? "h-12 line-clamp-2" : "h-16")} key={currentBg.description}>
+            <p className={cn("text-white/90 text-sm max-w-md transition-opacity duration-500", hasScrolled ? "h-12 line-clamp-2" : "h-16 mb-6")} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="space-y-4">
@@ -137,7 +138,7 @@ export default function Hero() {
                 <span className="block font-headline">PEARL</span>
             </h1>
             <div className={cn("h-1 bg-accent mb-6 transition-all duration-500", hasScrolled ? "w-16" : "w-24")}></div>
-             <p className={cn("text-muted-foreground max-w-md mb-8 transition-all duration-500", hasScrolled ? 'text-sm h-16' : 'h-20')} key={currentBg.description}>
+             <p className={cn("text-muted-foreground max-w-md transition-all duration-500", hasScrolled ? 'text-sm h-16' : 'h-20 mb-8')} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex items-center gap-4 mb-4">
@@ -157,3 +158,4 @@ export default function Hero() {
     </div>
   );
 }
+
