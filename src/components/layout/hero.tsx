@@ -117,9 +117,9 @@ export default function Hero() {
                   LET'S GET STARTED
                 </Link>
               </Button>
-               <p className="font-semibold text-primary hover:text-accent transition-colors">
+               <Button variant="outline" asChild className="rounded-full px-6 py-5 text-sm border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
                 <Link href="/about">Who we are</Link>
-              </p>
+              </Button>
             </div>
           </div>
           <TornPaperSVG />
