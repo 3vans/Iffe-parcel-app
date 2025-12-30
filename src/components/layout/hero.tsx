@@ -35,6 +35,20 @@ const TornPaperSVG = () => (
 export default function Hero() {
   const [ref, isVisible] = useScrollAnimation();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,7 +60,14 @@ export default function Hero() {
   const currentBg = backgroundContent[currentIndex];
 
   return (
-    <div ref={ref} className={cn('relative w-full h-[60vh] min-h-[400px] md:min-h-[500px] overflow-hidden rounded-lg shadow-2xl scroll-animate bg-background', isVisible && 'scroll-animate-in')}>
+    <div 
+        ref={ref} 
+        className={cn(
+            'relative w-full overflow-hidden shadow-2xl scroll-animate bg-background transition-all duration-700 ease-in-out',
+            hasScrolled ? 'h-[60vh] min-h-[500px] rounded-lg' : 'h-screen min-h-[600px] rounded-none',
+            isVisible && 'scroll-animate-in'
+        )}
+    >
       <div className="absolute inset-0 z-0">
           {backgroundContent.map((bg, index) => (
               <Image
