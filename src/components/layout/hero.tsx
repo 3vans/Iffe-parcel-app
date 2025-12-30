@@ -47,19 +47,23 @@ export default function Hero() {
 
   return (
     <div ref={ref} className={cn('relative w-full h-[60vh] min-h-[400px] md:min-h-[500px] overflow-hidden rounded-lg shadow-2xl scroll-animate bg-background', isVisible && 'scroll-animate-in')}>
-        {currentBg.image.src && (
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src={currentBg.image.src}
-                    alt={currentBg.description}
-                    layout="fill"
-                    objectFit="cover"
-                    data-ai-hint={currentBg.image.hint}
-                    priority
-                    key={currentIndex} 
-                />
-            </div>
-        )}
+      <div className="absolute inset-0 z-0">
+          {backgroundContent.map((bg, index) => (
+              <Image
+                  key={bg.image.src}
+                  src={bg.image.src}
+                  alt={bg.description}
+                  layout="fill"
+                  objectFit="cover"
+                  data-ai-hint={bg.image.hint}
+                  priority={index === 0}
+                  className={cn(
+                      "transition-opacity duration-1000 ease-in-out",
+                      index === currentIndex ? "opacity-100" : "opacity-0"
+                  )}
+              />
+          ))}
+      </div>
       
       {/* Mobile Content Container */}
       <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden">
