@@ -80,8 +80,8 @@ export default function Hero() {
                   data-ai-hint={bg.image.hint}
                   priority={index === 0}
                   className={cn(
-                      "transition-opacity duration-1000 ease-in-out",
-                      index === currentIndex ? "opacity-100" : "opacity-0"
+                      'transition-opacity duration-1000 ease-in-out',
+                      index === currentIndex ? 'opacity-100' : 'opacity-0'
                   )}
               />
           ))}
@@ -125,7 +125,7 @@ export default function Hero() {
           style={{backdropFilter: 'blur(8px)'}}
         >
           <div className="mix-blend-multiply dark:mix-blend-screen">
-            <p className={cn("font-semibold text-primary uppercase tracking-widest text-sm mb-2 transition-all duration-500", hasScrolled && 'text-xs')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
+            <p className={cn("font-semibold text-primary uppercase tracking-widest mb-2 transition-all duration-500", hasScrolled ? 'text-xs' : 'text-sm')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
               className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl")}
               style={{
@@ -137,7 +137,7 @@ export default function Hero() {
                 <span className="block font-headline">PEARL</span>
             </h1>
             <div className={cn("h-1 bg-accent mb-6 transition-all duration-500", hasScrolled ? "w-16" : "w-24")}></div>
-             <p className={cn("text-muted-foreground max-w-md mb-8 h-20 transition-all duration-500", hasScrolled && 'text-sm h-16')} key={currentBg.description}>
+             <p className={cn("text-muted-foreground max-w-md mb-8 transition-all duration-500", hasScrolled ? 'text-sm h-16' : 'h-20')} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex items-center gap-4 mb-4">
