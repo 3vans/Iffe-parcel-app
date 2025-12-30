@@ -79,7 +79,7 @@ export default function Hero() {
                 {currentBg.description}
             </p>
             <div className="space-y-4">
-               <Button size="lg" asChild className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold">
+               <Button size="lg" asChild className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold rounded-full">
                 <Link href="/contact">
                   LET'S GET STARTED
                 </Link>
@@ -112,7 +112,7 @@ export default function Hero() {
                 {currentBg.description}
             </p>
             <div className="flex items-center justify-between w-full">
-               <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg py-7 px-8">
+               <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg py-7 px-8 rounded-full">
                 <Link href="/contact">
                   LET'S GET STARTED
                 </Link>
