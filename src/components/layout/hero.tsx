@@ -136,7 +136,7 @@ export default function Hero() {
              <p className="text-muted-foreground max-w-md mb-8 h-20 transition-opacity duration-500" key={currentBg.description}>
                 {currentBg.description}
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mb-4">
                <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 text-md py-6 px-8 rounded-full">
                 <Link href="/contact">
                   LET'S GET STARTED
