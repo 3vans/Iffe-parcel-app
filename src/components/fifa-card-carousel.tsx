@@ -16,6 +16,7 @@ export interface CardData {
   id: string;
   title: string;
   country: string;
+  description?: string;
   rating: string;
   speed: string; // Represents days for trips, experience for people
   skill: string; // Represents activities for trips, tour count for people
@@ -159,6 +160,7 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
                         <div className="card-content">
                             <h3 className="card-title">{card.title}</h3>
                             <div className="card-location"><MapPin className="mr-1 h-4 w-4" />{card.country}</div>
+                            {card.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{card.description}</p>}
                             <Button asChild className="card-button w-full">
                                 <Link href={card.link}>
                                   <UserCircle className="mr-2 h-4 w-4" />
