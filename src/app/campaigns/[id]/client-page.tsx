@@ -42,57 +42,24 @@ interface CampaignDetailClientPageProps {
   campaign: Campaign;
 }
 
-const PhotoGallerySection = () => {
-    const galleryItems = [
-        { title: 'The Experience', image: placeholderImages.gallerySafariGroup, id: 'exp' },
-        { title: 'Activities', image: placeholderImages.ideaWalkingSafari, id: 'act' },
-        { title: 'Accommodation', image: placeholderImages.pkgAdventurer, id: 'acc' },
-        { title: 'Local Cuisine', image: placeholderImages.videoThumbTestimonial, id: ' cui' }
-    ];
-
-    const [ref, isVisible] = useScrollAnimation();
-
-    return (
-        <section ref={ref} className={cn('space-y-6 scroll-animate', isVisible && 'scroll-animate-in')}>
-            <h2 className="font-headline text-2xl font-semibold text-primary text-center">A Glimpse of Your Adventure</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-                {galleryItems.map(item => (
-                    <div key={item.id} className="relative aspect-square md:aspect-[4/5] rounded-lg overflow-hidden group shadow-lg">
-                        <Image 
-                            src={item.image.src} 
-                            alt={item.title}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={item.image.hint}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-start p-3">
-                            <h3 className="font-headline text-white text-sm md:text-lg font-bold">{item.title}</h3>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <div className="text-center mt-4">
-                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-                    <Link href="/gallery">
-                        <Camera className="mr-2 h-4 w-4" /> View Full Gallery
-                    </Link>
-                </Button>
-            </div>
-        </section>
-    );
-};
-
-
 export default function CampaignDetailClientPage({ campaign }: CampaignDetailClientPageProps) {
   const [ref, isVisible] = useScrollAnimation();
-  const [formattedEndDate, setFormattedEndDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     if (campaign?.endDate) {
-      // This runs only on the client, after hydration
-      setFormattedEndDate(new Date(campaign.endDate).toLocaleDateString())
+      setEndDate(new Date(campaign.endDate).toLocaleDateString())
     }
   }, [campaign?.endDate]);
+  
+  const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+    const [ref, isVisible] = useScrollAnimation();
+    return (
+        <section ref={ref} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
+            {children}
+        </section>
+    );
+  };
 
   return (
     <div ref={ref} className={cn('space-y-8 scroll-animate', isVisible && 'scroll-animate-in')}>
@@ -118,35 +85,55 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
         
         <CardContent className="p-6">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="md:col-span-2 space-y-6">
-              <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Tour</h2>
-                <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
-              </section>
-              <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">The Experience</h2>
-                <p className="text-muted-foreground leading-relaxed">{campaign.storyline}</p>
-              </section>
-              
-              <PhotoGallerySection />
+            <div className="md:col-span-2 space-y-8">
 
-              <div className="grid sm:grid-cols-2 gap-6">
-                <section>
-                  <h3 className="font-headline text-xl font-semibold text-primary mb-3 flex items-center"><Activity className="mr-2 h-5 w-5"/>Activities</h3>
+              <AnimatedSection>
+                <h2 className="font-headline text-2xl font-semibold text-primary">About this Tour</h2>
+                <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+              </AnimatedSection>
+
+              <AnimatedSection>
+                <h2 className="font-headline text-2xl font-semibold text-primary">The Experience</h2>
+                <p className="text-muted-foreground leading-relaxed">{campaign.storyline}</p>
+                <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                    <Image src={placeholderImages.gallerySafariGroup.src} alt="The Experience" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.gallerySafariGroup.hint} />
+                </div>
+              </AnimatedSection>
+              
+              <div className="grid sm:grid-cols-2 gap-8">
+                <AnimatedSection>
+                  <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><Activity className="mr-2 h-5 w-5"/>Activities</h3>
                   <ul className="space-y-1 text-muted-foreground list-disc list-inside">
                     {campaign.activities.map(activity => <li key={activity}>{activity}</li>)}
                   </ul>
-                </section>
-                <section>
-                  <h3 className="font-headline text-xl font-semibold text-primary mb-3 flex items-center"><BedDouble className="mr-2 h-5 w-5"/>Accommodation</h3>
+                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                        <Image src={placeholderImages.ideaWalkingSafari.src} alt="Activities" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.ideaWalkingSafari.hint} />
+                    </div>
+                </AnimatedSection>
+                <AnimatedSection>
+                  <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><BedDouble className="mr-2 h-5 w-5"/>Accommodation</h3>
                   <p className="text-muted-foreground">{campaign.accommodation}</p>
-                </section>
+                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                        <Image src={placeholderImages.pkgAdventurer.src} alt="Accommodation" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.pkgAdventurer.hint} />
+                    </div>
+                </AnimatedSection>
               </div>
 
-               <section>
-                <h3 className="font-headline text-xl font-semibold text-primary mb-3 flex items-center"><UtensilsCrossed className="mr-2 h-5 w-5"/>Meals</h3>
+               <AnimatedSection>
+                <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><UtensilsCrossed className="mr-2 h-5 w-5"/>Meals</h3>
                 <p className="text-muted-foreground">{campaign.meals}</p>
-              </section>
+                 <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                    <Image src={placeholderImages.videoThumbTestimonial.src} alt="Local Cuisine" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.videoThumbTestimonial.hint} />
+                </div>
+              </AnimatedSection>
+
+              <div className="text-center pt-4">
+                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Link href="/gallery">
+                        <Camera className="mr-2 h-4 w-4" /> View Full Gallery
+                    </Link>
+                </Button>
+              </div>
               
               {campaign.tags && campaign.tags.length > 0 && (
                 <section>
@@ -164,7 +151,7 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
                 campaignTitle={campaign.title}
                 currentAmount={campaign.currentAmount}
                 goal={campaign.goal}
-                endDate={formattedEndDate}
+                endDate={endDate}
                 volunteersSignedUp={campaign.volunteersSignedUp}
                 volunteersNeeded={campaign.volunteersNeeded}
               />
