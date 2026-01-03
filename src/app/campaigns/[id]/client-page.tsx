@@ -100,30 +100,41 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
                 </div>
               </AnimatedSection>
               
-              <div className="grid sm:grid-cols-2 gap-8">
-                <AnimatedSection>
-                  <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><Activity className="mr-2 h-5 w-5"/>Activities</h3>
-                  <ul className="space-y-1 text-muted-foreground list-disc list-inside">
-                    {campaign.activities.map(activity => <li key={activity}>{activity}</li>)}
-                  </ul>
-                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                        <Image src={placeholderImages.ideaWalkingSafari.src} alt="Activities" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.ideaWalkingSafari.hint} />
-                    </div>
-                </AnimatedSection>
-                <AnimatedSection>
-                  <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><BedDouble className="mr-2 h-5 w-5"/>Accommodation</h3>
-                  <p className="text-muted-foreground">{campaign.accommodation}</p>
-                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                        <Image src={placeholderImages.pkgAdventurer.src} alt="Accommodation" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.pkgAdventurer.hint} />
-                    </div>
-                </AnimatedSection>
-              </div>
+              <AnimatedSection>
+                <div className="grid sm:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><Activity className="mr-2 h-5 w-5"/>Activities</h3>
+                    <ul className="space-y-1 text-muted-foreground list-disc list-inside">
+                      {campaign.activities.map(activity => <li key={activity}>{activity}</li>)}
+                    </ul>
+                  </div>
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                      <Image src={placeholderImages.ideaWalkingSafari.src} alt="Activities" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.ideaWalkingSafari.hint} />
+                  </div>
+                </div>
+              </AnimatedSection>
+              
+              <AnimatedSection>
+                <div className="grid sm:grid-cols-2 gap-8 items-center">
+                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group sm:order-last">
+                      <Image src={placeholderImages.pkgAdventurer.src} alt="Accommodation" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.pkgAdventurer.hint} />
+                  </div>
+                  <div>
+                    <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><BedDouble className="mr-2 h-5 w-5"/>Accommodation</h3>
+                    <p className="text-muted-foreground">{campaign.accommodation}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
 
                <AnimatedSection>
-                <h3 className="font-headline text-xl font-semibold text-primary flex items-center"><UtensilsCrossed className="mr-2 h-5 w-5"/>Meals</h3>
-                <p className="text-muted-foreground">{campaign.meals}</p>
-                 <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                    <Image src={placeholderImages.videoThumbTestimonial.src} alt="Local Cuisine" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.videoThumbTestimonial.hint} />
+                <div className="grid sm:grid-cols-2 gap-8 items-center">
+                    <div>
+                      <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><UtensilsCrossed className="mr-2 h-5 w-5"/>Meals</h3>
+                      <p className="text-muted-foreground">{campaign.meals}</p>
+                    </div>
+                    <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
+                        <Image src={placeholderImages.videoThumbTestimonial.src} alt="Local Cuisine" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.videoThumbTestimonial.hint} />
+                    </div>
                 </div>
               </AnimatedSection>
 
