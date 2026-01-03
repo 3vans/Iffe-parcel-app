@@ -6,13 +6,14 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
+import { type RelatedTour } from './page';
 
 interface Campaign {
   id: string;
@@ -40,9 +41,50 @@ interface Campaign {
 
 interface CampaignDetailClientPageProps {
   campaign: Campaign;
+  relatedTours: RelatedTour[];
 }
 
-export default function CampaignDetailClientPage({ campaign }: CampaignDetailClientPageProps) {
+const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
+    if (tours.length === 0) return null;
+
+    return (
+        <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+            <CardHeader>
+                <CardTitle className="font-headline text-xl text-primary flex items-center">
+                    <Users className="mr-2 h-5 w-5"/>Related Tours
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                {tours.map(tour => (
+                    <Link key={tour.id} href={`/campaigns/${tour.id}`} className="block group">
+                        <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-card/50 transition-colors">
+                            <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
+                                <Image 
+                                    src={tour.imageUrl} 
+                                    alt={tour.title} 
+                                    fill 
+                                    className="object-cover transition-transform duration-300 group-hover:scale-105" 
+                                    data-ai-hint={tour.dataAiHint}
+                                />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">{tour.title}</p>
+                            </div>
+                        </div>
+                    </Link>
+                ))}
+            </CardContent>
+             <CardFooter>
+                <Button variant="link" className="text-accent hover:text-accent/80 p-0 text-sm w-full justify-start" asChild>
+                    <Link href="/campaigns">View All Tours <ExternalLink className="ml-1.5 h-3 w-3" /></Link>
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+};
+
+
+export default function CampaignDetailClientPage({ campaign, relatedTours }: CampaignDetailClientPageProps) {
   const [ref, isVisible] = useScrollAnimation();
   const [endDate, setEndDate] = useState('');
 
@@ -58,6 +100,31 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
         <section ref={ref} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
             {children}
         </section>
+    );
+  };
+
+  const InfoSectionWithImage = ({ title, icon: Icon, text, imageUrl, imageHint, imagePosition = 'left' }: { title: string, icon: React.ElementType, text: string, imageUrl: string, imageHint?: string, imagePosition?: 'left' | 'right' }) => {
+    return (
+      <AnimatedSection>
+        <div className={cn("grid md:grid-cols-2 gap-8 items-center")}>
+          <div className={cn("relative aspect-video rounded-lg overflow-hidden shadow-lg group", imagePosition === 'right' && 'md:order-last')}>
+            <Image src={imageUrl} alt={title} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={imageHint} />
+          </div>
+          <div>
+            <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2">
+              <Icon className="mr-2 h-5 w-5" />
+              {title}
+            </h3>
+            {text.split(',').length > 1 && !['Accommodation', 'Meals'].includes(title) ? (
+                 <ul className="space-y-1 text-muted-foreground list-disc list-inside">
+                    {text.split(',').map(item => <li key={item}>{item.trim()}</li>)}
+                </ul>
+            ) : (
+                <p className="text-muted-foreground">{text}</p>
+            )}
+          </div>
+        </div>
+      </AnimatedSection>
     );
   };
 
@@ -92,52 +159,41 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
                 <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
               </AnimatedSection>
 
-              <AnimatedSection>
-                <h2 className="font-headline text-2xl font-semibold text-primary">The Experience</h2>
-                <p className="text-muted-foreground leading-relaxed">{campaign.storyline}</p>
-                <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                    <Image src={placeholderImages.gallerySafariGroup.src} alt="The Experience" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.gallerySafariGroup.hint} />
-                </div>
-              </AnimatedSection>
+               <InfoSectionWithImage 
+                title="The Experience"
+                icon={Star}
+                text={campaign.storyline}
+                imageUrl={placeholderImages.gallerySafariGroup.src}
+                imageHint={placeholderImages.gallerySafariGroup.hint}
+                imagePosition="left"
+              />
               
-              <AnimatedSection>
-                <div className="grid sm:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><Activity className="mr-2 h-5 w-5"/>Activities</h3>
-                    <ul className="space-y-1 text-muted-foreground list-disc list-inside">
-                      {campaign.activities.map(activity => <li key={activity}>{activity}</li>)}
-                    </ul>
-                  </div>
-                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                      <Image src={placeholderImages.ideaWalkingSafari.src} alt="Activities" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.ideaWalkingSafari.hint} />
-                  </div>
-                </div>
-              </AnimatedSection>
+              <InfoSectionWithImage 
+                title="Activities"
+                icon={Activity}
+                text={campaign.activities.join(', ')}
+                imageUrl={placeholderImages.ideaWalkingSafari.src}
+                imageHint={placeholderImages.ideaWalkingSafari.hint}
+                imagePosition="right"
+              />
               
-              <AnimatedSection>
-                <div className="grid sm:grid-cols-2 gap-8 items-center">
-                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group sm:order-last">
-                      <Image src={placeholderImages.pkgAdventurer.src} alt="Accommodation" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.pkgAdventurer.hint} />
-                  </div>
-                  <div>
-                    <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><BedDouble className="mr-2 h-5 w-5"/>Accommodation</h3>
-                    <p className="text-muted-foreground">{campaign.accommodation}</p>
-                  </div>
-                </div>
-              </AnimatedSection>
+              <InfoSectionWithImage 
+                title="Accommodation"
+                icon={BedDouble}
+                text={campaign.accommodation}
+                imageUrl={placeholderImages.pkgAdventurer.src}
+                imageHint={placeholderImages.pkgAdventurer.hint}
+                imagePosition="left"
+              />
 
-               <AnimatedSection>
-                <div className="grid sm:grid-cols-2 gap-8 items-center">
-                    <div>
-                      <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2"><UtensilsCrossed className="mr-2 h-5 w-5"/>Meals</h3>
-                      <p className="text-muted-foreground">{campaign.meals}</p>
-                    </div>
-                    <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group">
-                        <Image src={placeholderImages.videoThumbTestimonial.src} alt="Local Cuisine" layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={placeholderImages.videoThumbTestimonial.hint} />
-                    </div>
-                </div>
-              </AnimatedSection>
-
+              <InfoSectionWithImage 
+                title="Meals"
+                icon={UtensilsCrossed}
+                text={campaign.meals}
+                imageUrl={placeholderImages.videoThumbTestimonial.src}
+                imageHint={placeholderImages.videoThumbTestimonial.hint}
+                imagePosition="right"
+              />
               
               {campaign.tags && campaign.tags.length > 0 && (
                 <section>
@@ -168,6 +224,7 @@ export default function CampaignDetailClientPage({ campaign }: CampaignDetailCli
                   <p className="text-xs text-muted-foreground">We are committed to responsible and authentic travel experiences.</p>
                 </CardContent>
               </Card>
+              <RelatedToursCard tours={relatedTours} />
             </aside>
           </div>
           

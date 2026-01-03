@@ -27,6 +27,13 @@ interface Campaign {
   shortDescription?: string;
 }
 
+export interface RelatedTour {
+  id: string;
+  title: string;
+  imageUrl: string;
+  dataAiHint?: string;
+}
+
 const mockCampaignsData: Campaign[] = [
     // Existing detailed campaigns
     {
@@ -286,17 +293,52 @@ const mockCampaignsData: Campaign[] = [
     },
 ];
 
-async function getCampaign(id: string): Promise<Campaign | undefined> {
-  // Simulate API call
-  return mockCampaignsData.find(campaign => campaign.id === id);
+async function getCampaign(id: string): Promise<{ campaign: Campaign | undefined; relatedTours: RelatedTour[] }> {
+    const campaign = mockCampaignsData.find(campaign => campaign.id === id);
+    
+    let relatedTours: RelatedTour[] = [];
+    if (campaign) {
+        relatedTours = mockCampaignsData
+            .filter(otherCampaign => {
+                // Ensure it's not the same campaign
+                if (otherCampaign.id === campaign.id) return false;
+                // Check if there's at least one common tag
+                return otherCampaign.tags.some(tag => campaign.tags.includes(tag));
+            })
+            // Shuffle and take the first few
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map(c => ({
+                id: c.id,
+                title: c.title,
+                imageUrl: (placeholderImages[c.imageUrl.split('/').pop()?.split('.')[0] as keyof typeof placeholderImages] as any)?.src || c.imageUrl,
+                dataAiHint: c.dataAiHint,
+            }));
+    }
+     // If no related tours found by tags, show some random ones
+    if (relatedTours.length === 0) {
+        relatedTours = mockCampaignsData
+            .filter(c => c.id !== id)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map(c => ({
+                id: c.id,
+                title: c.title,
+                imageUrl: (placeholderImages[c.imageUrl.split('/').pop()?.split('.')[0] as keyof typeof placeholderImages] as any)?.src || c.imageUrl,
+                dataAiHint: c.dataAiHint,
+            }));
+    }
+
+
+    return { campaign, relatedTours };
 }
 
 export default async function CampaignDetailPage({ params }: { params: { id: string } }) {
-  const campaign = await getCampaign(params.id);
+  const { campaign, relatedTours } = await getCampaign(params.id);
 
   if (!campaign) {
     notFound();
   }
 
-  return <CampaignDetailClientPage campaign={campaign} />;
+  return <CampaignDetailClientPage campaign={campaign} relatedTours={relatedTours} />;
 }
