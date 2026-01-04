@@ -58,7 +58,7 @@ const mockCampaignsData: Campaign[] = [
         ],
         accommodation: [
             { title: 'Eco-Lodges', description: 'Comfortable eco-lodges with stunning forest views.', image: 'pkgAdventurer' },
-            { title: 'Mid-Range Comfort', description: 'Options range from budget-friendly to luxury accommodations.', image: 'pkgUltimate' },
+            { title: 'Mid-Range Comfort', description: 'Perfect if you want comfort, great views, and good service without luxury pricing:', image: 'pkgUltimate' },
             { title: 'Luxury & Premium Safari Lodges', description: 'All lodges are selected for their commitment to sustainability and guest comfort.', image: 'pkgExplorer' }
         ],
         meals: [
@@ -694,6 +694,8 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
   return <CampaignDetailClientPage campaign={campaign} relatedTours={relatedTours} />;
 }
+
+    
 
     
 
