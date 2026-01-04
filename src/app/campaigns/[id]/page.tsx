@@ -45,7 +45,7 @@ const mockCampaignsData: Campaign[] = [
         imageHeight: placeholderImages.campaignBwindi.height,
         dataAiHint: placeholderImages.campaignBwindi.hint,
         description: 'The Bwindi Gorilla Trekking Tour offers an exceptional opportunity to encounter endangered mountain gorillas in their natural rainforest habitat. Set within the world-renowned Bwindi Impenetrable National Park, this carefully curated 3-day experience combines expert guidance, comfortable eco-lodging, and responsible tourism practices to deliver one of Africa’s most meaningful wildlife encounters. This is not simply a trek—it is an immersive conservation experience that allows you to witness one of the planet’s rarest species while directly supporting their protection and the communities that coexist with them.',
-        storyline: 'Gorilla trekking in Bwindi is one of the world’s most powerful wildlife experiences. With strictly limited daily permits, each trek is exclusive, intimate, and carefully managed to protect the gorillas and their fragile rainforest habitat.',
+        storyline: 'Gorilla trekking in Bwindi is one of the world\'s most powerful wildlife experiences. With strictly limited daily permits, each trek is exclusive, intimate, and carefully managed to protect the gorillas and their fragile rainforest habitat.',
         budget: 20000, goal: 100, currentAmount: 98, organizer: 'iffe-travels', tags: ['#Gorilla', '#UNESCO', '#Uganda'], startDate: '2024-09-01', endDate: '2024-09-04', volunteersNeeded: 8, volunteersSignedUp: 6,
         activities: ['Gorilla Trekking (permit included)', 'Community Walk', 'Bird Watching Tour'],
         accommodation: 'Comfortable eco-lodges with stunning forest views. Options range from budget to luxury.',
