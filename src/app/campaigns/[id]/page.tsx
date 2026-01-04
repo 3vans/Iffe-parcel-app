@@ -57,7 +57,7 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird Watching Experience', description: 'Bwindi is home to over 350 bird species, making it a rewarding destination for bird enthusiasts and nature lovers alike.', image: 'blogShoebill' }
         ],
         accommodation: [
-            { title: 'Eco-Lodges', description: 'Comfortable eco-lodges with stunning forest views.', image: 'pkgAdventurer' },
+            { title: 'Eco-Lodges', description: 'These are ideal if you want comfort near the park with budget cost:', image: 'pkgAdventurer' },
             { title: 'Mid-Range Comfort', description: 'Perfect if you want comfort, great views, and good service without luxury pricing:', image: 'pkgUltimate' },
             { title: 'Luxury & Premium Safari Lodges', description: 'All lodges are selected for their commitment to sustainability and guest comfort.', image: 'pkgExplorer' }
         ],
@@ -694,6 +694,8 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
   return <CampaignDetailClientPage campaign={campaign} relatedTours={relatedTours} />;
 }
+
+    
 
     
 
