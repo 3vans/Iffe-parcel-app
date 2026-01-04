@@ -23,7 +23,7 @@ interface Campaign {
   imageHeight: number;
   dataAiHint?: string;
   description: string;
-  storyline: string;
+  storyline: string[];
   budget: number;
   goal: number;
   currentAmount: number;
@@ -34,8 +34,8 @@ interface Campaign {
   volunteersNeeded: number;
   volunteersSignedUp: number;
   activities: string[];
-  accommodation: string;
-  meals: string;
+  accommodation: string[];
+  meals: string[];
   shortDescription?: string;
 }
 
@@ -114,7 +114,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 <div className="space-y-8">
                   {images.map((image, index) => (
                       <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
-                          <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group">
+                          <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group", index % 2 !== 0 && "md:order-last")}>
                               <Image src={image.src} alt={`${title} view ${index+1}`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={image.hint} />
                           </div>
                           <div>
@@ -122,33 +122,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                           </div>
                       </div>
                   ))}
-                </div>
-            </div>
-        </AnimatedSection>
-    )
-  };
-
-  const InfoSectionWithImage = ({ title, icon: Icon, text, imageUrl, imageHint, imagePosition = 'left' }: { title: string, icon: React.ElementType, text: string, imageUrl: string, imageHint?: string, imagePosition?: 'left' | 'right' }) => {
-    return (
-        <AnimatedSection>
-            <div className="space-y-4">
-                <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
-                    <Icon className="mr-2 h-5 w-5" />
-                    {title}
-                </h3>
-                <div className="grid md:grid-cols-2 gap-8 items-center">
-                    <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group", imagePosition === 'right' && 'md:order-last')}>
-                        <Image src={imageUrl} alt={title} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={imageHint} />
-                    </div>
-                     <div>
-                         {text.split(',').length > 1 ? (
-                            <ul className="space-y-2 text-muted-foreground list-disc list-inside">
-                                {text.split(',').map(item => <li key={item}>{item.trim()}</li>)}
-                            </ul>
-                        ) : (
-                            <p className="text-muted-foreground leading-relaxed">{text}</p>
-                        )}
-                    </div>
                 </div>
             </div>
         </AnimatedSection>
@@ -189,7 +162,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                <ImageGridInfoSection
                 title="The Experience"
                 icon={Star}
-                texts={campaign.storyline.split('. ')}
+                texts={campaign.storyline}
                 images={[
                   { src: placeholderImages.gallerySafariGroup.src, hint: placeholderImages.gallerySafariGroup.hint },
                   { src: placeholderImages.blogLionPride.src, hint: placeholderImages.blogLionPride.hint },
@@ -197,19 +170,21 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 ]}
               />
               
-              <InfoSectionWithImage
+               <ImageGridInfoSection
                 title="Activities"
                 icon={Activity}
-                text={campaign.activities.join(', ')}
-                imageUrl={placeholderImages.ideaWalkingSafari.src}
-                imageHint={placeholderImages.ideaWalkingSafari.hint}
-                imagePosition="right"
+                texts={campaign.activities}
+                images={[
+                    { src: placeholderImages.ideaWalkingSafari.src, hint: placeholderImages.ideaWalkingSafari.hint },
+                    { src: "https://picsum.photos/seed/activity2/600/400", hint: "community interaction" },
+                    { src: "https://picsum.photos/seed/activity3/600/400", hint: "bird watching" },
+                ]}
               />
               
               <ImageGridInfoSection
                 title="Accommodation"
                 icon={BedDouble}
-                texts={campaign.accommodation.split('. ')}
+                texts={campaign.accommodation}
                 images={[
                   { src: placeholderImages.pkgAdventurer.src, hint: placeholderImages.pkgAdventurer.hint },
                   { src: placeholderImages.pkgUltimate.src, hint: placeholderImages.pkgUltimate.hint },
@@ -220,7 +195,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               <ImageGridInfoSection
                 title="Meals"
                 icon={UtensilsCrossed}
-                texts={campaign.meals.split('. ')}
+                texts={campaign.meals}
                 images={[
                   { src: placeholderImages.videoThumbTestimonial.src, hint: placeholderImages.videoThumbTestimonial.hint },
                   { src: "https://picsum.photos/seed/meals2/600/400", hint: "outdoor dining" },
