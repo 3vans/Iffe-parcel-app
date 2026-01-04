@@ -134,6 +134,33 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     )
   };
 
+  const InfoSectionWithImage = ({ title, icon: Icon, text, imageUrl, imageHint, imagePosition = 'left' }: { title: string, icon: React.ElementType, text: string, imageUrl: string, imageHint?: string, imagePosition?: 'left' | 'right' }) => {
+    return (
+        <AnimatedSection>
+            <div className="space-y-4">
+                <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
+                    <Icon className="mr-2 h-5 w-5" />
+                    {title}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-8 items-center">
+                    <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group", imagePosition === 'right' && 'md:order-last')}>
+                        <Image src={imageUrl} alt={title} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={imageHint} />
+                    </div>
+                     <div>
+                         {text.split(',').length > 1 ? (
+                            <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                                {text.split(',').map(item => <li key={item}>{item.trim()}</li>)}
+                            </ul>
+                        ) : (
+                            <p className="text-muted-foreground leading-relaxed">{text}</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </AnimatedSection>
+    )
+  };
+
   return (
     <div ref={ref} className={cn('space-y-8 scroll-animate', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-2">
@@ -176,15 +203,13 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 ]}
               />
               
-              <ImageGridInfoSection
+              <InfoSectionWithImage
                 title="Activities"
                 icon={Activity}
                 text={campaign.activities.join(', ')}
-                images={[
-                  { src: placeholderImages.ideaWalkingSafari.src, hint: placeholderImages.ideaWalkingSafari.hint },
-                  { src: placeholderImages.campaignRafting.src, hint: placeholderImages.campaignRafting.hint },
-                  { src: placeholderImages.blogPhotographer.src, hint: placeholderImages.blogPhotographer.hint },
-                ]}
+                imageUrl={placeholderImages.ideaWalkingSafari.src}
+                imageHint={placeholderImages.ideaWalkingSafari.hint}
+                imagePosition="left"
               />
               
               <ImageGridInfoSection
