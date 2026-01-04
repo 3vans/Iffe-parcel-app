@@ -52,7 +52,7 @@ const SailingBoatPreloader: React.FC = () => {
                 <div className="text-xl font-bold mb-2 tracking-widest text-primary">
                     IFFE • TRAVELS LTD
                 </div>
-                <div className="text-sm text-muted-foreground mb-6 italic">
+                <div className="text-sm text-muted-foreground mb-6 italic mx-auto animate-typing">
                     Charting Your Course...
                 </div>
             </div>
