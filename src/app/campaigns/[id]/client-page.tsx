@@ -34,8 +34,8 @@ interface Campaign {
   volunteersNeeded: number;
   volunteersSignedUp: number;
   activities: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  accommodation: string[];
-  meals: string[];
+  accommodation: { title: string; description: string; image: keyof typeof placeholderImages }[];
+  meals: { title: string; description: string; image: keyof typeof placeholderImages }[];
   shortDescription?: string;
 }
 
@@ -103,7 +103,43 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     );
   };
   
-  const ImageGridInfoSection = ({ title, icon: Icon, texts, images }: { title: string, icon: React.ElementType, texts: string[], images: {src: string, hint?: string}[] }) => {
+  const ImageGridInfoSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+    return (
+        <AnimatedSection>
+            <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
+                <Icon className="mr-2 h-5 w-5" />
+                {title}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {items.map((item, index) => {
+                    const itemImage = placeholderImages[item.image];
+                    return (
+                        <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
+                            <div className="relative w-full aspect-[16/9] bg-muted">
+                                <Image 
+                                    src={itemImage.src} 
+                                    alt={item.title} 
+                                    layout="fill" 
+                                    objectFit="cover" 
+                                    data-ai-hint={itemImage.hint} 
+                                    className="transition-transform duration-300 group-hover:scale-105"
+                                />
+                            </div>
+                            <CardHeader>
+                                <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground">{item.description}</p>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
+            </div>
+        </AnimatedSection>
+    );
+  };
+
+  const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string, icon: React.ElementType, texts: string[], images: {src: string, hint?: string}[] }) => {
     return (
         <AnimatedSection>
             <div className="space-y-4">
@@ -159,7 +195,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
               </AnimatedSection>
 
-               <ImageGridInfoSection
+               <ExperienceSection
                 title="The Experience"
                 icon={Star}
                 texts={campaign.storyline}
@@ -194,58 +230,22 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
           </div>
 
           <div className="mt-8 space-y-8">
-              <AnimatedSection>
-                <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
-                    <Activity className="mr-2 h-5 w-5" />
-                    Activities
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {campaign.activities.map((activity, index) => {
-                        const activityImage = placeholderImages[activity.image];
-                        return (
-                            <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
-                                <div className="relative w-full aspect-[16/9] bg-muted">
-                                    <Image 
-                                        src={activityImage.src} 
-                                        alt={activity.title} 
-                                        layout="fill" 
-                                        objectFit="cover" 
-                                        data-ai-hint={activityImage.hint} 
-                                        className="transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                </div>
-                                <CardHeader>
-                                    <CardTitle className="text-lg font-semibold">{activity.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-muted-foreground">{activity.description}</p>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
-                </div>
-              </AnimatedSection>
+              <ImageGridInfoSection
+                title="Activities"
+                icon={Activity}
+                items={campaign.activities}
+              />
               
               <ImageGridInfoSection
                 title="Accommodation"
                 icon={BedDouble}
-                texts={campaign.accommodation}
-                images={[
-                  { src: placeholderImages.pkgAdventurer.src, hint: placeholderImages.pkgAdventurer.hint },
-                  { src: placeholderImages.pkgUltimate.src, hint: placeholderImages.pkgUltimate.hint },
-                  { src: placeholderImages.pkgExplorer.src, hint: placeholderImages.pkgExplorer.hint },
-                ]}
+                items={campaign.accommodation}
               />
 
               <ImageGridInfoSection
                 title="Meals"
                 icon={UtensilsCrossed}
-                texts={campaign.meals}
-                images={[
-                  { src: placeholderImages.videoThumbTestimonial.src, hint: placeholderImages.videoThumbTestimonial.hint },
-                  { src: "https://picsum.photos/seed/meals2/600/400", hint: "outdoor dining" },
-                  { src: "https://picsum.photos/seed/meals3/600/400", hint: "local food" },
-                ]}
+                items={campaign.meals}
               />
               
               {campaign.tags && campaign.tags.length > 0 && (
@@ -278,3 +278,5 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
+
+    

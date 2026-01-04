@@ -22,8 +22,8 @@ interface Campaign {
   volunteersNeeded: number;
   volunteersSignedUp: number;
   activities: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  accommodation: string[];
-  meals: string[];
+  accommodation: { title: string; description: string; image: keyof typeof placeholderImages }[];
+  meals: { title: string; description: string; image: keyof typeof placeholderImages }[];
   shortDescription?: string;
 }
 
@@ -57,14 +57,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird Watching Experience', description: 'Bwindi is home to over 350 bird species, making it a rewarding destination for bird enthusiasts and nature lovers alike.', image: 'blogShoebill' }
         ],
         accommodation: [
-            'Comfortable eco-lodges with stunning forest views.',
-            'Options range from budget-friendly to luxury accommodations.',
-            'All lodges are selected for their commitment to sustainability and guest comfort.'
+            { title: 'Eco-Lodges', description: 'Comfortable eco-lodges with stunning forest views.', image: 'pkgAdventurer' },
+            { title: 'Varied Options', description: 'Options range from budget-friendly to luxury accommodations.', image: 'pkgUltimate' },
+            { title: 'Sustainable Stays', description: 'All lodges are selected for their commitment to sustainability and guest comfort.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Full board included: breakfast, packed lunch for the trek, and dinner.',
-            'Meals are prepared with locally sourced ingredients, offering a taste of Uganda.',
-            'Special dietary requirements can be accommodated upon request.'
+            { title: 'Full Board', description: 'Full board included: breakfast, packed lunch for the trek, and dinner.', image: 'videoThumbTestimonial' },
+            { title: 'Local Ingredients', description: 'Meals are prepared with locally sourced ingredients, offering a taste of Uganda.', image: 'sipiCoffee' },
+            { title: 'Dietary Needs', description: 'Special dietary requirements can be accommodated upon request.', image: 'ideaFamilySafari' }
         ],
     },
     {
@@ -88,14 +88,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Crater Lake Drive', description: 'Explore the scenic crater lakes of the park.', image: 'campaignFortPortal' }
         ],
         accommodation: [
-            'Selection of safari lodges and camps overlooking the savannah or channel.',
-            'Each accommodation offers unique views and comfortable amenities.',
-            'Enjoy the sounds of the wild from the safety of your room.'
+            { title: 'Safari Lodges', description: 'Selection of safari lodges and camps overlooking the savannah or channel.', image: 'pkgAdventurer' },
+            { title: 'Unique Views', description: 'Each accommodation offers unique views and comfortable amenities.', image: 'pkgUltimate' },
+            { title: 'Sounds of the Wild', description: 'Enjoy the sounds of the wild from the safety of your room.', image: 'pkgExplorer' }
         ],
         meals: [
-            'All-inclusive options available.',
-            'Enjoy meals with a view of the park.',
-            'Bush breakfasts and dinners can be arranged for a special experience.'
+            { title: 'All-Inclusive', description: 'All-inclusive options available.', image: 'videoThumbTestimonial' },
+            { title: 'Dining with a View', description: 'Enjoy meals with a view of the park.', image: 'sipiCoffee' },
+            { title: 'Bush Dining', description: 'Bush breakfasts and dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ],
     },
     {
@@ -119,14 +119,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Game Drives', description: 'Spot the diverse wildlife of the park on guided game drives.', image: 'galleryGiraffe' }
         ],
         accommodation: [
-            'Riverside lodges and safari tents with stunning views.',
-            'Enjoy the sounds of the Nile from your accommodation.',
-            'Options available for all budgets.'
+            { title: 'Riverside Lodges', description: 'Riverside lodges and safari tents with stunning views.', image: 'pkgAdventurer' },
+            { title: 'Nile Sounds', description: 'Enjoy the sounds of the Nile from your accommodation.', image: 'pkgUltimate' },
+            { title: 'Budget Options', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Full board available.',
-            'Enjoy meals with a view of the river or savannah.',
-            'Options for bush breakfasts and dinners.'
+            { title: 'Full Board', description: 'Full board available.', image: 'videoThumbTestimonial' },
+            { title: 'River Views', description: 'Enjoy meals with a view of the river or savannah.', image: 'sipiCoffee' },
+            { title: 'Bush Dining', description: 'Options for bush breakfasts and dinners.', image: 'ideaFamilySafari' }
         ],
     },
     // Adding more campaigns from the main page
@@ -147,14 +147,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird Watching', description: 'Kibale is one of Africa\'s premier birding spots.', image: 'blogShoebill' }
         ],
         accommodation: [
-            'Forest lodges and camps, some with views of the forest canopy.',
-            'Wake up to the sounds of the forest.',
-            'Eco-friendly accommodations that blend with the natural environment.'
+            { title: 'Forest Lodges', description: 'Forest lodges and camps, some with views of the forest canopy.', image: 'pkgAdventurer' },
+            { title: 'Forest Sounds', description: 'Wake up to the sounds of the forest.', image: 'pkgUltimate' },
+            { title: 'Eco-Friendly', description: 'Eco-friendly accommodations that blend with the natural environment.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Packages typically include all meals during your stay.',
-            'Enjoy fresh, locally sourced food.',
-            'Dine in a unique forest setting.'
+            { title: 'All Meals Included', description: 'Packages typically include all meals during your stay.', image: 'videoThumbTestimonial' },
+            { title: 'Local Food', description: 'Enjoy fresh, locally sourced food.', image: 'sipiCoffee' },
+            { title: 'Forest Dining', description: 'Dine in a unique forest setting.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -174,14 +174,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Summit attempts on Margherita Peak', description: 'Attempt to summit the highest point, Margherita Peak.', image: 'fifaCardKili' }
         ],
         accommodation: [
-            'Basic but comfortable mountain huts along the trekking routes.',
-            'Experience the camaraderie of a mountain expedition.',
-            'All necessary camping gear is provided.'
+            { title: 'Mountain Huts', description: 'Basic but comfortable mountain huts along the trekking routes.', image: 'pkgAdventurer' },
+            { title: 'Expedition Camaraderie', description: 'Experience the camaraderie of a mountain expedition.', image: 'pkgUltimate' },
+            { title: 'Gear Provided', description: 'All necessary camping gear is provided.', image: 'pkgExplorer' }
         ],
         meals: [
-            'All meals on the mountain are prepared by a dedicated trek cook.',
-            'High-energy meals to fuel your trek.',
-            'Hot drinks and snacks are provided throughout the day.'
+            { title: 'Trek Cook', description: 'All meals on the mountain are prepared by a dedicated trek cook.', image: 'videoThumbTestimonial' },
+            { title: 'High-Energy Meals', description: 'High-energy meals to fuel your trek.', image: 'sipiCoffee' },
+            { title: 'Hot Drinks', description: 'Hot drinks and snacks are provided throughout the day.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -201,14 +201,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Swimming in the bilge-free waters', description: 'Enjoy a refreshing swim in the lake.', image: 'campaignBunyonyi' }
         ],
         accommodation: [
-            'A range of lakeside resorts, cottages, and campsites.',
-            'Wake up to stunning views of the lake.',
-            'Enjoy the peace and quiet of this beautiful location.'
+            { title: 'Lakeside Resorts', description: 'A range of lakeside resorts, cottages, and campsites.', image: 'pkgAdventurer' },
+            { title: 'Stunning Views', description: 'Wake up to stunning views of the lake.', image: 'pkgUltimate' },
+            { title: 'Peace and Quiet', description: 'Enjoy the peace and quiet of this beautiful location.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Freshly prepared meals, including local crayfish, a specialty of the lake.',
-            'Enjoy a meal with a view of the lake.',
-            'Options for all dietary needs.'
+            { title: 'Local Crayfish', description: 'Freshly prepared meals, including local crayfish, a specialty of the lake.', image: 'videoThumbTestimonial' },
+            { title: 'Dining with a View', description: 'Enjoy a meal with a view of the lake.', image: 'sipiCoffee' },
+            { title: 'All Diets', description: 'Options for all dietary needs.', image: 'ideaFamilySafari' }
         ]
     },
      {
@@ -228,14 +228,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Boat trips on the lake', description: 'See hippos and crocodiles on a boat trip.', image: 'galleryElephant' }
         ],
         accommodation: [
-            'Safari lodges and luxury tented camps.',
-            'Enjoy the sounds of the bush from your accommodation.',
-            'Options available for all budgets.'
+            { title: 'Safari Lodges', description: 'Safari lodges and luxury tented camps.', image: 'pkgAdventurer' },
+            { title: 'Bush Sounds', description: 'Enjoy the sounds of the bush from your accommodation.', image: 'pkgUltimate' },
+            { title: 'Budget Options', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'All-inclusive packages available.',
-            'Enjoy meals with a view of the park\'s wildlife.',
-            'Bush dinners can be arranged for a special experience.'
+            { title: 'All-Inclusive', description: 'All-inclusive packages available.', image: 'videoThumbTestimonial' },
+            { title: 'Wildlife Views', description: 'Enjoy meals with a view of the park\'s wildlife.', image: 'sipiCoffee' },
+            { title: 'Bush Dinners', description: 'Bush dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -255,14 +255,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Explore the colonial architecture', description: 'Discover the historic architecture of Jinja town.', image: 'campaignBusoga' }
         ],
         accommodation: [
-            'Hotels and guesthouses in Jinja.',
-            'Enjoy a comfortable stay in this historic town.',
-            'Options available for all budgets.'
+            { title: 'Jinja Hotels', description: 'Hotels and guesthouses in Jinja.', image: 'pkgAdventurer' },
+            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in this historic town.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Enjoy fresh fish from Lake Victoria.',
-            'Try local Ugandan cuisine.',
-            'A variety of restaurants and cafes in Jinja.'
+            { title: 'Fresh Fish', description: 'Enjoy fresh fish from Lake Victoria.', image: 'videoThumbTestimonial' },
+            { title: 'Local Cuisine', description: 'Try local Ugandan cuisine.', image: 'sipiCoffee' },
+            { title: 'Jinja Restaurants', description: 'A variety of restaurants and cafes in Jinja.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -282,14 +282,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'River bugging', description: 'A unique solo adventure on the river.', image: 'campaignRafting' }
         ],
         accommodation: [
-            'Riverside camps and lodges.',
-            'Relax by the river after a day of adventure.',
-            'Options available for all budgets.'
+            { title: 'Riverside Camps', description: 'Riverside camps and lodges.', image: 'pkgAdventurer' },
+            { title: 'Relax by the River', description: 'Relax by the river after a day of adventure.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Includes a BBQ lunch and celebratory drinks after the rafting.',
-            'Enjoy a meal with your fellow adventurers.',
-            'Vegetarian options available.'
+            { title: 'BBQ Lunch', description: 'Includes a BBQ lunch and celebratory drinks after the rafting.', image: 'videoThumbTestimonial' },
+            { title: 'Group Dining', description: 'Enjoy a meal with your fellow adventurers.', image: 'sipiCoffee' },
+            { title: 'Vegetarian Options', description: 'Vegetarian options available.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -309,14 +309,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird watching in the forested slopes', description: 'Discover the diverse birdlife of the park.', image: 'blogShoebill' }
         ],
         accommodation: [
-            'Guesthouses and campsites near the park entrance.',
-            'Enjoy the fresh mountain air.',
-            'Basic but comfortable lodging.'
+            { title: 'Guesthouses', description: 'Guesthouses and campsites near the park entrance.', image: 'pkgAdventurer' },
+            { title: 'Mountain Air', description: 'Enjoy the fresh mountain air.', image: 'pkgUltimate' },
+            { title: 'Basic Lodging', description: 'Basic but comfortable lodging.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Meals provided on multi-day treks.',
-            'High-energy food to fuel your hike.',
-            'Enjoy a hot meal after a day of trekking.'
+            { title: 'Trekking Meals', description: 'Meals provided on multi-day treks.', image: 'videoThumbTestimonial' },
+            { title: 'High-Energy Food', description: 'High-energy food to fuel your hike.', image: 'sipiCoffee' },
+            { title: 'Post-Hike Meal', description: 'Enjoy a hot meal after a day of trekking.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -336,14 +336,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Coffee tours', description: 'Learn about the local coffee industry.', image: 'sipiCoffee' }
         ],
         accommodation: [
-            'Lodges and community-run guesthouses with incredible views.',
-            'Enjoy the sound of the falls from your room.',
-            'A peaceful and relaxing place to stay.'
+            { title: 'Lodges with Views', description: 'Lodges and community-run guesthouses with incredible views.', image: 'pkgAdventurer' },
+            { title: 'Sound of Falls', description: 'Enjoy the sound of the falls from your room.', image: 'pkgUltimate' },
+            { title: 'Peaceful Stay', description: 'A peaceful and relaxing place to stay.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Taste local dishes and freshly brewed coffee.',
-            'Enjoy a meal with a view of the falls.',
-            'Vegetarian options available.'
+            { title: 'Local Dishes', description: 'Taste local dishes and freshly brewed coffee.', image: 'videoThumbTestimonial' },
+            { title: 'Dining with a View', description: 'Enjoy a meal with a view of the falls.', image: 'sipiCoffee' },
+            { title: 'Vegetarian Options', description: 'Vegetarian options available.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -363,14 +363,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Local craft workshops', description: 'Learn traditional skills from local artisans.', image: 'ideaFamilySafari' }
         ],
         accommodation: [
-            'Hotels in Jinja or nearby towns.',
-            'Enjoy a comfortable stay in a modern hotel.',
-            'Options available for all budgets.'
+            { title: 'Jinja Hotels', description: 'Hotels in Jinja or nearby towns.', image: 'pkgAdventurer' },
+            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in a modern hotel.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Try traditional Busoga cuisine.',
-            'Enjoy a meal with a local family.',
-            'A variety of restaurants in Jinja.'
+            { title: 'Traditional Cuisine', description: 'Try traditional Busoga cuisine.', image: 'videoThumbTestimonial' },
+            { title: 'Family Meal', description: 'Enjoy a meal with a local family.', image: 'sipiCoffee' },
+            { title: 'Jinja Restaurants', description: 'A variety of restaurants in Jinja.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -390,14 +390,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Hiking in the rugged landscapes', description: 'Explore the park on foot.', image: 'ideaWalkingSafari' }
         ],
         accommodation: [
-            'Luxury lodges and basic campsites within the park.',
-            'Enjoy the peace and quiet of the wilderness.',
-            'Options available for all budgets.'
+            { title: 'Luxury Lodges', description: 'Luxury lodges and basic campsites within the park.', image: 'pkgAdventurer' },
+            { title: 'Wilderness Peace', description: 'Enjoy the peace and quiet of the wilderness.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'All-inclusive packages available.',
-            'Enjoy meals with a view of the park\'s stunning landscapes.',
-            'Bush dinners can be arranged for a special experience.'
+            { title: 'All-Inclusive', description: 'All-inclusive packages available.', image: 'videoThumbTestimonial' },
+            { title: 'Scenic Dining', description: 'Enjoy meals with a view of the park\'s stunning landscapes.', image: 'sipiCoffee' },
+            { title: 'Bush Dinners', description: 'Bush dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -417,14 +417,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird watching in the surrounding area', description: 'Discover the diverse birdlife.', image: 'blogShoebill' }
         ],
         accommodation: [
-            'Lodges near the falls.',
-            'Enjoy a comfortable stay in a scenic location.',
-            'Options available for all budgets.'
+            { title: 'Nearby Lodges', description: 'Lodges near the falls.', image: 'pkgAdventurer' },
+            { title: 'Scenic Location', description: 'Enjoy a comfortable stay in a scenic location.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Provided by the lodges.',
-            'Enjoy a meal with a view of the river.',
-            'A variety of dining options available.'
+            { title: 'Lodge Dining', description: 'Provided by the lodges.', image: 'videoThumbTestimonial' },
+            { title: 'River Views', description: 'Enjoy a meal with a view of the river.', image: 'sipiCoffee' },
+            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -444,14 +444,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Cultural encounters', description: 'Meet the local Karamojong people.', image: 'ideaFamilySafari' }
         ],
         accommodation: [
-            'Basic camping facilities and nearby guesthouses.',
-            'A true back-to-nature experience.',
-            'Options for the adventurous traveler.'
+            { title: 'Camping', description: 'Basic camping facilities and nearby guesthouses.', image: 'pkgAdventurer' },
+            { title: 'Back to Nature', description: 'A true back-to-nature experience.', image: 'pkgUltimate' },
+            { title: 'Adventurous Options', description: 'Options for the adventurous traveler.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Basic meals provided on camping trips.',
-            'Enjoy a simple meal cooked over an open fire.',
-            'A chance to try local cuisine.'
+            { title: 'Camping Meals', description: 'Basic meals provided on camping trips.', image: 'videoThumbTestimonial' },
+            { title: 'Campfire Cooking', description: 'Enjoy a simple meal cooked over an open fire.', image: 'sipiCoffee' },
+            { title: 'Local Cuisine', description: 'A chance to try local cuisine.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -471,14 +471,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Trying local street food', description: 'A taste of Ugandan street food.', image: 'videoThumbTestimonial' }
         ],
         accommodation: [
-            'N/A (Day tour).',
-            'No accommodation provided.',
-            'Can be arranged upon request.'
+            { title: 'N/A', description: 'Day tour, no accommodation provided.', image: 'pkgAdventurer' },
+            { title: 'Can be Arranged', description: 'Can be arranged upon request.', image: 'pkgUltimate' },
+            { title: 'Contact Us', description: 'Contact us for more details.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Includes a traditional Ugandan lunch.',
-            'Try local dishes like matoke and luwombo.',
-            'A taste of Ugandan cuisine.'
+            { title: 'Traditional Lunch', description: 'Includes a traditional Ugandan lunch.', image: 'videoThumbTestimonial' },
+            { title: 'Local Dishes', description: 'Try local dishes like matoke and luwombo.', image: 'sipiCoffee' },
+            { title: 'A Taste of Uganda', description: 'A taste of Ugandan cuisine.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -498,14 +498,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Lunch by Lake Victoria', description: 'Enjoy a meal with a view.', image: 'videoThumbTestimonial' }
         ],
         accommodation: [
-            'N/A (Day tour).',
-            'No accommodation provided.',
-            'Can be arranged upon request.'
+            { title: 'N/A', description: 'Day tour, no accommodation provided.', image: 'pkgAdventurer' },
+            { title: 'Can be Arranged', description: 'Can be arranged upon request.', image: 'pkgUltimate' },
+            { title: 'Contact Us', description: 'Contact us for more details.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Includes lunch at a lakeside restaurant.',
-            'Enjoy fresh fish from Lake Victoria.',
-            'A relaxing meal with a view.'
+            { title: 'Lakeside Lunch', description: 'Includes lunch at a lakeside restaurant.', image: 'videoThumbTestimonial' },
+            { title: 'Fresh Fish', description: 'Enjoy fresh fish from Lake Victoria.', image: 'sipiCoffee' },
+            { title: 'Relaxing Meal', description: 'A relaxing meal with a view.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -525,14 +525,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Educational talks on conservation', description: 'Learn about chimpanzee conservation efforts.', image: 'homeCreatorTom' }
         ],
         accommodation: [
-            'N/A (Day trip).',
-            'No accommodation provided.',
-            'Can be arranged upon request.'
+            { title: 'N/A', description: 'Day trip, no accommodation provided.', image: 'pkgAdventurer' },
+            { title: 'Can be Arranged', description: 'Can be arranged upon request.', image: 'pkgUltimate' },
+            { title: 'Contact Us', description: 'Contact us for more details.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Lunch is included in the trip.',
-            'Enjoy a meal on the island.',
-            'A unique dining experience.'
+            { title: 'Island Lunch', description: 'Lunch is included in the trip.', image: 'videoThumbTestimonial' },
+            { title: 'Dining Experience', description: 'Enjoy a meal on the island.', image: 'sipiCoffee' },
+            { title: 'Unique Setting', description: 'A unique dining experience.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -552,14 +552,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird watching', description: 'Discover the numerous bird species in the forest.', image: 'blogShoebill' }
         ],
         accommodation: [
-            'N/A (Day trip).',
-            'No accommodation provided.',
-            'Can be arranged upon request.'
+            { title: 'N/A', description: 'Day trip, no accommodation provided.', image: 'pkgAdventurer' },
+            { title: 'Can be Arranged', description: 'Can be arranged upon request.', image: 'pkgUltimate' },
+            { title: 'Contact Us', description: 'Contact us for more details.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Lunch included in the package.',
-            'Enjoy a meal in a forest setting.',
-            'A chance to refuel after your adventure.'
+            { title: 'Forest Lunch', description: 'Lunch included in the package.', image: 'videoThumbTestimonial' },
+            { title: 'Adventure Refuel', description: 'Enjoy a meal in a forest setting.', image: 'sipiCoffee' },
+            { title: 'Refuel', description: 'A chance to refuel after your adventure.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -579,14 +579,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Fishing for tilapia and Nile perch', description: 'Try your hand at fishing.', image: 'videoThumbTestimonial' }
         ],
         accommodation: [
-            'Beachfront resorts and hotels.',
-            'Enjoy stunning views of the lake from your room.',
-            'A range of options for all budgets.'
+            { title: 'Beachfront Resorts', description: 'Beachfront resorts and hotels.', image: 'pkgAdventurer' },
+            { title: 'Lake Views', description: 'Enjoy stunning views of the lake from your room.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'A range of options for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Fresh fish is a specialty.',
-            'Enjoy a meal on the beach.',
-            'A variety of dining options available.'
+            { title: 'Fresh Fish', description: 'Fresh fish is a specialty.', image: 'videoThumbTestimonial' },
+            { title: 'Beach Dining', description: 'Enjoy a meal on the beach.', image: 'sipiCoffee' },
+            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -606,14 +606,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Nature walks', description: 'Explore the rainforest on foot.', image: 'ideaWalkingSafari' }
         ],
         accommodation: [
-            'Lodges and campsites near the park.',
-            'Enjoy a comfortable stay in a beautiful setting.',
-            'Options available for all budgets.'
+            { title: 'Nearby Lodges', description: 'Lodges and campsites near the park.', image: 'pkgAdventurer' },
+            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in a beautiful setting.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Provided by accommodation.',
-            'Enjoy meals with a view of the forest.',
-            'A variety of dining options.'
+            { title: 'Lodge Dining', description: 'Provided by accommodation.', image: 'videoThumbTestimonial' },
+            { title: 'Forest Views', description: 'Enjoy meals with a view of the forest.', image: 'sipiCoffee' },
+            { title: 'Varied Options', description: 'A variety of dining options.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -633,14 +633,14 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Exploring the Amabere ga Nyina Mwiru caves', description: 'A unique cultural experience.', image: 'campaignElgon' }
         ],
         accommodation: [
-            'A wide range of hotels and lodges in and around Fort Portal.',
-            'Enjoy a comfortable stay in this beautiful town.',
-            'Options available for all budgets.'
+            { title: 'Fort Portal Hotels', description: 'A wide range of hotels and lodges in and around Fort Portal.', image: 'pkgAdventurer' },
+            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in this beautiful town.', image: 'pkgUltimate' },
+            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
         ],
         meals: [
-            'Explore local and international cuisine in Fort Portal.',
-            'Enjoy a meal with a view of the crater lakes.',
-            'A variety of dining options available.'
+            { title: 'Local & International', description: 'Explore local and international cuisine in Fort Portal.', image: 'videoThumbTestimonial' },
+            { title: 'Crater Lake Views', description: 'Enjoy a meal with a view of the crater lakes.', image: 'sipiCoffee' },
+            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
         ]
     },
 ];
@@ -694,3 +694,5 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
   return <CampaignDetailClientPage campaign={campaign} relatedTours={relatedTours} />;
 }
+
+    
