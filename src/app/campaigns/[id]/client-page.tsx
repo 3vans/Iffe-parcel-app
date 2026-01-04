@@ -150,7 +150,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
            <CardTitle className="font-headline text-3xl md:text-4xl text-white absolute bottom-6 left-6 z-10">{campaign.title}</CardTitle>
         </div>
         
-        <CardContent className="p-6">
+        <div className="p-6">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             <div className="md:col-span-2 space-y-8">
 
@@ -169,7 +169,31 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   { src: placeholderImages.fifaCardGorilla.src, hint: placeholderImages.fifaCardGorilla.hint },
                 ]}
               />
-              
+            </div>
+
+            <aside className="space-y-6 md:sticky md:top-24 h-fit">
+                <CampaignActionsCard
+                    campaignTitle={campaign.title}
+                    currentAmount={campaign.currentAmount}
+                    goal={campaign.goal}
+                    endDate={endDate}
+                    volunteersSignedUp={campaign.volunteersSignedUp}
+                    volunteersNeeded={campaign.volunteersNeeded}
+                />
+                <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+                    <CardHeader>
+                    <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                    <p className="text-foreground font-semibold">{campaign.organizer}</p>
+                    <p className="text-xs text-muted-foreground">We are committed to responsible and authentic travel experiences.</p>
+                    </CardContent>
+                </Card>
+                <RelatedToursCard tours={relatedTours} />
+            </aside>
+          </div>
+
+          <div className="mt-8 space-y-8">
               <AnimatedSection>
                 <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
                     <Activity className="mr-2 h-5 w-5" />
@@ -234,32 +258,11 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   </div>
                 </section>
               )}
-            </div>
-            <aside className="space-y-6 md:sticky md:top-24">
-              <CampaignActionsCard
-                campaignTitle={campaign.title}
-                currentAmount={campaign.currentAmount}
-                goal={campaign.goal}
-                endDate={endDate}
-                volunteersSignedUp={campaign.volunteersSignedUp}
-                volunteersNeeded={campaign.volunteersNeeded}
-              />
-              <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
-                <CardHeader>
-                  <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-foreground font-semibold">{campaign.organizer}</p>
-                  <p className="text-xs text-muted-foreground">We are committed to responsible and authentic travel experiences.</p>
-                </CardContent>
-              </Card>
-              <RelatedToursCard tours={relatedTours} />
-            </aside>
           </div>
           
           <Summarizer campaignDescription={campaign.description} campaignTitle={campaign.title} />
-
-        </CardContent>
+        </div>
+        
         <CardFooter className="border-t p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
            <div className="flex space-x-2">
             <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Reviews (32)</Button>
