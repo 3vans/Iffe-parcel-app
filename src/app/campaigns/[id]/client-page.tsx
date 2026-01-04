@@ -103,34 +103,30 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     );
   };
   
-  const ImageGridInfoSection = ({ title, icon: Icon, text, images, imagePosition = 'left' }: { title: string, icon: React.ElementType, text: string, images: {src: string, hint?: string}[], imagePosition?: 'left' | 'right' }) => {
+  const ImageGridInfoSection = ({ title, icon: Icon, text, images }: { title: string, icon: React.ElementType, text: string, images: {src: string, hint?: string}[] }) => {
     return (
         <AnimatedSection>
             <div className="space-y-4">
-                <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-2">
+                <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
                     <Icon className="mr-2 h-5 w-5" />
                     {title}
                 </h3>
-                <div className={cn("grid md:grid-cols-2 gap-8 items-center")}>
-                    <div className={cn(imagePosition === 'right' && 'md:order-last')}>
+                <div className="grid md:grid-cols-2 gap-8 items-center">
+                    <div className="flex flex-col space-y-2">
+                        {images.map((image, index) => (
+                            <div key={index} className="relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group">
+                                <Image src={image.src} alt={`${title} view ${index+1}`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={image.hint} />
+                            </div>
+                        ))}
+                    </div>
+                     <div>
                          {text.split(',').length > 1 && !['Accommodation', 'Meals'].includes(title) ? (
-                            <ul className="space-y-1 text-muted-foreground list-disc list-inside">
+                            <ul className="space-y-2 text-muted-foreground list-disc list-inside">
                                 {text.split(',').map(item => <li key={item}>{item.trim()}</li>)}
                             </ul>
                         ) : (
-                            <p className="text-muted-foreground">{text}</p>
+                            <p className="text-muted-foreground leading-relaxed">{text}</p>
                         )}
-                    </div>
-                    <div className="grid grid-cols-2 grid-rows-2 gap-2 h-64 md:h-80">
-                        <div className="col-span-2 row-span-1 relative rounded-lg overflow-hidden shadow-lg group">
-                            <Image src={images[0].src} alt={`${title} large view`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={images[0].hint} />
-                        </div>
-                        <div className="col-span-1 row-span-1 relative rounded-lg overflow-hidden shadow-lg group">
-                            <Image src={images[1].src} alt={`${title} small view 1`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={images[1].hint} />
-                        </div>
-                        <div className="col-span-1 row-span-1 relative rounded-lg overflow-hidden shadow-lg group">
-                           <Image src={images[2].src} alt={`${title} small view 2`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={images[2].hint} />
-                        </div>
                     </div>
                 </div>
             </div>
@@ -178,7 +174,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   { src: placeholderImages.blogLionPride.src, hint: placeholderImages.blogLionPride.hint },
                   { src: placeholderImages.fifaCardGorilla.src, hint: placeholderImages.fifaCardGorilla.hint },
                 ]}
-                imagePosition="left"
               />
               
               <ImageGridInfoSection
@@ -190,7 +185,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   { src: placeholderImages.campaignRafting.src, hint: placeholderImages.campaignRafting.hint },
                   { src: placeholderImages.blogPhotographer.src, hint: placeholderImages.blogPhotographer.hint },
                 ]}
-                imagePosition="right"
               />
               
               <ImageGridInfoSection
@@ -202,7 +196,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   { src: placeholderImages.pkgUltimate.src, hint: placeholderImages.pkgUltimate.hint },
                   { src: placeholderImages.pkgExplorer.src, hint: placeholderImages.pkgExplorer.hint },
                 ]}
-                imagePosition="left"
               />
 
               <ImageGridInfoSection
@@ -214,7 +207,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                   { src: "https://picsum.photos/seed/meals2/600/400", hint: "outdoor dining" },
                   { src: "https://picsum.photos/seed/meals3/600/400", hint: "local food" },
                 ]}
-                imagePosition="right"
               />
               
               {campaign.tags && campaign.tags.length > 0 && (
