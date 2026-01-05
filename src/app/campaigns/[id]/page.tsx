@@ -77,9 +77,9 @@ const mockCampaignsData: Campaign[] = [
         dataAiHint: placeholderImages.campaignQueenElizabeth.hint,
         description: 'Discover the remarkable diversity of Queen Elizabeth National Park, Uganda’s most visited and most varied safari destination. Stretching from open savannah plains to dense wetlands and volcanic crater lakes, this park offers a classic African safari experience enriched by breathtaking scenery and abundant wildlife.  Renowned for its tree-climbing lions in the Ishasha sector and the iconic Kazinga Channel boat safari, this tour delivers exceptional wildlife viewing both on land and water. From elephants and buffalo to hippos, crocodiles, and over 600 bird species, every moment in Queen Elizabeth National Park is a new encounter with nature.',
         storyline: [
-            'From the open savannah to the dense papyrus swamps, every game drive and boat cruise offers a new discovery.',
-            'This is classic African safari at its best, with opportunities to see a wide range of wildlife.',
-            'The park\'s diverse landscapes make it a photographer\'s paradise.'
+            'From sweeping savannahs to lush papyrus swamps, each game drive and boat cruise reveals a different side of the park’s extraordinary ecosystems.',
+            'This is African safari at its finest—expertly guided game drives offer excellent chances to spot lions, leopards, elephants, buffalo, antelope, and more in their natural habitat.',
+            'With dramatic landscapes, volcanic crater lakes, and stunning viewpoints, the park is a photographer\'s paradise.'
         ],
         budget: 15000, goal: 100, currentAmount: 92, organizer: 'iffe-travels', tags: ['#Wildlife', '#Lions', '#Uganda'], startDate: '2024-07-15', endDate: '2024-07-22', volunteersNeeded: 12, volunteersSignedUp: 8,
         activities: [
@@ -702,3 +702,4 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
     
+
