@@ -75,7 +75,7 @@ const mockCampaignsData: Campaign[] = [
         imageWidth: placeholderImages.campaignQueenElizabeth.width,
         imageHeight: placeholderImages.campaignQueenElizabeth.height,
         dataAiHint: placeholderImages.campaignQueenElizabeth.hint,
-        description: 'Explore the diverse ecosystems of Queen Elizabeth National Park. Famous for its tree-climbing lions, this park also boasts a stunning boat safari on the Kazinga Channel where you can see elephants, hippos, crocodiles, and a huge variety of birdlife.',
+        description: 'Discover the remarkable diversity of Queen Elizabeth National Park, Uganda’s most visited and most varied safari destination. Stretching from open savannah plains to dense wetlands and volcanic crater lakes, this park offers a classic African safari experience enriched by breathtaking scenery and abundant wildlife.  Renowned for its tree-climbing lions in the Ishasha sector and the iconic Kazinga Channel boat safari, this tour delivers exceptional wildlife viewing both on land and water. From elephants and buffalo to hippos, crocodiles, and over 600 bird species, every moment in Queen Elizabeth National Park is a new encounter with nature.',
         storyline: [
             'From the open savannah to the dense papyrus swamps, every game drive and boat cruise offers a new discovery.',
             'This is classic African safari at its best, with opportunities to see a wide range of wildlife.',
