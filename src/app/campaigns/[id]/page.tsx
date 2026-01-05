@@ -88,9 +88,9 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Crater Lake Drive', description: 'Explore the park’s stunning volcanic crater lakes, offering panoramic views and insight into the region’s geological history.', image: 'campaignFortPortal' }
         ],
         accommodation: [
-            { title: 'Safari Lodges', description: 'Selection of safari lodges and camps overlooking the savannah or channel.', image: 'pkgAdventurer' },
-            { title: 'Unique Views', description: 'Each accommodation offers unique views and comfortable amenities.', image: 'pkgUltimate' },
-            { title: 'Sounds of the Wild', description: 'Enjoy the sounds of the wild from the safety of your room.', image: 'pkgExplorer' }
+            { title: 'Safari Lodges & Camps', description: 'Choose from a selection of carefully chosen safari lodges and camps overlooking the savannah or the Kazinga Channel.', image: 'pkgAdventurer' },
+            { title: 'Unique Views', description: 'Each accommodation offers a unique setting—sunsets over open plains, wildlife sightings from your veranda, or serene water views.', image: 'pkgUltimate' },
+            { title: 'Sounds of the Wild', description: 'Fall asleep to the natural sounds of the African wilderness while enjoying comfort, safety, and warm hospitality.', image: 'pkgExplorer' }
         ],
         meals: [
             { title: 'All-Inclusive', description: 'All-inclusive options available.', image: 'videoThumbTestimonial' },
