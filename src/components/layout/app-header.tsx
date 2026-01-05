@@ -70,8 +70,7 @@ const AppHeader = () => {
   const mobileNavItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/packages', label: 'Packages', icon: Package },
-    { href: '/discover-jinja', label: 'Jinja', icon: Waves },
-    { href: '/sipi-falls', label: 'Sipi Falls', icon: MountainSnow },
+    { href: '/campaigns', label: 'All Tours', icon: Compass },
     { href: '/events', label: 'Departures', icon: CalendarClock },
     { href: '/ideas', label: 'Dream Trips', icon: Lightbulb },
     { href: '/blog', label: 'Journal', icon: Edit3 },
