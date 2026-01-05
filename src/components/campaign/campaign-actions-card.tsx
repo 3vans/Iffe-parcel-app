@@ -35,7 +35,7 @@ export default function CampaignActionsCard({
       }
   }, [endDate]);
 
-  const progressPercentage = goal > 0 ? (currentAmount / goal) * 100 : 0;
+  const rating = currentAmount / 10;
   const spotsLeft = volunteersNeeded - volunteersSignedUp;
 
   const handleBookNow = () => {
@@ -53,36 +53,31 @@ export default function CampaignActionsCard({
         <CardDescription>Prices and availability are subject to change.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-            <div className="flex justify-between text-sm font-medium">
-              <span className="text-primary flex items-center"><Star className="h-4 w-4 mr-1 text-yellow-500 fill-yellow-400"/> {currentAmount / 10}/10 Rating</span>
-            </div>
-            <Progress value={progressPercentage} aria-label={`${progressPercentage.toFixed(0)}% traveller rating`} className="mt-1"/>
-        </div>
         <div className="text-sm text-muted-foreground space-y-2">
             <div className="flex items-center">
-              <CalendarDays className="h-4 w-4 mr-2 text-accent" />
-              <span>Tour Dates: {formattedEndDate}</span>
+                <Star className="h-4 w-4 mr-2 text-accent" />
+                <span>Rating: {rating.toFixed(1)} / 10</span>
             </div>
             <div className="flex items-center">
               <Users className="h-4 w-4 mr-2 text-accent" />
-              <span>{spotsLeft > 0 ? `${spotsLeft} spots left` : 'Tour Full'}</span>
+              <span>Limited spots available</span>
             </div>
         </div>
-        <Button 
-          className="w-full mt-2 bg-accent text-accent-foreground hover:bg-accent/90"
-          onClick={handleBookNow}
-          disabled={spotsLeft <= 0}
-        >
-          <HeartHandshake className="mr-2 h-5 w-5" /> {spotsLeft > 0 ? 'Book This Tour' : 'Tour Full'}
-        </Button>
+        <div className="space-y-2">
+            <Button 
+              className="w-full mt-2 bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={handleBookNow}
+              disabled={spotsLeft <= 0}
+            >
+              <HeartHandshake className="mr-2 h-5 w-5" /> {spotsLeft > 0 ? 'Book This Tour' : 'Tour Full'}
+            </Button>
+            <p className="text-xs text-muted-foreground text-center">Secure your place on one of Uganda’s most iconic safari experiences.</p>
+        </div>
       </CardContent>
        <CardFooter>
-          <Button variant="link" className="text-muted-foreground hover:text-primary w-full text-xs" asChild>
-            <Link href="/contact">
-              <Info className="mr-2 h-4 w-4"/> Have a question? Inquire here.
-            </Link>
-          </Button>
+          <p className="text-xs text-muted-foreground">
+            Have questions or special interests? <Link href="/contact" className="text-accent hover:underline">Inquire with us</Link> — we’re happy to customize your safari.
+          </p>
       </CardFooter>
     </Card>
   );

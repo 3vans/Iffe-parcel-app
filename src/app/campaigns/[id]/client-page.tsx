@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -221,8 +221,13 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                     <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
                     </CardHeader>
                     <CardContent>
-                    <p className="text-foreground font-semibold">{campaign.organizer}</p>
-                    <p className="text-xs text-muted-foreground">We are committed to responsible and authentic travel experiences.</p>
+                        <p className="text-foreground font-semibold">{campaign.organizer}</p>
+                    </CardContent>
+                    <CardHeader className='pt-0'>
+                        <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5"/>Responsible & Authentic Travel</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-xs text-muted-foreground">We are committed to responsible tourism practices that protect wildlife, support conservation efforts, and benefit local communities. Your visit contributes to the preservation of Queen Elizabeth National Park and supports livelihoods connected to sustainable tourism.</p>
                     </CardContent>
                 </Card>
                 <RelatedToursCard tours={relatedTours} />
