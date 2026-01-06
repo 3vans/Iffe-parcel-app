@@ -147,9 +147,9 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Bird Watching', description: 'With over 370 recorded bird species, Kibale is one of Africa’s premier birding destinations, ideal for both casual bird lovers and serious birders.', image: 'blogShoebill' }
         ],
         accommodation: [
-            { title: 'Forest Lodges', description: 'Stay in carefully selected forest lodges and eco-camps located close to the park, offering comfort while maintaining a strong connection to the natural environment.', image: 'pkgAdventurer' },
-            { title: 'Forest Sounds', description: 'Wake up to the natural sounds of the rainforest—bird calls, rustling leaves, and distant primate movement.', image: 'pkgUltimate' },
-            { title: 'Eco-Friendly', description: 'Accommodations emphasize sustainability, blending seamlessly with the forest and supporting responsible tourism practices.', image: 'pkgExplorer' }
+            { title: 'Carefully Selected Forest Lodges', description: 'Accommodation for this tour is arranged at well-established lodges and eco-retreats located near Kibale Forest National Park, ensuring easy access to trekking starting points while maintaining comfort and privacy. Lodges are chosen based on location, service quality, and responsible environmental practices.', image: 'pkgAdventurer' },
+            { title: 'Comfort in a Natural Setting', description: 'Rooms are designed to offer a balance between comfort and immersion, with spacious interiors, private facilities, and views of surrounding forest or gardens. After a day of trekking, guests can relax in a quiet, natural setting without sacrificing essential amenities.', image: 'pkgUltimate' },
+            { title: 'Sustainable & Responsible Stays', description: 'Where possible, we prioritize lodges that support sustainable operations, local employment, and community partnerships, aligning your stay with conservation goals and responsible tourism standards.', image: 'pkgExplorer' }
         ],
         meals: [
             { title: 'All Meals Included', description: 'Tour packages typically include breakfast, lunch, and dinner for a seamless and relaxed stay.', image: 'videoThumbTestimonial' },
