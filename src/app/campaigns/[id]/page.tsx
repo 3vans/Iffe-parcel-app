@@ -296,7 +296,7 @@ const mockCampaignsData: Campaign[] = [
             'Explore Jinja’s cultural character through its streets, markets, and landmarks shaped by colonial history and modern Ugandan life.'
         ],
         budget: 3000, goal: 100, currentAmount: 90, organizer: 'iffe-travels',
-        tags: ['#SourceOfTheNile', '#ScenicBoatCruises', '#CulturalExploration', '#Jinja', '#Uganda', '#Day-Trip', '#Kampala', '#EasternUganda'],
+        tags: ['#SourceOfTheNile', '#RiverNile', '#Jinja', '#EasternUganda', '#Day-Trip', '#Kampala'],
         startDate: '2024-12-01', endDate: '2024-12-02', volunteersNeeded: 30, volunteersSignedUp: 25,
         activities: [
             { title: 'Source of the Nile Boat Visit', description: 'A guided boat ride leads you to the official source marker, accompanied by storytelling on exploration history, local beliefs, and the Nile’s global importance.', image: 'campaignSourceNile' },
@@ -481,7 +481,7 @@ const mockCampaignsData: Campaign[] = [
         goal: 100,
         currentAmount: 82,
         organizer: 'iffe-travels',
-        tags: ['#BusogaKingdom', '#CulturalHeritage', '#TraditionalMusic', '#CommunityExperiences', '#Jinja', '#EasternUganda'],
+        tags: ['#BusogaKingdom', '#CulturalHeritage', '#Jinja', '#EasternUganda', '#CommunityInteraction'],
         startDate: '2024-12-05',
         endDate: '2024-12-06',
         volunteersNeeded: 25,
@@ -703,7 +703,7 @@ const mockCampaignsData: Campaign[] = [
             'Discover Uganda’s political, cultural, and spiritual history through guided visits to iconic sites.'
         ],
         budget: 2000, goal: 100, currentAmount: 91, organizer: 'iffe-travels', 
-        tags: ['#Kampala', '#CulturalHeritage', '#HistoricLandmarks', '#LocalMarkets', '#UrbanUganda', '#Day-Trip'], 
+        tags: ['#Kampala', '#CulturalHeritage', '#HistoricLandmarks', '#UrbanUganda', '#Day-Trip'], 
         startDate: '2024-11-15', endDate: '2024-11-15', volunteersNeeded: 50, volunteersSignedUp: 45,
         activities: [
             { title: 'Cultural & Historical Landmarks', description: 'Visit key sites such as the Kasubi Royal Tombs, religious monuments, and historic buildings that shaped Uganda’s identity.', image: 'campaignBusoga' },
@@ -741,7 +741,7 @@ const mockCampaignsData: Campaign[] = [
             'Relax along the shores of Lake Victoria, where gentle breezes, open water views, and birdlife define the atmosphere.'
         ],
         budget: 1500, goal: 100, currentAmount: 89, organizer: 'iffe-travels', 
-        tags: ['#Entebbe', '#Gardens', '#Relaxation', '#LakeVictoria', '#Wildlife', '#Day-Trip', '#Kampala'], 
+        tags: ['#Entebbe', '#Gardens', '#LakeVictoria', '#Wildlife', '#Day-Trip', '#Kampala'], 
         startDate: '2024-11-14', endDate: '2024-11-14', volunteersNeeded: 40, volunteersSignedUp: 30,
         activities: [
             { title: 'Guided Botanical Walks', description: 'Learn about medicinal plants, indigenous trees, and exotic species introduced during the colonial era.', image: 'campaignEntebbe' },
@@ -967,26 +967,24 @@ async function getCampaign(id: string): Promise<{ campaign: Campaign | undefined
     
     let relatedTours: RelatedTour[] = [];
     if (campaign) {
-        relatedTours = mockCampaignsData
-            .filter(otherCampaign => {
-                // Ensure it's not the same campaign
-                if (otherCampaign.id === campaign.id) return false;
-                // Check if there's at least one common tag
-                return otherCampaign.tags.some(tag => campaign.tags.includes(tag));
+        // Find other campaigns that share at least one tag
+        const related = mockCampaignsData
+            .filter(otherCampaign => 
+                otherCampaign.id !== campaign.id && 
+                otherCampaign.tags.some(tag => campaign.tags.includes(tag))
+            )
+            .map(otherCampaign => {
+                // Score based on number of common tags
+                const commonTags = otherCampaign.tags.filter(tag => campaign.tags.includes(tag));
+                return {
+                    ...otherCampaign,
+                    relevance: commonTags.length,
+                };
             })
-            // Shuffle and take the first few
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3)
-            .map(c => ({
-                id: c.id,
-                title: c.title,
-            }));
-    }
-     // If no related tours found by tags, show some random ones
-    if (relatedTours.length === 0) {
-        relatedTours = mockCampaignsData
-            .filter(c => c.id !== id)
-            .sort(() => 0.5 - Math.random())
+            // Sort by relevance (most common tags first)
+            .sort((a, b) => b.relevance - a.relevance);
+
+        relatedTours = related
             .slice(0, 3)
             .map(c => ({
                 id: c.id,
@@ -994,6 +992,18 @@ async function getCampaign(id: string): Promise<{ campaign: Campaign | undefined
             }));
     }
 
+    // If not enough related tours found by tags, fill with the most recent ones
+    if (relatedTours.length < 3) {
+        const existingIds = new Set([campaign?.id, ...relatedTours.map(t => t.id)]);
+        const recentTours = mockCampaignsData
+            .filter(c => !existingIds.has(c.id))
+            .slice(0, 3 - relatedTours.length);
+        
+        relatedTours.push(...recentTours.map(c => ({
+            id: c.id,
+            title: c.title,
+        })));
+    }
 
     return { campaign, relatedTours };
 }
@@ -1007,35 +1017,3 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
   return <CampaignDetailClientPage campaign={campaign} relatedTours={relatedTours} />;
 }
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    
-
-    
-
-    
