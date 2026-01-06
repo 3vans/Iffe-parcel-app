@@ -296,7 +296,7 @@ const mockCampaignsData: Campaign[] = [
             'Explore Jinja’s cultural character through its streets, markets, and landmarks shaped by colonial history and modern Ugandan life.'
         ],
         budget: 3000, goal: 100, currentAmount: 90, organizer: 'iffe-travels',
-        tags: ['#SourceOfTheNile', '#ScenicBoatCruises', '#CulturalExploration', '#Jinja', '#Uganda', '#Day-Trip', '#Kampala'],
+        tags: ['#SourceOfTheNile', '#ScenicBoatCruises', '#CulturalExploration', '#Jinja', '#Uganda', '#Day-Trip', '#Kampala', '#EasternUganda'],
         startDate: '2024-12-01', endDate: '2024-12-02', volunteersNeeded: 30, volunteersSignedUp: 25,
         activities: [
             { title: 'Source of the Nile Boat Visit', description: 'A guided boat ride leads you to the official source marker, accompanied by storytelling on exploration history, local beliefs, and the Nile’s global importance.', image: 'campaignSourceNile' },
@@ -883,30 +883,43 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '21', title: 'Semuliki National Park',
+        id: '21',
+        title: 'Semuliki National Park',
         shortDescription: 'Discover unique bird species and boiling hot springs.',
         imageUrl: placeholderImages.campaignSemuliki.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'semuliki hot springs',
-        description: 'Explore the unique lowland tropical rainforest of Semuliki National Park. It\'s a birdwatcher\'s paradise and home to the amazing Sempaya Hot Springs.',
+        description: 'Step into Semuliki National Park, a hidden jewel of Uganda’s tropical rainforest nestled along the border with the Democratic Republic of Congo. This is one of the few lowland forests in East Africa, where ancient trees tower above you and the air hums with the songs of hundreds of bird species. The park is a sanctuary for rare wildlife, including forest elephants, chimpanzees, monkeys, duikers, and countless bird species, making it a paradise for eco-tourists and nature lovers seeking a more intimate safari experience. Unlike busier savannah parks, Semuliki immerses you in dense, misty forests, winding river trails, and secluded hot springs that offer a sense of solitude and adventure. Visitors can explore forest trails with expert guides, soak in the mineral-rich thermal springs, and interact with the Batwa communities, learning about the culture and traditions of one of Africa’s most ancient peoples. This tour is perfect for travelers who want more than just wildlife sightings — it is a complete sensory experience, blending the thrill of discovery, the beauty of untouched rainforest, and the richness of cultural heritage.',
         storyline: [
-            'A taste of Central African jungle in Uganda.',
-            'See unique bird species not found elsewhere in Uganda.',
-            'Witness the power of the Sempaya Hot Springs.'
+            'Imagine walking under a canopy of towering mahogany and ironwood trees, the forest floor dappled with sunlight filtering through leaves. All around you, the calls of hornbills, turacos, and monkeys echo, while hidden butterflies flit between ferns and vines. Each step along the winding forest trails offers the possibility of spotting a shy duiker or the distant flash of a chimpanzee moving through the trees.',
+            'Semuliki’s thermal hot springs provide a rare natural retreat. Imagine soaking in warm, steaming waters surrounded by the dense rainforest, feeling the tension leave your body while the sounds of birds, running water, and rustling leaves fill the air. These springs are not just relaxing — they are a unique part of the park’s ecological and cultural identity, offering an unforgettable contrast to traditional wildlife safaris.',
+            'Interact with the Batwa pygmy communities, whose knowledge of the forest spans generations. Observe their traditional hunting techniques, learn about medicinal plants, and understand their intimate connection to the rainforest. This cultural encounter is enlightening and humbling, giving travelers a rare perspective on human resilience, tradition, and environmental stewardship.'
         ],
-        budget: 7500, goal: 100, currentAmount: 77, organizer: 'iffe-travels', tags: ['#BirdWatching', '#HotSprings', '#Semuliki', '#Uganda'], startDate: '2025-03-01', endDate: '2025-03-04', volunteersNeeded: 10, volunteersSignedUp: 6,
+        budget: 7500, goal: 100, currentAmount: 80, organizer: 'iffe-travels', 
+        tags: ['#Semuliki', '#Rainforest', '#BirdWatching', '#HotSprings', '#CulturalHeritage', '#EcoTourism'], 
+        startDate: '2025-03-01', endDate: '2025-03-04', volunteersNeeded: 10, volunteersSignedUp: 6,
         activities: [
-            { title: 'Bird watching', description: 'An expert guide will help you spot unique bird species.', image: 'blogShoebill' },
-            { title: 'Visiting the hot springs', description: 'Boil eggs in the hot springs.', image: 'campaignSemuliki' },
-            { title: 'Nature walks', description: 'Explore the rainforest on foot.', image: 'ideaWalkingSafari' }
+            { title: 'Guided Rainforest Walks', description: 'Explore Semuliki on foot with expert guides who know the forest intimately. Wander along hidden trails, riverbanks, and ancient forest paths, spotting monkeys, birds, butterflies, and endemic plants. Each walk is a chance to witness rare wildlife up close, from elusive duikers to troop movements of red-tailed monkeys.', image: 'ideaWalkingSafari' },
+            { title: 'Bird Watching', description: 'Semuliki is a birdwatcher’s paradise, home to over 400 species, including the African grey parrot, African fish eagle, and the elusive Narina trogon. Guided tours provide spotting scopes and expert knowledge to make your experience unforgettable.', image: 'blogShoebill' },
+            { title: 'Thermal Hot Springs', description: 'Immerse yourself in Semuliki’s warm natural springs, an ideal way to unwind after morning trails. The mineral-rich waters are said to have therapeutic properties, offering relaxation in a dramatic rainforest setting.', image: 'campaignSemuliki' },
+            { title: 'Cultural Immersion', description: 'Meet and learn from Batwa communities, one of Africa’s oldest forest-dwelling peoples. Witness traditional music, dance, and storytelling, and gain insight into how these communities live sustainably within the rainforest.', image: 'ideaFamilySafari' },
+            { title: 'Photography & Nature Observation', description: 'From mist-shrouded riverbanks to sun-dappled forest clearings, Semuliki is a photographer’s dream. Capture rare primates, colorful birds, or intimate landscapes that transport viewers straight into Uganda’s rainforest heart.', image: 'gallerySafariGroup' }
         ],
         accommodation: [
-            { title: 'Nearby Lodges', description: 'Lodges and campsites near the park.', image: 'pkgAdventurer' },
-            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in a beautiful setting.', image: 'pkgUltimate' },
-            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
+            { title: 'Forest Lodges & Eco-Camps', description: 'Stay in eco-friendly lodges or forest campsites designed to minimize environmental impact while providing comfort. Many lodges are located close to the park trails, allowing early morning wildlife walks and evening forest sounds.', image: 'pkgAdventurer' },
+            { title: 'Immersive & Serene', description: 'Wake up to birdsong and flowing streams, surrounded by dense forest greenery. Lodges offer a secluded, peaceful environment for reflection and relaxation after your rainforest adventures.', image: 'pkgUltimate' },
+            { title: 'Flexible Options', description: 'Choose from budget-friendly campsites to mid-range lodges with full amenities, ensuring a tailored experience for every type of traveler.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Lodge Dining', description: 'Provided by accommodation.', image: 'videoThumbTestimonial' },
-            { title: 'Forest Views', description: 'Enjoy meals with a view of the forest.', image: 'sipiCoffee' },
-            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
+            { title: 'Fresh & Local Cuisine', description: 'Savor meals prepared from fresh, locally sourced ingredients, including fish from nearby rivers, tropical fruits, and traditional Ugandan dishes.', image: 'videoThumbTestimonial' },
+            { title: 'Forest Dining Experiences', description: 'Picnic lunches along forest trails or riversides can be arranged, letting you dine amidst nature while absorbing the sounds and smells of the rainforest.', image: 'sipiCoffee' },
+            { title: 'Full-Board Packages', description: 'Multi-day tours include breakfast, lunch, and dinner. Meals are carefully prepared to fuel your forest adventures while introducing you to the rich flavors of western Uganda.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Start early for the best wildlife sightings and birdwatching opportunities.",
+            "Wear breathable clothing, sturdy walking shoes, and a light rain jacket.",
+            "Bring sunscreen, insect repellent, and a hat.",
+            "Respect cultural sites and follow guide instructions when engaging with local communities.",
+            "Photography enthusiasts should carry extra batteries and memory cards — the park is full of rare photo opportunities.",
+            "Combine this tour with Toro Kingdom, Fort Portal, or Kibale Forest for a full western Uganda adventure."
         ]
     },
     {
@@ -914,7 +927,7 @@ const mockCampaignsData: Campaign[] = [
         title: 'Toro Kingdom & Fort Portal',
         shortDescription: 'Explore royal heritage, crater lakes, and the vibrant culture of Uganda’s "Tourism City".',
         imageUrl: placeholderImages.campaignFortPortal.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'crater lake',
-        description: 'Step into the heart of Western Uganda, where history, culture, and natural beauty intertwine in the Toro Kingdom and the vibrant town of Fort Portal. This tour invites you to explore royal heritage, local traditions, crater lakes, and rolling hills that have earned Fort Portal the nickname “Tourism City of Uganda”.\n\nThe Toro Kingdom remains one of Uganda’s most significant cultural regions, with centuries-old traditions, royal palaces, and ceremonial sites that reveal the kingdom’s rich history. Meanwhile, Fort Portal is a hub for adventure, nature, and relaxation, surrounded by lush tea plantations, crater lakes, and forests.\n\nThis tour is ideal for culture enthusiasts, history lovers, photographers, and nature seekers, offering a blend of cultural immersion and scenic discovery rarely found elsewhere in East Africa.',
+        description: 'Step into the heart of Western Uganda, where history, culture, and natural beauty intertwine in the Toro Kingdom and the vibrant town of Fort Portal. This tour invites you to explore royal heritage, local traditions, crater lakes, and rolling hills that have earned Fort Portal the nickname “Tourism City of Uganda”. The Toro Kingdom remains one of Uganda’s most significant cultural regions, with centuries-old traditions, royal palaces, and ceremonial sites that reveal the kingdom’s rich history. Meanwhile, Fort Portal is a hub for adventure, nature, and relaxation, surrounded by lush tea plantations, crater lakes, and forests. This tour is ideal for culture enthusiasts, history lovers, photographers, and nature seekers, offering a blend of cultural immersion and scenic discovery rarely found elsewhere in East Africa.',
         storyline: [
             'Discover the legacy of the Toro Kingdom, visiting royal palaces, cultural centers, and local villages. Learn about the kingdom’s customs, ceremonies, and the roles of its leaders in modern Ugandan society.',
             'Explore Fort Portal’s breathtaking natural landscapes, including the Crater Lake National Park, Mount Rwenzori foothills, and scenic waterfalls. Each stop offers a visual feast for photographers and nature lovers alike.',
@@ -932,7 +945,7 @@ const mockCampaignsData: Campaign[] = [
         accommodation: [
             { title: 'Fort Portal Hotels & Guesthouses', description: 'Stay in comfortable lodges or boutique hotels with access to crater lakes, forests, and the town’s cultural attractions.', image: 'pkgAdventurer' },
             { title: 'Tranquil & Scenic', description: 'Accommodations offer scenic views, quiet surroundings, and personalized service, making it a peaceful retreat after a day of exploration.', image: 'pkgUltimate' },
-            { title: 'Flexible Options', description: 'Choose budget-friendly guesthouses, mid-range lodges, or luxury boutique hotels depending on your itinerary and preferences.', image: 'pkgExplorer' }
+            { title: 'Flexible Options', description: 'Choose from budget-friendly guesthouses, mid-range lodges, or luxury boutique hotels depending on your itinerary and preferences.', image: 'pkgExplorer' }
         ],
         meals: [
             { title: 'Local & Traditional Cuisine', description: 'Enjoy fresh, locally sourced meals highlighting Toro Kingdom specialties, regional fruits, vegetables, and fish dishes.', image: 'videoThumbTestimonial' },
@@ -1020,6 +1033,8 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
 
+
+    
 
     
 
