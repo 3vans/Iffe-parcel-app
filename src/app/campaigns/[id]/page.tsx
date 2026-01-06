@@ -31,8 +31,6 @@ interface Campaign {
 export interface RelatedTour {
   id: string;
   title: string;
-  imageUrl: string;
-  dataAiHint?: string;
 }
 
 const mockCampaignsData: Campaign[] = [
@@ -711,7 +709,7 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Cultural & Historical Landmarks', description: 'Visit key sites such as the Kasubi Royal Tombs, religious monuments, and historic buildings that shaped Uganda’s identity.', image: 'campaignBusoga' },
             { title: 'City Life & Local Markets', description: 'Explore vibrant markets where food, crafts, and daily commerce offer insight into Kampala’s living culture.', image: 'ideaFamilySafari' },
             { title: 'Panoramic City Views', description: 'Enjoy elevated viewpoints from Kampala’s hills, perfect for photography and orientation.', image: 'campaignKampala' },
-            { title: 'Optional Museum Visits', description: 'Museums and cultural centers can be included for deeper historical and artistic context.', image: 'homeCreatorTom'}
+            { title: 'Optional Museum Visits', description: 'Museums and cultural centers can be included for deeper historical and artistic context.', image: 'homeCreatorTom' }
         ],
         accommodation: [
             { title: 'City Hotels & Boutique Stays', description: 'Accommodation is arranged in well-located hotels and boutique lodges offering comfort and easy access to tour sites.', image: 'pkgAdventurer' },
@@ -770,32 +768,41 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '18', title: 'Ngamba Island Chimpanzee Sanctuary',
+        id: '18', 
+        title: 'Ngamba Island Chimpanzee Sanctuary',
         shortDescription: 'Visit a sanctuary for orphaned chimpanzees on Lake Victoria.',
         imageUrl: placeholderImages.campaignNgamba.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'chimpanzee sanctuary',
-        description: 'Take a boat trip on Lake Victoria to Ngamba Island, a sanctuary for rescued and orphaned chimpanzees. Learn about their conservation and watch them during their feeding time.',
+        description: 'Ngamba Island Chimpanzee Sanctuary is a unique wildlife conservation experience located on the serene waters of Lake Victoria. The sanctuary is home to rescued orphaned chimpanzees, providing a safe and natural environment where visitors can observe their behaviors, social interactions, and playful personalities in a semi-wild setting. This tour offers a hands-on conservation experience, combining education, wildlife observation, and lakeside relaxation. Visitors not only witness the fascinating lives of chimpanzees but also contribute directly to their care and protection, supporting ethical tourism and species preservation. Ngamba Island is ideal for families, conservation enthusiasts, and wildlife lovers seeking a meaningful and unforgettable encounter.',
         storyline: [
-            'A heartwarming and educational experience supporting chimp conservation.',
-            'Get up close with our closest relatives.',
-            'A great day trip from Entebbe or Kampala.'
+            'Observe chimpanzees during feeding and enrichment sessions, gaining insight into their intelligence, social structure, and personalities.',
+            'Explore the sanctuary grounds and walk through the lush forested island while learning about rehabilitation and conservation practices.',
+            'Relax on the shores of Lake Victoria, where gentle breezes, birdsong, and water views complement the wildlife experience.'
         ],
         budget: 3500, goal: 100, currentAmount: 94, organizer: 'iffe-travels', 
-        tags: ['#Conservation', '#Chimpanzee', '#Uganda', '#Day-Trip', '#Kampala'], 
+        tags: ['#NgambaIsland', '#Chimpanzee', '#LakeVictoria', '#WildlifeConservation', '#EthicalTourism', '#Day-Trip', '#Kampala'], 
         startDate: '2024-11-16', endDate: '2024-11-16', volunteersNeeded: 20, volunteersSignedUp: 19,
         activities: [
-            { title: 'Boat trip on Lake Victoria', description: 'A scenic boat trip to Ngamba Island.', image: 'campaignSourceNile' },
-            { title: 'Chimpanzee viewing', description: 'Watch the chimpanzees during their feeding time.', image: 'campaignNgamba' },
-            { title: 'Educational talks on conservation', description: 'Learn about chimpanzee conservation efforts.', image: 'homeCreatorTom' }
+            { title: 'Chimpanzee Observation', description: 'Witness rescued chimpanzees in their natural behaviors during feeding and enrichment periods, guided by expert staff.', image: 'campaignNgamba' },
+            { title: 'Sanctuary Walks', description: 'Walk through forested trails with interpretation on conservation practices, rehabilitation, and habitat preservation.', image: 'ideaWalkingSafari' },
+            { title: 'Lake Victoria Exploration', description: 'Enjoy boat rides to and from the island with opportunities to spot fish eagles, herons, and other waterbirds along the way.', image: 'campaignSourceNile' },
+            { title: 'Educational Sessions', description: 'Learn about chimpanzee ecology, threats in the wild, and global conservation challenges through interactive discussions.', image: 'homeCreatorTom' }
         ],
         accommodation: [
-            { title: 'N/A', description: 'Day trip, no accommodation provided.', image: 'pkgAdventurer' },
-            { title: 'Can be Arranged', description: 'Can be arranged upon request.', image: 'pkgUltimate' },
-            { title: 'Contact Us', description: 'Contact us for more details.', image: 'pkgExplorer' }
+            { title: 'Nearby Entebbe Lodges & Hotels', description: 'Visitors stay in comfortable lodges and hotels in Entebbe, offering easy access to Ngamba Island and Lake Victoria.', image: 'pkgAdventurer' },
+            { title: 'Convenient & Relaxing', description: 'Accommodations emphasize comfort, scenic views, and a tranquil lakeside atmosphere.', image: 'pkgUltimate' },
+            { title: 'Flexible Options', description: 'Choose budget-friendly stays, mid-range lodges, or upscale hotels depending on your itinerary.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Island Lunch', description: 'Lunch is included in the trip.', image: 'videoThumbTestimonial' },
-            { title: 'Dining Experience', description: 'Enjoy a meal on the island.', image: 'sipiCoffee' },
-            { title: 'Unique Setting', description: 'A unique dining experience.', image: 'ideaFamilySafari' }
+            { title: 'Fresh & Local Cuisine', description: 'Enjoy locally sourced meals before or after your visit, including fresh fish, fruits, and regional dishes.', image: 'videoThumbTestimonial' },
+            { title: 'Picnic & Lakeside Dining', description: 'Optional picnic lunches can be arranged on the island or nearby for a unique wildlife dining experience.', image: 'sipiCoffee' },
+            { title: 'Full-Board Options', description: 'When paired with overnight stays, lodges provide full-board meals featuring local and international menus.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Book early to secure slots, as visitor numbers are limited for chimp welfare.",
+            "Children are welcome but should be supervised at all times.",
+            "Combine with Entebbe Botanical Gardens or a Lake Victoria cruise for a full-day experience.",
+            "Wear comfortable clothing and shoes suitable for short forest walks.",
+            "Photography is allowed, but maintain respectful distance from the chimpanzees."
         ]
     },
     {
@@ -926,8 +933,6 @@ async function getCampaign(id: string): Promise<{ campaign: Campaign | undefined
             .map(c => ({
                 id: c.id,
                 title: c.title,
-                imageUrl: (placeholderImages[c.imageUrl.split('/').pop()?.split('.')[0] as keyof typeof placeholderImages] as any)?.src || c.imageUrl,
-                dataAiHint: c.dataAiHint,
             }));
     }
      // If no related tours found by tags, show some random ones
@@ -939,8 +944,6 @@ async function getCampaign(id: string): Promise<{ campaign: Campaign | undefined
             .map(c => ({
                 id: c.id,
                 title: c.title,
-                imageUrl: (placeholderImages[c.imageUrl.split('/').pop()?.split('.')[0] as keyof typeof placeholderImages] as any)?.src || c.imageUrl,
-                dataAiHint: c.dataAiHint,
             }));
     }
 
