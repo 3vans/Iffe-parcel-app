@@ -258,7 +258,9 @@ const mockCampaignsData: Campaign[] = [
             'Enjoy the freedom of moving silently through the savannah, guided by experienced rangers who interpret animal behavior and landscapes.',
             'Pause at scenic viewpoints and waterholes to observe wildlife activity and capture expansive views of Lake Mburo’s rolling terrain.'
         ],
-        budget: 6000, goal: 100, currentAmount: 82, organizer: 'iffe-travels', tags: ['#Cycling', '#Zebras', '#Uganda', '#WalkingSafari'], startDate: '2024-11-01', endDate: '2024-11-03', volunteersNeeded: 20, volunteersSignedUp: 18,
+        budget: 6000, goal: 100, currentAmount: 82, organizer: 'iffe-travels', 
+        tags: ['#CyclingSafari', '#WalkingSafari', '#Zebras', '#LakeMburo', '#Uganda'], 
+        startDate: '2024-11-01', endDate: '2024-11-03', volunteersNeeded: 20, volunteersSignedUp: 18,
         activities: [
             { title: 'Guided Cycling Safari', description: 'Cycle through designated park routes accompanied by armed park rangers and professional guides, ensuring safety while allowing close wildlife observation.', image: 'campaignMburo' },
             { title: 'Walking Safari', description: 'Lake Mburo is one of the few Ugandan parks that permits walking safaris, offering a deeper understanding of tracks, plants, and animal behavior.', image: 'ideaWalkingSafari' },
@@ -296,7 +298,7 @@ const mockCampaignsData: Campaign[] = [
             'Explore Jinja’s cultural character through its streets, markets, and landmarks shaped by colonial history and modern Ugandan life.'
         ],
         budget: 3000, goal: 100, currentAmount: 90, organizer: 'iffe-travels',
-        tags: ['#RiverNile', '#Jinja', '#Culture', '#History', '#Day-Trip', '#Uganda'],
+        tags: ['#SourceOfTheNile', '#ScenicBoatCruises', '#CulturalExploration', '#Jinja', '#Uganda'],
         startDate: '2024-12-01', endDate: '2024-12-02', volunteersNeeded: 30, volunteersSignedUp: 25,
         activities: [
             { title: 'Source of the Nile Boat Visit', description: 'A guided boat ride leads you to the official source marker, accompanied by storytelling on exploration history, local beliefs, and the Nile’s global importance.', image: 'campaignSourceNile' },
@@ -334,7 +336,7 @@ const mockCampaignsData: Campaign[] = [
             'Celebrate each successful rapid with your team, guided by expert rafters who prioritize safety, teamwork, and enjoyment.'
         ],
         budget: 4000, goal: 100, currentAmount: 95, organizer: 'iffe-travels',
-        tags: ['#Adventure', '#Jinja', '#RiverNile', '#Day-Trip'],
+        tags: ['#Grade5Rafting', '#RiverNile', '#ProfessionalGuides', '#Jinja', '#Uganda'],
         startDate: '2024-12-03', endDate: '2024-12-03', volunteersNeeded: 40, volunteersSignedUp: 40,
         activities: [
             { title: 'Grade 5 White-Water Rafting', description: 'Tackle some of the Nile’s most famous rapids, including powerful drops and technical sections that define world-class rafting.', image: 'campaignRafting' },
@@ -372,7 +374,7 @@ const mockCampaignsData: Campaign[] = [
             'Discover the dramatic scenery of Sipi Falls, where water cascades down sheer cliffs framed by green highland landscapes.'
         ],
         budget: 9000, goal: 100, currentAmount: 78, organizer: 'iffe-travels',
-        tags: ['#Hiking', '#Volcano', '#Caves', '#SipiFalls', '#Uganda'],
+        tags: ['#MountElgon', '#VolcanicCaves', '#SipiFalls', '#ScenicHiking', '#EasternUganda'],
         startDate: '2025-02-01', endDate: '2025-02-05', volunteersNeeded: 12, volunteersSignedUp: 7,
         activities: [
             { title: 'Guided Mountain Hiking', description: 'Follow well-established trails through forest, moorland, and volcanic terrain, suitable for both day hikes and extended treks.', image: 'campaignElgon' },
@@ -437,30 +439,41 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '12', title: 'Busoga Kingdom Cultural Tour',
+        id: '12', 
+        title: 'Busoga Kingdom Cultural Tour',
         shortDescription: 'Immerse yourself in the royal heritage and traditions of Busoga.',
         imageUrl: placeholderImages.campaignBusoga.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'cultural kingdom',
-        description: 'Experience the rich culture of the Busoga Kingdom. Visit royal sites, learn about local traditions, and enjoy cultural performances. A unique insight into the heritage of eastern Uganda.',
+        description: 'The Busoga Kingdom Cultural Tour offers a deep and authentic introduction to one of Uganda’s most historically rich and culturally vibrant regions. Centered around Jinja and surrounding Busoga communities, this experience explores the traditions, leadership systems, and daily life of the Basoga people.\n\nVisitors are introduced to royal heritage, clan traditions, music, dance, storytelling, and crafts, while learning how culture continues to shape modern Busoga society. This tour is ideal for travelers seeking meaningful cultural engagement beyond wildlife and landscapes.\n\nBusoga is not only a kingdom of history, but a living culture — proud, evolving, and welcoming.',
         storyline: [
-            'A deep dive into the history and living culture of the Basoga people.',
-            'Learn about the kingdom\'s traditions and customs.',
-            'A fascinating and educational experience.'
+            'Learn about the Busoga Kingdom’s royal structure, history, and traditions through guided cultural interpretation and community visits.',
+            'Experience traditional music, dance, and storytelling that reflect the identity, values, and social life of the Basoga people.',
+            'Engage with artisans and local communities to discover traditional crafts, food practices, and everyday life in Busoga.'
         ],
-        budget: 2500, goal: 100, currentAmount: 65, organizer: 'iffe-travels', tags: ['#Culture', '#History', '#Uganda'], startDate: '2024-12-05', endDate: '2024-12-06', volunteersNeeded: 25, volunteersSignedUp: 10,
+        budget: 2500, goal: 100, currentAmount: 65, organizer: 'iffe-travels', 
+        tags: ['#BusogaKingdom', '#CulturalHeritage', '#TraditionalMusic', '#CommunityExperiences', '#EasternUganda'], 
+        startDate: '2024-12-05', endDate: '2024-12-06', volunteersNeeded: 25, volunteersSignedUp: 10,
         activities: [
-            { title: 'Visit to the Kyabazinga\'s palace', description: 'See the royal palace of the Busoga Kingdom.', image: 'campaignBusoga' },
-            { title: 'Cultural performances', description: 'Enjoy traditional music and dance.', image: 'ideaFamilySafari' },
-            { title: 'Local craft workshops', description: 'Learn traditional skills from local artisans.', image: 'ideaFamilySafari' }
+            { title: 'Royal & Cultural Heritage Visits', description: 'Explore cultural sites connected to Busoga leadership, clan systems, and historical narratives guided by knowledgeable locals.', image: 'campaignBusoga' },
+            { title: 'Traditional Music & Dance', description: 'Witness or participate in cultural performances that express storytelling, celebration, and community identity.', image: 'ideaFamilySafari' },
+            { title: 'Crafts & Artisan Encounters', description: 'Meet local craftsmen and women producing traditional items such as baskets, drums, and household crafts.', image: 'ideaFamilySafari' },
+            { title: 'Community Interaction', description: 'Spend time in local communities to understand daily life, social structures, and cultural values.', image: 'campaignKampala'}
         ],
         accommodation: [
-            { title: 'Jinja Hotels', description: 'Hotels in Jinja or nearby towns.', image: 'pkgAdventurer' },
-            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in a modern hotel.', image: 'pkgUltimate' },
-            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
+            { title: 'Comfortable Cultural Lodges & Hotels', description: 'Accommodation is arranged in well-selected lodges and hotels within Jinja and the Busoga region, offering comfort and easy access to cultural sites.', image: 'pkgAdventurer' },
+            { title: 'Local Character & Warm Hospitality', description: 'Stays emphasize friendly service, regional character, and a relaxed atmosphere suitable for cultural exploration.', image: 'pkgUltimate' },
+            { title: 'Optional Upgrades Available', description: 'Mid-range and higher-end options can be arranged for travelers seeking additional comfort.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Traditional Cuisine', description: 'Try traditional Busoga cuisine.', image: 'videoThumbTestimonial' },
-            { title: 'Family Meal', description: 'Enjoy a meal with a local family.', image: 'sipiCoffee' },
-            { title: 'Jinja Restaurants', description: 'A variety of restaurants in Jinja.', image: 'ideaFamilySafari' }
+            { title: 'Traditional Busoga Cuisine', description: 'Enjoy meals inspired by local Busoga dishes prepared with fresh regional ingredients.', image: 'videoThumbTestimonial' },
+            { title: 'Cultural Dining Experiences', description: 'Some meals are accompanied by cultural explanations, offering insight into food traditions and customs.', image: 'sipiCoffee' },
+            { title: 'Flexible Dining Options', description: 'Both local and international meal choices are available depending on accommodation and preferences.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Cultural tours are best enjoyed with an open schedule to allow deeper engagement.",
+            "Dress respectfully during cultural visits and ceremonies.",
+            "Photography should be done with permission, especially during performances.",
+            "Combine this tour with Jinja or Source of the Nile for a balanced cultural and adventure itinerary.",
+            "Let us know if you’re interested in educational or group-focused experiences."
         ]
     },
     {
@@ -554,7 +567,7 @@ const mockCampaignsData: Campaign[] = [
             'Experience the energy and vibrancy of Kampala.',
             'Learn about the history and culture of the city.'
         ],
-        budget: 2000, goal: 100, currentAmount: 91, organizer: 'iffe-travels', tags: ['#CityTour', '#Culture', '#Uganda', '#Day-Trip'], startDate: '2024-11-15', endDate: '2024-11-15', volunteersNeeded: 50, volunteersSignedUp: 45,
+        budget: 2000, goal: 100, currentAmount: 91, organizer: 'iffe-travels', tags: ['#CityTour', '#Culture', '#Uganda', '#Day-Trip', '#Jinja', '#Entebbe'], startDate: '2024-11-15', endDate: '2024-11-15', volunteersNeeded: 50, volunteersSignedUp: 45,
         activities: [
             { title: 'Visiting historical sites', description: 'See the Kasubi Tombs and other historic sites.', image: 'campaignBusoga' },
             { title: 'Shopping in craft markets', description: 'Find unique souvenirs.', image: 'ideaFamilySafari' },
@@ -581,7 +594,7 @@ const mockCampaignsData: Campaign[] = [
             'A great way to spend a day before or after a flight.',
             'Relax and unwind in a beautiful setting.'
         ],
-        budget: 1500, goal: 100, currentAmount: 89, organizer: 'iffe-travels', tags: ['#Gardens', '#Relaxation', '#Uganda', '#Day-Trip'], startDate: '2024-11-14', endDate: '2024-11-14', volunteersNeeded: 40, volunteersSignedUp: 30,
+        budget: 1500, goal: 100, currentAmount: 89, organizer: 'iffe-travels', tags: ['#Gardens', '#Relaxation', '#Uganda', '#Day-Trip', '#Jinja', '#Kampala'], startDate: '2024-11-14', endDate: '2024-11-14', volunteersNeeded: 40, volunteersSignedUp: 30,
         activities: [
             { title: 'A tour of the Botanical Gardens', description: 'Explore the lush gardens.', image: 'campaignEntebbe' },
             { title: 'A visit to the Wildlife Centre', description: 'See a variety of Ugandan wildlife.', image: 'galleryElephant' },
@@ -608,7 +621,7 @@ const mockCampaignsData: Campaign[] = [
             'Get up close with our closest relatives.',
             'A great day trip from Entebbe or Kampala.'
         ],
-        budget: 3500, goal: 100, currentAmount: 94, organizer: 'iffe-travels', tags: ['#Conservation', '#Chimpanzee', '#Uganda', '#Day-Trip'], startDate: '2024-11-16', endDate: '2024-11-16', volunteersNeeded: 20, volunteersSignedUp: 19,
+        budget: 3500, goal: 100, currentAmount: 94, organizer: 'iffe-travels', tags: ['#Conservation', '#Chimpanzee', '#Uganda', '#Day-Trip', '#Kampala'], startDate: '2024-11-16', endDate: '2024-11-16', volunteersNeeded: 20, volunteersSignedUp: 19,
         activities: [
             { title: 'Boat trip on Lake Victoria', description: 'A scenic boat trip to Ngamba Island.', image: 'campaignSourceNile' },
             { title: 'Chimpanzee viewing', description: 'Watch the chimpanzees during their feeding time.', image: 'campaignNgamba' },
@@ -794,6 +807,7 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
     
+
 
 
 
