@@ -741,7 +741,7 @@ const mockCampaignsData: Campaign[] = [
             'Relax along the shores of Lake Victoria, where gentle breezes, open water views, and birdlife define the atmosphere.'
         ],
         budget: 1500, goal: 100, currentAmount: 89, organizer: 'iffe-travels', 
-        tags: ['#Gardens', '#Relaxation', '#LakeVictoria', '#Wildlife', '#Day-Trip', '#Kampala'], 
+        tags: ['#Entebbe', '#Gardens', '#Relaxation', '#LakeVictoria', '#Wildlife', '#Day-Trip', '#Kampala'], 
         startDate: '2024-11-14', endDate: '2024-11-14', volunteersNeeded: 40, volunteersSignedUp: 30,
         activities: [
             { title: 'Guided Botanical Walks', description: 'Learn about medicinal plants, indigenous trees, and exotic species introduced during the colonial era.', image: 'campaignEntebbe' },
@@ -843,30 +843,42 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '20', title: 'Ssese Islands Relaxation',
+        id: '20', 
+        title: 'Ssese Islands Relaxation',
         shortDescription: 'Unwind on the beautiful beaches of the Ssese Islands.',
         imageUrl: placeholderImages.campaignSsese.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'lake victoria island',
-        description: 'Escape to the tranquil Ssese Islands in Lake Victoria. This archipelago of 84 islands is perfect for relaxing on sandy beaches, taking nature walks, and enjoying stunning sunsets.',
+        description: 'Escape to the tranquil Ssese Islands, a stunning archipelago of 84 islands nestled in the western reaches of Lake Victoria. Known for their pristine white sandy beaches, swaying palm trees, and lush tropical vegetation, the Ssese Islands offer a unique lakeside retreat where nature, culture, and relaxation meet. Unlike busier destinations, the islands provide a peaceful sanctuary from the bustle of urban life. Visitors can explore hidden coves, fishing villages, and scenic viewpoints, or simply unwind on sun-drenched beaches while listening to the gentle lapping of the lake. This experience is perfect for couples, families, and travelers seeking serenity, all while enjoying the rich biodiversity and local island culture. The Ssese Islands experience is more than a getaway; it is a chance to immerse yourself in Uganda’s natural beauty, indulge in slow-paced exploration, and reconnect with the rhythms of the lake.',
         storyline: [
-            'A tropical paradise in the heart of Africa.',
-            'Relax and unwind on the sandy beaches.',
-            'A perfect end to a Ugandan safari.'
+            'Step onto soft sandy beaches framed by palm trees and vibrant tropical flora. Feel the calm breeze over Lake Victoria as you take in the open water and distant islands. The air is alive with the sounds of birdlife, water lapping against the shores, and the gentle chatter of local fishermen.',
+            'Hop from island to island aboard traditional boats or modern launches, discovering hidden coves, small fishing communities, and secluded beaches accessible only by water. Each island has its own character — some dotted with coconut groves, others with forested trails perfect for birding and photography.',
+            'Immerse yourself in lakeside living and local culture. Meet island residents, learn about traditional fishing techniques, and enjoy fresh seafood prepared by the community. As the sun sets, the lake reflects brilliant oranges and reds, creating a memory that will last a lifetime.'
         ],
-        budget: 6500, goal: 100, currentAmount: 93, organizer: 'iffe-travels', tags: ['#Beach', '#Relaxation', '#Uganda'], startDate: '2024-12-10', endDate: '2024-12-13', volunteersNeeded: 15, volunteersSignedUp: 14,
+        budget: 6500, goal: 100, currentAmount: 93, organizer: 'iffe-travels', 
+        tags: ['#SseseIslands', '#LakeVictoria', '#BirdWatching', '#LocalCulture', '#Relaxation'],
+        startDate: '2024-12-10', endDate: '2024-12-13', volunteersNeeded: 15, volunteersSignedUp: 14,
         activities: [
-            { title: 'Beach relaxation and swimming', description: 'Enjoy the sandy beaches.', image: 'campaignSsese' },
-            { title: 'Canoeing and kayaking', description: 'Explore the lake at your own pace.', image: 'fifaCardOkavango' },
-            { title: 'Fishing for tilapia and Nile perch', description: 'Try your hand at fishing.', image: 'videoThumbTestimonial' }
+            { title: 'Island Hopping', description: 'Glide between islands on calm waters, exploring secluded beaches, mangrove forests, and lush tropical scenery. Each stop offers a unique opportunity to appreciate the islands’ natural and cultural diversity.', image: 'campaignSsese' },
+            { title: 'Beach Relaxation', description: 'Unwind on pristine sands or take a refreshing swim in the warm, clear waters of Lake Victoria. Hammocks, picnic areas, and quiet spots make it easy to enjoy a full day of leisure.', image: 'campaignBunyonyi' },
+            { title: 'Bird Watching & Nature Walks', description: 'Ssese Islands are a haven for bird enthusiasts, with species such as fish eagles, kingfishers, and herons common along the shorelines. Guided forest walks reveal smaller wildlife, colorful butterflies, and indigenous plant life.', image: 'blogShoebill' },
+            { title: 'Cultural Engagement', description: 'Engage with local communities, observe traditional fishing methods, and learn about island livelihoods. These interactions enrich your understanding of daily life while supporting local economies.', image: 'ideaFamilySafari' },
+            { title: 'Photography & Scenic Views', description: 'From sunrise to sunset, every angle offers breathtaking compositions — whether it’s a panoramic lake view, vibrant birdlife, or tranquil beaches framed by swaying palms.', image: 'gallerySafariGroup' }
         ],
         accommodation: [
-            { title: 'Beachfront Resorts', description: 'Beachfront resorts and hotels.', image: 'pkgAdventurer' },
-            { title: 'Lake Views', description: 'Enjoy stunning views of the lake from your room.', image: 'pkgUltimate' },
-            { title: 'All Budgets', description: 'A range of options for all budgets.', image: 'pkgExplorer' }
+            { title: 'Island Lodges & Guesthouses', description: 'Stay in comfortable lodges or eco-friendly guesthouses with direct lake access, scenic views, and tranquil surroundings. Each property is carefully selected to ensure a peaceful retreat.', image: 'pkgAdventurer' },
+            { title: 'Privacy & Serenity', description: 'Experience the calm of remote island living, away from the crowds and noise. Many lodges offer private beaches or secluded spots for complete relaxation.', image: 'pkgUltimate' },
+            { title: 'Flexible Options', description: 'Choose from budget-friendly lodges, mid-range accommodations, or more luxurious lakeside retreats, depending on your itinerary and preferences.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Fresh Fish', description: 'Fresh fish is a specialty.', image: 'videoThumbTestimonial' },
-            { title: 'Beach Dining', description: 'Enjoy a meal on the beach.', image: 'sipiCoffee' },
-            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
+            { title: 'Fresh Lakeside Cuisine', description: 'Enjoy meals featuring fresh fish from Lake Victoria, tropical fruits, and locally inspired dishes prepared by talented local chefs.', image: 'videoThumbTestimonial' },
+            { title: 'Picnic & Outdoor Dining', description: 'For a truly memorable experience, enjoy picnic lunches on secluded beaches or al fresco dining under palm trees with lake views.', image: 'sipiCoffee' },
+            { title: 'Full-Board Options', description: 'Extended stays can include full-board packages with a mix of Ugandan and international cuisine, providing delicious meals throughout your visit.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Morning departures ensure calmer waters and optimal wildlife and bird sightings.",
+            "Bring swimwear, sun protection, and comfortable walking shoes for beach and forest walks.",
+            "Overnight stays allow you to fully enjoy sunsets, sunrises, and early-morning tranquility.",
+            "Combine this tour with Entebbe Botanical Gardens or Ngamba Island for a full lakeside adventure.",
+            "Photography enthusiasts will find endless opportunities — be respectful and maintain distance from local wildlife."
         ]
     },
     {
