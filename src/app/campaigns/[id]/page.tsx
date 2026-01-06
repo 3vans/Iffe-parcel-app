@@ -126,7 +126,7 @@ const mockCampaignsData: Campaign[] = [
         meals: [
             { title: 'Full-Board Dining', description: 'Most accommodations operate on a full-board basis, including breakfast, lunch, and dinner.', image: 'videoThumbTestimonial' },
             { title: 'Dining with a View', description: 'Enjoy freshly prepared meals served with views of the Nile River or open plains, enhancing the overall safari experience.', image: 'sipiCoffee' },
-            { title: 'Bush Dining', description: 'Options for bush breakfasts and dinners can be arranged for a special experience.' }
+            { title: 'Bush Dining', description: 'Options for bush breakfasts and dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ],
     },
     {
@@ -182,7 +182,7 @@ const mockCampaignsData: Campaign[] = [
         meals: [
             { title: 'Full Board on the Mountain', description: 'All hiking packages include meals prepared by trained support teams, designed to provide energy and recovery during strenuous activity.', image: 'videoThumbTestimonial' },
             { title: 'Nutritious & Practical Menus', description: 'Meals focus on balanced nutrition, hydration support, and dietary needs, adapted for high-altitude conditions.', image: 'sipiCoffee' },
-            { title: 'Hot Drinks', description: 'Hot drinks and snacks are provided throughout the day.' }
+            { title: 'Hot Drinks', description: 'Hot drinks and snacks are provided throughout the day.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -215,7 +215,7 @@ const mockCampaignsData: Campaign[] = [
         meals: [
             { title: 'Fresh Crayfish', description: 'Freshly prepared meals, including local crayfish, a specialty of the lake.', image: 'videoThumbTestimonial' },
             { title: 'Dining with a View', description: 'Enjoy a meal with a view of the lake.', image: 'sipiCoffee' },
-            { title: 'All Diets', description: 'Options for all dietary needs.' }
+            { title: 'All Diets', description: 'Options for all dietary needs.', image: 'ideaFamilySafari' }
         ]
     },
      {
@@ -244,7 +244,7 @@ const mockCampaignsData: Campaign[] = [
         meals: [
             { title: 'Full Board Options Available', description: 'Most safari packages include breakfast, lunch, and dinner, allowing guests to focus fully on activities and relaxation.', image: 'videoThumbTestimonial' },
             { title: 'Fresh & Safari-Style Dining', description: 'Meals feature a mix of local and international cuisine, served in lodge dining areas or outdoor settings overlooking the park.', image: 'sipiCoffee' },
-            { title: 'Bush Dinners', description: 'Bush dinners can be arranged for a special experience.' }
+            { title: 'Bush Dinners', description: 'Bush dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -270,9 +270,9 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Community-Aware Hospitality', description: 'Many properties support local employment and sustainable practices, aligning with responsible tourism principles.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Flexible Meal Plans', description: 'Depending on your itinerary and lodge selection, meals may be included or arranged at quality local and international restaurants.', image: 'videoThumbTestimonial' },
-            { title: 'Scenic Dining Options', description: 'Several dining locations offer outdoor seating with views of the Nile, enhancing the overall experience.', image: 'sipiCoffee' },
-            { title: 'Local Cuisine', description: 'Try local Ugandan cuisine.' }
+            { title: 'Riverside Dining Experiences', description: 'Enjoy meals in carefully selected restaurants and lodges set along the River Nile, where open-air dining and river views turn every meal into part of the experience. The relaxed setting allows you to unwind while taking in the sights and sounds of the water.', image: 'videoThumbTestimonial' },
+            { title: 'Authentic Local Flavours', description: 'Sample Uganda’s culinary heritage through dishes such as fresh Nile fish, matoke, luwombo, and seasonal local produce. These meals reflect the region’s fishing traditions and agricultural roots, offering a genuine taste of eastern Uganda.', image: 'sipiCoffee' },
+            { title: 'Flexible & Refined Options', description: 'From casual lunches after visiting the source to more refined evening dining, meal options range from traditional Ugandan cuisine to well-prepared international dishes, ensuring comfort, variety, and quality throughout your stay.', image: 'ideaFamilySafari' }
         ]
     },
     {
@@ -714,6 +714,7 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
     
+
 
 
 
