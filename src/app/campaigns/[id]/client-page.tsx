@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck, HelpCircle, FilePen, Map, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -71,6 +71,46 @@ const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
         </Card>
     );
 };
+
+const NextStepsCard: React.FC = () => {
+    return (
+        <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+            <CardHeader>
+                <CardTitle className="font-headline text-xl text-primary flex items-center">
+                    <Compass className="mr-2 h-5 w-5"/>Next Steps
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                 <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link href="/contact"><HelpCircle className="mr-2 h-4 w-4"/> Ask a Question</Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link href="/campaigns/new"><FilePen className="mr-2 h-4 w-4"/> Get a Custom Quote</Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link href="/campaigns"><Map className="mr-2 h-4 w-4"/> View All Tours</Link>
+                </Button>
+            </CardContent>
+        </Card>
+    );
+};
+
+const SemulikiInfoCard: React.FC = () => {
+    return (
+        <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+            <CardHeader>
+                <CardTitle className="font-headline text-xl text-primary flex items-center">
+                    <Info className="mr-2 h-5 w-5"/>Good to Know
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>Semuliki is part of the Congo Basin ecosystem, making its flora and fauna distinct from other Ugandan parks.</p>
+                <p>The Sempaya Hot Springs are a key attraction. You can even boil eggs in the boiling water!</p>
+                <p>It's a prime birding destination with over 440 species, including many West African forest birds not found elsewhere in East Africa.</p>
+            </CardContent>
+        </Card>
+    )
+}
 
 const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
     const [ref, isVisible] = useScrollAnimation();
@@ -262,6 +302,8 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                     </CardContent>
                 </Card>
                 <RelatedToursCard tours={relatedTours} />
+                {campaign.id === '21' && <SemulikiInfoCard />}
+                <NextStepsCard />
             </aside>
           </div>
 
