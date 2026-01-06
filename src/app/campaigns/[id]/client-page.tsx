@@ -105,37 +105,70 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   };
   
   const ImageGridInfoSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+    const useHorizontalScroll = items.length > 3;
+
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
                 <Icon className="mr-2 h-5 w-5" />
                 {title}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {items.map((item, index) => {
-                    const itemImage = placeholderImages[item.image];
-                    return (
-                        <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
-                            <div className="relative w-full aspect-[16/9] bg-muted">
-                                <Image 
-                                    src={itemImage.src} 
-                                    alt={item.title} 
-                                    layout="fill" 
-                                    objectFit="cover" 
-                                    data-ai-hint={itemImage.hint} 
-                                    className="transition-transform duration-300 group-hover:scale-105"
-                                />
-                            </div>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
+            {useHorizontalScroll ? (
+                <ScrollArea className="w-full">
+                    <div className="flex space-x-6 pb-4">
+                        {items.map((item, index) => {
+                            const itemImage = placeholderImages[item.image];
+                            return (
+                                <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] sm:w-[350px] flex-shrink-0">
+                                    <div className="relative w-full aspect-[16/9] bg-muted">
+                                        <Image 
+                                            src={itemImage.src} 
+                                            alt={item.title} 
+                                            layout="fill" 
+                                            objectFit="cover" 
+                                            data-ai-hint={itemImage.hint} 
+                                            className="transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
+                                    <CardHeader>
+                                        <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {items.map((item, index) => {
+                        const itemImage = placeholderImages[item.image];
+                        return (
+                            <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
+                                <div className="relative w-full aspect-[16/9] bg-muted">
+                                    <Image 
+                                        src={itemImage.src} 
+                                        alt={item.title} 
+                                        layout="fill" 
+                                        objectFit="cover" 
+                                        data-ai-hint={itemImage.hint} 
+                                        className="transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                </div>
+                                <CardHeader>
+                                    <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
+                </div>
+            )}
         </AnimatedSection>
     );
   };
@@ -219,7 +252,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 />
                 <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
-                    <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
+                        <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p className="text-foreground font-semibold">{campaign.organizer}</p>
@@ -228,7 +261,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                         <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5"/>Responsible &amp; Authentic Travel</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-xs text-muted-foreground">We are committed to responsible tourism practices that protect wildlife, support conservation efforts, and benefit local communities.</p>
+                        <p className="text-sm text-muted-foreground">We are committed to responsible tourism practices that protect wildlife, support conservation efforts, and benefit local communities.</p>
                     </CardContent>
                 </Card>
                 <RelatedToursCard tours={relatedTours} />
@@ -284,7 +317,3 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
-
-    
-
-    
