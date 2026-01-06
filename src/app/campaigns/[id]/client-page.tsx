@@ -104,7 +104,37 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     );
   };
   
-  const ImageGridInfoSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+ const ImageGridInfoSection = ({ title, icon: Icon, items, scrollable = false }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[], scrollable?: boolean }) => {
+    const renderGrid = (
+        <div className={cn("grid gap-6", !scrollable && "grid-cols-1 sm:grid-cols-2 md:grid-cols-3")}>
+            {items.map((item, index) => {
+                const itemImage = placeholderImages[item.image];
+                return (
+                    <Card key={index} className={cn(
+                        "overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group",
+                        scrollable && "w-[300px] flex-shrink-0" // Fixed width for scrollable cards
+                    )}>
+                        <div className="relative w-full aspect-[16/9] bg-muted">
+                            <Image 
+                                src={itemImage.src} 
+                                alt={item.title} 
+                                layout="fill" 
+                                objectFit="cover" 
+                                data-ai-hint={itemImage.hint} 
+                                className="transition-transform duration-300 group-hover:scale-105"
+                            />
+                        </div>
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                        </CardContent>
+                    </Card>
+                );
+            })}
+        </div>
+    );
     
     return (
         <AnimatedSection>
@@ -112,31 +142,16 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 <Icon className="mr-2 h-5 w-5" />
                 {title}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {items.map((item, index) => {
-                    const itemImage = placeholderImages[item.image];
-                    return (
-                        <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
-                            <div className="relative w-full aspect-[16/9] bg-muted">
-                                <Image 
-                                    src={itemImage.src} 
-                                    alt={item.title} 
-                                    layout="fill" 
-                                    objectFit="cover" 
-                                    data-ai-hint={itemImage.hint} 
-                                    className="transition-transform duration-300 group-hover:scale-105"
-                                />
-                            </div>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
+            {scrollable ? (
+                <ScrollArea>
+                    <div className="flex space-x-6 pb-4">
+                        {renderGrid.props.children}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            ) : (
+                renderGrid
+            )}
         </AnimatedSection>
     );
   };
@@ -241,6 +256,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 title="Activities"
                 icon={Activity}
                 items={campaign.activities}
+                scrollable={true}
               />
               
               <ImageGridInfoSection
