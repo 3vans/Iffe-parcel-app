@@ -106,9 +106,12 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   
  const ImageGridInfoSection = ({ title, icon: Icon, items, scrollable = false }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[], scrollable?: boolean }) => {
     const renderGrid = (
-        <div className={cn("grid gap-6", !scrollable && "grid-cols-1 sm:grid-cols-2 md:grid-cols-3")}>
+        <div className={cn("grid gap-6", !scrollable && "grid-cols-1 sm:grid-cols-2 md:grid-cols-3", scrollable && "flex")}>
             {items.map((item, index) => {
                 const itemImage = placeholderImages[item.image];
+                if (!itemImage) {
+                    return null; // Don't render if image doesn't exist
+                }
                 return (
                     <Card key={index} className={cn(
                         "overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group",
