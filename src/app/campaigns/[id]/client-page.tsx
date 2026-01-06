@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { type RelatedTour } from './page';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface Campaign {
   id: string;
@@ -104,37 +105,69 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   };
   
   const ImageGridInfoSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+    const isScrollable = items.length > 3;
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
                 <Icon className="mr-2 h-5 w-5" />
                 {title}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {items.map((item, index) => {
-                    const itemImage = placeholderImages[item.image];
-                    return (
-                        <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
-                            <div className="relative w-full aspect-[16/9] bg-muted">
-                                <Image 
-                                    src={itemImage.src} 
-                                    alt={item.title} 
-                                    layout="fill" 
-                                    objectFit="cover" 
-                                    data-ai-hint={itemImage.hint} 
-                                    className="transition-transform duration-300 group-hover:scale-105"
-                                />
-                            </div>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
+            {isScrollable ? (
+                 <ScrollArea className="w-full whitespace-nowrap rounded-lg">
+                    <div className="flex w-max space-x-4 pb-4">
+                         {items.map((item, index) => {
+                            const itemImage = placeholderImages[item.image];
+                            return (
+                                <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] sm:w-[350px] whitespace-normal">
+                                    <div className="relative w-full aspect-[16/9] bg-muted">
+                                        <Image 
+                                            src={itemImage.src} 
+                                            alt={item.title} 
+                                            layout="fill" 
+                                            objectFit="cover" 
+                                            data-ai-hint={itemImage.hint} 
+                                            className="transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
+                                    <CardHeader>
+                                        <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {items.map((item, index) => {
+                        const itemImage = placeholderImages[item.image];
+                        return (
+                            <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
+                                <div className="relative w-full aspect-[16/9] bg-muted">
+                                    <Image 
+                                        src={itemImage.src} 
+                                        alt={item.title} 
+                                        layout="fill" 
+                                        objectFit="cover" 
+                                        data-ai-hint={itemImage.hint} 
+                                        className="transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                </div>
+                                <CardHeader>
+                                    <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
+                </div>
+            )}
         </AnimatedSection>
     );
   };
@@ -283,5 +316,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
+
+    
 
     
