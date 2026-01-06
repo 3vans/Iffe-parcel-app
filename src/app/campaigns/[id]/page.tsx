@@ -161,26 +161,26 @@ const mockCampaignsData: Campaign[] = [
         id: '5', title: 'Rwenzori Mountains Hiking',
         shortDescription: 'Hike the snow-capped "Mountains of the Moon".',
         imageUrl: placeholderImages.campaignRwenzori.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'rwenzori mountains',
-        description: 'Challenge yourself with a trek into the legendary Rwenzori Mountains, a UNESCO World Heritage site. These mist-shrouded peaks offer stunning scenery, unique flora, and a true high-altitude adventure.',
+        description: 'The Rwenzori Mountains offer one of Africa’s most dramatic and rewarding hiking experiences. Rising along Uganda’s western border, this UNESCO World Heritage Site is defined by mist-covered peaks, alpine valleys, glacial rivers, and rare high-altitude vegetation found nowhere else on Earth.\n\nThis multi-day hiking adventure takes you deep into the heart of the Rwenzoris, following established trails through tropical rainforest, bamboo zones, heather moorlands, and Afro-alpine ecosystems. Whether you are aiming for scenic lower-altitude treks or challenging summit attempts, this experience is designed for travelers seeking adventure, achievement, and raw natural beauty.\n\nUnlike typical mountain hikes, the Rwenzoris offer a constantly changing landscape, making every day on the trail distinct and unforgettable.',
         storyline: [
-            'A journey through different vegetation zones, from tropical rainforest to alpine meadows.',
-            'Culminate in views of equatorial glaciers, a rare sight in Africa.',
-            'This is a challenging but rewarding trek for the adventurous traveler.'
+            'Hike through ancient rainforests alive with birds, primates, and waterfalls as your journey begins at the mountain’s lower elevations.',
+            'Ascend into dramatic alpine terrain where giant lobelias, deep valleys, and cloud-covered ridges define the landscape.',
+            'Reach high-altitude zones shaped by glaciers and rugged peaks, rewarded with panoramic views and a powerful sense of accomplishment.'
         ],
         budget: 25000, goal: 100, currentAmount: 75, organizer: 'iffe-travels', tags: ['#Hiking', '#Mountains', '#Uganda'], startDate: '2025-01-10', endDate: '2025-01-20', volunteersNeeded: 8, volunteersSignedUp: 2,
         activities: [
-            { title: 'Multi-day trekking circuits', description: 'Circuits for all levels of fitness.', image: 'campaignRwenzori' },
-            { title: 'Acclimatization hikes', description: 'Prepare for the summit with acclimatization hikes.', image: 'sipiHiking' },
-            { title: 'Summit attempts on Margherita Peak', description: 'Attempt to summit the highest point, Margherita Peak.', image: 'fifaCardKili' }
+            { title: 'Guided Mountain Hiking', description: 'Professionally guided hikes tailored to your fitness level, ranging from shorter scenic routes to demanding multi-day climbs.', image: 'campaignRwenzori' },
+            { title: 'Summit Attempts (Optional)', description: 'For experienced hikers, extended itineraries can include summit goals such as Margherita Peak, weather and conditions permitting.', image: 'fifaCardKili' },
+            { title: 'Nature & Landscape Photography', description: 'The Rwenzoris offer exceptional opportunities for photography, from misty valleys to alpine plant life and glacial terrain.', image: 'sipiHiking' }
         ],
         accommodation: [
-            { title: 'Mountain Huts', description: 'Basic but comfortable mountain huts along the trekking routes.', image: 'pkgAdventurer' },
-            { title: 'Expedition Camaraderie', description: 'Experience the camaraderie of a mountain expedition.', image: 'pkgUltimate' },
-            { title: 'Gear Provided', description: 'All necessary camping gear is provided.', image: 'pkgExplorer' }
+            { title: 'Mountain Huts & Trail Lodges', description: 'Accommodation is arranged at official Rwenzori Mountain Services huts or carefully selected trail lodges, strategically located along hiking routes to support safe altitude progression.', image: 'pkgAdventurer' },
+            { title: 'Functional Comfort for High-Altitude Hiking', description: 'Facilities are simple, clean, and purpose-built for mountain conditions, offering warm meals, sheltered sleeping arrangements, and essential rest after long hiking days.', image: 'pkgUltimate' },
+            { title: 'Logistics-Focused & Safety-Oriented', description: 'Stays are selected based on proximity to trails, safety standards, and weather protection, ensuring a practical and well-supported mountain experience.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Trek Cook', description: 'All meals on the mountain are prepared by a dedicated trek cook.', image: 'videoThumbTestimonial' },
-            { title: 'High-Energy Meals', description: 'High-energy meals to fuel your trek.', image: 'sipiCoffee' },
+            { title: 'Full Board on the Mountain', description: 'All hiking packages include meals prepared by trained support teams, designed to provide energy and recovery during strenuous activity.', image: 'videoThumbTestimonial' },
+            { title: 'Nutritious & Practical Menus', description: 'Meals focus on balanced nutrition, hydration support, and dietary needs, adapted for high-altitude conditions.', image: 'sipiCoffee' },
             { title: 'Hot Drinks', description: 'Hot drinks and snacks are provided throughout the day.', image: 'ideaFamilySafari' }
         ]
     },
@@ -704,3 +704,4 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
     
+
