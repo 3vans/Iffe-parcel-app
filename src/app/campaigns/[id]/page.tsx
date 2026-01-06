@@ -111,7 +111,7 @@ const mockCampaignsData: Campaign[] = [
             "Enjoy classic game drives across the northern plains, where rolling savannahs provide excellent visibility for spotting lions, giraffes, elephants, hartebeest, and large herds of buffalo.",
             "Cruise upstream along the Nile beneath towering riverbanks, encountering hippos, Nile crocodiles, elephants, and a remarkable variety of birdlife in a calm, immersive setting."
         ],
-        budget: 8000, goal: 100, currentAmount: 88, organizer: 'iffe-travels', tags: ['#Wildlife', '#Waterfalls', '#Uganda', '#NorthernUganda'], startDate: '2024-10-05', endDate: '2024-10-10', volunteersNeeded: 10, volunteersSignedUp: 10,
+        budget: 8000, goal: 100, currentAmount: 88, organizer: 'iffe-travels', tags: ['#Wildlife', '#Waterfalls', '#Nile', '#NorthernUganda'], startDate: '2024-10-05', endDate: '2024-10-10', volunteersNeeded: 10, volunteersSignedUp: 10,
         activities: [
             { title: 'Game Drives', description: 'Morning and afternoon game drives in the park’s prime wildlife areas, guided by experienced safari guides who understand animal behavior and tracking techniques.', image: 'galleryGiraffe' },
             { title: 'Nile Boat Safari', description: 'A highlight of the tour, the boat cruise takes you along the Nile to the base of the falls, offering unmatched wildlife viewing and photography opportunities.', image: 'fifaCardNile' },
@@ -146,7 +146,7 @@ const mockCampaignsData: Campaign[] = [
             'Kibale Forest is a living soundscape. As you trek beneath towering trees, the forest comes alive with the calls of primates, birds, and insects, creating a truly immersive rainforest atmosphere.',
             'Throughout the experience, guides share insights into ongoing conservation and research efforts aimed at protecting chimpanzees and preserving Kibale’s rich biodiversity for future generations.'
         ],
-        budget: 12000, goal: 100, currentAmount: 85, organizer: 'iffe-travels', tags: ['#Chimpanzee', '#Primates', '#Uganda'], startDate: '2024-08-10', endDate: '2024-08-13', volunteersNeeded: 6, volunteersSignedUp: 4,
+        budget: 12000, goal: 100, currentAmount: 85, organizer: 'iffe-travels', tags: ['#Chimpanzee', '#Primates', '#Kibale', '#Uganda'], startDate: '2024-08-10', endDate: '2024-08-13', volunteersNeeded: 6, volunteersSignedUp: 4,
         activities: [
             { title: 'Chimpanzee Trekking', description: 'Led by expert guides and Uganda Wildlife Authority rangers, this guided trek takes you deep into the forest to locate and observe chimpanzees in the wild. Permits ensure ethical, controlled encounters.', image: 'campaignKibale' },
             { title: 'Bigodi Wetland Sanctuary Walk', description: 'A guided community-run walk through Bigodi Wetland, renowned for birdlife, monkeys, and cultural interaction. Proceeds directly support local conservation and development projects.', image: 'blogShoebill' },
@@ -181,7 +181,7 @@ const mockCampaignsData: Campaign[] = [
             'Ascend into dramatic alpine terrain where giant lobelias, deep valleys, and cloud-covered ridges define the landscape.',
             'Reach high-altitude zones shaped by glaciers and rugged peaks, rewarded with panoramic views and a powerful sense of accomplishment.'
         ],
-        budget: 25000, goal: 100, currentAmount: 75, organizer: 'iffe-travels', tags: ['#Hiking', '#Mountains', '#Uganda'], startDate: '2025-01-10', endDate: '2025-01-20', volunteersNeeded: 8, volunteersSignedUp: 2,
+        budget: 25000, goal: 100, currentAmount: 75, organizer: 'iffe-travels', tags: ['#Hiking', '#Mountains', '#Rwenzori', '#Uganda'], startDate: '2025-01-10', endDate: '2025-01-20', volunteersNeeded: 8, volunteersSignedUp: 2,
         activities: [
             { title: 'Guided Mountain Hiking', description: 'Professionally guided hikes tailored to your fitness level, ranging from shorter scenic routes to demanding multi-day climbs.', image: 'campaignRwenzori' },
             { title: 'Summit Attempts (Optional)', description: 'For experienced hikers, extended itineraries can include summit goals such as Margherita Peak, weather and conditions permitting.', image: 'fifaCardKili' },
@@ -216,7 +216,7 @@ const mockCampaignsData: Campaign[] = [
             'Spend unhurried time at the lakeshore, enjoying panoramic views, warm afternoons, and dramatic sunsets that reflect across the water.',
             'Discover the cultural stories of the lake through guided island visits and village walks that reveal traditions shaped by generations of lakeside living.'
         ],
-        budget: 5000, goal: 100, currentAmount: 95, organizer: 'iffe-travels', tags: ['#Relaxation', '#Scenery', '#Uganda'], startDate: '2024-09-05', endDate: '2024-09-08', volunteersNeeded: 15, volunteersSignedUp: 15,
+        budget: 5000, goal: 100, currentAmount: 95, organizer: 'iffe-travels', tags: ['#Relaxation', '#Scenery', '#Bunyonyi', '#Uganda'], startDate: '2024-09-05', endDate: '2024-09-08', volunteersNeeded: 15, volunteersSignedUp: 15,
         activities: [
             { title: 'Island Boat & Canoe Excursions', description: 'Explore Lake Bunyonyi’s islands by traditional canoe or guided boat tour. Visit culturally significant sites such as Punishment Island, or enjoy quiet, scenic islands ideal for photography and nature walks.', image: 'campaignBunyonyi' },
             { title: 'Canoeing & Kayaking', description: 'Paddle across the lake at your own pace, discovering hidden bays and enjoying uninterrupted views of the surrounding highlands. Early mornings and sunset sessions are especially rewarding.', image: 'fifaCardOkavango' },
@@ -340,7 +340,7 @@ const mockCampaignsData: Campaign[] = [
         goal: 100,
         currentAmount: 95,
         organizer: 'iffe-travels',
-        tags: ['#Grade5Rafting', '#RiverNileAdventure', '#ProfessionalGuides', '#Jinja', '#Uganda'],
+        tags: ['#Grade5Rafting', '#RiverNileAdventure', '#Jinja', '#Uganda'],
         startDate: '2024-12-03',
         endDate: '2024-12-03',
         volunteersNeeded: 40,
@@ -817,12 +817,13 @@ const mockCampaignsData: Campaign[] = [
             'Discover forest biodiversity from above and on foot, spotting monkeys, exotic birds, and native plant species during guided forest walks.'
         ],
         budget: 2800, goal: 100, currentAmount: 86, organizer: 'iffe-travels', 
-        tags: ['#MabiraForest', '#CanopyZip-Lining', '#TropicalRainforest', '#RareBirds', '#Family-Friendly'], 
+        tags: ['#MabiraForest', '#CanopyZip-Lining', '#TropicalRainforest', '#RareBirds', '#Family-Friendly', '#Jinja'], 
         startDate: '2024-11-17', endDate: '2024-11-17', volunteersNeeded: 25, volunteersSignedUp: 20,
         activities: [
             { title: 'Canopy Zip-Lining', description: 'Experience multiple zip-lines across forest platforms, ranging in height and length, suitable for beginners and adrenaline enthusiasts.', image: 'campaignMabira' },
             { title: 'Guided Nature Walks', description: 'Walk the forest trails with an experienced guide to learn about Mabira’s rich biodiversity, medicinal plants, and birdlife.', image: 'ideaWalkingSafari' },
-            { title: 'Bird Watching & Wildlife Spotting', description: 'Look for rare species such as hornbills, turacos, monkeys, and butterflies while exploring the forest.', image: 'blogShoebill' }
+            { title: 'Bird Watching & Wildlife Spotting', description: 'Look for rare species such as hornbills, turacos, monkeys, and butterflies while exploring the forest.', image: 'blogShoebill' },
+            { title: 'Team-Building & Group Activities', description: 'Zip-lining is ideal for corporate groups or family adventures, combining physical challenges with team collaboration.', image: 'ideaFamilySafari' }
         ],
         accommodation: [
             { title: 'Nearby Lodges & Guesthouses', description: 'Accommodation is arranged in comfortable lodges near Mabira Forest, providing easy access for early starts and evening relaxation.', image: 'pkgAdventurer' },
@@ -891,7 +892,7 @@ const mockCampaignsData: Campaign[] = [
             'See unique bird species not found elsewhere in Uganda.',
             'Witness the power of the Sempaya Hot Springs.'
         ],
-        budget: 7500, goal: 100, currentAmount: 77, organizer: 'iffe-travels', tags: ['#BirdWatching', '#HotSprings', '#Uganda'], startDate: '2025-03-01', endDate: '2025-03-04', volunteersNeeded: 10, volunteersSignedUp: 6,
+        budget: 7500, goal: 100, currentAmount: 77, organizer: 'iffe-travels', tags: ['#BirdWatching', '#HotSprings', '#Semuliki', '#Uganda'], startDate: '2025-03-01', endDate: '2025-03-04', volunteersNeeded: 10, volunteersSignedUp: 6,
         activities: [
             { title: 'Bird watching', description: 'An expert guide will help you spot unique bird species.', image: 'blogShoebill' },
             { title: 'Visiting the hot springs', description: 'Boil eggs in the hot springs.', image: 'campaignSemuliki' },
@@ -909,30 +910,41 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '22', title: 'Toro Kingdom & Fort Portal',
-        shortDescription: 'Explore stunning crater lakes and rich cultural experiences.',
+        id: '22',
+        title: 'Toro Kingdom & Fort Portal',
+        shortDescription: 'Explore royal heritage, crater lakes, and the vibrant culture of Uganda’s "Tourism City".',
         imageUrl: placeholderImages.campaignFortPortal.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'crater lake',
-        description: 'Visit the picturesque town of Fort Portal, the seat of the Toro Kingdom. The area is famous for its stunning crater lakes, offering beautiful scenery and opportunities for hiking and swimming.',
+        description: 'Step into the heart of Western Uganda, where history, culture, and natural beauty intertwine in the Toro Kingdom and the vibrant town of Fort Portal. This tour invites you to explore royal heritage, local traditions, crater lakes, and rolling hills that have earned Fort Portal the nickname “Tourism City of Uganda”.\n\nThe Toro Kingdom remains one of Uganda’s most significant cultural regions, with centuries-old traditions, royal palaces, and ceremonial sites that reveal the kingdom’s rich history. Meanwhile, Fort Portal is a hub for adventure, nature, and relaxation, surrounded by lush tea plantations, crater lakes, and forests.\n\nThis tour is ideal for culture enthusiasts, history lovers, photographers, and nature seekers, offering a blend of cultural immersion and scenic discovery rarely found elsewhere in East Africa.',
         storyline: [
-            'A blend of natural beauty and cultural heritage.',
-            'Explore the stunning crater lakes of the region.',
-            'Learn about the history and culture of the Toro Kingdom.'
+            'Discover the legacy of the Toro Kingdom, visiting royal palaces, cultural centers, and local villages. Learn about the kingdom’s customs, ceremonies, and the roles of its leaders in modern Ugandan society.',
+            'Explore Fort Portal’s breathtaking natural landscapes, including the Crater Lake National Park, Mount Rwenzori foothills, and scenic waterfalls. Each stop offers a visual feast for photographers and nature lovers alike.',
+            'Engage with local communities through craft markets, cultural demonstrations, and traditional cuisine, gaining a deeper understanding of life in the Toro Kingdom today.'
         ],
-        budget: 5000, goal: 100, currentAmount: 81, organizer: 'iffe-travels', tags: ['#Culture', '#Scenery', '#Uganda'], startDate: '2024-11-25', endDate: '2024-11-27', volunteersNeeded: 20, volunteersSignedUp: 15,
+        budget: 5000, goal: 100, currentAmount: 81, organizer: 'iffe-travels', 
+        tags: ['#ToroKingdom', '#FortPortal', '#CraterLakes', '#CulturalHeritage', '#ScenicExploration', '#CommunityInteraction'], 
+        startDate: '2024-11-25', endDate: '2024-11-27', volunteersNeeded: 20, volunteersSignedUp: 15,
         activities: [
-            { title: 'Crater lake hikes', description: 'Hikes with stunning views of the crater lakes.', image: 'campaignFortPortal' },
-            { title: 'Visit to the Toro Kingdom palace', description: 'Learn about the history of the kingdom.', image: 'campaignBusoga' },
-            { title: 'Exploring the Amabere ga Nyina Mwiru caves', description: 'A unique cultural experience.', image: 'campaignElgon' }
+            { title: 'Cultural Immersion', description: 'Visit royal palaces, community centers, and cultural monuments, witnessing ceremonies, traditional music, and dance. Gain insight into Toro’s governance, history, and spiritual traditions.', image: 'campaignBusoga' },
+            { title: 'Scenic Exploration', description: 'Walk around crater lakes, rolling hills, and waterfalls. Fort Portal offers lush tea plantations, hiking trails, and viewpoints perfect for photography and contemplation.', image: 'campaignFortPortal' },
+            { title: 'Craft Markets & Local Life', description: 'Engage with artisans in local markets, shop for traditional crafts, and learn about the region’s economic and cultural practices.', image: 'ideaFamilySafari' },
+            { title: 'Nature Walks & Eco-Tourism', description: 'Explore forest reserves and wildlife-rich areas near Fort Portal. Discover birds, monkeys, and endemic plants along guided trails.', image: 'ideaWalkingSafari' }
         ],
         accommodation: [
-            { title: 'Fort Portal Hotels', description: 'A wide range of hotels and lodges in and around Fort Portal.', image: 'pkgAdventurer' },
-            { title: 'Comfortable Stay', description: 'Enjoy a comfortable stay in this beautiful town.', image: 'pkgUltimate' },
-            { title: 'All Budgets', description: 'Options available for all budgets.', image: 'pkgExplorer' }
+            { title: 'Fort Portal Hotels & Guesthouses', description: 'Stay in comfortable lodges or boutique hotels with access to crater lakes, forests, and the town’s cultural attractions.', image: 'pkgAdventurer' },
+            { title: 'Tranquil & Scenic', description: 'Accommodations offer scenic views, quiet surroundings, and personalized service, making it a peaceful retreat after a day of exploration.', image: 'pkgUltimate' },
+            { title: 'Flexible Options', description: 'Choose budget-friendly guesthouses, mid-range lodges, or luxury boutique hotels depending on your itinerary and preferences.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Local & International', description: 'Explore local and international cuisine in Fort Portal.', image: 'videoThumbTestimonial' },
-            { title: 'Crater Lake Views', description: 'Enjoy a meal with a view of the crater lakes.', image: 'sipiCoffee' },
-            { title: 'Varied Options', description: 'A variety of dining options available.', image: 'ideaFamilySafari' }
+            { title: 'Local & Traditional Cuisine', description: 'Enjoy fresh, locally sourced meals highlighting Toro Kingdom specialties, regional fruits, vegetables, and fish dishes.', image: 'videoThumbTestimonial' },
+            { title: 'Cultural Dining Experiences', description: 'Optional meals with local families or in traditional settings offer an immersive cultural experience.', image: 'sipiCoffee' },
+            { title: 'Full-Board Options', description: 'For multi-day trips, full-board meals are available, blending traditional Toro cuisine with continental favorites.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Morning tours are ideal for clear light and active wildlife.",
+            "Dress respectfully when visiting cultural sites and royal palaces.",
+            "Bring comfortable walking shoes for crater lake trails and village visits.",
+            "Combine this tour with Kibale Forest Chimpanzee Trekking or Semuliki National Park for an extended adventure.",
+            "Photography is encouraged — cultural sites and landscapes provide endless opportunities."
         ]
     },
 ];
