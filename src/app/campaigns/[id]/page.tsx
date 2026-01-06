@@ -131,7 +131,7 @@ const mockCampaignsData: Campaign[] = [
     },
     {
         id: '4', 
-        title: 'Kibale Forest Chimpanzee Trekking',
+        title: 'Kibale Forest Chimpanzee Trekking – Uganda',
         shortDescription: 'Trek chimpanzees in the primate capital of East Africa.',
         imageUrl: placeholderImages.campaignKibale.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'chimpanzee forest',
         description: 'Immerse yourself in the lush tropical rainforest of Kibale Forest National Park, widely regarded as the primate capital of Africa. This exceptional tour offers a rare opportunity to trek through dense forest in search of wild chimpanzees, our closest relatives in the animal kingdom, and observe them in their natural habitat.\n\nKibale Forest is home to the highest concentration of primates in Africa, with over 13 primate species recorded. The highlight of this experience is a guided chimpanzee trek led by expert trackers and park rangers, providing an intimate and educational encounter that combines adventure, conservation, and deep connection with nature.\n\nThis tour is ideal for travelers seeking a meaningful wildlife experience rooted in research, sustainability, and authentic forest exploration.',
@@ -159,7 +159,7 @@ const mockCampaignsData: Campaign[] = [
     },
     {
         id: '5',
-        title: 'Rwenzori Mountains Hiking',
+        title: 'Hiking the Legendary “Mountains of the Moon”',
         shortDescription: 'Hike the snow-capped "Mountains of the Moon".',
         imageUrl: placeholderImages.campaignRwenzori.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'rwenzori mountains',
         description: 'The Rwenzori Mountains offer one of Africa’s most dramatic and rewarding hiking experiences. Rising along Uganda’s western border, this UNESCO World Heritage Site is defined by mist-covered peaks, alpine valleys, glacial rivers, and rare high-altitude vegetation found nowhere else on Earth.\n\nThis multi-day hiking adventure takes you deep into the heart of the Rwenzoris, following established trails through tropical rainforest, bamboo zones, heather moorlands, and Afro-alpine ecosystems. Whether you are aiming for scenic lower-altitude treks or challenging summit attempts, this experience is designed for travelers seeking adventure, achievement, and raw natural beauty.\n\nUnlike typical mountain hikes, the Rwenzoris offer a constantly changing landscape, making every day on the trail distinct and unforgettable.',
@@ -187,7 +187,7 @@ const mockCampaignsData: Campaign[] = [
     },
     {
         id: '6',
-        title: 'Relax at Lake Bunyonyi',
+        title: 'A Tranquil Escape on One of Africa’s Most Scenic Lakes',
         shortDescription: 'Relax by one of Africa’s deepest and most scenic lakes.',
         imageUrl: placeholderImages.campaignBunyonyi.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'lake bunyonyi',
         description: 'Lake Bunyonyi is one of Uganda’s most peaceful and visually captivating destinations, set among rolling terraced hills near the border of Bwindi Impenetrable Forest. With over 20 small islands scattered across its calm waters, the lake offers a rare combination of natural beauty, cultural depth, and safe, relaxed exploration.\n\nOften described as one of Africa’s most scenic lakes, Lake Bunyonyi is free from dangerous wildlife, making it ideal for swimming, canoeing, and extended lakeside stays. This tour is designed for travelers seeking rest, reflection, light adventure, and authentic local experiences, either as a standalone retreat or as a perfect complement to gorilla trekking.\n\nThe pace here is intentionally slow, allowing visitors to disconnect from routine and fully appreciate Uganda’s quieter, more intimate landscapes.',
@@ -213,35 +213,37 @@ const mockCampaignsData: Campaign[] = [
             { title: 'Sustainable & Community-Focused Stays', description: 'Many lodges emphasize sustainability, local sourcing, and community employment, ensuring your stay contributes positively to the region.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Local Crayfish', description: 'Freshly prepared meals, including local crayfish, a specialty of the lake.', image: 'videoThumbTestimonial' },
+            { title: 'Fresh Crayfish', description: 'Freshly prepared meals, including local crayfish, a specialty of the lake.', image: 'videoThumbTestimonial' },
             { title: 'Dining with a View', description: 'Enjoy a meal with a view of the lake.', image: 'sipiCoffee' },
             { title: 'All Diets', description: 'Options for all dietary needs.', image: 'ideaFamilySafari' }
         ]
     },
      {
-        id: '7', title: 'Lake Mburo Cycling Safari',
+        id: '7', title: 'Explore Uganda’s Savannah on Two Wheels',
         shortDescription: 'The closest park to Kampala, perfect for cycling among zebras.',
         imageUrl: placeholderImages.campaignMburo.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'zebra safari',
-        description: 'Experience a unique cycling safari in Lake Mburo National Park. Ride alongside herds of zebras, impalas, and other wildlife in this beautiful and accessible park.',
+        description: 'Lake Mburo National Park offers one of the most unique safari experiences in East Africa — a guided cycling safari through open savannah landscapes, where wildlife moves freely and encounters happen at ground level.\n\nAs Uganda’s closest national park to Kampala, Lake Mburo is ideal for travelers seeking an active, immersive safari without long travel times. The park is home to zebras, impalas, buffalo, eland, warthogs, giraffes, and a rich variety of birdlife, all set within rolling hills, acacia woodland, and seasonal lakes.\n\nThis cycling safari allows you to experience wildlife without vehicles, creating a more intimate and environmentally friendly way to explore the park. It is suitable for travelers with moderate fitness levels and a sense of adventure.',
         storyline: [
-            'A thrilling and active way to get closer to nature.',
-            'Cycling among the wildlife is an unforgettable experience.',
-            'The park is small but packed with wildlife.'
+            'Cycle along open park tracks as zebras and antelope graze nearby, offering close but respectful wildlife encounters.',
+            'Enjoy the freedom of moving silently through the savannah, guided by experienced rangers who interpret animal behavior and landscapes.',
+            'Pause at scenic viewpoints and waterholes to observe wildlife activity and capture expansive views of Lake Mburo’s rolling terrain.'
         ],
         budget: 6000, goal: 100, currentAmount: 82, organizer: 'iffe-travels', tags: ['#Cycling', '#Zebras', '#Uganda'], startDate: '2024-11-01', endDate: '2024-11-03', volunteersNeeded: 20, volunteersSignedUp: 18,
         activities: [
-            { title: 'Guided cycling safaris', description: 'Scenic trails for a unique safari experience.', image: 'campaignMburo' },
-            { title: 'Walking safaris', description: 'Get even closer to the wildlife on foot.', image: 'ideaWalkingSafari' },
-            { title: 'Boat trips on the lake', description: 'See hippos and crocodiles on a boat trip.', image: 'galleryElephant' }
+            { title: 'Guided Cycling Safari', description: 'Cycle through designated park routes accompanied by armed park rangers and professional guides, ensuring safety while allowing close wildlife observation.', image: 'campaignMburo' },
+            { title: 'Walking Safari', description: 'Lake Mburo is one of the few Ugandan parks that permits walking safaris, offering a deeper understanding of tracks, plants, and animal behavior.', image: 'ideaWalkingSafari' },
+            { title: 'Game Drives (Optional)', description: 'Morning or evening game drives can be added for broader wildlife coverage, especially for predators and nocturnal species.', image: 'galleryElephant' },
+            { title: 'Boat Cruise on Lake Mburo', description: 'A relaxed boat trip offers sightings of hippos, crocodiles, waterbirds, and lakeside wildlife.', image: 'galleryElephant' },
+            { title: 'Bird Watching', description: 'With over 300 bird species recorded, Lake Mburo is a rewarding destination for bird enthusiasts, particularly acacia-dwelling and wetland species.', image: 'blogShoebill' }
         ],
         accommodation: [
-            { title: 'Safari Lodges', description: 'Safari lodges and luxury tented camps.', image: 'pkgAdventurer' },
-            { title: 'Bush Sounds', description: 'Enjoy the sounds of the bush from your accommodation.', image: 'pkgUltimate' },
-            { title: 'Budget Options', description: 'Options available for all budgets.', image: 'pkgExplorer' }
+            { title: 'Safari Lodges & Tented Camps', description: 'Accommodation is arranged at carefully selected lodges and tented camps within or near the park, offering convenient access to cycling and safari activities.', image: 'pkgAdventurer' },
+            { title: 'Comfort with a Wilderness Feel', description: 'Rooms are designed for comfort while maintaining a close connection to nature, with private facilities, shaded verandas, and savannah views.', image: 'pkgUltimate' },
+            { title: 'Sustainability-Focused Stays', description: 'Many properties support conservation initiatives and local communities through eco-friendly operations and responsible tourism practices.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'All-Inclusive', description: 'All-inclusive packages available.', image: 'videoThumbTestimonial' },
-            { title: 'Wildlife Views', description: 'Enjoy meals with a view of the park\'s wildlife.', image: 'sipiCoffee' },
+            { title: 'Full Board Options Available', description: 'Most safari packages include breakfast, lunch, and dinner, allowing guests to focus fully on activities and relaxation.', image: 'videoThumbTestimonial' },
+            { title: 'Fresh & Safari-Style Dining', description: 'Meals feature a mix of local and international cuisine, served in lodge dining areas or outdoor settings overlooking the park.', image: 'sipiCoffee' },
             { title: 'Bush Dinners', description: 'Bush dinners can be arranged for a special experience.', image: 'ideaFamilySafari' }
         ]
     },
@@ -711,5 +713,6 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     
 
     
+
 
 
