@@ -94,7 +94,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   
  const ImageGridInfoSection = ({ title, icon: Icon, items, scrollable = false }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[], scrollable?: boolean }) => {
     const renderGrid = (
-        <div className={cn("grid gap-6", !scrollable && "grid-cols-1 sm:grid-cols-2 md:grid-cols-3", scrollable && "flex")}>
+        <div className={cn("grid gap-6", scrollable ? "flex" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3")}>
             {items.map((item, index) => {
                 const itemImage = placeholderImages[item.image];
                 if (!itemImage) {
@@ -103,7 +103,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 return (
                     <Card key={index} className={cn(
                         "overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group",
-                        scrollable && "w-[300px] flex-shrink-0"
+                        scrollable && "min-w-[300px] flex-shrink-0"
                     )}>
                         <div className="relative w-full aspect-[16/9] bg-muted">
                             <Image 
@@ -135,8 +135,8 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
             </h3>
             {scrollable ? (
                 <ScrollArea>
-                    <div className="flex space-x-6 pb-4">
-                        {renderGrid.props.children}
+                    <div className="pb-4">
+                        {renderGrid}
                     </div>
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
@@ -296,5 +296,3 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
-
-    
