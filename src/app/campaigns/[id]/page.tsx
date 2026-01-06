@@ -113,7 +113,7 @@ const mockCampaignsData: Campaign[] = [
             "Enjoy classic game drives across the northern plains, where rolling savannahs provide excellent visibility for spotting lions, giraffes, elephants, hartebeest, and large herds of buffalo.",
             "Cruise upstream along the Nile beneath towering riverbanks, encountering hippos, Nile crocodiles, elephants, and a remarkable variety of birdlife in a calm, immersive setting."
         ],
-        budget: 8000, goal: 100, currentAmount: 88, organizer: 'iffe-travels', tags: ['#Wildlife', '#Waterfalls', '#Uganda'], startDate: '2024-10-05', endDate: '2024-10-10', volunteersNeeded: 10, volunteersSignedUp: 10,
+        budget: 8000, goal: 100, currentAmount: 88, organizer: 'iffe-travels', tags: ['#Wildlife', '#Waterfalls', '#Uganda', '#NorthernUganda'], startDate: '2024-10-05', endDate: '2024-10-10', volunteersNeeded: 10, volunteersSignedUp: 10,
         activities: [
             { title: 'Game Drives', description: 'Morning and afternoon game drives in the park’s prime wildlife areas, guided by experienced safari guides who understand animal behavior and tracking techniques.', image: 'galleryGiraffe' },
             { title: 'Nile Boat Safari', description: 'A highlight of the tour, the boat cruise takes you along the Nile to the base of the falls, offering unmatched wildlife viewing and photography opportunities.', image: 'fifaCardNile' },
@@ -374,7 +374,7 @@ const mockCampaignsData: Campaign[] = [
             'Discover the dramatic scenery of Sipi Falls, where water cascades down sheer cliffs framed by green highland landscapes.'
         ],
         budget: 9000, goal: 100, currentAmount: 78, organizer: 'iffe-travels',
-        tags: ['#MountElgon', '#VolcanicCaves', '#SipiFalls', '#ScenicHiking', '#EasternUganda', '#NorthernUganda'],
+        tags: ['#MountElgon', '#VolcanicCaves', '#SipiFalls', '#ScenicHiking', '#EasternUganda'],
         startDate: '2025-02-01', endDate: '2025-02-05', volunteersNeeded: 12, volunteersSignedUp: 7,
         activities: [
             { title: 'Guided Mountain Hiking', description: 'Follow well-established trails through forest, moorland, and volcanic terrain, suitable for both day hikes and extended treks.', image: 'campaignElgon' },
@@ -449,8 +449,8 @@ const mockCampaignsData: Campaign[] = [
             'Experience traditional music, dance, and storytelling that reflect the identity, values, and social life of the Basoga people.',
             'Engage with artisans and local communities to discover traditional crafts, food practices, and everyday life in Busoga.'
         ],
-        budget: 2500, goal: 100, currentAmount: 65, organizer: 'iffe-travels', 
-        tags: ['#BusogaKingdom', '#CulturalHeritage', '#TraditionalMusic', '#CommunityExperiences', '#EasternUganda', '#Jinja', '#Day-Trip'], 
+        budget: 2500, goal: 100, currentAmount: 82, organizer: 'iffe-travels', 
+        tags: ['#BusogaKingdom', '#CulturalHeritage', '#TraditionalMusic', '#CommunityExperiences', '#Jinja', '#Day-Trip'], 
         startDate: '2024-12-05', endDate: '2024-12-06', volunteersNeeded: 25, volunteersSignedUp: 10,
         activities: [
             { title: 'Royal & Cultural Heritage Visits', description: 'Explore cultural sites connected to Busoga leadership, clan systems, and historical narratives guided by knowledgeable locals.', image: 'campaignBusoga' },
@@ -602,32 +602,41 @@ const mockCampaignsData: Campaign[] = [
         ]
     },
     {
-        id: '15', title: 'Pian Upe Wildlife Reserve',
+        id: '15', 
+        title: 'Pian Upe Wildlife Reserve',
         shortDescription: 'Discover rare wildlife species in a semi-arid savannah.',
         imageUrl: placeholderImages.campaignPianUpe.src, imageWidth: 600, imageHeight: 350, dataAiHint: 'savannah reserve',
-        description: 'Explore one of Uganda\'s lesser-known gems, the Pian Upe Wildlife Reserve. This vast savannah is home to rare species like the roan antelope and offers a secluded safari experience.',
+        description: 'Pian Upe Wildlife Reserve is Uganda’s second-largest protected area and one of its most underrated wilderness destinations. Located in the semi-arid plains of northeastern Uganda, Pian Upe offers vast open landscapes, dramatic rocky outcrops, and wildlife species rarely seen elsewhere in the country.\n\nThis reserve is defined by its wide horizons, quiet isolation, and raw, unfiltered nature. Unlike busier national parks, Pian Upe provides a sense of true exploration, where game drives unfold without crowds and every sighting feels personal and unexpected.\n\nFor travelers seeking authenticity, solitude, and rare species, Pian Upe is a rewarding off-the-beaten-path experience.',
         storyline: [
-            'An off-the-beaten-path adventure for the intrepid traveler.',
-            'See rare wildlife that you won\'t find in other parks.',
-            'A true wilderness experience.'
+            'Endless savannah plains stretch beneath open skies, framed by rolling hills and ancient rock formations that define Pian Upe’s dramatic scenery.',
+            'Wildlife encounters feel intimate and unscripted, with sightings often unfolding in complete silence and wide open space.',
+            'Cultural interactions with nearby pastoral communities add context and meaning to the landscape and its conservation story.'
         ],
-        budget: 13000, goal: 100, currentAmount: 60, organizer: 'iffe-travels', 
-        tags: ['#RareWildlife', '#Savannah', '#Uganda', '#NorthernUganda'], 
+        budget: 13000, goal: 100, currentAmount: 81, organizer: 'iffe-travels', 
+        tags: ['#PianUpe', '#RareWildlife', '#SemiAridSavannah', '#NorthernUganda', '#OffTheBeatenPath'], 
         startDate: '2025-04-01', endDate: '2025-04-05', volunteersNeeded: 10, volunteersSignedUp: 2,
         activities: [
-            { title: 'Game drives', description: 'Spot rare wildlife on game drives.', image: 'campaignPianUpe' },
-            { title: 'Nature walks', description: 'Explore the savannah on foot.', image: 'ideaWalkingSafari' },
-            { title: 'Cultural encounters', description: 'Meet the local Karamojong people.', image: 'ideaFamilySafari' }
+            { title: 'Game Drives', description: 'Explore vast savannahs home to species such as roan antelope, eland, ostrich, cheetah, and leopard — many rarely seen in other Ugandan parks.', image: 'campaignPianUpe' },
+            { title: 'Bird Watching', description: 'With over 240 bird species, including dry-land and raptor species, Pian Upe is a hidden gem for bird enthusiasts.', image: 'blogShoebill' },
+            { title: 'Guided Nature Walks', description: 'Walks led by experienced guides reveal the reserve’s plant life, geology, and smaller wildlife often missed on game drives.', image: 'ideaWalkingSafari' },
+            { title: 'Cultural Encounters', description: 'Visits to nearby communities offer insight into traditional pastoral lifestyles and the relationship between people and wildlife.', image: 'ideaFamilySafari' }
         ],
         accommodation: [
-            { title: 'Camping', description: 'Basic camping facilities and nearby guesthouses.', image: 'pkgAdventurer' },
-            { title: 'Back to Nature', description: 'A true back-to-nature experience.', image: 'pkgUltimate' },
-            { title: 'Adventurous Options', description: 'Options for the adventurous traveler.', image: 'pkgExplorer' }
+            { title: 'Safari Camps & Lodges', description: 'Accommodation is arranged in simple but comfortable safari camps and lodges within or near the reserve, designed for immersion in nature.', image: 'pkgAdventurer' },
+            { title: 'Remote Wilderness Comfort', description: 'Expect peaceful settings, open views, and an authentic safari atmosphere rather than luxury infrastructure.', image: 'pkgUltimate' },
+            { title: 'Flexible Itineraries', description: 'Pian Upe is often combined with nearby parks, allowing accommodation upgrades along the route.', image: 'pkgExplorer' }
         ],
         meals: [
-            { title: 'Camping Meals', description: 'Basic meals provided on camping trips.', image: 'videoThumbTestimonial' },
-            { title: 'Campfire Cooking', description: 'Enjoy a simple meal cooked over an open fire.', image: 'sipiCoffee' },
-            { title: 'Local Cuisine', description: 'A chance to try local cuisine.', image: 'ideaFamilySafari' }
+            { title: 'Full-Board Safari Dining', description: 'Most itineraries include full-board meals, ensuring comfort during remote travel.', image: 'videoThumbTestimonial' },
+            { title: 'Fresh & Hearty Cuisine', description: 'Meals are prepared using fresh ingredients, offering nourishing dishes suited to long exploration days.', image: 'sipiCoffee' },
+            { title: 'Outdoor Dining', description: 'Depending on camp location, meals may be enjoyed outdoors under open skies.', image: 'ideaFamilySafari' }
+        ],
+        bookingTips: [
+            "Pian Upe is best suited for travelers comfortable with remote destinations.",
+            "The dry seasons offer easier access and better wildlife visibility.",
+            "Early mornings and late afternoons provide the best light for photography.",
+            "Pack sun protection and light clothing for warm daytime temperatures.",
+            "Combining Pian Upe with Kidepo or Mount Elgon creates a unique adventure circuit."
         ]
     },
     {
@@ -641,7 +650,7 @@ const mockCampaignsData: Campaign[] = [
             'Learn about the history and culture of the city.'
         ],
         budget: 2000, goal: 100, currentAmount: 91, organizer: 'iffe-travels', 
-        tags: ['#CityTour', '#Culture', '#Uganda', '#Day-Trip', '#Jinja'], 
+        tags: ['#CityTour', '#Culture', '#Uganda', '#Day-Trip', '#Jinja', '#CulturalHeritage'], 
         startDate: '2024-11-15', endDate: '2024-11-15', volunteersNeeded: 50, volunteersSignedUp: 45,
         activities: [
             { title: 'Visiting historical sites', description: 'See the Kasubi Tombs and other historic sites.', image: 'campaignBusoga' },
@@ -901,3 +910,6 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
     
 
+
+
+    
