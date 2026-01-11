@@ -10,7 +10,7 @@
     "skill": "5 Activities",
     "image": "fifaCardGorilla",
     "dataAiHint": "mountain gorilla",
-    "link": "/campaigns/2"
+    "link": "/campaigns/1"
   },
   {
     "id": "2",
@@ -22,7 +22,7 @@
     "skill": "6 Activities",
     "image": "fifaCardMasai",
     "dataAiHint": "safari group sunset",
-    "link": "/campaigns/1"
+    "link": "/campaigns/3"
   },
   {
     "id": "3",
@@ -46,7 +46,7 @@
     "skill": "8 Activities",
     "image": "fifaCardNile",
     "dataAiHint": "nile river cruise",
-    "link": "/campaigns/nile-cruise"
+    "link": "/campaigns/campaignNileCruise"
   },
   {
     "id": "5",
@@ -58,6 +58,6 @@
     "skill": "3 Activities",
     "image": "fifaCardKili",
     "dataAiHint": "mount kilimanjaro",
-    "link": "/campaigns/kilimanjaro-hike"
+    "link": "/campaigns/campaignKilimanjaro"
   }
 ]
