@@ -54,7 +54,7 @@ const profilesData: Profile[] = [
     bio: `About Ivan Ian Ivan seamlessly blends his technical photography skills with a deep, ancestral connection to the Pearl of Africa. With over four years of professional experience navigating Uganda’s diverse landscapes, he specializes in guiding travelers through the rhythmic pulse of our cities and the serenity of our wild spaces.  Whether you are exploring the source of the Nile in Jinja, trekking the highlands of Kapchorwa, or navigating the vibrant streets of Kampala, Ivan ensures you don't just see the sights—you capture them perfectly. His tours are defined by a "storyteller’s lens," combining vast knowledge of Ugandan wildlife with intimate insights into the local cultures that make this country unique. From technical photography workshops in the field to expert navigation of Uganda’s hidden gems, Ivan is dedicated to creating an immersive, safe, and visually stunning journey for every traveler.`,
     stats: [
       { label: 'Experience', value: '4+ Years' },
-      { label: 'Tours Guided', value: '300+' },
+      { label: 'Tours Guided', value: '79' },
       { label: 'Specialties', value: 'Photography, Big Cats' },
     ],
     isVerified: true,
@@ -190,7 +190,11 @@ export default function RangerProfilePage() {
                 <p className="text-muted-foreground">{profileData.title}</p>
                 <div className="mt-3 flex gap-2 flex-wrap justify-center sm:justify-start">
                     <Button className="bg-accent text-accent-foreground hover:bg-accent/90"><UserPlus className="w-4 h-4 mr-2" /> Follow</Button>
-                    <Button variant="outline"><MessageSquare className="w-4 h-4 mr-2" /> Message</Button>
+                    <Button variant="outline" asChild>
+                        <Link href="https://wa.me/256705398510" target="_blank" rel="noopener noreferrer">
+                            <i className="fa-brands fa-whatsapp h-4 w-4 mr-2"></i> Message on WhatsApp
+                        </Link>
+                    </Button>
                 </div>
               </div>
             </div>
@@ -257,3 +261,5 @@ export default function RangerProfilePage() {
     </div>
   );
 }
+
+    
