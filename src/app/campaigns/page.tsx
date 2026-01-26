@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tag, ArrowRight, PlusCircle, Loader2, Search } from 'lucide-react';
+import { Tag, ArrowRight, PlusCircle, Loader2, Search, ListFilter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useState, useMemo, useEffect } from 'react';
 import HeroSection from '@/components/layout/hero-section';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AnimatedSection from '@/components/animated-section';
 
 interface CampaignTeaser {
@@ -24,61 +25,64 @@ interface CampaignTeaser {
   goal: number;
   currentAmount: number;
   tags: string[];
+  region: 'Western' | 'Eastern' | 'Northern' | 'Central' | 'Other';
 }
 
 const mockCampaignsData: CampaignTeaser[] = [
   // Western Uganda
-  { id: '1', title: 'Bwindi Gorilla Trekking', imageUrl: placeholderImages.campaignBwindi.src, dataAiHint: 'bwindi forest', shortDescription: 'World-famous gorilla trekking in a UNESCO World Heritage site.', goal: 100, currentAmount: 98, tags: ['#Gorilla', '#UNESCO'] },
-  { id: '2', title: 'Queen Elizabeth National Park', imageUrl: placeholderImages.campaignQueenElizabeth.src, dataAiHint: 'tree climbing lion', shortDescription: 'Spot tree-climbing lions and enjoy Kazinga Channel boat safaris.', goal: 100, currentAmount: 92, tags: ['#Wildlife', '#Lions'] },
-  { id: '3', title: 'Murchison Falls Safari', imageUrl: placeholderImages.campaignMurchison.src, dataAiHint: 'murchison falls', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', goal: 100, currentAmount: 88, tags: ['#Wildlife', '#Waterfalls'] },
-  { id: '4', title: 'Kibale Forest Chimpanzee Trekking', imageUrl: placeholderImages.campaignKibale.src, dataAiHint: 'chimpanzee forest', shortDescription: 'Trek chimpanzees in the primate capital of East Africa.', goal: 100, currentAmount: 85, tags: ['#Chimpanzee', '#Primates'] },
-  { id: '5', title: 'Rwenzori Mountains Hiking', imageUrl: placeholderImages.campaignRwenzori.src, dataAiHint: 'rwenzori mountains', shortDescription: 'Hike the snow-capped "Mountains of the Moon".', goal: 100, currentAmount: 75, tags: ['#Hiking', '#Mountains'] },
-  { id: '6', title: 'Relax at Lake Bunyonyi', imageUrl: placeholderImages.campaignBunyonyi.src, dataAiHint: 'lake bunyonyi', shortDescription: 'Relax by one of Africa’s deepest and most scenic lakes.', goal: 100, currentAmount: 95, tags: ['#Relaxation', '#Scenery'] },
-  { id: '7', title: 'Lake Mburo Cycling Safari', imageUrl: placeholderImages.campaignMburo.src, dataAiHint: 'zebra safari', shortDescription: 'The closest park to Kampala, perfect for cycling among zebras.', goal: 100, currentAmount: 82, tags: ['#Cycling', '#Zebras'] },
+  { id: '1', title: 'Bwindi Gorilla Trekking', imageUrl: placeholderImages.campaignBwindi.src, dataAiHint: 'bwindi forest', shortDescription: 'World-famous gorilla trekking in a UNESCO World Heritage site.', goal: 100, currentAmount: 98, tags: ['#Gorilla', '#UNESCO'], region: 'Western' },
+  { id: '2', title: 'Queen Elizabeth National Park', imageUrl: placeholderImages.campaignQueenElizabeth.src, dataAiHint: 'tree climbing lion', shortDescription: 'Spot tree-climbing lions and enjoy Kazinga Channel boat safaris.', goal: 100, currentAmount: 92, tags: ['#Wildlife', '#Lions'], region: 'Western' },
+  { id: '3', title: 'Murchison Falls Safari', imageUrl: placeholderImages.campaignMurchison.src, dataAiHint: 'murchison falls', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', goal: 100, currentAmount: 88, tags: ['#Wildlife', '#Waterfalls'], region: 'Western' },
+  { id: '4', title: 'Kibale Forest Chimpanzee Trekking', imageUrl: placeholderImages.campaignKibale.src, dataAiHint: 'chimpanzee forest', shortDescription: 'Trek chimpanzees in the primate capital of East Africa.', goal: 100, currentAmount: 85, tags: ['#Chimpanzee', '#Primates'], region: 'Western' },
+  { id: '5', title: 'Rwenzori Mountains Hiking', imageUrl: placeholderImages.campaignRwenzori.src, dataAiHint: 'rwenzori mountains', shortDescription: 'Hike the snow-capped "Mountains of the Moon".', goal: 100, currentAmount: 75, tags: ['#Hiking', '#Mountains'], region: 'Western' },
+  { id: '6', title: 'Relax at Lake Bunyonyi', imageUrl: placeholderImages.campaignBunyonyi.src, dataAiHint: 'lake bunyonyi', shortDescription: 'Relax by one of Africa’s deepest and most scenic lakes.', goal: 100, currentAmount: 95, tags: ['#Relaxation', '#Scenery'], region: 'Western' },
+  { id: '7', title: 'Lake Mburo Cycling Safari', imageUrl: placeholderImages.campaignMburo.src, dataAiHint: 'zebra safari', shortDescription: 'The closest park to Kampala, perfect for cycling among zebras.', goal: 100, currentAmount: 82, tags: ['#Cycling', '#Zebras'], region: 'Western' },
   // Eastern Uganda
-  { id: '8', title: 'Jinja - Source of the Nile', imageUrl: placeholderImages.campaignSourceNile.src, dataAiHint: 'source of nile', shortDescription: 'Discover the legendary source of the world\'s longest river.', goal: 100, currentAmount: 90, tags: ['#Jinja', '#RiverNile'] },
-  { id: '9', title: 'White-Water Rafting in Jinja', imageUrl: placeholderImages.campaignRafting.src, dataAiHint: 'white water rafting', shortDescription: 'Experience the thrill of Grade 5 rapids on the Nile.', goal: 100, currentAmount: 95, tags: ['#Adventure', '#Jinja'] },
-  { id: '10', title: 'Mount Elgon National Park', imageUrl: placeholderImages.campaignElgon.src, dataAiHint: 'mount elgon', shortDescription: 'Hike a volcanic mountain and explore caves near Sipi Falls.', goal: 100, currentAmount: 78, tags: ['#Hiking', '#Volcano'] },
-  { id: '11', title: 'Sipi Falls Adventure', imageUrl: placeholderImages.campaignSipi.src, dataAiHint: 'sipi falls', shortDescription: 'Explore a series of beautiful waterfalls with coffee tours and hikes.', goal: 100, currentAmount: 88, tags: ['#Waterfalls', '#Coffee'] },
-  { id: '12', title: 'Busoga Kingdom Cultural Tour', imageUrl: placeholderImages.campaignBusoga.src, dataAiHint: 'cultural kingdom', shortDescription: 'Immerse yourself in the royal heritage and traditions of Busoga.', goal: 100, currentAmount: 65, tags: ['#Culture', '#History'] },
+  { id: '8', title: 'Jinja - Source of the Nile', imageUrl: placeholderImages.campaignSourceNile.src, dataAiHint: 'source of nile', shortDescription: 'Discover the legendary source of the world\'s longest river.', goal: 100, currentAmount: 90, tags: ['#Jinja', '#RiverNile'], region: 'Eastern' },
+  { id: '9', title: 'White-Water Rafting in Jinja', imageUrl: placeholderImages.campaignRafting.src, dataAiHint: 'white water rafting', shortDescription: 'Experience the thrill of Grade 5 rapids on the Nile.', goal: 100, currentAmount: 95, tags: ['#Adventure', '#Jinja'], region: 'Eastern' },
+  { id: '10', title: 'Mount Elgon National Park', imageUrl: placeholderImages.campaignElgon.src, dataAiHint: 'mount elgon', shortDescription: 'Hike a volcanic mountain and explore caves near Sipi Falls.', goal: 100, currentAmount: 78, tags: ['#Hiking', '#Volcano'], region: 'Eastern' },
+  { id: '11', title: 'Sipi Falls Adventure', imageUrl: placeholderImages.campaignSipi.src, dataAiHint: 'sipi falls', shortDescription: 'Explore a series of beautiful waterfalls with coffee tours and hikes.', goal: 100, currentAmount: 88, tags: ['#Waterfalls', '#Coffee'], region: 'Eastern' },
+  { id: '12', title: 'Busoga Kingdom Cultural Tour', imageUrl: placeholderImages.campaignBusoga.src, dataAiHint: 'cultural kingdom', shortDescription: 'Immerse yourself in the royal heritage and traditions of Busoga.', goal: 100, currentAmount: 65, tags: ['#Culture', '#History'], region: 'Eastern' },
   // Northern Uganda
-  { id: '13', title: 'Kidepo Valley National Park', imageUrl: placeholderImages.campaignKidepo.src, dataAiHint: 'kidepo valley', shortDescription: 'Explore remote, rugged landscapes with unique wildlife.', goal: 100, currentAmount: 70, tags: ['#Remote', '#Wilderness'] },
-  { id: '14', title: 'Karuma Falls Wildlife Tour', imageUrl: placeholderImages.campaignKaruma.src, dataAiHint: 'karuma falls', shortDescription: 'Spot wildlife near the stunning Karuma Falls on the Nile.', goal: 100, currentAmount: 85, tags: ['#Wildlife', '#NationalPark'] },
-  { id: '15', title: 'Pian Upe Wildlife Reserve', imageUrl: placeholderImages.campaignPianUpe.src, dataAiHint: 'savannah reserve', shortDescription: 'Discover rare wildlife species in a semi-arid savannah.', goal: 100, currentAmount: 60, tags: ['#RareWildlife', '#Savannah'] },
+  { id: '13', title: 'Kidepo Valley National Park', imageUrl: placeholderImages.campaignKidepo.src, dataAiHint: 'kidepo valley', shortDescription: 'Explore remote, rugged landscapes with unique wildlife.', goal: 100, currentAmount: 70, tags: ['#Remote', '#Wilderness'], region: 'Northern' },
+  { id: '14', title: 'Karuma Falls Wildlife Tour', imageUrl: placeholderImages.campaignKaruma.src, dataAiHint: 'karuma falls', shortDescription: 'Spot wildlife near the stunning Karuma Falls on the Nile.', goal: 100, currentAmount: 85, tags: ['#Wildlife', '#NationalPark'], region: 'Northern' },
+  { id: '15', title: 'Pian Upe Wildlife Reserve', imageUrl: placeholderImages.campaignPianUpe.src, dataAiHint: 'savannah reserve', shortDescription: 'Discover rare wildlife species in a semi-arid savannah.', goal: 100, currentAmount: 60, tags: ['#RareWildlife', '#Savannah'], region: 'Northern' },
   // Central Uganda
-  { id: '16', title: 'Kampala City Tour', imageUrl: placeholderImages.campaignKampala.src, dataAiHint: 'kampala city', shortDescription: 'Explore museums, mosques, and cultural centres in Uganda\'s capital.', goal: 100, currentAmount: 91, tags: ['#CityTour', '#Culture'] },
-  { id: '17', title: 'Entebbe Botanical Gardens', imageUrl: placeholderImages.campaignEntebbe.src, dataAiHint: 'entebbe botanical', shortDescription: 'Visit the Wildlife Centre and relax by Lake Victoria.', goal: 100, currentAmount: 89, tags: ['#Gardens', '#Relaxation'] },
-  { id: '18', title: 'Ngamba Island Chimpanzee Sanctuary', imageUrl: placeholderImages.campaignNgamba.src, dataAiHint: 'chimpanzee sanctuary', shortDescription: 'Visit a sanctuary for orphaned chimpanzees on Lake Victoria.', goal: 100, currentAmount: 94, tags: ['#Conservation', '#Chimpanzee'] },
-  { id: '19', title: 'Mabira Forest Zip-Lining', imageUrl: placeholderImages.campaignMabira.src, dataAiHint: 'rainforest zip', shortDescription: 'Experience the thrill of zip-lining through a lush rainforest.', goal: 100, currentAmount: 86, tags: ['#Adventure', '#Forest'] },
-  { id: '20', title: 'Ssese Islands Relaxation', imageUrl: placeholderImages.campaignSsese.src, dataAiHint: 'lake victoria island', shortDescription: 'Unwind on the beautiful beaches of the Ssese Islands.', goal: 100, currentAmount: 93, tags: ['#Beach', '#Relaxation'] },
+  { id: '16', title: 'Kampala City Tour', imageUrl: placeholderImages.campaignKampala.src, dataAiHint: 'kampala city', shortDescription: 'Explore museums, mosques, and cultural centres in Uganda\'s capital.', goal: 100, currentAmount: 91, tags: ['#CityTour', '#Culture'], region: 'Central' },
+  { id: '17', title: 'Entebbe Botanical Gardens', imageUrl: placeholderImages.campaignEntebbe.src, dataAiHint: 'entebbe botanical', shortDescription: 'Visit the Wildlife Centre and relax by Lake Victoria.', goal: 100, currentAmount: 89, tags: ['#Gardens', '#Relaxation'], region: 'Central' },
+  { id: '18', title: 'Ngamba Island Chimpanzee Sanctuary', imageUrl: placeholderImages.campaignNgamba.src, dataAiHint: 'chimpanzee sanctuary', shortDescription: 'Visit a sanctuary for orphaned chimpanzees on Lake Victoria.', goal: 100, currentAmount: 94, tags: ['#Conservation', '#Chimpanzee'], region: 'Central' },
+  { id: '19', title: 'Mabira Forest Zip-Lining', imageUrl: placeholderImages.campaignMabira.src, dataAiHint: 'rainforest zip', shortDescription: 'Experience the thrill of zip-lining through a lush rainforest.', goal: 100, currentAmount: 86, tags: ['#Adventure', '#Forest'], region: 'Central' },
+  { id: '20', title: 'Ssese Islands Relaxation', imageUrl: placeholderImages.campaignSsese.src, dataAiHint: 'lake victoria island', shortDescription: 'Unwind on the beautiful beaches of the Ssese Islands.', goal: 100, currentAmount: 93, tags: ['#Beach', '#Relaxation'], region: 'Central' },
   // Other Areas
-  { id: '21', title: 'Semuliki National Park', imageUrl: placeholderImages.campaignSemuliki.src, dataAiHint: 'semuliki hot springs', shortDescription: 'Discover unique bird species and boiling hot springs.', goal: 100, currentAmount: 77, tags: ['#BirdWatching', '#HotSprings'] },
-  { id: '22', title: 'Toro Kingdom & Fort Portal', imageUrl: placeholderImages.campaignFortPortal.src, dataAiHint: 'crater lake', shortDescription: 'Explore stunning crater lakes and rich cultural experiences.', goal: 100, currentAmount: 81, tags: ['#Culture', '#Scenery'] },
+  { id: '21', title: 'Semuliki National Park', imageUrl: placeholderImages.campaignSemuliki.src, dataAiHint: 'semuliki hot springs', shortDescription: 'Discover unique bird species and boiling hot springs.', goal: 100, currentAmount: 77, tags: ['#BirdWatching', '#HotSprings'], region: 'Other' },
+  { id: '22', title: 'Toro Kingdom & Fort Portal', imageUrl: placeholderImages.campaignFortPortal.src, dataAiHint: 'crater lake', shortDescription: 'Explore stunning crater lakes and rich cultural experiences.', goal: 100, currentAmount: 81, tags: ['#Culture', '#Scenery'], region: 'Other' },
 ];
 
 const ITEMS_PER_PAGE = 6;
+const regions = ['All Regions', 'Western', 'Eastern', 'Northern', 'Central', 'Other'];
 
 export default function CampaignsPage() {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [regionFilter, setRegionFilter] = useState('All Regions');
 
   const filteredCampaigns = useMemo(() => {
-    if (!searchTerm) {
-      return mockCampaignsData;
-    }
-    const term = searchTerm.toLowerCase();
     return mockCampaignsData.filter(campaign => {
-      const inTitle = campaign.title.toLowerCase().includes(term);
-      const inDescription = campaign.shortDescription.toLowerCase().includes(term);
-      const inTags = campaign.tags.some(tag => tag.toLowerCase().replace('#', '').includes(term));
-      return inTitle || inDescription || inTags;
+      const matchesSearch = !searchTerm || 
+        campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.tags.some(tag => tag.toLowerCase().replace('#', '').includes(searchTerm.toLowerCase()));
+      
+      const matchesRegion = regionFilter === 'All Regions' || campaign.region === regionFilter;
+
+      return matchesSearch && matchesRegion;
     });
-  }, [searchTerm]);
+  }, [searchTerm, regionFilter]);
   
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE);
-  }, [searchTerm]);
+  }, [searchTerm, regionFilter]);
 
   const handleLoadMore = () => {
     setIsLoadingMore(true);
@@ -156,17 +160,30 @@ export default function CampaignsPage() {
 
       <AnimatedSection>
         <div className="text-center">
-            <h2 className="font-headline text-xl font-bold text-primary mb-2">Search Tours</h2>
-            <p className="text-sm text-muted-foreground mb-4">Find your next adventure using a title, keyword, or tag.</p>
-            <div className="flex justify-center items-center gap-4">
-                <Search className="h-7 w-7 text-primary animate-slow-bounce" />
-                <Input 
-                    type="search" 
-                    placeholder="e.g., 'Gorilla', 'Lions', '#Hiking'..." 
-                    className="w-full max-w-md h-12 text-base rounded-full border focus-visible:ring-2 focus-visible:ring-accent"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <h2 className="font-headline text-xl font-bold text-primary mb-2">Search & Filter Tours</h2>
+            <p className="text-sm text-muted-foreground mb-4">Find your next adventure using a keyword or region.</p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <div className="relative flex items-center w-full max-w-md">
+                    <Search className="absolute left-4 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        type="search" 
+                        placeholder="Search by keyword or tag..." 
+                        className="w-full h-12 text-base rounded-full border pl-12 focus-visible:ring-2 focus-visible:ring-accent"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <Select value={regionFilter} onValueChange={setRegionFilter}>
+                  <SelectTrigger className="w-full sm:w-auto h-12 rounded-full border text-base focus-visible:ring-2 focus-visible:ring-accent">
+                    <ListFilter className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <SelectValue placeholder="Filter by region" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {regions.map(region => (
+                      <SelectItem key={region} value={region}>{region}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
             </div>
         </div>
       </AnimatedSection>
@@ -180,7 +197,7 @@ export default function CampaignsPage() {
       ) : (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">
-            {searchTerm ? `No tours found for "${searchTerm}".` : "No tours found. Check back later!"}
+            {searchTerm || regionFilter !== 'All Regions' ? `No tours found for your criteria.` : "No tours found. Check back later!"}
           </p>
         </div>
       )}
