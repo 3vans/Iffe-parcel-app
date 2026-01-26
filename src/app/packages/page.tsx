@@ -33,7 +33,7 @@ const mockPackages: PackageTier[] = [
         priceDescription: 'per person',
         features: ['5-Day Group Tour', 'Standard Accommodations', 'Key Highlight Visits', 'Community Support'],
         buttonText: 'Learn More',
-        buttonLink: '/campaigns/1',
+        buttonLink: '/campaigns',
         imageUrl: placeholderImages.pkgExplorer.src,
         dataAiHint: placeholderImages.pkgExplorer.hint,
     },
@@ -125,7 +125,7 @@ export default function PackagesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
+       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
           alt="Safari Packages"
