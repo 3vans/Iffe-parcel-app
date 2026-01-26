@@ -36,7 +36,7 @@ export default function RootLayout({
             <div className="flex flex-col min-h-screen">
               <AppHeader />
               <main 
-                className="flex-grow px-1 sm:px-4"
+                className="flex-grow"
               >
                 {children}
               </main>
