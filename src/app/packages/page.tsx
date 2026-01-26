@@ -26,42 +26,58 @@ interface PackageTier {
 
 const mockPackages: PackageTier[] = [
     {
-        id: 'pkg_starter',
+        id: 'explorer',
         title: 'Explorer Package',
-        price: '$2,500',
+        price: '$750',
         priceDescription: 'per person',
-        features: ['5-Day Group Tour', 'Standard Accommodations', 'Key Highlight Visits', 'Community Support'],
-        buttonText: 'Learn More',
-        buttonLink: '/campaigns',
+        features: ['4-Day Eastern Uganda Tour', 'Source of the Nile Visit', 'Sipi Falls Hike & Coffee Tour', 'Great for short trips'],
+        buttonText: 'View Package',
+        buttonLink: '/packages/explorer',
         imageUrl: placeholderImages.pkgExplorer.src,
         dataAiHint: placeholderImages.pkgExplorer.hint,
     },
     {
-        id: 'pkg_adventurer',
+        id: 'adventurer',
         title: 'Adventurer Package',
         price: '$4,500',
         priceDescription: 'per person',
-        features: ['7-Day Private Tour', 'Luxury Tented Camps', 'All-Inclusive Meals', 'Off-the-beaten-path locations', 'Expert Private Guide'],
-        buttonText: 'Book Now',
-        buttonLink: '/campaigns/2',
+        features: ['7-Day Primate Focus Tour', 'Gorilla & Chimp Trekking', 'Expert Private Guide', 'Mid-range & Luxury Lodges'],
+        buttonText: 'View Package',
+        buttonLink: '/packages/adventurer',
         isFeatured: true,
         imageUrl: placeholderImages.pkgAdventurer.src,
         dataAiHint: placeholderImages.pkgAdventurer.hint,
     },
     {
-        id: 'pkg_ultimate',
+        id: 'ultimate',
         title: 'Ultimate Safari',
         price: '$8,000',
         priceDescription: 'per person',
-        features: ['10-Day Custom Itinerary', 'Fly-in Safari Options', 'Premium Lodges & Camps', 'Conservation Experiences', 'Private Photographer'],
-        buttonText: 'Plan Your Trip',
-        buttonLink: '/campaigns/new',
+        features: ['10-Day Western Uganda Circuit', 'Savannah & Forest Parks', 'Murchison, Kibale & Queen Elizabeth', 'Diverse Wildlife Experiences'],
+        buttonText: 'View Package',
+        buttonLink: '/packages/ultimate',
         imageUrl: placeholderImages.pkgUltimate.src,
         dataAiHint: placeholderImages.pkgUltimate.hint,
     }
 ];
 
+// Adding the Super Combi to the list of packages.
+const superCombiPackage: PackageTier = {
+    id: 'super-combi',
+    title: 'Super Combi Safari',
+    price: '$12,000',
+    priceDescription: 'per person',
+    features: ['14-Day Grand Ugandan Tour', 'All Major Parks Included', 'Gorillas, Chimps, & Big Game', 'The Complete Experience'],
+    buttonText: 'View Package',
+    buttonLink: '/packages/super-combi',
+    imageUrl: placeholderImages.campaignKidepo.src,
+    dataAiHint: 'kidepo valley',
+};
+
+
 export default function PackagesPage() {
+    const allPackages = [...mockPackages, superCombiPackage];
+
     const AnimatedPackageCard = ({ pkg }: { pkg: PackageTier }) => {
         const [ref, isVisible] = useScrollAnimation();
         const [imgSrc, setImgSrc] = useState(pkg.imageUrl || placeholderImages.eventDetailDefault.src);
@@ -123,7 +139,7 @@ export default function PackagesPage() {
 
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-12">
        <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
         <Image
           src={heroImage}
@@ -155,7 +171,7 @@ export default function PackagesPage() {
               <div className="flex flex-wrap items-center gap-4">
                  <Button size="lg" asChild className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105">
                    <Link href="/campaigns">
-                     Explore Packages
+                     Explore All Tours
                    </Link>
                  </Button>
                  <Button variant="link" asChild className="text-yellow-400 hover:text-yellow-300">
@@ -168,13 +184,15 @@ export default function PackagesPage() {
           </div>
       </section>
       
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
-        {mockPackages.map(pkg => (
-            <AnimatedPackageCard key={pkg.id} pkg={pkg} />
-        ))}
+      <section className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch pt-8">
+          {allPackages.map(pkg => (
+              <AnimatedPackageCard key={pkg.id} pkg={pkg} />
+          ))}
+        </div>
       </section>
 
-      <AnimatedSection>
+      <AnimatedSection className="container mx-auto">
         <div className={cn('text-center p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-inner transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1')}>
             <h2 className="font-headline text-2xl font-bold text-primary mb-4">Can't find the perfect package?</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">Let us create a bespoke journey just for you. From family adventures to photographic expeditions, we can tailor every detail to your desires.</p>

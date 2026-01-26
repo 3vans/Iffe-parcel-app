@@ -1,0 +1,89 @@
+[
+  {
+    "slug": "explorer",
+    "title": "Explorer Package",
+    "subtitle": "A whirlwind tour of Eastern Uganda's highlights, from the source of the Nile to the stunning Sipi Falls.",
+    "price": "750",
+    "priceDescription": "per person",
+    "duration": "4 Days / 3 Nights",
+    "imageUrl": "campaignSipi",
+    "description": "The Explorer Package is the perfect introduction to the beauty and adventure of Eastern Uganda. This compact journey takes you to the legendary Source of the Nile in Jinja, where you'll experience the power of the world's longest river. Then, you'll travel to the stunning Sipi Falls on the slopes of Mt. Elgon for breathtaking hikes and a unique coffee tour. It's an ideal trip for those with limited time who want to experience some of Uganda's most iconic landscapes.",
+    "includedTours": ["8", "11"],
+    "sampleItinerary": [
+      { "day": 1, "activity": "Arrival in Jinja & Source of the Nile", "description": "Travel to Jinja, visit the Source of the Nile with a boat tour, and explore Jinja town. Overnight in Jinja." },
+      { "day": 2, "activity": "Travel to Sipi Falls", "description": "Morning drive to Sipi Falls. Check into your lodge with stunning waterfall views and relax." },
+      { "day": 3, "activity": "Sipi Falls Hike & Coffee Tour", "description": "Embark on a guided hike to all three Sipi waterfalls. In the afternoon, experience a farm-to-cup coffee tour with local farmers." },
+      { "day": 4, "activity": "Return to Kampala", "description": "Enjoy a final breakfast with waterfall views before departing for Kampala/Entebbe." }
+    ]
+  },
+  {
+    "slug": "adventurer",
+    "title": "Adventurer Package",
+    "subtitle": "The ultimate primate experience, combining world-famous gorilla trekking with chimpanzee tracking in Kibale.",
+    "price": "4500",
+    "priceDescription": "per person",
+    "duration": "7 Days / 6 Nights",
+    "imageUrl": "campaignBwindi",
+    "description": "The Adventurer Package is a primate lover's dream. This tour focuses on Uganda's two most iconic primate experiences. You'll begin in Kibale Forest, the primate capital of the world, to track habituated chimpanzees. Afterwards, you'll journey south to the ancient Bwindi Impenetrable Forest for the awe-inspiring experience of spending time with a mountain gorilla family. This is a profound wildlife journey you'll never forget.",
+    "includedTours": ["4", "1"],
+    "sampleItinerary": [
+      { "day": 1, "activity": "Travel to Kibale Forest", "description": "Depart from Kampala/Entebbe and travel to the region of Kibale Forest National Park. Check into your lodge near the forest." },
+      { "day": 2, "activity": "Chimpanzee Trekking in Kibale", "description": "Morning chimpanzee trek in Kibale Forest. In the afternoon, take a guided walk through the Bigodi Wetland Sanctuary." },
+      { "day": 3, "activity": "Travel to Bwindi", "description": "Journey south towards Bwindi Impenetrable National Park, enjoying scenic views of the 'Mountains of the Moon' en route." },
+      { "day": 4, "activity": "Gorilla Trekking in Bwindi", "description": "The highlight of your trip! A full day dedicated to trekking and observing a mountain gorilla family in their natural habitat." },
+      { "day": 5, "activity": "Relaxation or Community Walk", "description": "A day to relax after the trek, or opt for a guided community walk to learn about the local Bakiga and Batwa cultures." },
+      { "day": 6, "activity": "Travel to Lake Mburo", "description": "Break the journey back to Kampala with a stop at Lake Mburo National Park, known for its zebras and cycling safaris." },
+      { "day": 7, "activity": "Morning Game Walk & Departure", "description": "Enjoy a morning walking safari in Lake Mburo before continuing your journey back to Kampala/Entebbe." }
+    ]
+  },
+  {
+    "slug": "ultimate",
+    "title": "Ultimate Safari",
+    "subtitle": "A grand tour of Uganda's premier western parks, featuring savannah, forests, and incredible wildlife.",
+    "price": "8000",
+    "priceDescription": "per person",
+    "duration": "10 Days / 9 Nights",
+    "imageUrl": "campaignQueenElizabeth",
+    "description": "The Ultimate Safari is a comprehensive journey through the highlights of Western Uganda. Starting with the powerful Murchison Falls, you'll experience classic savannah game drives and a Nile boat safari. You'll then head to Kibale for chimpanzee trekking before exploring the diverse ecosystems of Queen Elizabeth National Park, famous for its tree-climbing lions and the Kazinga Channel. This tour offers an unparalleled diversity of landscapes and wildlife.",
+    "includedTours": ["3", "4", "2"],
+    "sampleItinerary": [
+      { "day": 1, "activity": "Travel to Murchison Falls NP", "description": "Drive north from Kampala, stopping at the Ziwa Rhino Sanctuary en route. Continue to your lodge near Murchison Falls." },
+      { "day": 2, "activity": "Murchison Game Drive & Boat Safari", "description": "Morning game drive on the northern bank. In the afternoon, take a boat safari on the Nile to the base of the falls." },
+      { "day": 3, "activity": "Top of the Falls & Travel to Kibale", "description": "Visit the top of Murchison Falls, then begin the scenic drive south towards the Kibale Forest region." },
+      { "day": 4, "activity": "Chimpanzee Trekking", "description": "Track chimpanzees in Kibale Forest National Park, followed by an afternoon walk in the Bigodi Wetlands." },
+      { "day": 5, "activity": "Travel to Queen Elizabeth NP", "description": "Short drive to Queen Elizabeth National Park, with an evening game drive upon arrival." },
+      { "day": 6, "activity": "Kazinga Channel & Game Drive", "description": "Morning game drive in the Kasenyi plains. In the afternoon, enjoy a boat cruise along the famous Kazinga Channel." },
+      { "day": 7, "activity": "Ishasha's Tree-Climbing Lions", "description": "Drive to the southern Ishasha sector of the park to search for the famous tree-climbing lions." },
+      { "day": 8, "activity": "Travel to Lake Bunyonyi", "description": "Travel to the stunningly beautiful Lake Bunyonyi for an afternoon of relaxation, canoeing or swimming." },
+      { "day": 9, "activity": "Explore Lake Bunyonyi", "description": "Full day to explore the 'Lake of Little Birds' by canoe, visit various islands, or simply relax by the shore." },
+      { "day": 10, "activity": "Return to Kampala", "description": "Enjoy a final scenic breakfast before your journey back to Kampala/Entebbe, with a stop at the Equator." }
+    ]
+  },
+  {
+    "slug": "super-combi",
+    "title": "Super Combi Package",
+    "subtitle": "The definitive Ugandan safari, combining all major highlights from savannahs to primates.",
+    "price": "12000",
+    "priceDescription": "per person",
+    "duration": "14 Days / 13 Nights",
+    "imageUrl": "campaignKidepo",
+    "description": "For the traveler who wants to see it all, the Super Combi is our most comprehensive package. This epic 14-day journey covers the best of Uganda: the powerful Murchison Falls, chimpanzee trekking in Kibale, the diverse wildlife of Queen Elizabeth National Park, and the unforgettable mountain gorilla encounter in Bwindi Impenetrable Forest. This is the ultimate Ugandan wildlife and landscape experience.",
+    "includedTours": ["3", "4", "2", "1"],
+    "sampleItinerary": [
+      { "day": 1, "activity": "Arrival & Transfer to Murchison", "description": "Arrive and drive to Murchison Falls NP, stopping at Ziwa Rhino Sanctuary." },
+      { "day": 2, "activity": "Murchison Falls Exploration", "description": "Morning game drive and afternoon Nile boat safari to the base of the falls." },
+      { "day": 3, "activity": "Travel to Kibale Forest", "description": "Visit the top of the falls, then a long scenic drive to the Kibale region." },
+      { "day": 4, "activity": "Chimpanzee Trekking", "description": "Track chimpanzees in Kibale and explore Bigodi Wetland Sanctuary in the afternoon." },
+      { "day": 5, "activity": "Travel to Queen Elizabeth NP", "description": "Drive to Queen Elizabeth National Park, crossing the equator. Evening game drive." },
+      { "day": 6, "activity": "Queen Elizabeth Game & Boat", "description": "Morning game drive and afternoon boat cruise on the Kazinga Channel." },
+      { "day": 7, "activity": "Ishasha Sector", "description": "Head to the southern Ishasha sector to find the famous tree-climbing lions." },
+      { "day": 8, "activity": "Transfer to Bwindi", "description": "Morning game drive in Ishasha before transferring to Bwindi Impenetrable Forest." },
+      { "day": 9, "activity": "Gorilla Trekking", "description": "The ultimate wildlife experience: spend an hour with a mountain gorilla family." },
+      { "day": 10, "activity": "Relax or Community Visit", "description": "Rest day. Optional activities include a community walk or a visit to Lake Mutanda." },
+      { "day": 11, "activity": "Travel to Lake Mburo NP", "description": "Break the long journey with a stop at Lake Mburo National Park." },
+      { "day": 12, "activity": "Lake Mburo Walking Safari", "description": "Experience a unique walking safari among zebras and impalas. Afternoon boat trip." },
+      { "day": 13, "activity": "Morning cycle & travel to Entebbe", "description": "Enjoy an optional cycling safari before heading to your hotel in Entebbe." },
+      { "day": 14, "activity": "Departure", "description": "Depending on your flight schedule, visit the botanical gardens or wildlife center before your departure." }
+    ]
+  }
+]
