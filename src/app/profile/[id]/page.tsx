@@ -61,7 +61,7 @@ const profilesData: Profile[] = [
       { id: 'b1', title: 'A Lion\'s Tale: A Close Encounter', author: 'Ian Ivan', date: 'Nov 05, 2023', excerpt: 'The story of a thrilling and humbling afternoon spent observing a pride of lions in their natural habitat.', imageUrl: 'https://images.unsplash.com/photo-1549429355-2070c1b4122d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', dataAiHint: 'lion pride', tags: ['#BigCats', '#Serengeti'], commentCount: 18 },
     ],
     guidedTours: [
-      { id: '1', title: 'Serengeti Great Migration', shortDescription: 'Witness the epic annual migration of over a million wildebeest across the Serengeti plains.', image: 'campaignDetailWildebeest' },
+      { id: '3', title: 'Murchison Falls Safari – Uganda', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', image: 'campaignMurchison' },
     ],
   },
   {
@@ -133,7 +133,7 @@ const profilesData: Profile[] = [
     stats: [
       { label: 'Experience', value: '5 Yrs' },
       { label: 'Trips Coordinated', value: '200+' },
-      { label: 'Specialty', 'Ground Operations' },
+      { label: 'Specialty', value: 'Ground Operations' },
     ],
     isVerified: true,
     blogPosts: [],
