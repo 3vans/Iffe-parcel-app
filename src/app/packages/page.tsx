@@ -1,3 +1,4 @@
+
 'use client';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -85,8 +86,8 @@ export default function PackagesPage() {
         return (
             <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
                 <Card key={pkg.id} className={cn(
-                    "shadow-lg transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1 flex flex-col h-full bg-card/80 backdrop-blur-sm",
-                     pkg.isFeatured ? 'border-accent border-2 -translate-y-2' : ''
+                    "shadow-lg transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1 flex flex-col h-full bg-card/80 backdrop-blur-sm border-2 hover:border-accent",
+                     pkg.isFeatured ? 'border-accent -translate-y-2' : 'border-transparent'
                      )}>
                     {pkg.imageUrl && (
                         <div className="relative w-full h-56">
