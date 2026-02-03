@@ -1,6 +1,6 @@
 
 import { notFound } from 'next/navigation';
-import { getMockVideoData, type VideoItem } from '../videos/data';
+import { getMockVideoData, type VideoItem } from '@/app/videos/data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
