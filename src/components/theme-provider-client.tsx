@@ -23,11 +23,8 @@ export function ThemeProviderClient({ children }: { children: React.ReactNode })
     }
   }, [mounted]);
 
-  // To avoid a flash of unstyled content or the wrong theme, we can render nothing or a loader until mounted.
-  // This ensures the correct theme is applied before children are visible.
-  if (!mounted) {
-    return null; // Or return a loading skeleton if you prefer
-  }
-
+  // We render children even before mounting to ensure the server-rendered HTML
+  // matches the initial client-rendered HTML (both without theme side-effects applied yet).
+  // This fixes hydration errors where the entire app content was missing on the server.
   return <>{children}</>;
 }
