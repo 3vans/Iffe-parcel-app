@@ -11,7 +11,8 @@ import {
   doc, 
   updateDoc,
   where,
-  getDoc
+  getDoc,
+  limit
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
@@ -53,6 +54,20 @@ export interface VideoItem {
   duration?: string;
 }
 
+export interface Campaign {
+  id: string;
+  title: string;
+  shortDescription: string;
+  description: string;
+  imageUrl: string;
+  dataAiHint?: string;
+  region: 'Western' | 'Eastern' | 'Northern' | 'Central' | 'Other';
+  goal: number;
+  currentAmount: number;
+  tags: string[];
+  featured?: boolean;
+}
+
 // --- GALLERY ---
 
 export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
@@ -77,8 +92,11 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   return { id: docRef.id, src: downloadUrl };
 }
 
-export async function fetchGalleryImages(): Promise<GalleryImage[]> {
-  const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
+export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
+  let q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
+  if (count) {
+    q = query(q, limit(count));
+  }
   const querySnapshot = await getDocs(q);
   
   return querySnapshot.docs.map(doc => {
@@ -109,17 +127,20 @@ export async function deleteGalleryImage(id: string, storagePath?: string) {
 export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
   const docRef = await addDoc(collection(db, 'posts'), {
     ...data,
-    status: 'Published', // In real app, might start as 'Pending'
+    status: 'Published',
     commentCount: 0,
     createdAt: serverTimestamp(),
   });
   return docRef.id;
 }
 
-export async function fetchBlogPosts(status?: string): Promise<BlogPost[]> {
+export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
   let q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
   if (status && status !== 'all') {
     q = query(collection(db, 'posts'), where('status', '==', status), orderBy('createdAt', 'desc'));
+  }
+  if (count) {
+    q = query(q, limit(count));
   }
   
   const querySnapshot = await getDocs(q);
@@ -172,4 +193,24 @@ export async function fetchVideos(): Promise<VideoItem[]> {
 
 export async function deleteVideo(id: string) {
   await deleteDoc(doc(db, 'videos', id));
+}
+
+// --- CAMPAIGNS (TOURS) ---
+
+export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]> {
+  let q = query(collection(db, 'campaigns'), orderBy('createdAt', 'desc'));
+  if (featuredOnly) {
+    q = query(q, where('featured', '==', true));
+  }
+  
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Campaign));
+}
+
+export async function getCampaign(id: string): Promise<Campaign | null> {
+  const docSnap = await getDoc(doc(db, 'campaigns', id));
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() } as Campaign;
+  }
+  return null;
 }

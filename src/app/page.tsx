@@ -5,9 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Edit3, Lightbulb, MessageCircle, ArrowRight, MountainSnow, ShieldCheck, Package } from 'lucide-react';
-import BlogCard, { type BlogCardProps } from '@/components/blog-card';
-import EventCard, { type EventCardProps } from '@/components/event-card';
+import { Edit3, Lightbulb, MessageCircle, ArrowRight, MountainSnow, ShieldCheck, Package, Loader2 } from 'lucide-react';
+import BlogCard from '@/components/blog-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -17,110 +16,72 @@ import FifaCardCarousel from '@/components/fifa-card-carousel';
 import Hero from '@/components/layout/hero';
 import ERotaractSignupTrigger from '@/components/auth/erotaract-signup-trigger';
 import fifaCardData from '@/app/lib/fifa-card-data.json';
-
+import { fetchBlogPosts, fetchGalleryImages, type BlogPost, type GalleryImage } from '@/lib/services/cms-service';
 
 interface FeedItemBase {
   id: string;
-  type: 'creator' | 'room' | 'blog' | 'event';
+  type: 'creator' | 'blog' | 'gallery';
 }
 
 interface CreatorFeedItem extends FeedItemBase {
   type: 'creator';
   name: string;
   avatarUrl: string;
-  avatarWidth: number;
-  avatarHeight: number;
-  dataAiHint?: string;
   specialty: string;
   profileLink: string;
 }
 
-interface RoomFeedItem extends FeedItemBase {
-  type: 'room';
-  name: string;
-  topic: string;
-  chatLink: string;
-}
-
 interface BlogFeedItem extends FeedItemBase {
   type: 'blog';
-  post: BlogCardProps;
+  post: BlogPost;
 }
 
-interface EventFeedItem extends FeedItemBase {
-  type: 'event';
-  event: EventCardProps;
+interface GalleryFeedItem extends FeedItemBase {
+  type: 'gallery';
+  image: GalleryImage;
 }
 
-type FeedItem = CreatorFeedItem | RoomFeedItem | BlogFeedItem | EventFeedItem;
-
-const initialFeedItems: FeedItem[] = [
-  {
-    id: 'creator-1',
-    type: 'creator',
-    name: 'Ian Ivan',
-    avatarUrl: placeholderImages.homeCreatorJane.src,
-    avatarWidth: placeholderImages.homeCreatorJane.width,
-    avatarHeight: placeholderImages.homeCreatorJane.height,
-    dataAiHint: placeholderImages.homeCreatorJane.hint,
-    specialty: 'Expert Guide & Wildlife Photographer',
-    profileLink: '/profile/ian-ivan',
-  },
-  {
-    id: 'blog-1',
-    type: 'blog',
-    post: {
-      id: 'b1', 
-      title: 'A Lion\'s Tale: A Close Encounter',
-      author: 'Dr Ian',
-      date: 'Nov 05, 2025',
-      excerpt: 'The story of a thrilling and humbling afternoon spent observing a pride of lions in their natural habitat.',
-      imageUrl: 'https://images.unsplash.com/photo-1549429355-2070c1b4122d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      dataAiHint: 'lion pride',
-      tags: ['#BigCats', '#Serengeti'],
-      commentCount: 18,
-    }
-  },
-  {
-    id: 'room-1',
-    type: 'room',
-    name: 'Photography Tips & Tricks',
-    topic: 'Share your best wildlife shots and get advice from fellow photographers.',
-    chatLink: '/chat', 
-  },
-  {
-    id: 'event-1',
-    type: 'event',
-    event: {
-      id: 'e1', 
-      title: 'Kenya Big Five Safari - Group Departure',
-      date: 'Feb 15, 2025',
-      time: 'All Day Event',
-      location: 'Nairobi, Kenya',
-      type: 'Offline',
-      excerpt: 'Join our special group departure to track the Big Five in the Maasai Mara. Limited spots available!',
-      imageUrl: 'https://images.unsplash.com/photo-1521635343834-3564c4c47b59?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      dataAiHint: 'safari jeep',
-      rsvpLink: '#',
-      calendarLink: '#',
-    }
-  },
-  {
-    id: 'creator-2',
-    type: 'creator',
-    name: 'Reuben Traveller',
-    avatarUrl: placeholderImages.userEdward.src,
-    avatarWidth: placeholderImages.userEdward.width,
-    avatarHeight: placeholderImages.userEdward.height,
-    dataAiHint: placeholderImages.userEdward.hint,
-    specialty: 'Experienced Tour Guide',
-    profileLink: '/profile/reuben-traveller',
-  },
-];
+type FeedItem = CreatorFeedItem | BlogFeedItem | GalleryFeedItem;
 
 export default function Home() {
-    const [feedItems] = useState<FeedItem[]>(initialFeedItems);
+    const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [activeCarouselImage, setActiveCarouselImage] = useState<string | null>(null);
+
+    useEffect(() => {
+      const loadFeed = async () => {
+        setIsLoading(true);
+        try {
+          const [posts, images] = await Promise.all([
+            fetchBlogPosts('Published', 3),
+            fetchGalleryImages(2)
+          ]);
+
+          const items: FeedItem[] = [];
+          
+          posts.forEach(p => items.push({ id: p.id, type: 'blog', post: p }));
+          images.forEach(img => items.push({ id: img.id, type: 'gallery', image: img }));
+          
+          // Add a few static guides for flavor
+          items.push({
+            id: 'guide-1',
+            type: 'creator',
+            name: 'Ian Ivan',
+            avatarUrl: placeholderImages.homeCreatorJane.src,
+            specialty: 'Expert Guide & Wildlife Photographer',
+            profileLink: '/profile/ian-ivan',
+          });
+
+          // Shuffle or sort by relevance (here we just mix them)
+          setFeedItems(items.sort(() => Math.random() - 0.5));
+        } catch (err) {
+          console.error("Feed load error:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadFeed();
+    }, []);
 
     const AnimatedCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
         const [ref, isVisible] = useScrollAnimation();
@@ -169,82 +130,72 @@ export default function Home() {
         
         <section>
           <h2 className="font-headline text-3xl font-bold text-primary mb-6">From the Wild</h2>
-          <div className="space-y-8">
-            {feedItems.map((item) => {
-              if (item.type === 'creator') {
-                return (
-                  <AnimatedCard key={item.id}>
-                  <Card className="shadow-md transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 bg-card/80 backdrop-blur-sm">
-                    <CardHeader>
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage asChild src={item.avatarUrl} alt={item.name}>
-                            <Image src={item.avatarUrl} alt={item.name} width={item.avatarWidth} height={item.avatarHeight} data-ai-hint={item.dataAiHint} />
-                          </AvatarImage>
-                          <AvatarFallback>{item.name.substring(0,2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <CardTitle className="font-headline text-lg text-primary">{item.name}</CardTitle>
-                          <CardDescription className="text-xs">{item.specialty}</CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-3">Learn more about our expert guides and their experiences in the wild. Check out their profile for stories, photos, and upcoming tours.</p>
-                       <Button variant="outline" asChild size="sm">
-                         <Link href={item.profileLink}>
-                           View Profile <ArrowRight className="ml-2 h-4 w-4" />
-                         </Link>
-                       </Button>
-                    </CardContent>
-                  </Card>
-                  </AnimatedCard>
-                );
-              }
-              if (item.type === 'room') {
-                return (
-                  <AnimatedCard key={item.id}>
-                  <Card className="shadow-md transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 bg-card/80 backdrop-blur-sm">
-                    <CardHeader>
-                       <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-accent/20 rounded-full">
-                             <MessageCircle className="h-6 w-6 text-accent" />
-                          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          ) : (
+            <div className="space-y-8">
+              {feedItems.map((item) => {
+                if (item.type === 'creator') {
+                  return (
+                    <AnimatedCard key={item.id}>
+                    <Card className="shadow-md transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 bg-card/80 backdrop-blur-sm">
+                      <CardHeader>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={item.avatarUrl} alt={item.name} />
+                            <AvatarFallback>{item.name.substring(0,2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
                           <div>
-                              <CardTitle className="font-headline text-lg text-primary">{item.name}</CardTitle>
+                            <CardTitle className="font-headline text-lg text-primary">{item.name}</CardTitle>
+                            <CardDescription className="text-xs">{item.specialty}</CardDescription>
                           </div>
-                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-3">{item.topic}</p>
-                      <Button variant="default" asChild size="sm" className="bg-primary hover:bg-primary/90">
-                         <Link href={item.chatLink}>
-                           Join Discussion <ArrowRight className="ml-2 h-4 w-4" />
-                         </Link>
-                       </Button>
-                    </CardContent>
-                  </Card>
-                  </AnimatedCard>
-                );
-              }
-              if (item.type === 'blog') {
-                return (
-                    <AnimatedCard key={item.id}>
-                        <BlogCard {...item.post} />
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-3">Learn more about our expert guides and their experiences in the wild.</p>
+                         <Button variant="outline" asChild size="sm">
+                           <Link href={item.profileLink}>
+                             View Profile <ArrowRight className="ml-2 h-4 w-4" />
+                           </Link>
+                         </Button>
+                      </CardContent>
+                    </Card>
                     </AnimatedCard>
-                );
-              }
-              if (item.type === 'event') {
-                 return (
+                  );
+                }
+                if (item.type === 'blog') {
+                  return (
+                      <AnimatedCard key={item.id}>
+                          <BlogCard {...item.post} />
+                      </AnimatedCard>
+                  );
+                }
+                if (item.type === 'gallery') {
+                  return (
                     <AnimatedCard key={item.id}>
-                        <EventCard {...item.event} />
+                      <Card className="overflow-hidden bg-card/80 backdrop-blur-sm">
+                        <div className="relative aspect-video">
+                          <Image src={item.image.src} alt={item.image.alt} fill objectFit="cover" data-ai-hint={item.image.dataAiHint} />
+                          <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">Recent Photo</div>
+                        </div>
+                        <CardHeader>
+                          <CardTitle className="text-lg font-headline">{item.image.caption || "A moment from the wild"}</CardTitle>
+                          <CardDescription>{item.image.date}</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                           <Button variant="link" asChild className="p-0 text-accent">
+                             <Link href="/gallery">Explore Gallery <ArrowRight className="ml-1 h-4 w-4"/></Link>
+                           </Button>
+                        </CardFooter>
+                      </Card>
                     </AnimatedCard>
-                );
-              }
-              return null;
-            })}
-          </div>
-          {feedItems.length === 0 && (
+                  )
+                }
+                return null;
+              })}
+            </div>
+          )}
+          {!isLoading && feedItems.length === 0 && (
               <div className="text-center py-12">
                   <p className="text-xl text-muted-foreground">The feed is quiet right now... Why not start something?</p>
               </div>
