@@ -1,0 +1,455 @@
+{
+  "entities": {
+    "Package": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Package",
+      "type": "object",
+      "description": "Represents a base safari package offering different foundational experiences.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Package entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the safari package (e.g., 'Explorer', 'Adventurer')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of what the package includes and its highlights."
+        },
+        "basePrice": {
+          "type": "number",
+          "description": "The base price of this package in USD."
+        },
+        "duration": {
+          "type": "number",
+          "description": "The typical duration of the package in days."
+        },
+        "features": {
+          "type": "array",
+          "description": "A list of key features or inclusions of the package.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isPopular": {
+          "type": "boolean",
+          "description": "Indicates if this package is marked as popular for display purposes."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "basePrice",
+        "duration",
+        "features"
+      ]
+    },
+    "AddOn": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AddOn",
+      "type": "object",
+      "description": "Represents an optional add-on feature or service that can be added to a safari package.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AddOn entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the add-on (e.g., 'Gorilla Trekking', 'Luxury Lodge Upgrade')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of what the add-on provides."
+        },
+        "price": {
+          "type": "number",
+          "description": "The additional cost of this add-on in USD."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the add-on (e.g., 'activity', 'luxury', 'extension')."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "price",
+        "category"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/packages",
+        "definition": {
+          "entityName": "Package",
+          "schema": {
+            "$ref": "#/backend/entities/Package"
+          },
+          "description": "Publicly accessible list of predefined safari packages. All documents in this collection share a public read security posture."
+        }
+      },
+      {
+        "path": "/addons",
+        "definition": {
+          "entityName": "AddOn",
+          "schema": {
+            "$ref": "#/backend/entities/AddOn"
+          },
+          "description": "Publicly accessible list of available safari add-ons. All documents in this collection share a public read security posture."
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "User profiles, accessible by the user themselves or administrators. Ownership is determined by the `userId` wildcard matching `request.auth.uid`.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "AdminRole",
+          "schema": {
+            "$ref": "#/backend/entities/AdminRole"
+          },
+          "description": "Collection to store IDs of users with global administrative privileges. Authorization is based on document existence (DBAC). Read access to check roles is public, write is restricted to other admins.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user with admin role."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_creator/{userId}",
+        "definition": {
+          "entityName": "CreatorRole",
+          "schema": {
+            "$ref": "#/backend/entities/CreatorRole"
+          },
+          "description": "Collection to store IDs of users designated as 'Creators'. Authorization is based on document existence (DBAC). Read access is public, write is restricted to administrators.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user with creator role."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/campaigns",
+        "definition": {
+          "entityName": "Campaign",
+          "schema": {
+            "$ref": "#/backend/entities/Campaign"
+          },
+          "description": "Publicly viewable campaigns after administrator approval. Documents include `ownerId` for ownership-based authorization and a `status` field (e.g., 'PUBLISHED') to manage visibility and approval workflow. Also includes a `members` map for campaign-specific collaborators (denormalized for authorization independence)."
+        }
+      },
+      {
+        "path": "/users/{userId}/campaign_drafts/{campaignDraftId}",
+        "definition": {
+          "entityName": "Campaign",
+          "schema": {
+            "$ref": "#/backend/entities/Campaign"
+          },
+          "description": "Campaigns created by a user, still in draft or pending review. Owned by `{userId}` based on the path. This collection ensures separation of concerns between private drafts and public campaigns. Includes `ownerId` (matching path `{userId}`) and `status`.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns the draft campaign."
+            },
+            {
+              "name": "campaignDraftId",
+              "description": "The unique ID of the campaign draft."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/campaigns/{campaignId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Comments made on a specific campaign. Includes `userId` of the commenter for ownership rules.",
+          "params": [
+            {
+              "name": "campaignId",
+              "description": "The unique ID of the parent campaign."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique ID of the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/campaigns/{campaignId}/volunteers/{volunteerId}",
+        "definition": {
+          "entityName": "Volunteer",
+          "schema": {
+            "$ref": "#/backend/entities/Volunteer"
+          },
+          "description": "Records users who have volunteered for a specific campaign. The document ID (`volunteerId`) is the `userId` of the volunteer. Includes `userId` and `status`.",
+          "params": [
+            {
+              "name": "campaignId",
+              "description": "The unique ID of the parent campaign."
+            },
+            {
+              "name": "volunteerId",
+              "description": "The unique ID of the volunteer (matching `userId`)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/blogs",
+        "definition": {
+          "entityName": "BlogPost",
+          "schema": {
+            "$ref": "#/backend/entities/BlogPost"
+          },
+          "description": "Publicly viewable blog posts after administrator approval. Documents include `ownerId` for ownership-based authorization and a `status` field (e.g., 'PUBLISHED') to manage visibility and approval workflow."
+        }
+      },
+      {
+        "path": "/users/{userId}/blog_drafts/{blogDraftId}",
+        "definition": {
+          "entityName": "BlogPost",
+          "schema": {
+            "$ref": "#/backend/entities/BlogPost"
+          },
+          "description": "Blog posts created by a user, still in draft or pending review. Owned by `{userId}` based on the path. This collection ensures separation of concerns between private drafts and public posts. Includes `ownerId` (matching path `{userId}`) and `status`.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns the draft blog post."
+            },
+            {
+              "name": "blogDraftId",
+              "description": "The unique ID of the blog post draft."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/blogs/{blogPostId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Comments made on a specific blog post. Includes `userId` of the commenter for ownership rules.",
+          "params": [
+            {
+              "name": "blogPostId",
+              "description": "The unique ID of the parent blog post."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique ID of the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/chatrooms",
+        "definition": {
+          "entityName": "Chatroom",
+          "schema": {
+            "$ref": "#/backend/entities/Chatroom"
+          },
+          "description": "Publicly discoverable chatrooms. Each chatroom document includes `creatorId`, a `members` map (denormalized) for authorization independence for messages, and an `isPublic` flag."
+        }
+      },
+      {
+        "path": "/chatrooms/{chatroomId}/messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Messages within a specific chatroom. For authorization independence, each message document *must* denormalize the `members` map from its parent `chatroom` (as `chatroomMembers`) and `chatroomCreatorId` to facilitate atomic rules without `get()`. Includes `senderId` for ownership of messages.",
+          "params": [
+            {
+              "name": "chatroomId",
+              "description": "The unique ID of the parent chatroom."
+            },
+            {
+              "name": "messageId",
+              "description": "The unique ID of the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/events",
+        "definition": {
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "description": "Publicly viewable upcoming events and live sessions. Includes `organizerId` and `status` fields."
+        }
+      },
+      {
+        "path": "/events/{eventId}/rsvps/{userId}",
+        "definition": {
+          "entityName": "RSVP",
+          "schema": {
+            "$ref": "#/backend/entities/RSVP"
+          },
+          "description": "Records users who have RSVP'd for a specific event. The document ID (`userId`) is the unique ID of the user. Includes `userId` and `status`.",
+          "params": [
+            {
+              "name": "eventId",
+              "description": "The unique ID of the parent event."
+            },
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who RSVP'd."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/idea_box",
+        "definition": {
+          "entityName": "Idea",
+          "schema": {
+            "$ref": "#/backend/entities/Idea"
+          },
+          "description": "User-submitted project ideas. Includes `ownerId` for ownership rules and `status` for review/voting workflow."
+        }
+      },
+      {
+        "path": "/idea_box/{ideaId}/votes/{userId}",
+        "definition": {
+          "entityName": "Vote",
+          "schema": {
+            "$ref": "#/backend/entities/Vote"
+          },
+          "description": "Records votes for a specific idea. The document ID (`userId`) is the unique ID of the user. Ensures one vote per user per idea.",
+          "params": [
+            {
+              "name": "ideaId",
+              "description": "The unique ID of the parent idea."
+            },
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who voted."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/feedback_board",
+        "definition": {
+          "entityName": "Feedback",
+          "schema": {
+            "$ref": "#/backend/entities/Feedback"
+          },
+          "description": "User-submitted feedback for platform improvement. Includes `ownerId` for ownership rules. Read access is restricted to administrators."
+        }
+      },
+      {
+        "path": "/creator_profiles",
+        "definition": {
+          "entityName": "CreatorProfile",
+          "schema": {
+            "$ref": "#/backend/entities/CreatorProfile"
+          },
+          "description": "Public profiles for users designated as 'Creators'. The document ID is the `userId` of the creator. Includes `userId` for ownership-based authorization."
+        }
+      },
+      {
+        "path": "/users/{userId}/followed_creators/{creatorId}",
+        "definition": {
+          "entityName": "FollowedCreator",
+          "schema": {
+            "$ref": "#/backend/entities/FollowedCreator"
+          },
+          "description": "Records creators followed by a specific user. Owned by `{userId}` based on the path. The document ID is the `creatorId` of the followed creator.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who is following."
+            },
+            {
+              "name": "creatorId",
+              "description": "The unique ID of the creator being followed."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/followed_rooms/{chatroomId}",
+        "definition": {
+          "entityName": "FollowedChatroom",
+          "schema": {
+            "$ref": "#/backend/entities/FollowedChatroom"
+          },
+          "description": "Records chatrooms followed by a specific user. Owned by `{userId}` based on the path. The document ID is the `chatroomId` of the followed chatroom.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who is following."
+            },
+            {
+              "name": "chatroomId",
+              "description": "The unique ID of the chatroom being followed."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/bookmarks/{bookmarkId}",
+        "definition": {
+          "entityName": "Bookmark",
+          "schema": {
+            "$ref": "#/backend/entities/Bookmark"
+          },
+          "description": "Personal bookmarks for content (e.g., campaigns, blog posts) for a specific user. Owned by `{userId}` based on the path. The document ID is a unique `bookmarkId`.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns the bookmark."
+            },
+            {
+              "name": "bookmarkId",
+              "description": "The unique ID of the bookmark."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to adhere strictly to the core design principles, particularly Authorization Independence and enabling efficient Queryable Access Patterns (QAPs). The primary strategy for achieving authorization independence is **denormalization**, where relevant authorization context (like `ownerId` or `members` maps) is copied directly into documents that require access control based on that context. This eliminates the need for expensive and non-atomic `get()` operations in security rules, making rules simpler, more robust, and easier to debug.\n\n**Authorization Independence through Denormalization:**\n*   **Collaborative Data (e.g., Chatroom Messages):** For collections like `/chatrooms/{chatroomId}/messages/{messageId}`, each `message` document will include a denormalized `chatroomMembers` map (a copy of the parent `chatroom`'s `members` map) and `chatroomCreatorId`. This allows security rules to evaluate read/write permissions for messages solely based on the message document's data, without performing a `get()` call to the parent `chatroom` document. This is critical for maintaining atomic operations and rule clarity.\n*   **User-Owned Subcollections:** Paths like `/users/{userId}/campaign_drafts/{campaignDraftId}` inherently provide authorization independence. The `userId` in the path segment directly corresponds to `request.auth.uid`, making ownership checks simple and efficient for documents within these subcollections.\n*   **Top-Level Collections (e.g., Campaigns, Blogs):** Documents in `/campaigns` and `/blogs` include an `ownerId` and a `status` field. This enables direct, self-contained rules for creation, modification, and publishing, where a document's own data dictates its authorization, preventing reliance on a separate parent document's state.\n\n**Supporting Queryable Access Patterns (QAPs):**\n*   **Structural Segregation:** Data with different security postures is separated into distinct collections or subcollections. For instance, `/packages` and `/addons` are public read, while `/users/{userId}/campaign_drafts` is private to the user. This ensures that a `list` operation on a collection implicitly operates on documents with a uniform security requirement, allowing rules to `allow list` without server-side filtering.\n*   **Status Fields:** Collections like `/campaigns` and `/blogs` utilize a `status` field (e.g., 'DRAFT', 'PENDING_REVIEW', 'PUBLISHED'). Public queries are explicitly restricted by rules to `status == 'PUBLISHED'`, meaning the client-side query itself requests only published items, and the rule enforces that the *requested* items meet this criterion, rather than filtering a broader set on the server.\n*   **Membership Maps for `list` operations:** For chatrooms, while the top-level `/chatrooms` collection is publicly readable for discovery, access to actual messages in `/chatrooms/{chatroomId}/messages` is guarded by the denormalized `chatroomMembers` map. A `list` operation on messages is allowed if `request.auth.uid` is present in `resource.data.chatroomMembers`. The rule is clear and applies uniformly to all messages being listed, thus fulfilling the QAP principle.\n*   **DBAC (Database Access Control):** Global roles are managed via dedicated collections like `/roles_admin/{userId}`. Checking for admin privileges involves a simple `exists()` check in security rules (`exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid))`), which is highly efficient and supports QAPs as it's not filtering data but verifying an identity's role."
+  }
+}

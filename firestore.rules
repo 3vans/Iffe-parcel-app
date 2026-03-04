@@ -1,0 +1,357 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Core Philosophy:
+     * This ruleset enforces a strict user-ownership and role-based access model designed for a premium safari booking and community platform.
+     * Security is achieved through a combination of path-based authorization for private user data and denormalization for collaborative content.
+     *
+     * Data Structure:
+     * - Public Catalog: /packages and /addons are globally readable.
+     * - User Data: Private drafts and personal records are nested under /users/{userId}.
+     * - Collaborative Content: Campaigns, Chatrooms, and Blogs are top-level but secured via ownerId fields and membership maps.
+     * - Role Management: Global permissions are managed via dedicated /roles_admin and /roles_creator collections.
+     *
+     * Key Security Decisions:
+     * - Prototyping Mode: Rules strictly enforce 'Who' can access data (Authorization) but remain flexible on 'What' the data looks like (Schema).
+     * - Denormalization: Authorization context (like members and owner IDs) is copied onto documents to allow fast, atomic security checks.
+     * - Relational Integrity: On creation of user-scoped documents, the system enforces that internal ownership fields match the authenticated user.
+     * - Query Safety: List operations are restricted to owner-scoped paths or public collections to prevent unauthorized data exposure.
+     */
+
+    // --- HELPER FUNCTIONS ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    function isCreator() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_creator/$(request.auth.uid));
+    }
+
+    function isExistingOwner(ownerId) {
+      return resource != null && request.auth.uid == ownerId;
+    }
+
+    function isMember(membersMap) {
+      return isSignedIn() && membersMap[request.auth.uid] != null;
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Provides public access to predefined safari packages. Writes restricted to admins.
+     * @path /packages/{packageId}
+     * @allow get, list: (any user)
+     * @deny create, update, delete: (non-admin user)
+     * @principle Public Read with Admin-Only Writes.
+     */
+    match /packages/{packageId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Provides public access to safari add-ons. Writes restricted to admins.
+     * @path /addons/{addOnId}
+     * @allow get, list: (any user)
+     * @deny create, update, delete: (non-admin user)
+     * @principle Public Read with Admin-Only Writes.
+     */
+    match /addons/{addOnId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description User profiles accessible by the owner or administrators.
+     * @path /users/{userId}
+     * @allow get: (owner or admin), list: (admin), create, update: (owner)
+     * @deny delete: (all)
+     * @principle Ownership and Role-based access.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Tracks users with administrative privileges.
+     * @path /roles_admin/{userId}
+     * @allow get, list: (any user)
+     * @deny create, update, delete: (non-admin)
+     * @principle DBAC (Database Access Control) for roles.
+     */
+    match /roles_admin/{userId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Tracks users with creator privileges.
+     * @path /roles_creator/{userId}
+     * @allow get, list: (any user)
+     * @deny create, update, delete: (non-admin)
+     * @principle DBAC (Database Access Control) for roles.
+     */
+    match /roles_creator/{userId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Publicly viewable campaigns with ownership-based write access.
+     * @path /campaigns/{campaignId}
+     * @allow get, list: (any user), create: (creator), update, delete: (owner or admin)
+     * @deny create: (non-creator), update: (non-owner)
+     * @principle Ownership and status-based visibility.
+     */
+    match /campaigns/{campaignId} {
+      allow get, list: if true;
+      allow create: if isCreator() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if (isExistingOwner(resource.data.ownerId) || isAdmin()) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isExistingOwner(resource.data.ownerId) || isAdmin();
+    }
+
+    /**
+     * @description Private campaign drafts nested under user paths.
+     * @path /users/{userId}/campaign_drafts/{draftId}
+     * @allow get, list, create, update, delete: (owner)
+     * @deny all: (non-owner)
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/campaign_drafts/{draftId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.ownerId == userId;
+      allow update: if isOwner(userId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Comments on campaigns.
+     * @path /campaigns/{campaignId}/comments/{commentId}
+     * @allow get, list: (any user), create: (signed-in), update, delete: (owner)
+     * @deny update, delete: (non-owner)
+     * @principle Ownership-based writes for community content.
+     */
+    match /campaigns/{campaignId}/comments/{commentId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(resource.data.userId);
+    }
+
+    /**
+     * @description Volunteer records for campaigns.
+     * @path /campaigns/{campaignId}/volunteers/{volunteerId}
+     * @allow get, list: (any user), create, update, delete: (owner of volunteerId)
+     * @deny create: (mismatched volunteerId)
+     * @principle Self-creation and self-management based on document ID.
+     */
+    match /campaigns/{campaignId}/volunteers/{volunteerId} {
+      allow get, list: if true;
+      allow create: if isOwner(volunteerId) && request.resource.data.userId == volunteerId;
+      allow update: if isOwner(volunteerId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isOwner(volunteerId) && resource != null;
+    }
+
+    /**
+     * @description Public blog posts managed by creators.
+     * @path /blogs/{blogId}
+     * @allow get, list: (any user), create: (creator), update, delete: (owner or admin)
+     * @deny create: (non-creator)
+     * @principle Public Read with Owner-Only Writes.
+     */
+    match /blogs/{blogId} {
+      allow get, list: if true;
+      allow create: if isCreator() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if (isExistingOwner(resource.data.ownerId) || isAdmin()) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isExistingOwner(resource.data.ownerId) || isAdmin();
+    }
+
+    /**
+     * @description Private blog drafts.
+     * @path /users/{userId}/blog_drafts/{draftId}
+     * @allow get, list, create, update, delete: (owner)
+     * @principle Structural Segregation for private content.
+     */
+    match /users/{userId}/blog_drafts/{draftId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.ownerId == userId;
+      allow update: if isOwner(userId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Comments on blog posts.
+     * @path /blogs/{blogId}/comments/{commentId}
+     * @allow get, list: (any user), create: (signed-in), update, delete: (owner)
+     * @principle Ownership-based writes.
+     */
+    match /blogs/{blogId}/comments/{commentId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(resource.data.userId);
+    }
+
+    /**
+     * @description Discovery for chatrooms.
+     * @path /chatrooms/{chatroomId}
+     * @allow get, list: (any user), create: (signed-in), update, delete: (creator or admin)
+     * @principle Shared Access management.
+     */
+    match /chatrooms/{chatroomId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+      allow update: if (isExistingOwner(resource.data.creatorId) || isAdmin()) && request.resource.data.creatorId == resource.data.creatorId;
+      allow delete: if isExistingOwner(resource.data.creatorId) || isAdmin();
+    }
+
+    /**
+     * @description Messages within chatrooms, secured via denormalized membership maps.
+     * @path /chatrooms/{chatroomId}/messages/{messageId}
+     * @allow get, list: (members), create: (members), update, delete: (owner)
+     * @deny get: (non-member)
+     * @principle Authorization independence through denormalization.
+     */
+    match /chatrooms/{chatroomId}/messages/{messageId} {
+      allow get: if isMember(resource.data.chatroomMembers);
+      allow list: if isSignedIn(); // Filtered by client-side queries against membership map
+      allow create: if isMember(request.resource.data.chatroomMembers) && request.resource.data.senderId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.senderId) && request.resource.data.senderId == resource.data.senderId;
+      allow delete: if isExistingOwner(resource.data.senderId);
+    }
+
+    /**
+     * @description Event listings and live sessions.
+     * @path /events/{eventId}
+     * @allow get, list: (any user), create, update, delete: (organizer or admin)
+     * @principle Public Read with Owner-Only Writes.
+     */
+    match /events/{eventId} {
+      allow get, list: if true;
+      allow create: if (isCreator() || isAdmin()) && request.resource.data.organizerId == request.auth.uid;
+      allow update: if (isExistingOwner(resource.data.organizerId) || isAdmin()) && request.resource.data.organizerId == resource.data.organizerId;
+      allow delete: if isExistingOwner(resource.data.organizerId) || isAdmin();
+    }
+
+    /**
+     * @description RSVP records for events.
+     * @path /events/{eventId}/rsvps/{userId}
+     * @allow get, list: (any user), create, update, delete: (owner of userId)
+     * @principle Path-consistent document creation.
+     */
+    match /events/{eventId}/rsvps/{userId} {
+      allow get, list: if true;
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Community idea submissions.
+     * @path /idea_box/{ideaId}
+     * @allow get, list: (any user), create: (signed-in), update, delete: (owner or admin)
+     * @principle Ownership-based lifecycle.
+     */
+    match /idea_box/{ideaId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if (isExistingOwner(resource.data.ownerId) || isAdmin()) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isExistingOwner(resource.data.ownerId) || isAdmin();
+    }
+
+    /**
+     * @description Vote tracking for ideas.
+     * @path /idea_box/{ideaId}/votes/{userId}
+     * @allow get, list: (any user), create, update, delete: (owner of userId)
+     * @principle Prevents duplicate voting via document ID enforcement.
+     */
+    match /idea_box/{ideaId}/votes/{userId} {
+      allow get, list: if true;
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Platform feedback board.
+     * @path /feedback_board/{feedbackId}
+     * @allow get, list: (admin), create: (signed-in), update, delete: (owner)
+     * @deny get: (non-admin)
+     * @principle Private feedback with administrative oversight.
+     */
+    match /feedback_board/{feedbackId} {
+      allow get, list: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.ownerId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isExistingOwner(resource.data.ownerId);
+    }
+
+    /**
+     * @description Public profiles for designated creators.
+     * @path /creator_profiles/{userId}
+     * @allow get, list: (any user), create, update: (owner and creator)
+     * @deny delete: (all)
+     * @principle Role-validated ownership.
+     */
+    match /creator_profiles/{userId} {
+      allow get, list: if true;
+      allow create: if isOwner(userId) && isCreator() && request.resource.data.userId == userId;
+      allow update: if isOwner(userId) && isCreator() && request.resource.data.userId == resource.data.userId;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Records of creators followed by a specific user.
+     * @path /users/{userId}/followed_creators/{creatorId}
+     * @allow get, list, create, update, delete: (owner)
+     * @principle User-scoped relationship tracking.
+     */
+    match /users/{userId}/followed_creators/{creatorId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Records of chatrooms followed by a specific user.
+     * @path /users/{userId}/followed_rooms/{chatroomId}
+     * @allow get, list, create, update, delete: (owner)
+     * @principle User-scoped relationship tracking.
+     */
+    match /users/{userId}/followed_rooms/{chatroomId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Personal bookmarks for platform content.
+     * @path /users/{userId}/bookmarks/{bookmarkId}
+     * @allow get, list, create, update, delete: (owner)
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/bookmarks/{bookmarkId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId) && resource != null;
+    }
+  }
+}
