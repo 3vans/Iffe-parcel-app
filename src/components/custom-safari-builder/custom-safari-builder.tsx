@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -16,13 +15,6 @@ const categoryIcons: Record<string, any> = {
   'Adventure': Zap,
   'Culture': UsersIcon,
   'Default': Star
-};
-
-const regionIcons: Record<string, any> = {
-  'Central': MapPin,
-  'Western': MapPin,
-  'Eastern': MapPin,
-  'Northern': MapPin
 };
 
 interface CustomSafariBuilderProps {
@@ -72,6 +64,17 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
     setSelectedAddonIds(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
+  };
+
+  const toggleRegion = (items: Addon[]) => {
+    const itemIds = items.map(i => i.id);
+    const allInRegionSelected = itemIds.every(id => selectedAddonIds.includes(id));
+    
+    if (allInRegionSelected) {
+      setSelectedAddonIds(prev => prev.filter(id => !itemIds.includes(id)));
+    } else {
+      setSelectedAddonIds(prev => Array.from(new Set([...prev, ...itemIds])));
+    }
   };
 
   const handleBooking = () => {
@@ -195,9 +198,22 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                           {Object.entries(regions).map(([regionName, items]) => (
                             <div key={regionName} className="space-y-4">
                               {regionName !== 'General' && (
-                                <h4 className="text-xs font-black text-stone-500 uppercase tracking-[0.3em] flex items-center gap-2">
-                                  <MapPin className="h-3 w-3 text-accent" /> {regionName} Region
-                                </h4>
+                                <div className="flex items-center justify-between">
+                                  <h4 className="text-xs font-black text-stone-500 uppercase tracking-[0.3em] flex items-center gap-2">
+                                    <MapPin className="h-3 w-3 text-accent" /> {regionName} Region
+                                  </h4>
+                                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                                    <Checkbox 
+                                      id={`select-all-${regionName}`}
+                                      checked={items.every(item => selectedAddonIds.includes(item.id))}
+                                      onCheckedChange={() => toggleRegion(items)}
+                                      className="h-3 w-3 data-[state=checked]:bg-accent data-[state=checked]:border-accent border-white/20"
+                                    />
+                                    <label htmlFor={`select-all-${regionName}`} className="text-[10px] font-black text-stone-400 uppercase tracking-wider cursor-pointer">
+                                      All <span className="text-accent/60">(discount price)</span>
+                                    </label>
+                                  </div>
+                                </div>
                               )}
                               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                 {items.map((item) => (
