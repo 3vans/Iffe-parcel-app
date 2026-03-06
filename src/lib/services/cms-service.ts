@@ -139,15 +139,32 @@ export async function fetchAddons(): Promise<Addon[]> {
   
   if (snapshot.empty) {
     return [
+      // Wildlife Category (As requested)
       { id: 'gorilla', name: 'Gorilla Trekking', price: 700, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
-      { id: 'chimp', name: 'Chimp Tracking', price: 250, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
+      { id: 'chimp', name: 'Chimpanzee Tracking', price: 250, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
+      { id: 'golden_monkey', name: 'Golden Monkey Tracking', price: 100, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      { id: 'big_five', name: 'Big Five Game Drive', price: 150, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      { id: 'rhino_tracking', name: 'Rhino Tracking', price: 100, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      { id: 'bird_watching', name: 'Bird Watching Safari', price: 80, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      { id: 'night_game', name: 'Night Game Drive', price: 120, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      { id: 'predator_tracking', name: 'Predator Tracking Experience', price: 200, category: 'activity', subCategory: 'Wildlife', isActive: true },
+      
+      // Adventure Category
       { id: 'rafting', name: 'Nile Rafting', price: 150, category: 'activity', subCategory: 'Adventure', isActive: true },
       { id: 'zipline', name: 'Mabira Ziplining', price: 80, category: 'activity', subCategory: 'Adventure', isActive: true },
+      { id: 'quad_bike', name: 'Quad Biking', price: 120, category: 'activity', subCategory: 'Adventure', isActive: true },
+      
+      // Culture Category
       { id: 'kampala_tour', name: 'Kampala City Tour', price: 50, category: 'activity', subCategory: 'Culture', isActive: true },
       { id: 'jinja_tour', name: 'Source of the Nile', price: 100, category: 'activity', subCategory: 'Culture', isActive: true },
+      { id: 'batwa_experience', name: 'Batwa Cultural Experience', price: 80, category: 'activity', subCategory: 'Culture', isActive: true },
+      
+      // Luxury Options
       { id: 'luxury_lodge', name: 'Luxury Lodge Upgrade', price: 1200, category: 'luxury', isActive: true },
       { id: 'private_guide', name: 'Private Safari Guide', price: 900, category: 'luxury', isActive: true },
       { id: 'private_cruiser', name: 'Private Land Cruiser', price: 1500, category: 'luxury', isActive: true },
+      
+      // Extensions
       { id: 'extra_2days', name: 'Extra 2 Days', price: 900, category: 'extension', isActive: true },
       { id: 'zanzibar', name: 'Zanzibar Beach Add-on', price: 2000, category: 'extension', isActive: true }
     ];
