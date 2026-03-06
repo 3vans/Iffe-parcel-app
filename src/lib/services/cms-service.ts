@@ -159,6 +159,10 @@ export async function fetchAddons(): Promise<Addon[]> {
     { id: 'mtn_hiking', name: 'Mountain Hiking', price: 200, category: 'activity', subCategory: 'Adventure', isActive: true },
     { id: 'volcano_trek', name: 'Volcano Trekking', price: 250, category: 'activity', subCategory: 'Adventure', isActive: true },
     { id: 'nature_trail', name: 'Nature Trail Exploration', price: 60, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'zip_lining', name: 'Zip Lining', price: 80, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'bungee_jumping', name: 'Bungee Jumping', price: 150, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'abseiling', name: 'Abseiling', price: 100, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'ballooning', name: 'Hot Air Ballooning', price: 450, category: 'activity', subCategory: 'Adventure', isActive: true },
     
     // Culture Category
     { id: 'kampala_tour', name: 'Kampala City Tour', price: 50, category: 'activity', subCategory: 'Culture', isActive: true },
