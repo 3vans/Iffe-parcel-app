@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -175,7 +176,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                       </div>
 
                       {isExpanded && (
-                        <div className="bg-stone-900/40 backdrop-blur-md border border-white/10 rounded-[2rem] p-4 animate-in slide-in-from-top-4 fade-in duration-300 grid grid-cols-2 gap-3">
+                        <div className="bg-stone-950/40 backdrop-blur-md border border-white/10 rounded-[2rem] p-4 animate-in slide-in-from-top-4 fade-in duration-300 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                           {items.map((item) => (
                             <div 
                               key={item.id}
