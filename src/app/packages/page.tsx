@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
@@ -9,6 +8,7 @@ import AnimatedSection from "@/components/animated-section";
 import TestimonialSection from "@/components/testimonial-section";
 import CustomSafariBuilder from "@/components/custom-safari-builder/custom-safari-builder";
 import { fetchBasePackages, fetchAddons, type Package as BuilderPackage } from "@/lib/services/cms-service";
+import { cn } from "@/lib/utils";
 
 interface PackageTier {
     id: string;
