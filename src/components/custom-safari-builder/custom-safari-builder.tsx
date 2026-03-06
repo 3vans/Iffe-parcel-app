@@ -150,7 +150,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                   const selectedCount = items.filter(item => selectedAddonIds.includes(item.id)).length;
 
                   return (
-                    <div key={category} className="space-y-4">
+                    <div key={category} className={cn("space-y-4 transition-all duration-500", isExpanded && "col-span-full")}>
                       <div 
                         className={cn(
                           "p-6 rounded-3xl border transition-all duration-500 cursor-pointer group relative overflow-hidden text-center",
