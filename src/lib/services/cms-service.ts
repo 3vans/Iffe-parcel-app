@@ -151,9 +151,14 @@ export async function fetchAddons(): Promise<Addon[]> {
     { id: 'predator_tracking', name: 'Predator Tracking Experience', price: 200, category: 'activity', subCategory: 'Wildlife', isActive: true },
     
     // Adventure Category
-    { id: 'rafting', name: 'Nile Rafting', price: 150, category: 'activity', subCategory: 'Adventure', isActive: true },
-    { id: 'zipline', name: 'Mabira Ziplining', price: 80, category: 'activity', subCategory: 'Adventure', isActive: true },
-    { id: 'quad_bike', name: 'Quad Biking', price: 120, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'safari_game_drive', name: 'Guided Safari Game Drive', price: 150, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'off_road_adventure', name: 'Off-Road Safari Adventure', price: 180, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'walking_safari', name: 'Walking Safari', price: 100, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'cycling_safari', name: 'Cycling Safari', price: 80, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'atv_safari', name: 'ATV / Quad Bike Safari', price: 120, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'mtn_hiking', name: 'Mountain Hiking', price: 200, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'volcano_trek', name: 'Volcano Trekking', price: 250, category: 'activity', subCategory: 'Adventure', isActive: true },
+    { id: 'nature_trail', name: 'Nature Trail Exploration', price: 60, category: 'activity', subCategory: 'Adventure', isActive: true },
     
     // Culture Category
     { id: 'kampala_tour', name: 'Kampala City Tour', price: 50, category: 'activity', subCategory: 'Culture', isActive: true },
