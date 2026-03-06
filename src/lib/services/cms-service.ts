@@ -88,7 +88,7 @@ export interface Addon {
   name: string;
   price: number;
   category: 'activity' | 'luxury' | 'extension';
-  subCategory?: 'Wildlife' | 'Adventure' | 'Culture';
+  subCategory?: 'Wildlife' | 'Adventure' | 'Culture' | 'Nature & Scenic';
   region?: 'Central' | 'Western' | 'Eastern' | 'Northern';
   bundleEligible?: boolean;
   isActive: boolean;
@@ -165,6 +165,14 @@ export async function fetchAddons(): Promise<Addon[]> {
     { id: 'abseiling', name: 'Abseiling', price: 100, category: 'activity', subCategory: 'Adventure', isActive: true },
     { id: 'ballooning', name: 'Hot Air Ballooning', price: 450, category: 'activity', subCategory: 'Adventure', isActive: true },
     
+    // Nature & Scenic Category
+    { id: 'np_scenic', name: 'National Park Scenic Tour', price: 120, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+    { id: 'waterfall_visit', name: 'Waterfall Visit', price: 50, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+    { id: 'canopy_walk', name: 'Forest Canopy Walk', price: 80, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+    { id: 'botanical_tour', name: 'Botanical Garden Tour', price: 40, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+    { id: 'sun_view', name: 'Sunrise or Sunset Viewing', price: 30, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+    { id: 'photo_safari', name: 'Photography Safari', price: 150, category: 'activity', subCategory: 'Nature & Scenic', isActive: true },
+
     // Culture Category - Central
     { id: 'kampala', name: 'Kampala City', price: 50, category: 'activity', subCategory: 'Culture', region: 'Central', isActive: true },
     { id: 'entebbe', name: 'Entebbe', price: 60, category: 'activity', subCategory: 'Culture', region: 'Central', isActive: true },

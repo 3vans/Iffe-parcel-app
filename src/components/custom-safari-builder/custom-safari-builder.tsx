@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin } from 'lucide-react';
+import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin, Mountain } from 'lucide-react';
 import { calculatePricing, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +15,7 @@ const categoryIcons: Record<string, any> = {
   'Wildlife': Bird,
   'Adventure': Zap,
   'Culture': UsersIcon,
+  'Nature & Scenic': Mountain,
   'Default': Star
 };
 
@@ -157,7 +159,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                 Step 2: Add Your Activities
               </h3>
 
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid sm:grid-cols-2 md:grid-cols-2 gap-6">
                 {Object.entries(groupedActivities).map(([category, regions]) => {
                   const Icon = categoryIcons[category] || categoryIcons.Default;
                   const isExpanded = expandedActivityCategory === category;
