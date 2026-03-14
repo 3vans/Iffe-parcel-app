@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -12,12 +11,12 @@ import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import HeroSection from '@/components/layout/hero-section';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { sendMessage, subscribeToMessages, type ChatMessage } from '@/lib/services/cms-service';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ChatPage() {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -46,24 +45,24 @@ export default function ChatPage() {
     e.preventDefault();
     if (newMessage.trim() === '') return;
     
-    if (!session?.user) {
+    if (!user) {
       toast({ title: "Login Required", description: "Please sign in to join the conversation.", variant: "destructive" });
       return;
     }
   
     const msgText = newMessage;
-    setNewMessage(''); // Clear input immediately for better UX
+    setNewMessage('');
 
     try {
       await sendMessage({
         text: msgText,
-        senderId: session.user.id,
-        senderName: session.user.name || 'Explorer',
-        senderAvatar: session.user.image || undefined,
+        senderId: user.uid,
+        senderName: user.displayName || user.email || 'Explorer',
+        senderAvatar: user.photoURL || undefined,
       });
     } catch (err) {
       toast({ title: "Failed to send message", variant: "destructive" });
-      setNewMessage(msgText); // Restore text on failure
+      setNewMessage(msgText);
     }
   };
 
@@ -81,7 +80,7 @@ export default function ChatPage() {
               <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
             ) : (
               messages.map((msg) => {
-                const isOwn = session?.user?.id === msg.senderId;
+                const isOwn = user?.uid === msg.senderId;
                 return (
                   <div
                     key={msg.id}
@@ -128,14 +127,14 @@ export default function ChatPage() {
           <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
             <Input
               type="text"
-              placeholder={session?.user ? "Type a message..." : "Please log in to chat"}
+              placeholder={user ? "Type a message..." : "Please log in to chat"}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               className="flex-grow h-10 sm:h-11"
               autoComplete="off"
-              disabled={!session?.user}
+              disabled={!user}
             />
-            <Button type="submit" size="icon" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 h-10 w-10 sm:h-11 sm:w-11" disabled={!session?.user}>
+            <Button type="submit" size="icon" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 h-10 w-10 sm:h-11 sm:w-11" disabled={!user}>
               <Send className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="sr-only">Send message</span>
             </Button>

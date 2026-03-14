@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, MessageSquare, ShieldCheck, Loader2 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -20,14 +19,13 @@ interface Message {
 }
 
 export default function DashboardChat() {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Simulated conversation fetch
     setTimeout(() => {
       setMessages([
         {
@@ -54,8 +52,8 @@ export default function DashboardChat() {
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      senderId: session?.user?.id || 'user',
-      senderName: session?.user?.name || 'Traveler',
+      senderId: user?.uid || 'user',
+      senderName: user?.displayName || user?.email || 'Traveler',
       text: input,
       createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -63,7 +61,6 @@ export default function DashboardChat() {
     setMessages([...messages, newMessage]);
     setInput('');
     
-    // Simulated support response
     setTimeout(() => {
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
@@ -99,7 +96,7 @@ export default function DashboardChat() {
       <ScrollArea className="flex-grow bg-muted/10 p-6">
         <div className="space-y-6">
           {messages.map((msg) => {
-            const isMe = msg.senderId === session?.user?.id;
+            const isMe = msg.senderId === user?.uid;
             return (
               <div key={msg.id} className={cn(
                 "flex items-start gap-3 max-w-[85%]",

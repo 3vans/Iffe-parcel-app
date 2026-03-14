@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -15,19 +14,19 @@ import Link from 'next/link';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { submitBlogPost } from '@/lib/services/cms-service';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 
 const blogPostSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long'),
   content: z.string().min(50, 'Story must be at least 50 characters long'),
-  tags: z.string().optional(), // Comma-separated tags
+  tags: z.string().optional(),
   imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
 
 type BlogPostFormValues = z.infer<typeof blogPostSchema>;
 
 export default function SubmitBlogPage() {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ref, isVisible] = useScrollAnimation();
@@ -45,7 +44,7 @@ export default function SubmitBlogPage() {
         title: data.title,
         content: data.content,
         excerpt: data.content.substring(0, 150) + '...',
-        author: session?.user?.name || 'Explorer',
+        author: user?.displayName || user?.email || 'Explorer',
         tags: tagsArray,
         imageUrl: data.imageUrl,
         dataAiHint: 'safari story',

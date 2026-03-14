@@ -9,13 +9,15 @@ import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { useSession, signOut } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuGroup } from '@/components/ui/dropdown-menu';
 
 
 const AppHeader = () => {
-  const { data: session, status } = useSession();
+  const { user } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [signupInitialStep, setSignupInitialStep] = useState<"user" | "community" | "erotaract" | null>(null);
@@ -34,10 +36,9 @@ const AppHeader = () => {
 
   const controlNavbar = useCallback(() => {
       const currentScrollY = window.scrollY;
-      // Hide header
       if (currentScrollY > lastScrollY.current && currentScrollY > headerHeight) {
         setShowNavbar(false);
-      } else { // Show header
+      } else {
         setShowNavbar(true);
       }
       lastScrollY.current = currentScrollY;
@@ -62,7 +63,7 @@ const AppHeader = () => {
   }
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' }); // Redirect to home after sign out
+    await signOut(auth);
     setIsMobileMenuOpen(false);
   };
 
@@ -169,17 +170,15 @@ const AppHeader = () => {
             </Button>
             
             <Separator orientation="vertical" className="h-6 mx-2 bg-border" />
-            {status === 'loading' ? (
-              <Button variant="outline" disabled>Loading...</Button>
-            ) : session?.user ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? "User"} data-ai-hint="profile avatar" />
-                          <AvatarFallback>{session.user.name?.substring(0,1).toUpperCase() ?? 'U'}</AvatarFallback>
+                          <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} data-ai-hint="profile avatar" />
+                          <AvatarFallback>{user.displayName?.substring(0,1).toUpperCase() ?? user.email?.substring(0,1).toUpperCase() ?? 'U'}</AvatarFallback>
                         </Avatar>
-                        <span className="hidden xl:inline">{session.user.name}</span>
+                        <span className="hidden xl:inline">{user.displayName || user.email}</span>
                         <ChevronDown className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -196,7 +195,7 @@ const AppHeader = () => {
                         <MountainSnow className="mr-2 h-4 w-4" /> My Trips
                        </Link>
                     </DropdownMenuItem>
-                    {session.user.role === 'admin' && (
+                    {user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
                       <>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>Admin Tools</DropdownMenuLabel>
@@ -208,7 +207,7 @@ const AppHeader = () => {
                       </>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>
+                    <DropdownMenuItem onClick={handleSignOut}>
                         <LogOutIcon className="mr-2 h-4 w-4" /> Sign Out
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -260,7 +259,7 @@ const AppHeader = () => {
                       </Link>
                     </SheetClose>
                   ))}
-                  {session?.user && (
+                  {user && (
                       <>
                        <Separator className="my-4" />
                         <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">My Account</p>
@@ -275,7 +274,7 @@ const AppHeader = () => {
                               </Link>
                             </SheetClose>
                         ))}
-                        {session.user.role === 'admin' && (
+                        {user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
                           <SheetClose asChild>
                             <Link
                               href="/admin"
@@ -291,9 +290,7 @@ const AppHeader = () => {
                 </nav>
                 <Separator className="my-2" />
                 <div className="p-4 space-y-3 border-t">
-                  {status === 'loading' ? (
-                    <Button variant="outline" className="w-full justify-start p-3 text-base" disabled>Loading...</Button>
-                  ) : session?.user ? (
+                  {user ? (
                     <SheetClose asChild>
                       <Button variant="outline" className="w-full justify-start p-3 text-base" onClick={handleSignOut}>
                         <LogOut className="mr-3 h-5 w-5 text-accent"/> Sign Out
@@ -319,8 +316,8 @@ const AppHeader = () => {
           </div>
         </nav>
       </header>
-      {!session?.user && <LoginModal open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen} />}
-      {!session?.user && <SignupModal open={isSignupModalOpen} onOpenChange={setIsSignupModalOpen} initialStep={signupInitialStep} />}
+      {!user && <LoginModal open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen} />}
+      {!user && <SignupModal open={isSignupModalOpen} onOpenChange={setIsSignupModalOpen} initialStep={signupInitialStep} />}
     </>
   );
 };
