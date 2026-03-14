@@ -11,15 +11,17 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
+          console.error("Missing credentials");
           return null;
         }
 
         const { email } = credentials;
         const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com';
         
-        // Use the logic from the reference: check if email matches admin
         const isAdmin = email.toLowerCase() === adminEmail.toLowerCase();
         
+        console.log(`Authenticating: ${email}, isAdmin: ${isAdmin}`);
+
         // For the prototype, we allow the admin to log in with any password.
         // For travelers, we expect the frontend to have already verified them with Firebase Auth.
         return {
@@ -33,6 +35,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -52,9 +55,10 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/',
-    error: '/',
+    error: '/api/auth/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);

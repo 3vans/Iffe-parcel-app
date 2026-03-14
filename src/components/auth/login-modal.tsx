@@ -34,7 +34,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
     const isAdminEmail = email.toLowerCase() === adminEmail.toLowerCase();
 
     try {
-      // 1. PHASE 2 Reference: For Travelers, verify with Firebase first
+      // 1. For Travelers, verify with Firebase first
       if (activeTab === 'user' && !isAdminEmail) {
         try {
           await signInWithEmailAndPassword(auth, email, password);
@@ -52,7 +52,8 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       });
 
       if (result?.error) {
-        throw new Error(result.error === 'CredentialsSignin' ? "Authentication service unavailable." : result.error);
+        console.error("NextAuth Error:", result.error);
+        throw new Error("Authentication failed. Please check your credentials.");
       }
 
       toast({
@@ -60,7 +61,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
         description: isAdminEmail ? "Welcome to the Administrative Engine." : "Welcome to your Traveler Dashboard.",
       });
 
-      // 3. PHASE 2 Reference: Redirect based on role
+      // 3. Redirect based on role
       onOpenChange(false);
       
       if (isAdminEmail) {
@@ -72,10 +73,10 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       setEmail('');
       setPassword('');
     } catch (error: any) {
-      console.error("Login Error:", error);
+      console.error("Submission Error:", error);
       toast({
         title: "Login Failed",
-        description: error.message || "Could not connect to authentication services.",
+        description: error.message || "An error occurred during sign in.",
         variant: "destructive",
       });
     } finally {
@@ -135,7 +136,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                 />
               </div>
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Accessing Hub...</> : "Login as Traveler"}
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Authenticating...</> : "Login as Traveler"}
               </Button>
             </form>
           </TabsContent>
