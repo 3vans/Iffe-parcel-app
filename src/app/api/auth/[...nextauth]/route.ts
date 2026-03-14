@@ -10,8 +10,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log("Auth request received for:", credentials?.email);
-        
         if (!credentials?.email || !credentials.password) {
           return null;
         }
@@ -19,14 +17,14 @@ export const authOptions: NextAuthOptions = {
         const { email } = credentials;
         const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com';
         
+        // Use the logic from the reference: check if email matches admin
         const isAdmin = email.toLowerCase() === adminEmail.toLowerCase();
         
-        console.log(`Processing auth for: ${email}. Role assigned: ${isAdmin ? 'admin' : 'user'}`);
-
-        // Return a user object that includes the role
+        // For the prototype, we allow the admin to log in with any password.
+        // For travelers, we expect the frontend to have already verified them with Firebase Auth.
         return {
-          id: isAdmin ? 'admin-uid' : 'user-uid',
-          name: isAdmin ? 'Platform Admin' : 'Traveler',
+          id: isAdmin ? 'admin-uid' : 'traveler-' + Date.now(),
+          name: isAdmin ? 'Platform Admin' : 'Iffe Traveler',
           email: email,
           role: isAdmin ? 'admin' : 'user',
         };

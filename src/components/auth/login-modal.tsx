@@ -11,6 +11,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation"; 
+import { Loader2 } from "lucide-react";
 
 interface LoginModalProps {
   open: boolean;
@@ -33,17 +34,17 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
     const isAdminEmail = email.toLowerCase() === adminEmail.toLowerCase();
 
     try {
-      // 1. For Travelers, try Firebase Auth first
-      if (!isAdminEmail && activeTab === 'user') {
+      // 1. PHASE 2 Reference: For Travelers, verify with Firebase first
+      if (activeTab === 'user' && !isAdminEmail) {
         try {
           await signInWithEmailAndPassword(auth, email, password);
         } catch (firebaseError: any) {
           console.error("Firebase Auth Error:", firebaseError);
-          throw new Error("Invalid traveler credentials. Please check your email and password.");
+          throw new Error("Invalid traveler credentials. Please ensure your account is created.");
         }
       }
 
-      // 2. Sign in to NextAuth session
+      // 2. Establish NextAuth session
       const result = await signIn('credentials', {
         redirect: false,
         email,
@@ -51,29 +52,30 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       });
 
       if (result?.error) {
-        throw new Error(result.error === 'CredentialsSignin' ? "Authentication failed. Please check your details." : result.error);
+        throw new Error(result.error === 'CredentialsSignin' ? "Authentication service unavailable." : result.error);
       }
 
       toast({
         title: "Login Successful!",
-        description: isAdminEmail ? "Welcome to the Administrative Dashboard." : "Welcome back, Traveler!",
+        description: isAdminEmail ? "Welcome to the Administrative Engine." : "Welcome to your Traveler Dashboard.",
       });
 
-      // Navigate based on role
+      // 3. PHASE 2 Reference: Redirect based on role
+      onOpenChange(false);
+      
       if (isAdminEmail) {
         router.push('/admin');
       } else {
         router.push('/dashboard');
       }
 
-      onOpenChange(false);
       setEmail('');
       setPassword('');
     } catch (error: any) {
       console.error("Login Error:", error);
       toast({
         title: "Login Failed",
-        description: error.message || "An error occurred during login. Please try again.",
+        description: error.message || "Could not connect to authentication services.",
         variant: "destructive",
       });
     } finally {
@@ -97,7 +99,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl text-primary">Login to iffe-travels</DialogTitle>
           <DialogDescription>
-            Access your account to manage your trips and stories.
+            Enter your credentials to access your protected dashboard.
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="user" className="w-full" onValueChange={handleTabChange}>
@@ -108,24 +110,24 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
           
           <TabsContent value="user">
             <form onSubmit={handleSubmit} className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="user-email">Email</Label>
+              <div className="space-y-2">
+                <Label htmlFor="user-email">Email Address</Label>
                 <Input 
                   id="user-email" 
                   type="email" 
-                  placeholder="you@example.com" 
+                  placeholder="traveler@example.com" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required 
                   disabled={isLoading}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="user-password">Password</Label>
                 <Input 
                   id="user-password" 
                   type="password" 
-                  placeholder="Your password"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required 
@@ -133,14 +135,14 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                 />
               </div>
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Login as Traveler"}
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Accessing Hub...</> : "Login as Traveler"}
               </Button>
             </form>
           </TabsContent>
           
           <TabsContent value="admin">
              <form onSubmit={handleSubmit} className="space-y-4 py-4">
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="admin-email">Admin Email</Label>
                 <Input 
                   id="admin-email" 
@@ -152,20 +154,20 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
                   disabled={isLoading}
                 />
               </div>
-              <div>
-                <Label htmlFor="admin-password">Password</Label>
+              <div className="space-y-2">
+                <Label htmlFor="admin-password">Secure Password</Label>
                 <Input 
                   id="admin-password" 
                   type="password" 
-                  placeholder="Enter admin password"
+                  placeholder="••••••••"
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)}
                   required 
                   disabled={isLoading}
                 />
               </div>
-              <Button type="submit" className="w-full bg-destructive hover:bg-destructive/90" disabled={isLoading}>
-                {isLoading ? "Validating Admin..." : "Login to Admin Panel"}
+              <Button type="submit" className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isLoading}>
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying Admin...</> : "Login to Admin Panel"}
               </Button>
             </form>
           </TabsContent>
