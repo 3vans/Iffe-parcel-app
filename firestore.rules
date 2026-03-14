@@ -1,79 +1,8 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isAdmin() {
-      return isSignedIn() && (
-        request.auth.token.email == "admin@iffe-travels.com" || 
-        exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid))
-      );
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    // Public Collections
-    match /packages/{packageId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    
-    match /campaigns/{campaignId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /posts/{postId} {
-      allow read: if true;
-      allow write: if isSignedIn();
-    }
-
-    match /gallery/{imageId} {
-      allow read: if true;
-      allow write: if isSignedIn();
-    }
-
-    // New Dashboard Collections
-    match /announcements/{announcementId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /user_documents/{docId} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow write: if isAdmin();
-    }
-
-    match /support_threads/{userId} {
-      allow read, write: if isSignedIn() && (userId == request.auth.uid || isAdmin());
-      
-      match /messages/{messageId} {
-        allow read, write: if isSignedIn() && (userId == request.auth.uid || isAdmin());
-      }
-    }
-
-    // Legacy/User Collections
-    match /users/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
-      allow create: if isSignedIn();
-      allow update: if isOwner(userId) || isAdmin();
-    }
-
-    match /ideas/{ideaId} {
-      allow read: if true;
-      allow write: if isSignedIn();
-    }
-
-    match /chats/{chatId} {
-      allow read: if true;
-      allow write: if isSignedIn();
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
