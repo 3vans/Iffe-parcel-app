@@ -237,13 +237,12 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                       "flex flex-col items-center gap-3 p-4 rounded-2xl transition-all duration-300 cursor-pointer group hover:bg-white/5 border border-white/5 text-center",
                                       selectedAddonIds.includes(item.id) && "bg-white/10 border-accent/30"
                                     )}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleAddon(item.id);
-                                    }}
+                                    onClick={() => toggleAddon(item.id)}
                                   >
                                     <Checkbox 
                                       checked={selectedAddonIds.includes(item.id)}
+                                      onCheckedChange={() => toggleAddon(item.id)}
+                                      onClick={(e) => e.stopPropagation()}
                                       className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-4 w-4 border-white/30"
                                     />
                                     <div className="flex flex-col items-center gap-1">
@@ -327,6 +326,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                     id={addon.id} 
                                     checked={selectedAddonIds.includes(addon.id)}
                                     onCheckedChange={() => toggleAddon(addon.id)}
+                                    onClick={(e) => e.stopPropagation()}
                                     className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-5 w-5 border-white/30"
                                   />
                                   <label className="text-xs font-bold text-stone-200 cursor-pointer group-hover:text-white transition-colors leading-tight">{addon.name}</label>

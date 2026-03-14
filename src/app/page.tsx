@@ -17,6 +17,7 @@ import Hero from '@/components/layout/hero';
 import ERotaractSignupTrigger from '@/components/auth/erotaract-signup-trigger';
 import fifaCardData from '@/app/lib/fifa-card-data.json';
 import { fetchBlogPosts, fetchGalleryImages, type BlogPost, type GalleryImage } from '@/lib/services/cms-service';
+import TestimonialSection from '@/components/testimonial-section';
 
 interface FeedItemBase {
   id: string;
@@ -220,6 +221,8 @@ export default function Home() {
                 }} 
             />
         </section>
+
+        <TestimonialSection />
       </div>
     </>
   );
