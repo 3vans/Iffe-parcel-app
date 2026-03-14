@@ -247,28 +247,31 @@ export async function fetchAddons(): Promise<Addon[]> {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Addon));
 }
 
-export function calculatePricing(basePackage: Package, selectedAddons: Addon[]) {
+export function calculatePricing(basePackage: Package, selectedAddons: Addon[], numPeople: number = 1) {
   const basePrice = basePackage.basePrice;
-  let addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+  let addonsTotalPerPerson = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
   
-  // Bundle Logic: 5% off Gorilla + Chimp
-  let discountAmount = 0;
+  // Bundle Logic: 5% off Gorilla + Chimp (applied per person)
+  let discountAmountPerPerson = 0;
   const hasGorilla = selectedAddons.some(a => a.id === 'gorilla');
   const hasChimp = selectedAddons.some(a => a.id === 'chimp');
   
   if (hasGorilla && hasChimp) {
     const wildlifeItems = selectedAddons.filter(a => a.id === 'gorilla' || a.id === 'chimp');
     const wildlifeSum = wildlifeItems.reduce((sum, item) => sum + item.price, 0);
-    discountAmount = wildlifeSum * 0.05;
+    discountAmountPerPerson = wildlifeSum * 0.05;
   }
 
-  const finalTotal = basePrice + addonsTotal - discountAmount;
+  const finalPerPerson = basePrice + addonsTotalPerPerson - discountAmountPerPerson;
+  const finalTotal = finalPerPerson * numPeople;
+  
   const tier = finalTotal > 10000 ? 'elite' : 'standard';
 
   return {
     basePrice,
-    addonsTotal,
-    discountAmount,
+    addonsTotal: addonsTotalPerPerson,
+    discountAmount: discountAmountPerPerson,
+    perPersonTotal: finalPerPerson,
     finalTotal,
     tier
   };

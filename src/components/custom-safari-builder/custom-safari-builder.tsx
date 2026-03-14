@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -5,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin, Mountain, Gem, MapPlus } from 'lucide-react';
+import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin, Mountain, Gem, MapPlus, UserPlus } from 'lucide-react';
 import { calculatePricing, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
 import { useToast } from '@/hooks/use-toast';
 
@@ -37,6 +40,7 @@ interface CustomSafariBuilderProps {
 
 export default function CustomSafariBuilder({ initialPackages, initialAddons }: CustomSafariBuilderProps) {
   const { toast } = useToast();
+  const [numPeople, setNumPeople] = useState<number>(1);
   const [selectedPackage, setSelectedPackage] = useState<BuilderPackage | null>(initialPackages[1] || initialPackages[0] || null);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -48,8 +52,8 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
   const pricing = useMemo(() => {
     if (!selectedPackage) return null;
-    return calculatePricing(selectedPackage, selectedAddons);
-  }, [selectedPackage, selectedAddons]);
+    return calculatePricing(selectedPackage, selectedAddons, numPeople);
+  }, [selectedPackage, selectedAddons, numPeople]);
 
   const groupedActivities = useMemo(() => {
     const activities = initialAddons.filter(a => a.category === 'activity');
@@ -94,9 +98,13 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
   };
 
   const handleBooking = () => {
+    if (numPeople < 1) {
+        toast({ title: "Traveller Count Required", description: "Please select at least 1 traveller.", variant: "destructive" });
+        return;
+    }
     toast({
       title: "Custom Safari Request Prepared",
-      description: "Our experts will contact you to finalize your bespoke itinerary.",
+      description: "Our experts will contact you to finalize your bespoke itinerary for " + numPeople + " travelers.",
     });
   };
 
@@ -122,11 +130,36 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
         <div className="grid lg:grid-cols-3 gap-16 items-start">
           <div className="lg:col-span-2 space-y-16">
+            
+            {/* Step 0: Number of Travelers */}
+            <div className="space-y-8">
+              <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
+                <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><UserPlus className="h-6 w-6 text-accent" /></div>
+                Step 1: Number of Travelers
+              </h3>
+              <div className="max-w-xs space-y-2">
+                <Label htmlFor="numPeople" className="text-stone-400 font-bold uppercase text-[10px] tracking-widest">Select Group Size (Required)</Label>
+                <div className="relative group">
+                    <Input 
+                        id="numPeople"
+                        type="number" 
+                        min={1} 
+                        max={20}
+                        value={numPeople}
+                        onChange={(e) => setNumPeople(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="bg-white/5 border-white/10 text-white h-14 rounded-2xl px-6 text-xl font-black focus:ring-accent focus:border-accent transition-all"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 font-bold uppercase text-[10px]">People</div>
+                </div>
+                <p className="text-[10px] text-stone-500 font-medium italic mt-2">* Pricing for permits and entrance fees applies per individual traveler.</p>
+              </div>
+            </div>
+
             {/* Step 1: Base Package */}
             <div className="space-y-8">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><Package className="h-6 w-6 text-accent" /></div>
-                Step 1: Choose Your Foundation
+                Step 2: Choose Your Foundation
               </h3>
               <div className="grid sm:grid-cols-3 gap-6">
                 {initialPackages.map((pkg) => (
@@ -144,7 +177,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                     )} />
                     <CardHeader className="p-6 relative z-10">
                       <CardTitle className="text-xl font-headline text-white group-hover:text-accent transition-colors">{pkg.name}</CardTitle>
-                      <div className="text-3xl font-black text-accent mt-2">${pkg.basePrice}</div>
+                      <div className="text-3xl font-black text-accent mt-2">${pkg.basePrice} <span className="text-[10px] font-bold uppercase text-stone-500">pp</span></div>
                     </CardHeader>
                     <CardContent className="p-6 pt-0 text-sm text-stone-400 relative z-10 font-medium">
                       {pkg.durationDays} Days Duration
@@ -170,7 +203,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
             <div className="space-y-10">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><ListChecks className="h-6 w-6 text-accent" /></div>
-                Step 2: Add Your Activities
+                Step 3: Add Your Activities
               </h3>
 
               <div className="grid sm:grid-cols-2 md:grid-cols-2 gap-6">
@@ -222,7 +255,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                     <Checkbox 
                                       id={`select-all-${regionName}`}
                                       checked={items.every(item => selectedAddonIds.includes(item.id))}
-                                      onCheckedChange={() => {}} // Controlled by toggleRegion click handler
+                                      onCheckedChange={() => {}} 
                                       className="h-3 w-3 data-[state=checked]:bg-accent data-[state=checked]:border-accent border-white/20 pointer-events-none"
                                     />
                                     <label htmlFor={`select-all-${regionName}`} className="text-[10px] font-black text-stone-400 uppercase tracking-wider cursor-pointer group-hover/toggle:text-white transition-colors">
@@ -243,7 +276,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                   >
                                     <Checkbox 
                                       checked={selectedAddonIds.includes(item.id)}
-                                      onCheckedChange={() => {}} // Controlled by parent div click
+                                      onCheckedChange={() => {}} 
                                       className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-4 w-4 border-white/30 pointer-events-none"
                                     />
                                     <div className="flex flex-col items-center gap-1">
@@ -267,7 +300,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
             <div className="space-y-10 pt-8 border-t border-white/10">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><Sparkles className="h-6 w-6 text-accent" /></div>
-                Step 3: Enhance Your Comfort
+                Step 4: Enhance Your Comfort
               </h3>
 
               <div className="grid sm:grid-cols-2 gap-6">
@@ -326,7 +359,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                   <Checkbox 
                                     id={addon.id} 
                                     checked={selectedAddonIds.includes(addon.id)}
-                                    onCheckedChange={() => {}} // Controlled by parent div click
+                                    onCheckedChange={() => {}} 
                                     className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-5 w-5 border-white/30 pointer-events-none"
                                   />
                                   <label className="text-xs font-bold text-stone-200 cursor-pointer group-hover:text-white transition-colors leading-tight">{addon.name}</label>
@@ -361,16 +394,16 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
               <CardContent className="p-8 pt-0 space-y-6">
                 <div className="space-y-4 text-sm font-medium">
                   <div className="flex justify-between text-stone-300">
-                    <span className="opacity-70">Base Foundation</span>
+                    <span className="opacity-70">Base Foundation (pp)</span>
                     <span className="text-white">${pricing?.basePrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-stone-300">
-                    <span className="opacity-70">Custom Add-ons ({selectedAddonIds.length})</span>
+                    <span className="opacity-70">Custom Add-ons ({selectedAddonIds.length} pp)</span>
                     <span className="text-white">${pricing?.addonsTotal.toLocaleString()}</span>
                   </div>
                   {pricing?.discountAmount ? (
                     <div className="flex justify-between text-green-400 bg-green-400/10 px-3 py-2 rounded-xl border border-green-400/20">
-                      <span>Wildlife Bundle Discount</span>
+                      <span>Wildlife Bundle Discount (pp)</span>
                       <span className="font-black">-${pricing.discountAmount.toLocaleString()}</span>
                     </div>
                   ) : null}
@@ -378,15 +411,22 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
                 <div className="pt-8 border-t border-white/10">
                   <div className="flex flex-col gap-2">
-                    <span className="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em]">Total Investment</span>
+                    <span className="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em]">Total Investment ({numPeople} {numPeople === 1 ? 'Person' : 'People'})</span>
                     <div className="text-5xl font-black text-white tabular-nums tracking-tighter drop-shadow-[0_0_25px_rgba(251,191,36,0.25)] transition-all duration-700">
                       ${pricing?.finalTotal.toLocaleString()}
                     </div>
+                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mt-1">
+                        ${pricing?.perPersonTotal.toLocaleString()} per person
+                    </p>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="bg-stone-950/50 p-8 border-t border-white/5">
-                <Button className="w-full bg-accent text-stone-950 hover:bg-white hover:scale-[1.02] font-black h-16 text-lg rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(251,191,36,0.3)] active:scale-95" onClick={handleBooking}>
+                <Button 
+                    className="w-full bg-accent text-stone-950 hover:bg-white hover:scale-[1.02] font-black h-16 text-lg rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(251,191,36,0.3)] active:scale-95 disabled:opacity-50 disabled:grayscale" 
+                    onClick={handleBooking}
+                    disabled={numPeople < 1}
+                >
                   REQUEST ITINERARY <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </CardFooter>
@@ -394,7 +434,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
             <div className="text-center px-6">
               <p className="text-[11px] text-stone-500 font-bold uppercase tracking-widest leading-relaxed">
-                * All custom safaris are subject to seasonal availability. Prices represent estimated group investments per person.
+                * All custom safaris are subject to seasonal availability. Final prices represent group investment totals.
               </p>
             </div>
           </aside>
