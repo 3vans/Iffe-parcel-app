@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -25,7 +24,6 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('user');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,7 +42,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
 
       onOpenChange(false);
       
-      // Role based redirection based on reference
+      // Direct redirect based on email as per reference
       if (res.user.email?.toLowerCase() === adminEmail.toLowerCase()) {
         router.push("/admin");
       } else {
@@ -56,7 +54,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       setError("Login failed. Please check your credentials.");
       toast({
         title: "Login Failed",
-        description: err.message || "Invalid email or password.",
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -64,24 +62,13 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
     }
   };
 
-  const handleTabChange = (newTabValue: string) => {
-    setActiveTab(newTabValue);
-    setError(null);
-    if (newTabValue === 'admin') {
-      setEmail(process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com');
-    } else {
-      setEmail('');
-    }
-    setPassword('');
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl text-primary">Access Your Hub</DialogTitle>
-          <DialogDescription>
-            Log in to manage expeditions or view your personal travel dashboard.
+          <DialogTitle className="font-headline text-2xl text-primary text-center">Login to Your Account</DialogTitle>
+          <DialogDescription className="text-center">
+            Enter your email and password to access your dashboard.
           </DialogDescription>
         </DialogHeader>
 
@@ -93,76 +80,35 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
           </Alert>
         )}
 
-        <Tabs defaultValue="user" className="w-full" onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="user" disabled={isLoading}>Traveler</TabsTrigger>
-            <TabsTrigger value="admin" disabled={isLoading}>Administrator</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="user" className="space-y-4">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="user-email">Email Address</Label>
-                <Input 
-                  id="user-email" 
-                  type="email" 
-                  placeholder="traveler@example.com" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required 
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="user-password">Password</Label>
-                <Input 
-                  id="user-password" 
-                  type="password" 
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required 
-                  disabled={isLoading}
-                />
-              </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In"}
-              </Button>
-            </form>
-          </TabsContent>
-          
-          <TabsContent value="admin" className="space-y-4">
-             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="admin-email">Admin Email</Label>
-                <Input 
-                  id="admin-email" 
-                  type="email" 
-                  placeholder="admin@iffe-travels.com" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)}
-                  required 
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="admin-password">Administrative Password</Label>
-                <Input 
-                  id="admin-password" 
-                  type="password" 
-                  placeholder="••••••••"
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)}
-                  required 
-                  disabled={isLoading}
-                />
-              </div>
-              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Unlocking Panel...</> : "Enter Admin Panel"}
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address</Label>
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder="you@example.com" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+              disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input 
+              id="password" 
+              type="password" 
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+              disabled={isLoading}
+            />
+          </div>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</> : "Sign In"}
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
