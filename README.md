@@ -6,20 +6,20 @@ This is a professional adventure tourism platform built with Next.js, Firebase, 
 
 The creation of the Iffe-Travels platform was executed in five strategic phases to ensure a robust and scalable architecture:
 
-1.  **Architecture & Environment Setup**: Establishing the Next.js App Router foundation, configuring Firebase SDKs, and setting up the ShadCN UI component library.
-2.  **Authentication Infrastructure**: Building the NextAuth.js configuration to handle secure sessions, integrating it with Firebase Auth for traveler accounts and environment-based logic for the Admin account.
-3.  **Admin Dashboard (The "Engine")**: Developing the management suite under `/admin`. This involved creating Firestore CRUD services for live pricing, safari packages, tour itineraries, and promotional codes.
-4.  **Traveler Experience (The "Storefront")**: Designing the public-facing journeys, including the cinematic hero sections, the interactive Custom Safari Builder, and the real-time community chat.
-5.  **Security & RBAC**: Implementing server-side middleware to protect administrative routes and ensuring the UI dynamically adapts to the user's role (Admin vs. Traveler).
+1.  **Phase 1: Foundation & Infrastructure**: Establishing the Next.js App Router foundation, configuring Tailwind CSS for the design system, and initializing the Firebase SDK for real-time data and authentication.
+2.  **Phase 2: Authentication & Security Framework**: Building a hybrid authentication layer using NextAuth.js for session lifecycle management and Firebase Auth for user identity. Implemented server-side Middleware to enforce Role-Based Access Control (RBAC).
+3.  **Phase 3: Administrative Business Engine**: Developing the `/admin` suite to manage core business assets. This included creating Firestore-connected modules for live inventory, dynamic pricing, expedition itineraries, and promotional codes.
+4.  **Phase 4: Traveller Experience & Storefront**: Designing the public-facing journey, featuring the cinematic "Explore the Pearl" hero sections, the logic-driven Custom Safari Builder, and real-time community engagement tools like the Traveler Chat.
+5.  **Phase 5: Data Synchronization & Live Integration**: Finalizing the bridge between management controls and public views, ensuring that pricing updates and new tour content are published globally in real-time.
 
-## Authentication & Account Handling
+## Authentication & Account Handling Process
 
-The platform uses a hybrid authentication model designed for both security and development flexibility:
+The platform utilizes a secure, JWT-based authentication flow designed for both traveler convenience and administrative security:
 
-- **Unified Login**: A central `LoginModal` handles all authentication.
-- **NextAuth + Firebase**: NextAuth manages the session lifecycle and JWT tokens, while Firebase Auth serves as the primary user database.
-- **Admin Access**: During the prototype phase, the administrator role is assigned based on the `NEXT_PUBLIC_ADMIN_EMAIL`. This allows for immediate access to business controls without manual user creation.
-- **Route Protection**: `middleware.ts` acts as a security gatekeeper, checking the `role` property within the session JWT to restrict `/admin` routes to authorized personnel only.
+-   **Unified Identity Bridge**: We leverage NextAuth.js to provide a consistent session management layer, while using Firebase Auth as the authoritative user database.
+-   **Role-Based Provisioning**: During the login handshake, the system evaluates credentials. Accounts matching the `NEXT_PUBLIC_ADMIN_EMAIL` are automatically provisioned with 'admin' privileges, while others default to the 'traveler' role.
+-   **JWT Persistence**: Upon successful authentication, a JSON Web Token (JWT) is generated containing the user's ID and role. This token is securely persisted in an HTTP-only cookie to prevent unauthorized access.
+-   **Middleware Gatekeeping**: All administrative routes under `/admin` are protected by a server-side gatekeeper (`middleware.ts`). This layer inspects the session JWT at the edge, redirecting any non-authorized users before they can access the business engine.
 
 ## Deployment to Vercel
 
