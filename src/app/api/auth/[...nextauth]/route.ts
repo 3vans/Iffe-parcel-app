@@ -11,7 +11,6 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
-          console.error("Missing credentials");
           return null;
         }
 
@@ -20,10 +19,10 @@ export const authOptions: NextAuthOptions = {
         
         const isAdmin = email.toLowerCase() === adminEmail.toLowerCase();
         
-        console.log(`Authenticating: ${email}, isAdmin: ${isAdmin}`);
+        console.log(`[Auth] Attempting login for: ${email}, isAdmin: ${isAdmin}`);
 
-        // For the prototype, we allow the admin to log in with any password.
-        // For travelers, we expect the frontend to have already verified them with Firebase Auth.
+        // For the prototype, we assign the role based on the email.
+        // Admins bypass the Firebase Auth check for immediate access.
         return {
           id: isAdmin ? 'admin-uid' : 'traveler-' + Date.now(),
           name: isAdmin ? 'Platform Admin' : 'Iffe Traveler',
