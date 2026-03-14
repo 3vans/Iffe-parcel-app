@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard } from 'lucide-react';
+import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard, Database, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RotarySpinner from '@/components/ui/rotary-spinner';
 import React from 'react';
@@ -27,6 +27,8 @@ interface AdminLayoutProps {
 
 const adminNavItems = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/inventory', label: 'Inventory & Prices', icon: Database },
+  { href: '/admin/expeditions', label: 'Expeditions', icon: Map },
   { href: '/admin/users', label: 'User Management', icon: Users },
   { href: '/admin/approvals', label: 'Approvals', icon: CheckSquare },
   { href: '/admin/posts', label: 'Content Moderation', icon: FileText },
@@ -44,8 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return (
       <>
         <AdminMobileTopNav navItems={adminNavItems} />
-        <main className="flex-1 overflow-y-auto p-6 pt-20"> {/* Adjust pt to account for nav height */}
-          {/* Developer Note can be omitted on mobile or placed differently if needed */}
+        <main className="flex-1 overflow-y-auto p-6 pt-20">
           {children}
         </main>
       </>
@@ -53,7 +54,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <SidebarProvider defaultOpen={false}> {/* Default to collapsed on desktop */}
+    <SidebarProvider defaultOpen={false}>
       <Sidebar collapsible="icon" side="left" variant="sidebar" className="border-r bg-card text-card-foreground">
         <SidebarHeader className="p-2 py-3 border-b h-14 flex items-center">
           <Link href="/admin" className="flex items-center gap-2 group/logo">

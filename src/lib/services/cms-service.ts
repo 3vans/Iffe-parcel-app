@@ -17,6 +17,7 @@ import {
   increment,
   arrayUnion,
   arrayRemove,
+  setDoc,
   type DocumentData
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -136,6 +137,19 @@ export async function fetchBasePackages(): Promise<Package[]> {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
 }
 
+export async function savePackage(pkg: Partial<Package>) {
+  if (pkg.id) {
+    const pkgRef = doc(db, 'packages', pkg.id);
+    await updateDoc(pkgRef, { ...pkg, updatedAt: serverTimestamp() });
+  } else {
+    await addDoc(collection(db, 'packages'), {
+      ...pkg,
+      isActive: true,
+      createdAt: serverTimestamp(),
+    });
+  }
+}
+
 export async function fetchAddons(): Promise<Addon[]> {
   const q = query(collection(db, 'addons'), where('isActive', '==', true));
   const snapshot = await getDocs(q);
@@ -245,6 +259,23 @@ export async function fetchAddons(): Promise<Addon[]> {
     return defaultAddons;
   }
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Addon));
+}
+
+export async function saveAddon(addon: Partial<Addon>) {
+  if (addon.id) {
+    const addonRef = doc(db, 'addons', addon.id);
+    await updateDoc(addonRef, { ...addon, updatedAt: serverTimestamp() });
+  } else {
+    await addDoc(collection(db, 'addons'), {
+      ...addon,
+      isActive: true,
+      createdAt: serverTimestamp(),
+    });
+  }
+}
+
+export async function deleteAddon(id: string) {
+  await deleteDoc(doc(db, 'addons', id));
 }
 
 export function calculatePricing(basePackage: Package, selectedAddons: Addon[], numPeople: number = 1) {
@@ -410,7 +441,7 @@ export async function deleteVideo(id: string) {
   await deleteDoc(doc(db, 'videos', id));
 }
 
-// --- CAMPAIGNS ---
+// --- CAMPAIGNS (Expeditions) ---
 
 export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]> {
   const campaignsRef = collection(db, 'campaigns');
@@ -421,6 +452,22 @@ export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]
   
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Campaign));
+}
+
+export async function saveCampaign(campaign: Partial<Campaign>) {
+  if (campaign.id) {
+    const ref = doc(db, 'campaigns', campaign.id);
+    await updateDoc(ref, { ...campaign, updatedAt: serverTimestamp() });
+  } else {
+    await addDoc(collection(db, 'campaigns'), {
+      ...campaign,
+      createdAt: serverTimestamp(),
+    });
+  }
+}
+
+export async function deleteCampaign(id: string) {
+  await deleteDoc(doc(db, 'campaigns', id));
 }
 
 // --- IDEAS ---
