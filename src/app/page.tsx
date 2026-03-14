@@ -219,9 +219,8 @@ export default function Home() {
           </AnimatedCard>
         </section>
 
-        {/* Trust & Booking Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Quick Inquiry - Left Side */}
+        {/* Quick Safari Inquiry Section */}
+        <section>
             <AnimatedCard>
                 <Card className="h-full bg-card/80 backdrop-blur-sm border-primary/10 flex flex-col">
                     <CardHeader>
@@ -254,83 +253,6 @@ export default function Home() {
                     </CardContent>
                     <CardFooter className="bg-muted/30 py-4 text-center">
                         <p className="text-xs text-muted-foreground w-full">We typically respond within 2-4 business hours.</p>
-                    </CardFooter>
-                </Card>
-            </AnimatedCard>
-
-            {/* Trust & Authority - Right Side */}
-            <AnimatedCard>
-                <Card className="h-full bg-primary text-primary-foreground border-none relative overflow-hidden flex flex-col">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -mr-16 -mt-16" />
-                    <CardHeader>
-                        <CardTitle className="font-headline text-2xl flex items-center">
-                            <ShieldCheck className="mr-3 h-6 w-6 text-accent" />
-                            Why Choose Iffe-Travels?
-                        </CardTitle>
-                        <CardDescription className="text-primary-foreground/70">Building trust through thousands of successful African adventures.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
-                                    <Users className="h-5 w-5 text-accent" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-black leading-none">2,000+</p>
-                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Happy Travelers</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
-                                    <Calendar className="h-5 w-5 text-accent" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-black leading-none">10+ Yrs</p>
-                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Safari Experience</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
-                                    <MapPin className="h-5 w-5 text-accent" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-black leading-none">500+</p>
-                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Tours Completed</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
-                                    <Award className="h-5 w-5 text-accent" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-black leading-none">Certified</p>
-                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Safety & Quality</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="space-y-3 pt-4 border-t border-white/10">
-                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Our Global Partnerships</p>
-                            <div className="flex flex-wrap gap-4 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
-                                <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                                    <Globe className="h-3 w-3" />
-                                    <span className="text-[10px] font-black tracking-widest">UTB CERTIFIED</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                                    <CheckCircle2 className="h-3 w-3" />
-                                    <span className="text-[10px] font-black tracking-widest">AUTO MEMBER</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="pt-4 border-t border-white/10">
-                            <p className="text-sm font-medium text-white/80 leading-relaxed italic">
-                                "Our mission is to provide authentic, responsible, and safe travel experiences that leave you with memories for a lifetime."
-                            </p>
-                        </div>
-                    </CardContent>
-                    <CardFooter className="mt-auto">
-                        <Button variant="link" className="text-accent hover:text-white p-0" asChild>
-                            <Link href="/about">Learn more about our heritage <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                        </Button>
                     </CardFooter>
                 </Card>
             </AnimatedCard>
@@ -427,6 +349,87 @@ export default function Home() {
                     }
                 }} 
             />
+        </section>
+
+        {/* Trust & Authority - Moved below the Featured Expeditions section */}
+        <section>
+            <AnimatedCard>
+                <Card className="bg-primary text-primary-foreground border-none relative overflow-hidden flex flex-col">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -mr-16 -mt-16" />
+                    <CardHeader>
+                        <CardTitle className="font-headline text-2xl flex items-center">
+                            <ShieldCheck className="mr-3 h-6 w-6 text-accent" />
+                            Why Choose Iffe-Travels?
+                        </CardTitle>
+                        <CardDescription className="text-primary-foreground/70">Building trust through thousands of successful African adventures.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow space-y-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                                    <Users className="h-5 w-5 text-accent" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-black leading-none">2,000+</p>
+                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Happy Travelers</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                                    <Calendar className="h-5 w-5 text-accent" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-black leading-none">10+ Yrs</p>
+                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Safari Experience</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                                    <MapPin className="h-5 w-5 text-accent" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-black leading-none">500+</p>
+                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Tours Completed</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                                    <Award className="h-5 w-5 text-accent" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-black leading-none">Certified</p>
+                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Safety & Quality</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 border-t border-white/10">
+                            <div className="space-y-3">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Our Global Partnerships</p>
+                                <div className="flex flex-wrap gap-4 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+                                    <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                        <Globe className="h-3 w-3" />
+                                        <span className="text-[10px] font-black tracking-widest">UTB CERTIFIED</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                        <CheckCircle2 className="h-3 w-3" />
+                                        <span className="text-[10px] font-black tracking-widest">AUTO MEMBER</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="md:max-w-xs">
+                                <p className="text-sm font-medium text-white/80 leading-relaxed italic border-l-2 border-accent pl-4">
+                                    "Our mission is to provide authentic, responsible, and safe travel experiences that leave you with memories for a lifetime."
+                                </p>
+                            </div>
+                        </div>
+                    </CardContent>
+                    <CardFooter className="mt-auto border-t border-white/5 pt-4">
+                        <Button variant="link" className="text-accent hover:text-white p-0" asChild>
+                            <Link href="/about">Learn more about our heritage <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </AnimatedCard>
         </section>
 
         <TestimonialSection />
