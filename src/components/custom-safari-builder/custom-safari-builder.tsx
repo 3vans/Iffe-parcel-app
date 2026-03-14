@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -40,10 +39,15 @@ interface CustomSafariBuilderProps {
 
 export default function CustomSafariBuilder({ initialPackages, initialAddons }: CustomSafariBuilderProps) {
   const { toast } = useToast();
-  const [numPeople, setNumPeople] = useState<number>(1);
+  const [numPeople, setNumPeople] = useState<string>("1");
   const [selectedPackage, setSelectedPackage] = useState<BuilderPackage | null>(initialPackages[1] || initialPackages[0] || null);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  const travelerCount = useMemo(() => {
+    const count = parseInt(numPeople);
+    return isNaN(count) || count < 1 ? 1 : count;
+  }, [numPeople]);
 
   const selectedAddons = useMemo(() => 
     initialAddons.filter(a => selectedAddonIds.includes(a.id)),
@@ -52,8 +56,8 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
   const pricing = useMemo(() => {
     if (!selectedPackage) return null;
-    return calculatePricing(selectedPackage, selectedAddons, numPeople);
-  }, [selectedPackage, selectedAddons, numPeople]);
+    return calculatePricing(selectedPackage, selectedAddons, travelerCount);
+  }, [selectedPackage, selectedAddons, travelerCount]);
 
   const groupedActivities = useMemo(() => {
     const activities = initialAddons.filter(a => a.category === 'activity');
@@ -98,13 +102,13 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
   };
 
   const handleBooking = () => {
-    if (numPeople < 1) {
-        toast({ title: "Traveller Count Required", description: "Please select at least 1 traveller.", variant: "destructive" });
+    if (travelerCount < 1) {
+        toast({ title: "Traveller Count Required", description: "Please enter at least 1 traveller.", variant: "destructive" });
         return;
     }
     toast({
       title: "Custom Safari Request Prepared",
-      description: "Our experts will contact you to finalize your bespoke itinerary for " + numPeople + " travelers.",
+      description: "Our experts will contact you to finalize your bespoke itinerary for " + travelerCount + " travelers.",
     });
   };
 
@@ -131,7 +135,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
         <div className="grid lg:grid-cols-3 gap-16 items-start">
           <div className="lg:col-span-2 space-y-16">
             
-            {/* Step 0: Number of Travelers */}
+            {/* Step 1: Number of Travelers */}
             <div className="space-y-8">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><UserPlus className="h-6 w-6 text-accent" /></div>
@@ -142,12 +146,15 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                 <div className="relative group">
                     <Input 
                         id="numPeople"
-                        type="number" 
-                        min={1} 
-                        max={20}
+                        type="text" 
+                        inputMode="numeric"
                         value={numPeople}
-                        onChange={(e) => setNumPeople(Math.max(1, parseInt(e.target.value) || 1))}
-                        className="bg-white/5 border-white/10 text-white h-14 rounded-2xl px-6 text-xl font-black focus:ring-accent focus:border-accent transition-all"
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '');
+                            setNumPeople(val);
+                        }}
+                        placeholder="1"
+                        className="bg-white/5 border-white/10 text-white h-14 rounded-2xl px-6 text-xl font-black focus:ring-accent focus:border-accent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 font-bold uppercase text-[10px]">People</div>
                 </div>
@@ -155,7 +162,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
               </div>
             </div>
 
-            {/* Step 1: Base Package */}
+            {/* Step 2: Base Package */}
             <div className="space-y-8">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><Package className="h-6 w-6 text-accent" /></div>
@@ -199,7 +206,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
               )}
             </div>
 
-            {/* Step 2: Activities */}
+            {/* Step 3: Activities */}
             <div className="space-y-10">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><ListChecks className="h-6 w-6 text-accent" /></div>
@@ -296,7 +303,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
               </div>
             </div>
 
-            {/* Step 3: Luxury & Extensions */}
+            {/* Step 4: Luxury & Extensions */}
             <div className="space-y-10 pt-8 border-t border-white/10">
               <h3 className="font-headline text-2xl font-bold text-white flex items-center gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl"><Sparkles className="h-6 w-6 text-accent" /></div>
@@ -411,7 +418,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
 
                 <div className="pt-8 border-t border-white/10">
                   <div className="flex flex-col gap-2">
-                    <span className="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em]">Total Investment ({numPeople} {numPeople === 1 ? 'Person' : 'People'})</span>
+                    <span className="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em]">Total Investment ({travelerCount} {travelerCount === 1 ? 'Person' : 'People'})</span>
                     <div className="text-5xl font-black text-white tabular-nums tracking-tighter drop-shadow-[0_0_25px_rgba(251,191,36,0.25)] transition-all duration-700">
                       ${pricing?.finalTotal.toLocaleString()}
                     </div>
@@ -425,7 +432,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                 <Button 
                     className="w-full bg-accent text-stone-950 hover:bg-white hover:scale-[1.02] font-black h-16 text-lg rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(251,191,36,0.3)] active:scale-95 disabled:opacity-50 disabled:grayscale" 
                     onClick={handleBooking}
-                    disabled={numPeople < 1}
+                    disabled={travelerCount < 1}
                 >
                   REQUEST ITINERARY <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
