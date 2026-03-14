@@ -216,14 +216,14 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                   <h4 className="text-xs font-black text-stone-500 uppercase tracking-[0.3em] flex items-center gap-2">
                                     <MapPin className="h-3 w-3 text-accent" /> {regionName} Region
                                   </h4>
-                                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer group/toggle" onClick={() => toggleRegion(items)}>
                                     <Checkbox 
                                       id={`select-all-${regionName}`}
                                       checked={items.every(item => selectedAddonIds.includes(item.id))}
                                       onCheckedChange={() => toggleRegion(items)}
-                                      className="h-3 w-3 data-[state=checked]:bg-accent data-[state=checked]:border-accent border-white/20"
+                                      className="h-3 w-3 data-[state=checked]:bg-accent data-[state=checked]:border-accent border-white/20 pointer-events-none"
                                     />
-                                    <label htmlFor={`select-all-${regionName}`} className="text-[10px] font-black text-stone-400 uppercase tracking-wider cursor-pointer">
+                                    <label htmlFor={`select-all-${regionName}`} className="text-[10px] font-black text-stone-400 uppercase tracking-wider cursor-pointer group-hover/toggle:text-white transition-colors">
                                       All <span className="text-accent/60">(discount price)</span>
                                     </label>
                                   </div>
@@ -235,19 +235,18 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                     key={item.id}
                                     className={cn(
                                       "flex flex-col items-center gap-3 p-4 rounded-2xl transition-all duration-300 cursor-pointer group hover:bg-white/5 border border-white/5 text-center",
-                                      selectedAddonIds.includes(item.id) && "bg-white/10 border-accent/30"
+                                      selectedAddonIds.includes(item.id) && "bg-white/10 border-accent/30 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
                                     )}
                                     onClick={() => toggleAddon(item.id)}
                                   >
                                     <Checkbox 
                                       checked={selectedAddonIds.includes(item.id)}
                                       onCheckedChange={() => toggleAddon(item.id)}
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-4 w-4 border-white/30"
+                                      className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-4 w-4 border-white/30 pointer-events-none"
                                     />
                                     <div className="flex flex-col items-center gap-1">
-                                      <span className="text-[10px] font-bold text-stone-300 group-hover:text-white leading-tight">{item.name}</span>
-                                      <span className="text-[10px] font-black text-accent">+${item.price}</span>
+                                      <span className="text-[10px] font-bold text-stone-300 group-hover:text-white leading-tight transition-colors">{item.name}</span>
+                                      <span className="text-[10px] font-black text-accent group-hover:scale-110 transition-transform">+${item.price}</span>
                                     </div>
                                   </div>
                                 ))}
@@ -326,8 +325,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                     id={addon.id} 
                                     checked={selectedAddonIds.includes(addon.id)}
                                     onCheckedChange={() => toggleAddon(addon.id)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-5 w-5 border-white/30"
+                                    className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-5 w-5 border-white/30 pointer-events-none"
                                   />
                                   <label className="text-xs font-bold text-stone-200 cursor-pointer group-hover:text-white transition-colors leading-tight">{addon.name}</label>
                                 </div>

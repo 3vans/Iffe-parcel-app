@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Edit3, Lightbulb, MessageCircle, ArrowRight, MountainSnow, ShieldCheck, Package, Loader2, Users, MapPin, Award, Calendar, Send } from 'lucide-react';
+import { Edit3, Lightbulb, MessageCircle, ArrowRight, MountainSnow, ShieldCheck, Package, Loader2, Users, MapPin, Award, Calendar, Send, Globe, CheckCircle2, HeartHandshake } from 'lucide-react';
 import BlogCard from '@/components/blog-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import placeholderImages from '@/app/lib/placeholder-images.json';
@@ -76,7 +76,7 @@ export default function Home() {
             profileLink: '/profile/ian-ivan',
           });
 
-          // Shuffle or sort by relevance (here we just mix them)
+          // Shuffle or sort by relevance
           setFeedItems(items.sort(() => Math.random() - 0.5));
         } catch (err) {
           console.error("Feed load error:", err);
@@ -140,8 +140,9 @@ export default function Home() {
           </AnimatedCard>
         </section>
 
-        {/* New Trust & Booking Section */}
+        {/* Trust & Booking Section */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Quick Inquiry - Left Side */}
             <AnimatedCard>
                 <Card className="h-full bg-card/80 backdrop-blur-sm border-primary/10 flex flex-col">
                     <CardHeader>
@@ -156,16 +157,16 @@ export default function Home() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Full Name</label>
-                                    <Input placeholder="John Doe" required />
+                                    <Input placeholder="John Doe" required className="bg-background/50" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Email Address</label>
-                                    <Input type="email" placeholder="john@example.com" required />
+                                    <Input type="email" placeholder="john@example.com" required className="bg-background/50" />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Where would you like to go?</label>
-                                <Input placeholder="e.g. Bwindi Gorilla Trekking" />
+                                <Input placeholder="e.g. Bwindi Gorilla Trekking" className="bg-background/50" />
                             </div>
                             <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-2 font-bold py-6">
                                 <Send className="mr-2 h-5 w-5" /> Send Inquiry
@@ -178,6 +179,7 @@ export default function Home() {
                 </Card>
             </AnimatedCard>
 
+            {/* Trust & Authority - Right Side */}
             <AnimatedCard>
                 <Card className="h-full bg-primary text-primary-foreground border-none relative overflow-hidden flex flex-col">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -mr-16 -mt-16" />
@@ -213,8 +215,8 @@ export default function Home() {
                                     <MapPin className="h-5 w-5 text-accent" />
                                 </div>
                                 <div>
-                                    <p className="text-xl font-black leading-none">Expert</p>
-                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Local Guides</p>
+                                    <p className="text-xl font-black leading-none">500+</p>
+                                    <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Tours Completed</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
@@ -224,6 +226,19 @@ export default function Home() {
                                 <div>
                                     <p className="text-xl font-black leading-none">Certified</p>
                                     <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Safety & Quality</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-3 pt-4 border-t border-white/10">
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Our Global Partnerships</p>
+                            <div className="flex flex-wrap gap-4 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+                                <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                    <Globe className="h-3 w-3" />
+                                    <span className="text-[10px] font-black tracking-widest">UTB CERTIFIED</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                    <CheckCircle2 className="h-3 w-3" />
+                                    <span className="text-[10px] font-black tracking-widest">AUTO MEMBER</span>
                                 </div>
                             </div>
                         </div>
