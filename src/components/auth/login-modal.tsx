@@ -29,17 +29,19 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
     event.preventDefault();
     setIsLoading(true);
 
-    try {
-      const isAdminEmail = email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com';
+    const isAdminEmail = email.toLowerCase() === adminEmail.toLowerCase();
 
+    try {
       // 1. Sign in to Firebase (Optional for Admin during prototype to allow immediate access)
       if (!isAdminEmail) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
+        // Attempt FB login but don't block if it fails (bypass for prototype admin)
         try {
           await signInWithEmailAndPassword(auth, email, password);
         } catch (fbError) {
-          console.warn("Firebase Auth failed for admin. Continuing with prototype bypass.");
+          console.warn("Firebase Auth bypass active for admin.");
         }
       }
 
@@ -73,7 +75,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       console.error("Login error:", error);
       toast({
         title: "Login Failed",
-        description: "Please check your credentials. Note: Non-admin users must be registered in the Firebase console.",
+        description: "Please check your credentials.",
         variant: "destructive",
       });
     } finally {

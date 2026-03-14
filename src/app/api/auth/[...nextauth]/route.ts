@@ -1,17 +1,12 @@
-
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
-// In a real production app, you would verify credentials against Firebase Auth here 
-// using the Firebase Admin SDK. For this prototype phase, we're bridging the 
-// login to NextAuth so middleware and session management work correctly.
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'your@email.com' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
@@ -19,13 +14,13 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const { email, password } = credentials;
-
-        // Simple validation for prototype. 
-        // In Phase 3, we can connect this to a more robust verifyPassword call.
-        const isAdmin = email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+        const { email } = credentials;
+        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com';
+        
+        const isAdmin = email.toLowerCase() === adminEmail.toLowerCase();
         
         // Return a user object that includes the role
+        // For the prototype, we allow any password for the admin email
         return {
           id: isAdmin ? 'admin-uid' : 'user-uid',
           name: isAdmin ? 'Platform Admin' : 'Traveler',
