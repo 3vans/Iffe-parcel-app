@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -223,7 +222,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                     <Checkbox 
                                       id={`select-all-${regionName}`}
                                       checked={items.every(item => selectedAddonIds.includes(item.id))}
-                                      onCheckedChange={() => toggleRegion(items)}
+                                      onCheckedChange={() => {}} // Controlled by toggleRegion click handler
                                       className="h-3 w-3 data-[state=checked]:bg-accent data-[state=checked]:border-accent border-white/20 pointer-events-none"
                                     />
                                     <label htmlFor={`select-all-${regionName}`} className="text-[10px] font-black text-stone-400 uppercase tracking-wider cursor-pointer group-hover/toggle:text-white transition-colors">
@@ -244,7 +243,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                   >
                                     <Checkbox 
                                       checked={selectedAddonIds.includes(item.id)}
-                                      onCheckedChange={() => toggleAddon(item.id)}
+                                      onCheckedChange={() => {}} // Controlled by parent div click
                                       className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-4 w-4 border-white/30 pointer-events-none"
                                     />
                                     <div className="flex flex-col items-center gap-1">
@@ -327,7 +326,7 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                                   <Checkbox 
                                     id={addon.id} 
                                     checked={selectedAddonIds.includes(addon.id)}
-                                    onCheckedChange={() => toggleAddon(addon.id)}
+                                    onCheckedChange={() => {}} // Controlled by parent div click
                                     className="data-[state=checked]:bg-accent data-[state=checked]:border-accent h-5 w-5 border-white/30 pointer-events-none"
                                   />
                                   <label className="text-xs font-bold text-stone-200 cursor-pointer group-hover:text-white transition-colors leading-tight">{addon.name}</label>
