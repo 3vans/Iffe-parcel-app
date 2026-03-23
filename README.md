@@ -7,6 +7,8 @@ To access the Admin Panel (/admin), use the following credentials:
 - **Email**: `admin@iffe-travels.com`
 - **Password**: `admin123` (Suggested)
 
+
+
 ### Setup Instructions
 1. **Firebase Console**: Go to the [Firebase Console](https://console.firebase.google.com/).
 2. **Authentication**: Select your project, go to **Build > Authentication > Users**.
