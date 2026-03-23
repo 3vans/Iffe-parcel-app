@@ -110,10 +110,10 @@ export default function Hero() {
       
       {/* Mobile Content Container */}
       <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden pt-[68px]">
-        <div className="bg-gradient-to-r from-stone-900/80 via-stone-900/80 to-transparent backdrop-blur-md rounded-2xl p-6 text-center text-white">
-            <p className={cn("font-semibold text-primary uppercase tracking-widest mb-2 transition-all duration-500", hasScrolled ? 'text-xs' : 'text-sm')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
+        <div className="bg-stone-900/85 backdrop-blur-xl rounded-[2rem] p-8 text-center text-white border border-white/10 shadow-2xl flex flex-col gap-6 w-full max-w-sm mx-auto">
+            <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500 leading-tight", hasScrolled ? 'text-[10px]' : 'text-xs')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
-              className={cn("font-headline font-black mb-3 tracking-widest uppercase transition-all duration-500", hasScrolled ? "text-2xl" : "text-3xl")}
+              className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-xl" : "text-3xl")}
                style={{
                 WebkitTextStroke: '0.5px white',
                 color: 'transparent'
@@ -122,13 +122,14 @@ export default function Hero() {
               <span className="block">Explore the</span>
               <span className="block">PEARL</span>
             </h1>
-            <p className={cn("text-muted-foreground max-w-md transition-opacity duration-500", hasScrolled ? "h-12 text-sm line-clamp-2" : "h-16 text-base")} key={currentBg.description}>
+            <div className="h-0.5 bg-accent/40 w-12 mx-auto rounded-full" />
+            <p className={cn("text-stone-300 transition-opacity duration-500 leading-relaxed font-medium", hasScrolled ? "text-xs line-clamp-2" : "text-sm")} key={currentBg.description}>
                 {currentBg.description}
             </p>
-            <div className="space-y-4">
-               <Button size={hasScrolled ? 'default' : 'lg'} asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full transition-all duration-500">
+            <div className="pt-2">
+               <Button size={hasScrolled ? 'sm' : 'lg'} asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-black rounded-full transition-all duration-500 uppercase tracking-widest w-full h-12">
                 <Link href="/contact">
-                  LET'S GET STARTED
+                  GET STARTED
                 </Link>
               </Button>
             </div>
