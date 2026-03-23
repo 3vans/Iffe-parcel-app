@@ -1,8 +1,8 @@
-
 import GalleryClientContent from '@/components/gallery/gallery-client-content';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 import { fetchGalleryImages } from '@/lib/services/cms-service';
 
 export default async function GalleryPage() {
@@ -14,11 +14,13 @@ export default async function GalleryPage() {
   return (
     <div className="space-y-8 animate-fade-in">
         <section className="relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg flex items-center">
-            <img
+            <Image
                 src={heroImage}
                 alt="Safari Gallery"
-                className="absolute inset-0 w-full h-full object-cover z-0"
+                fill
+                className="object-cover z-0"
                 data-ai-hint={heroDataAiHint}
+                priority
             />
             <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
             
