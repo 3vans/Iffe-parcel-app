@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -169,7 +168,7 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
         onTouchEnd={onTouchEnd}
         onWheel={handleWheel}
       >
-        <h1 className="font-headline text-4xl font-bold text-white mb-6 text-center">{title}</h1>
+        <h1 className="font-headline text-2xl md:text-4xl font-bold text-white mb-6 text-center">{title}</h1>
         
         <div className="carousel">
             <div className="carousel-track">

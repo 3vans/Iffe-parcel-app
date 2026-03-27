@@ -199,15 +199,19 @@ body {
   /* Responsive adjustments for smaller screens */
   @media (max-width: 768px) {
     .carousel-container {
-      padding: 1rem 0 0;
+      padding: 1.5rem 1rem 0;
     }
     .carousel {
         perspective: none;
+        height: 480px;
     }
   }
 
   @media (max-width: 480px) {
      .card {
+      width: 260px;
+    }
+    .carousel-track {
       width: 260px;
     }
   }
