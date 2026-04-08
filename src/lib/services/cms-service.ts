@@ -24,6 +24,22 @@ import placeholderImages from '@/app/lib/placeholder-images.json';
 
 // --- TYPES ---
 
+export interface UserProfile {
+  id: string;
+  email: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  profilePictureUrl?: string;
+  isCreator: boolean;
+  isAdmin: boolean;
+  points: number;
+  level: string;
+  memberSince: string;
+  followedUserIds: string[];
+  createdAt: any;
+}
+
 export interface GalleryImage {
   id: string;
   src: string;
@@ -137,6 +153,42 @@ export interface ChatMessage {
   senderAvatar?: string;
   timestamp: string;
   createdAt: any;
+}
+
+// --- USER PROFILE SERVICES ---
+
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  const docRef = doc(db, 'users', userId);
+  const docSnap = await getDoc(docRef);
+  
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      ...data,
+      memberSince: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) || 'Recently'
+    } as UserProfile;
+  }
+  return null;
+}
+
+export async function createUserProfile(userId: string, data: Partial<UserProfile>) {
+  const userRef = doc(db, 'users', userId);
+  const profile: Partial<UserProfile> = {
+    email: data.email || '',
+    displayName: data.displayName || 'Iffe Traveler',
+    username: data.username || data.email?.split('@')[0] || `user_${userId.substring(0, 5)}`,
+    bio: data.bio || 'New explorer at iffe-travels.',
+    isCreator: data.isCreator || false,
+    isAdmin: data.isAdmin || false,
+    points: 0,
+    level: 'Novice Explorer',
+    followedUserIds: [],
+    createdAt: serverTimestamp(),
+    ...data
+  };
+  await setDoc(userRef, profile);
+  return profile;
 }
 
 // --- DEFAULTS ---

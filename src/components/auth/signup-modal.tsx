@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { createUserProfile } from "@/lib/services/cms-service";
 
 interface SignupModalProps {
   open: boolean;
@@ -26,7 +28,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [clubName, setClubName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -34,12 +35,10 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
       setStep(2);
       setCurrentAccountType(initialStep);
     }
-    // Reset form fields when modal opens or initialStep changes
     if (open) {
       setName('');
       setEmail('');
       setPassword('');
-      setClubName('');
     }
   }, [open, initialStep]);
 
@@ -57,75 +56,60 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
   };
   
   const handleBack = () => {
-    if (initialStep && step === 2) { // If opened directly to step 2, "Back" should close.
+    if (initialStep && step === 2) {
       onOpenChange(false);
     } else {
       setStep(1);
-      // Don't reset currentAccountType if initialStep is present, so it remains selected if user navigates back and forth
     }
-  };
-
-  const resetFormFields = () => {
-    setName('');
-    setEmail('');
-    setPassword('');
-    setClubName('');
   };
 
   const handleCloseModal = () => {
     onOpenChange(false);
-    // Delay reset to allow modal close animation
     setTimeout(() => {
       setStep(initialStep ? 2 : 1);
       if (!initialStep) {
         setCurrentAccountType(null);
       }
-      resetFormFields();
+      setName('');
+      setEmail('');
+      setPassword('');
     }, 300);
   };
 
   const handleApiSubmit = async (selectedAccountType: AccountType) => {
-    setIsLoading(true);
-    let requestBody: any = {
-      name,
-      email,
-      password,
-      accountType: selectedAccountType,
-    };
-    
-    // Basic validation for common fields
     if (!name.trim() || !email.trim() || !password.trim()) {
         toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
-        setIsLoading(false);
         return;
     }
 
+    setIsLoading(true);
 
     try {
-      // NOTE: In a real app, you would have a dedicated API route like '/api/auth/register'.
-      // For this mock, we'll just simulate success.
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const result = { message: "Your account has been created." };
-      const response = { ok: true };
+      // 1. Create User in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
+      // 2. Update Display Name in Auth
+      await updateProfile(user, { displayName: name });
 
-      if (response.ok) {
-        toast({
-          title: "Registration Successful!",
-          description: result.message || "Your account has been created.",
-        });
-        handleCloseModal();
-      } else {
-        toast({
-          title: "Registration Failed",
-          description: result.message || "An error occurred during registration.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+      // 3. Create Profile in Firestore
+      await createUserProfile(user.uid, {
+        email: email,
+        displayName: name,
+        isCreator: selectedAccountType === 'erotaract', // Explorer club members can suggest destinations
+        isAdmin: email === process.env.NEXT_PUBLIC_ADMIN_EMAIL,
+      });
+
       toast({
-        title: "Registration Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Registration Successful!",
+        description: "Welcome to the iffe-travels community.",
+      });
+      handleCloseModal();
+    } catch (error: any) {
+      console.error("Registration Error:", error);
+      toast({
+        title: "Registration Failed",
+        description: error.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -140,14 +124,6 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
         handleCloseModal();
       } else {
         onOpenChange(true);
-         if (initialStep) { // If modal is opened with an initial step, ensure state is correct
-            setStep(2);
-            setCurrentAccountType(initialStep);
-        } else {
-            setStep(1);
-            setCurrentAccountType(null);
-        }
-        resetFormFields(); // Reset fields whenever dialog is opened/toggled
       }
     }}>
       <DialogContent className="sm:max-w-md">
@@ -201,7 +177,7 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
             </div>
             <DialogFooter>
               <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-                {isLoading ? 'Creating Account...' : 'Create Free Account'}
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account...</> : "Create Free Account"}
               </Button>
             </DialogFooter>
           </form>
@@ -210,13 +186,8 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
         {step === 2 && currentAccountType === "erotaract" && (
            <form onSubmit={(e) => { 
                 e.preventDefault(); 
-                toast({ title: "Payment Gateway Mock", description: "Simulating payment..." });
-                // Simulate a delay for payment processing
-                setIsLoading(true);
-                setTimeout(() => {
-                    toast({ title: "Payment Successful (Simulated)", description: "Proceeding with registration." });
-                    handleApiSubmit('erotaract'); // This will set isLoading to false
-                }, 1500);
+                toast({ title: "Payment Gateway", description: "In a production app, you would be redirected to a secure payment provider here." });
+                handleApiSubmit('erotaract');
             }} className="py-4 space-y-4">
             <p className="text-muted-foreground text-center">You're applying to become a member of the Explorer's Club!</p>
             <div>
@@ -236,14 +207,13 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
                     <li>Post travel stories and photos</li>
                     <li>Suggest and vote on new destinations</li>
-                    <li>Get exclusive access to special events</li>
-                    <li>Personal trip tracker on your profile</li>
+                    <li>Exclusive access to special events</li>
                     <li>Verified member badge</li>
                 </ul>
             </div>
             <p className="text-sm font-semibold text-center">Membership Fee: $50 per year.</p>
             <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-              {isLoading ? 'Processing...' : 'Proceed to Payment (Simulated)'}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : "Proceed to Payment (Simulated)"}
             </Button>
           </form>
         )}
