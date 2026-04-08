@@ -158,6 +158,8 @@ export interface ChatMessage {
 
 // --- CONSTANTS ---
 const CAMPAIGNS_COLLECTION = 'campaigns_public';
+const POSTS_COLLECTION = 'posts_approved';
+const GALLERY_COLLECTION = 'gallery';
 
 // --- USER PROFILE SERVICES ---
 
@@ -344,6 +346,8 @@ export async function deletePromotion(id: string) {
 // --- GALLERY ---
 
 export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+  // NOTE: This currently uses Firebase Storage as the blob engine.
+  // To use Supabase, swap this function's internals while maintaining the Firestore metadata write.
   const storagePath = `gallery/${Date.now()}_${file.name}`;
   const storageRef = ref(storage, storagePath);
   
@@ -352,7 +356,7 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`) : [];
   
-  const docRef = await addDoc(collection(db, 'gallery'), {
+  const docRef = await addDoc(collection(db, GALLERY_COLLECTION), {
     src: downloadUrl,
     alt: metadata.caption || 'Gallery Image',
     caption: metadata.caption || '',
@@ -367,10 +371,12 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
   try {
-    const galleryRef = collection(db, 'gallery');
-    const q = count 
-      ? query(galleryRef, limit(count))
-      : query(galleryRef);
+    const galleryRef = collection(db, GALLERY_COLLECTION);
+    let q = query(galleryRef, orderBy('createdAt', 'desc'));
+    
+    if (count) {
+      q = query(q, limit(count));
+    }
       
     const querySnapshot = await getDocs(q);
     
@@ -400,13 +406,13 @@ export async function deleteGalleryImage(id: string, storagePath?: string) {
     const storageRef = ref(storage, storagePath);
     await deleteObject(storageRef).catch(err => console.error("Storage delete error:", err));
   }
-  await deleteDoc(doc(db, 'gallery', id));
+  await deleteDoc(doc(db, GALLERY_COLLECTION, id));
 }
 
 // --- BLOG ---
 
 export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
-  const docRef = await addDoc(collection(db, 'posts'), {
+  const docRef = await addDoc(collection(db, POSTS_COLLECTION), {
     ...data,
     status: 'Published',
     commentCount: 0,
@@ -417,13 +423,11 @@ export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'comme
 
 export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
   try {
-    const postsRef = collection(db, 'posts');
-    let q;
+    const postsRef = collection(db, POSTS_COLLECTION);
+    let q = query(postsRef, orderBy('createdAt', 'desc'));
     
     if (status && status !== 'all') {
-      q = query(postsRef, where('status', '==', status));
-    } else {
-      q = query(postsRef);
+      q = query(q, where('status', '==', status));
     }
     
     if (count) {
@@ -446,7 +450,7 @@ export async function fetchBlogPosts(status?: string, count?: number): Promise<B
 
 export async function getBlogPost(id: string): Promise<BlogPost | null> {
   try {
-    const docSnap = await getDoc(doc(db, 'posts', id));
+    const docSnap = await getDoc(doc(db, POSTS_COLLECTION, id));
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
@@ -460,11 +464,11 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
 }
 
 export async function updatePostStatus(id: string, status: BlogPost['status']) {
-  await updateDoc(doc(db, 'posts', id), { status });
+  await updateDoc(doc(db, POSTS_COLLECTION, id), { status });
 }
 
 export async function deleteBlogPost(id: string) {
-  await deleteDoc(doc(db, 'posts', id));
+  await deleteDoc(doc(db, POSTS_COLLECTION, id));
 }
 
 // --- VIDEOS ---
@@ -479,7 +483,7 @@ export async function addVideo(video: Omit<VideoItem, 'id'>) {
 
 export async function fetchVideos(): Promise<VideoItem[]> {
   try {
-    const q = query(collection(db, 'videos'));
+    const q = query(collection(db, 'videos'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoItem));
   } catch (e) {
@@ -558,7 +562,7 @@ export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'vote
 
 export async function fetchIdeas(): Promise<Idea[]> {
   try {
-    const q = query(collection(db, 'ideas'));
+    const q = query(collection(db, 'ideas'), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
       const data = doc.data();
