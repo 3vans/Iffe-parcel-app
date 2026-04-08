@@ -97,6 +97,7 @@ export interface Campaign {
   meals?: any[];
   bookingTips?: string[];
   endDate?: string;
+  status?: 'active' | 'completed' | 'cancelled';
 }
 
 export interface Package {
@@ -154,6 +155,9 @@ export interface ChatMessage {
   timestamp: string;
   createdAt: any;
 }
+
+// --- CONSTANTS ---
+const CAMPAIGNS_COLLECTION = 'campaigns_public';
 
 // --- USER PROFILE SERVICES ---
 
@@ -491,7 +495,7 @@ export async function deleteVideo(id: string) {
 
 export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]> {
   try {
-    const campaignsRef = collection(db, 'campaigns');
+    const campaignsRef = collection(db, CAMPAIGNS_COLLECTION);
     const q = featuredOnly 
       ? query(campaignsRef, where('featured', '==', true))
       : query(campaignsRef);
@@ -508,7 +512,7 @@ export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]
 
 export async function getCampaignById(id: string): Promise<Campaign | null> {
   try {
-    const docSnap = await getDoc(doc(db, 'campaigns', id));
+    const docSnap = await getDoc(doc(db, CAMPAIGNS_COLLECTION, id));
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() } as Campaign;
     }
@@ -520,18 +524,22 @@ export async function getCampaignById(id: string): Promise<Campaign | null> {
 
 export async function saveCampaign(campaign: Partial<Campaign>) {
   if (campaign.id) {
-    const ref = doc(db, 'campaigns', campaign.id);
-    await updateDoc(ref, { ...campaign, updatedAt: serverTimestamp() });
+    const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
+    await updateDoc(ref, { 
+      ...campaign, 
+      updatedAt: serverTimestamp() 
+    });
   } else {
-    await addDoc(collection(db, 'campaigns'), {
+    await addDoc(collection(db, CAMPAIGNS_COLLECTION), {
       ...campaign,
+      status: 'active',
       createdAt: serverTimestamp(),
     });
   }
 }
 
 export async function deleteCampaign(id: string) {
-  await deleteDoc(doc(db, 'campaigns', id));
+  await deleteDoc(doc(db, CAMPAIGNS_COLLECTION, id));
 }
 
 // --- IDEAS ---

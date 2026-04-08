@@ -26,11 +26,12 @@ const defaultMeals = [
 ];
 
 async function getDetailedCampaign(id: string): Promise<{ campaign: Campaign | undefined; relatedTours: RelatedTour[] }> {
+    // 1. Fetch the campaign from the campaigns_public collection
     const campaign = await getCampaignById(id);
     
     if (!campaign) return { campaign: undefined, relatedTours: [] };
 
-    // Fill in defaults for missing CMS fields to ensure a rich UI
+    // 2. Enrich the data with defaults for missing CMS fields to ensure a rich UI
     const enrichedCampaign = {
         ...campaign,
         storyline: campaign.storyline || [
@@ -48,6 +49,7 @@ async function getDetailedCampaign(id: string): Promise<{ campaign: Campaign | u
         imageHeight: 600,
     };
 
+    // 3. Fetch related tours for the sidebar
     const allCampaigns = await fetchCampaigns();
     const related = allCampaigns
         .filter(c => c.id !== id && c.tags?.some(tag => campaign.tags?.includes(tag)))
