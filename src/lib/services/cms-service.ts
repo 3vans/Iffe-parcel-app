@@ -147,6 +147,14 @@ export interface Idea {
   commentsCount: number;
 }
 
+export interface Chatroom {
+  id: string;
+  name: string;
+  topic: string;
+  userCount: number;
+  lastActivity: string;
+}
+
 export interface ChatMessage {
   id: string;
   text: string;
@@ -161,6 +169,8 @@ export interface ChatMessage {
 const CAMPAIGNS_COLLECTION = 'campaigns_public';
 const POSTS_COLLECTION = 'posts_approved';
 const GALLERY_COLLECTION = 'gallery';
+const CHATROOMS_COLLECTION = 'chatrooms';
+const IDEAS_COLLECTION = 'ideas';
 
 // --- USER PROFILE SERVICES ---
 
@@ -198,39 +208,12 @@ export async function createUserProfile(userId: string, data: Partial<UserProfil
   return profile;
 }
 
-// --- DEFAULTS ---
-
-const DEFAULT_GALLERY_IMAGES: GalleryImage[] = [
-  { id: 'g1', src: placeholderImages.gallerySafariGroup.src, alt: 'Safari Group', dataAiHint: placeholderImages.gallerySafariGroup.hint, tags: ['#Safari', '#Group'], caption: 'Adventurers at sunset' },
-  { id: 'g2', src: placeholderImages.galleryElephant.src, alt: 'Elephant', dataAiHint: placeholderImages.galleryElephant.hint, tags: ['#Wildlife', '#Elephant'], caption: 'Majestic elephant by the river' },
-  { id: 'g3', src: placeholderImages.galleryLioness.src, alt: 'Lioness', dataAiHint: placeholderImages.galleryLioness.hint, tags: ['#Wildlife', '#Lions'], caption: 'Lioness with her cubs' },
-  { id: 'g4', src: placeholderImages.galleryBalloon.src, alt: 'Hot Air Balloon', dataAiHint: placeholderImages.galleryBalloon.hint, tags: ['#Adventure', '#Balloon'], caption: 'Soaring over the plains' },
-  { id: 'g5', src: placeholderImages.galleryGiraffe.src, alt: 'Giraffe', dataAiHint: placeholderImages.galleryGiraffe.hint, tags: ['#Wildlife', '#Giraffe'], caption: 'Giraffe at sunrise' },
-];
-
-const DEFAULT_CAMPAIGNS: Campaign[] = [
-  { id: '1', title: 'Bwindi Gorilla Trekking', imageUrl: placeholderImages.campaignBwindi.src, dataAiHint: 'bwindi forest', shortDescription: 'World-famous gorilla trekking in a UNESCO World Heritage site.', description: 'Venture into the ancient Bwindi Impenetrable Forest for a face-to-face encounter with endangered mountain gorillas.', region: 'Western', goal: 100, currentAmount: 98, tags: ['#Gorilla', '#UNESCO'] },
-  { id: '2', title: 'Queen Elizabeth National Park', imageUrl: placeholderImages.campaignQueenElizabeth.src, dataAiHint: 'tree climbing lion', shortDescription: 'Spot tree-climbing lions and enjoy Kazinga Channel boat safaris.', description: 'Explore Ugandas most popular savanna park, famous for its diverse ecosystems and the iconic Ishasha tree-climbing lions.', region: 'Western', goal: 100, currentAmount: 95, tags: ['#Wildlife', '#Lions'] },
-  { id: '3', title: 'Murchison Falls Safari', imageUrl: placeholderImages.campaignMurchison.src, dataAiHint: 'murchison falls', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', description: 'Witness the Nile River explode through a narrow gorge at Murchison Falls, surrounded by elephants, giraffes, and hippos.', region: 'Western', goal: 100, currentAmount: 96, tags: ['#Wildlife', '#Waterfalls'] },
-  { id: '4', title: 'Kibale Forest Chimpanzee Trekking', imageUrl: placeholderImages.campaignKibale.src, dataAiHint: 'chimpanzee forest', shortDescription: 'Trek chimpanzees in the primate capital of East Africa.', description: 'Track our closest relatives through the lush rainforest of Kibale, home to 13 different primate species.', region: 'Western', goal: 100, currentAmount: 94, tags: ['#Chimpanzee', '#Primates'] },
-  { id: '8', title: 'Jinja - Source of the Nile', imageUrl: placeholderImages.campaignSourceNile.src, dataAiHint: 'source of nile', shortDescription: 'Discover the legendary source of the world\'s longest river.', description: 'Visit the historic point where the Great Nile begins its 6,000km journey to the Mediterranean Sea.', region: 'Eastern', goal: 100, currentAmount: 95, tags: ['#Jinja', '#RiverNile'] },
-  { id: '11', title: 'Sipi Falls Adventure', imageUrl: placeholderImages.campaignSipi.src, dataAiHint: 'sipi falls', shortDescription: 'Explore a series of beautiful waterfalls with coffee tours and hikes.', description: 'Hike to three stunning waterfalls and learn about local Arabica coffee production from farm to cup.', region: 'Eastern', goal: 100, currentAmount: 96, tags: ['#Waterfalls', '#Coffee'] },
-];
-
 // --- BUILDER SERVICES ---
 
 export async function fetchBasePackages(): Promise<Package[]> {
   try {
     const q = query(collection(db, 'packages'), where('isActive', '==', true));
     const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      return [
-        { id: 'explorer', name: 'Explorer Package', basePrice: 750, durationDays: 4, features: ['Short Trip', 'Eastern Uganda'], isActive: true },
-        { id: 'adventurer', name: 'Adventurer Package', basePrice: 4500, durationDays: 7, features: ['Primate Focus', 'Lodge Stays'], isActive: true, isPopular: true },
-        { id: 'ultimate', name: 'Ultimate Safari', basePrice: 8000, durationDays: 10, features: ['All Major Parks', 'Full Circuit'], isActive: true }
-      ];
-    }
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
   } catch (e) {
     return [];
@@ -254,15 +237,6 @@ export async function fetchAddons(): Promise<Addon[]> {
   try {
     const q = query(collection(db, 'addons'), where('isActive', '==', true));
     const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      return [
-        { id: 'gorilla', name: 'Gorilla Trekking', price: 900, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
-        { id: 'chimp', name: 'Chimpanzee Tracking', price: 320, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
-        { id: 'big_five', name: 'Big Five Game Drive', price: 150, category: 'activity', subCategory: 'Wildlife', isActive: true },
-        { id: 'luxury_lodge', name: 'Luxury Lodge Upgrade', price: 1200, category: 'luxury', isActive: true },
-      ];
-    }
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Addon));
   } catch (e) {
     return [];
@@ -386,9 +360,6 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
     }
       
     const querySnapshot = await getDocs(q);
-    
-    if (querySnapshot.empty) return DEFAULT_GALLERY_IMAGES;
-
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
       return {
@@ -403,8 +374,7 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
       };
     });
   } catch (error) {
-    console.warn("Failed to fetch gallery from Firestore, using defaults", error);
-    return DEFAULT_GALLERY_IMAGES;
+    return [];
   }
 }
 
@@ -512,12 +482,9 @@ export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]
       : query(campaignsRef);
     
     const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-      return featuredOnly ? DEFAULT_CAMPAIGNS.filter(c => c.featured) : DEFAULT_CAMPAIGNS;
-    }
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Campaign));
   } catch (error) {
-    return featuredOnly ? DEFAULT_CAMPAIGNS.filter(c => c.featured) : DEFAULT_CAMPAIGNS;
+    return [];
   }
 }
 
@@ -528,18 +495,13 @@ export async function getCampaignById(id: string): Promise<Campaign | null> {
       return { id: docSnap.id, ...docSnap.data() } as Campaign;
     }
   } catch (e) {}
-  // Fallback to defaults
-  const defaultC = DEFAULT_CAMPAIGNS.find(c => c.id === id);
-  return defaultC || null;
+  return null;
 }
 
 export async function saveCampaign(campaign: Partial<Campaign>) {
   if (campaign.id) {
     const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
-    await updateDoc(ref, { 
-      ...campaign, 
-      updatedAt: serverTimestamp() 
-    });
+    await updateDoc(ref, { ...campaign, updatedAt: serverTimestamp() });
   } else {
     await addDoc(collection(db, CAMPAIGNS_COLLECTION), {
       ...campaign,
@@ -556,7 +518,7 @@ export async function deleteCampaign(id: string) {
 // --- IDEAS ---
 
 export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
-  const docRef = await addDoc(collection(db, 'ideas'), {
+  const docRef = await addDoc(collection(db, IDEAS_COLLECTION), {
     ...data,
     votes: 0,
     voters: [],
@@ -569,7 +531,7 @@ export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'vote
 
 export async function fetchIdeas(): Promise<Idea[]> {
   try {
-    const q = query(collection(db, 'ideas'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, IDEAS_COLLECTION), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
       const data = doc.data();
@@ -585,7 +547,7 @@ export async function fetchIdeas(): Promise<Idea[]> {
 }
 
 export async function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
-  const ideaRef = doc(db, 'ideas', ideaId);
+  const ideaRef = doc(db, IDEAS_COLLECTION, ideaId);
   if (hasVoted) {
     await updateDoc(ideaRef, {
       votes: increment(-1),
@@ -599,17 +561,47 @@ export async function voteForIdea(ideaId: string, userId: string, hasVoted: bool
   }
 }
 
-// --- CHAT ---
+// --- CHATROOMS & MESSAGES ---
 
-export async function sendMessage(message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
-  await addDoc(collection(db, 'chats'), {
+export async function fetchChatrooms(): Promise<Chatroom[]> {
+  try {
+    const q = query(collection(db, CHATROOMS_COLLECTION), orderBy('name', 'asc'));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      // Seed initial rooms if empty
+      const rooms = [
+        { name: 'General Discussion', topic: 'Talk about anything Rotary related!', userCount: 0, lastActivity: 'Now' },
+        { name: 'Project Brainstorming', topic: 'Ideas for new community projects.', userCount: 0, lastActivity: 'Now' },
+        { name: 'Support', topic: 'Get help with platform features.', userCount: 0, lastActivity: 'Now' }
+      ];
+      for (const r of rooms) {
+        await addDoc(collection(db, CHATROOMS_COLLECTION), r);
+      }
+      return fetchChatrooms();
+    }
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chatroom));
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
+  await addDoc(collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), {
     ...message,
     createdAt: serverTimestamp(),
   });
+  // Update room last activity
+  await updateDoc(doc(db, CHATROOMS_COLLECTION, roomId), {
+    lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  });
 }
 
-export function subscribeToMessages(callback: (messages: ChatMessage[]) => void) {
-  const q = query(collection(db, 'chats'), orderBy('createdAt', 'asc'), limit(50));
+export function subscribeToMessages(roomId: string, callback: (messages: ChatMessage[]) => void) {
+  const q = query(
+    collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), 
+    orderBy('createdAt', 'asc'), 
+    limit(50)
+  );
   
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => {
@@ -622,4 +614,8 @@ export function subscribeToMessages(callback: (messages: ChatMessage[]) => void)
     });
     callback(messages);
   });
+}
+
+export async function deleteChatMessage(roomId: string, messageId: string) {
+  await deleteDoc(doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId));
 }

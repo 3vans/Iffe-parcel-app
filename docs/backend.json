@@ -7,62 +7,20 @@
       "type": "object",
       "description": "Represents a registered user of the platform, including participants and creators.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the User entity."
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address, used for communication.",
-          "format": "email"
-        },
-        "username": {
-          "type": "string",
-          "description": "A unique username chosen by the user."
-        },
-        "bio": {
-          "type": "string",
-          "description": "A short biographical description provided by the user."
-        },
-        "profilePictureUrl": {
-          "type": "string",
-          "description": "URL to the user's profile picture, stored on Supabase.",
-          "format": "uri"
-        },
-        "isCreator": {
-          "type": "boolean",
-          "description": "Indicates if the user has a 'Creator' role, allowing them to lead campaigns and manage chatrooms."
-        },
-        "isAdmin": {
-          "type": "boolean",
-          "description": "Indicates if the user has administrative privileges for platform management."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the user account was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp of the last update to the user's profile.",
-          "format": "date-time"
-        },
-        "followedUserIds": {
-          "type": "array",
-          "description": "References to Users this user is following.",
-          "items": {
-            "type": "string"
-          }
-        }
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "username": { "type": "string" },
+        "displayName": { "type": "string" },
+        "bio": { "type": "string" },
+        "profilePictureUrl": { "type": "string", "format": "uri" },
+        "isCreator": { "type": "boolean" },
+        "isAdmin": { "type": "boolean" },
+        "points": { "type": "number" },
+        "level": { "type": "string" },
+        "followedUserIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "email",
-        "username",
-        "isCreator",
-        "isAdmin",
-        "createdAt"
-      ]
+      "required": ["id", "email", "username", "isCreator", "isAdmin", "createdAt"]
     },
     "Campaign": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -70,52 +28,19 @@
       "type": "object",
       "description": "Details about a community campaign or tour expedition.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Campaign entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the campaign."
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief overview of the campaign's purpose and goals."
-        },
-        "storyline": {
-          "type": "array",
-          "description": "A list of strings detailing the tour experience.",
-          "items": { "type": "string" }
-        },
-        "region": {
-          "type": "string",
-          "enum": ["Western", "Eastern", "Northern", "Central", "Other"]
-        },
-        "currentRaised": {
-          "type": "number",
-          "description": "The traveller rating or funds progress."
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status (e.g., 'active', 'completed', 'cancelled')."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the campaign was created.",
-          "format": "date-time"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Primary visual for the campaign."
-        }
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "shortDescription": { "type": "string" },
+        "storyline": { "type": "array", "items": { "type": "string" } },
+        "region": { "type": "string", "enum": ["Western", "Eastern", "Northern", "Central", "Other"] },
+        "currentAmount": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "imageUrl": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
       },
-      "required": [
-        "id",
-        "title",
-        "description",
-        "status",
-        "createdAt"
-      ]
+      "required": ["id", "title", "description", "status", "createdAt"]
     },
     "Package": {
       "title": "Package",
@@ -149,148 +74,98 @@
       "required": ["id", "name", "price", "category", "isActive"]
     },
     "Post": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Post",
       "type": "object",
-      "description": "Represents a blog-style article or community post.",
+      "description": "Approved journal entries.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Post entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the post."
-        },
-        "content": {
-          "type": "string",
-          "description": "The full content of the post."
-        },
-        "authorId": {
-          "type": "string",
-          "description": "Reference to the User who authored this post."
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status (e.g., 'published', 'draft')."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the post was created.",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "imageUrl": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
       },
-      "required": [
-        "id",
-        "title",
-        "content",
-        "authorId",
-        "status",
-        "createdAt"
-      ]
+      "required": ["id", "title", "content", "author", "status", "createdAt"]
+    },
+    "Chatroom": {
+      "title": "Chatroom",
+      "type": "object",
+      "description": "A channel for group discussion.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "topic": { "type": "string" },
+        "userCount": { "type": "number" },
+        "lastActivity": { "type": "string" }
+      }
+    },
+    "Message": {
+      "title": "Message",
+      "type": "object",
+      "description": "An individual chat message.",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderAvatar": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Idea": {
+      "title": "Idea",
+      "type": "object",
+      "description": "Community destination suggestion.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "submittedBy": { "type": "string" },
+        "votes": { "type": "number" },
+        "voters": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      }
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["password", "anonymous"]
   },
   "firestore": {
     "structure": [
       {
         "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "User profiles. Blobs stored on Supabase.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "Unique ID matching Firebase Auth UID."
-            }
-          ]
-        }
+        "definition": { "entityName": "User", "schema": { "$ref": "#/backend/entities/User" }, "description": "User profiles." }
       },
       {
         "path": "/campaigns_public/{campaignId}",
-        "definition": {
-          "entityName": "Campaign",
-          "schema": {
-            "$ref": "#/backend/entities/Campaign"
-          },
-          "description": "Public expeditions. Media URLs point to Supabase.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "Unique ID of the public campaign."
-            }
-          ]
-        }
+        "definition": { "entityName": "Campaign", "schema": { "$ref": "#/backend/entities/Campaign" }, "description": "Public expeditions." }
       },
       {
         "path": "/posts_approved/{postId}",
-        "definition": {
-          "entityName": "Post",
-          "schema": {
-            "$ref": "#/backend/entities/Post"
-          },
-          "description": "Approved journal entries.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "Unique ID of the approved post."
-            }
-          ]
-        }
+        "definition": { "entityName": "Post", "schema": { "$ref": "#/backend/entities/Post" }, "description": "Approved blog posts." }
       },
       {
         "path": "/packages/{packageId}",
-        "definition": {
-          "entityName": "Package",
-          "schema": {
-            "$ref": "#/backend/entities/Package"
-          },
-          "description": "Base safari package definitions.",
-          "params": [
-            {
-              "name": "packageId",
-              "description": "Unique ID for the base pricing foundation."
-            }
-          ]
-        }
+        "definition": { "entityName": "Package", "schema": { "$ref": "#/backend/entities/Package" }, "description": "Base safari packages." }
       },
       {
         "path": "/addons/{addonId}",
-        "definition": {
-          "entityName": "Addon",
-          "schema": {
-            "$ref": "#/backend/entities/Addon"
-          },
-          "description": "Selectable upgrades and activities.",
-          "params": [
-            {
-              "name": "addonId",
-              "description": "Unique ID for an add-on item."
-            }
-          ]
-        }
+        "definition": { "entityName": "Addon", "schema": { "$ref": "#/backend/entities/Addon" }, "description": "Selectable activities." }
       },
       {
-        "path": "/custom_bookings/{bookingId}",
-        "definition": {
-          "entityName": "Object",
-          "schema": { "type": "object" },
-          "description": "Captured requests from the Bespoke Safari Builder.",
-          "params": [
-            {
-              "name": "bookingId",
-              "description": "Unique ID for the bespoke request."
-            }
-          ]
-        }
+        "path": "/chatrooms/{roomId}",
+        "definition": { "entityName": "Chatroom", "schema": { "$ref": "#/backend/entities/Chatroom" }, "description": "Active chat channels." }
+      },
+      {
+        "path": "/chatrooms/{roomId}/messages/{messageId}",
+        "definition": { "entityName": "Message", "schema": { "$ref": "#/backend/entities/Message" }, "description": "Messages within a room." }
+      },
+      {
+        "path": "/ideas/{ideaId}",
+        "definition": { "entityName": "Idea", "schema": { "$ref": "#/backend/entities/Idea" }, "description": "Community suggestions." }
       }
     ]
   }
