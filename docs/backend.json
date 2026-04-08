@@ -25,7 +25,7 @@
         },
         "profilePictureUrl": {
           "type": "string",
-          "description": "URL to the user's profile picture, stored externally (e.g., Supabase).",
+          "description": "URL to the user's profile picture, stored on Supabase.",
           "format": "uri"
         },
         "isCreator": {
@@ -48,35 +48,7 @@
         },
         "followedUserIds": {
           "type": "array",
-          "description": "References to Users this user is following. (Relationship: User N:N User)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "favoriteChatroomIds": {
-          "type": "array",
-          "description": "References to Chatrooms this user has marked as favorite. (Relationship: User N:N Chatroom)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "rsvpEventIds": {
-          "type": "array",
-          "description": "References to Events this user has RSVP'd to. (Relationship: User N:N Event)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "upvotedIdeaIds": {
-          "type": "array",
-          "description": "References to Ideas this user has upvoted. (Relationship: User N:N Idea)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "downvotedIdeaIds": {
-          "type": "array",
-          "description": "References to Ideas this user has downvoted. (Relationship: User N:N Idea)",
+          "description": "References to Users this user is following.",
           "items": {
             "type": "string"
           }
@@ -95,7 +67,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Campaign",
       "type": "object",
-      "description": "Details about a community campaign, including fundraising and volunteering aspects.",
+      "description": "Details about a community campaign or tour expedition.",
       "properties": {
         "id": {
           "type": "string",
@@ -115,11 +87,11 @@
         },
         "budgetGoal": {
           "type": "number",
-          "description": "The target fundraising amount for the campaign."
+          "description": "The target fundraising or pricing goal."
         },
         "currentRaised": {
           "type": "number",
-          "description": "The current amount of funds raised for the campaign."
+          "description": "The current rating or funds progress."
         },
         "startDate": {
           "type": "string",
@@ -133,70 +105,29 @@
         },
         "status": {
           "type": "string",
-          "description": "The current status of the campaign (e.g., 'pending_approval', 'active', 'completed', 'cancelled')."
+          "description": "The current status (e.g., 'active', 'completed', 'cancelled')."
         },
         "creatorId": {
           "type": "string",
-          "description": "Reference to the User who created this campaign. (Relationship: User 1:N Campaign)"
+          "description": "Reference to the User who created this campaign."
         },
         "createdAt": {
           "type": "string",
           "description": "Timestamp when the campaign was created.",
           "format": "date-time"
         },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp of the last update to the campaign details.",
-          "format": "date-time"
-        },
         "mediaUrls": {
           "type": "array",
-          "description": "URLs to images or videos related to the campaign, stored externally.",
+          "description": "URLs to images or videos related to the campaign, stored on Supabase.",
           "items": {
             "type": "string"
           }
-        },
-        "participantUserIds": {
-          "type": "array",
-          "description": "References to Users who have participated in or volunteered for this campaign. (Relationship: Campaign N:N User)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "commentIds": {
-          "type": "array",
-          "description": "References to Comments made on this campaign. (Relationship: Campaign 1:N Comment)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "timelineUpdateIds": {
-          "type": "array",
-          "description": "References to CampaignTimelineUpdates for this campaign. (Relationship: Campaign 1:N CampaignTimelineUpdate)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "volunteerRoleIds": {
-          "type": "array",
-          "description": "References to VolunteerRoles associated with this campaign. (Relationship: Campaign 1:N VolunteerRole)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "aiSummary": {
-          "type": "string",
-          "description": "An AI-generated summary of the campaign description for quick highlights."
         }
       },
       "required": [
         "id",
         "title",
         "description",
-        "budgetGoal",
-        "currentRaised",
-        "startDate",
-        "endDate",
         "status",
         "creatorId",
         "createdAt"
@@ -206,7 +137,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Post",
       "type": "object",
-      "description": "Represents a blog-style article or community post submitted by users.",
+      "description": "Represents a blog-style article or community post.",
       "properties": {
         "id": {
           "type": "string",
@@ -218,47 +149,25 @@
         },
         "content": {
           "type": "string",
-          "description": "The full content of the post, supporting rich text."
+          "description": "The full content of the post."
         },
         "authorId": {
           "type": "string",
-          "description": "Reference to the User who authored this post. (Relationship: User 1:N Post)"
+          "description": "Reference to the User who authored this post."
         },
         "status": {
           "type": "string",
-          "description": "The current status of the post (e.g., 'pending_approval', 'approved', 'rejected', 'draft')."
+          "description": "The current status (e.g., 'published', 'draft')."
         },
         "createdAt": {
           "type": "string",
           "description": "Timestamp when the post was created.",
           "format": "date-time"
         },
-        "updatedAt": {
+        "mediaUrl": {
           "type": "string",
-          "description": "Timestamp of the last update to the post.",
-          "format": "date-time"
-        },
-        "tagIds": {
-          "type": "array",
-          "description": "References to Tags associated with this post. (Relationship: Post N:N Tag)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "commentIds": {
-          "type": "array",
-          "description": "References to Comments made on this post. (Relationship: Post 1:N Comment)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "socialShareCount": {
-          "type": "number",
-          "description": "The number of times the post has been shared on social media."
-        },
-        "aiSummary": {
-          "type": "string",
-          "description": "An AI-generated summary of the post content."
+          "description": "URL to the featured image, stored on Supabase.",
+          "format": "uri"
         }
       },
       "required": [
@@ -270,31 +179,11 @@
         "createdAt"
       ]
     },
-    "Tag": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Tag",
-      "type": "object",
-      "description": "Represents a tag used for categorizing posts and campaigns.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Tag entity."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the tag (e.g., 'YouthVoices', 'Environment')."
-        }
-      },
-      "required": [
-        "id",
-        "name"
-      ]
-    },
     "Chatroom": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Chatroom",
       "type": "object",
-      "description": "Represents a live chatroom where users can discuss topics.",
+      "description": "Represents a live chatroom.",
       "properties": {
         "id": {
           "type": "string",
@@ -306,37 +195,16 @@
         },
         "topic": {
           "type": "string",
-          "description": "The main topic or theme of the chatroom (e.g., 'Plastic Recycling')."
+          "description": "The main topic."
         },
         "creatorId": {
           "type": "string",
-          "description": "Reference to the User who created this chatroom. (Relationship: User 1:N Chatroom)"
+          "description": "Reference to the User who created this chatroom."
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp when the chatroom was created.",
+          "description": "Timestamp when created.",
           "format": "date-time"
-        },
-        "memberIds": {
-          "type": "array",
-          "description": "References to Users who are members of this chatroom. (Relationship: Chatroom N:N User)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "messageIds": {
-          "type": "array",
-          "description": "References to Messages posted in this chatroom. (Relationship: Chatroom 1:N Message)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "pinnedMessageIds": {
-          "type": "array",
-          "description": "References to Messages that have been pinned in this chatroom. (Relationship: Chatroom N:N Message)",
-          "items": {
-            "type": "string"
-          }
         }
       },
       "required": [
@@ -345,477 +213,6 @@
         "topic",
         "creatorId",
         "createdAt"
-      ]
-    },
-    "Message": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Message",
-      "type": "object",
-      "description": "An individual message sent within a chatroom.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Message entity."
-        },
-        "chatroomId": {
-          "type": "string",
-          "description": "Reference to the Chatroom where this message was posted. (Relationship: Chatroom 1:N Message)"
-        },
-        "senderId": {
-          "type": "string",
-          "description": "Reference to the User who sent this message. (Relationship: User 1:N Message)"
-        },
-        "content": {
-          "type": "string",
-          "description": "The text content of the message."
-        },
-        "mediaUrl": {
-          "type": "string",
-          "description": "URL to media attached to the message (e.g., image, video), stored externally.",
-          "format": "uri"
-        },
-        "timestamp": {
-          "type": "string",
-          "description": "The date and time when the message was sent.",
-          "format": "date-time"
-        },
-        "reactionIds": {
-          "type": "array",
-          "description": "References to Reactions given to this message. (Relationship: Message 1:N Reaction)",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "chatroomId",
-        "senderId",
-        "content",
-        "timestamp"
-      ]
-    },
-    "Reaction": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Reaction",
-      "type": "object",
-      "description": "A user's reaction (emoji) to a specific message.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Reaction entity."
-        },
-        "messageId": {
-          "type": "string",
-          "description": "Reference to the Message this reaction is for. (Relationship: Message 1:N Reaction)"
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the User who made this reaction. (Relationship: User 1:N Reaction)"
-        },
-        "emoji": {
-          "type": "string",
-          "description": "The emoji character representing the reaction (e.g., '👍', '❤️')."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the reaction was made.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "messageId",
-        "userId",
-        "emoji",
-        "createdAt"
-      ]
-    },
-    "Event": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Event",
-      "type": "object",
-      "description": "Information about an upcoming event or live session.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Event entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the event."
-        },
-        "description": {
-          "type": "string",
-          "description": "A detailed description of the event."
-        },
-        "dateTime": {
-          "type": "string",
-          "description": "The scheduled date and time of the event.",
-          "format": "date-time"
-        },
-        "location": {
-          "type": "string",
-          "description": "The physical location or virtual meeting link (e.g., Zoom/YouTube URL) for the event."
-        },
-        "mediaUrl": {
-          "type": "string",
-          "description": "URL to an image or video associated with the event, stored externally.",
-          "format": "uri"
-        },
-        "hostId": {
-          "type": "string",
-          "description": "Reference to the User who is hosting the event. (Relationship: User 1:N Event)"
-        },
-        "rsvpOpen": {
-          "type": "boolean",
-          "description": "Indicates if RSVPs are currently open for the event."
-        },
-        "eventUrl": {
-          "type": "string",
-          "description": "The direct URL for joining the live session (e.g., Zoom, YouTube Live).",
-          "format": "uri"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the event was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp of the last update to the event details.",
-          "format": "date-time"
-        },
-        "rsvpUserIds": {
-          "type": "array",
-          "description": "References to Users who have RSVP'd to this event. (Relationship: Event N:N User)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "relatedPostId": {
-          "type": "string",
-          "description": "Reference to a Post created as a recap or article about this event. (Relationship: Event 1:1 Post)"
-        }
-      },
-      "required": [
-        "id",
-        "title",
-        "description",
-        "dateTime",
-        "location",
-        "rsvpOpen",
-        "createdAt"
-      ]
-    },
-    "Comment": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Comment",
-      "type": "object",
-      "description": "A user-submitted comment on a campaign or a post.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Comment entity."
-        },
-        "entityType": {
-          "type": "string",
-          "description": "The type of entity this comment belongs to (e.g., 'Campaign', 'Post')."
-        },
-        "entityId": {
-          "type": "string",
-          "description": "Reference to the ID of the entity (Campaign or Post) this comment is on. (Relationship: Entity 1:N Comment)"
-        },
-        "authorId": {
-          "type": "string",
-          "description": "Reference to the User who authored this comment. (Relationship: User 1:N Comment)"
-        },
-        "content": {
-          "type": "string",
-          "description": "The text content of the comment."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the comment was posted.",
-          "format": "date-time"
-        },
-        "parentId": {
-          "type": "string",
-          "description": "Reference to the parent Comment if this is a reply. (Relationship: Comment 1:N Comment)"
-        }
-      },
-      "required": [
-        "id",
-        "entityType",
-        "entityId",
-        "authorId",
-        "content",
-        "createdAt"
-      ]
-    },
-    "UserBadge": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserBadge",
-      "type": "object",
-      "description": "A badge awarded to a user for participation or achievement.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserBadge entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the User who received this badge. (Relationship: User 1:N UserBadge)"
-        },
-        "badgeType": {
-          "type": "string",
-          "description": "The type or name of the badge (e.g., 'FirstCampaignParticipant', 'EcoWarrior')."
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of what the badge represents."
-        },
-        "issuedDate": {
-          "type": "string",
-          "description": "The date and time when the badge was issued.",
-          "format": "date-time"
-        },
-        "campaignId": {
-          "type": "string",
-          "description": "Reference to the Campaign associated with this badge, if applicable. (Relationship: Campaign 1:N UserBadge)"
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "badgeType",
-        "description",
-        "issuedDate"
-      ]
-    },
-    "UserActivity": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserActivity",
-      "type": "object",
-      "description": "Records individual user actions contributing to their impact and volunteering record.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserActivity entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the User who performed this activity. (Relationship: User 1:N UserActivity)"
-        },
-        "activityType": {
-          "type": "string",
-          "description": "The type of activity performed (e.g., 'joined_campaign', 'volunteered_for_role', 'submitted_post', 'created_chatroom', 'rsvp_event')."
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief description of the activity."
-        },
-        "activityDate": {
-          "type": "string",
-          "description": "The date and time when the activity occurred.",
-          "format": "date-time"
-        },
-        "relatedEntityId": {
-          "type": "string",
-          "description": "Reference to the ID of the entity related to this activity (e.g., CampaignId, PostId, ChatroomId, EventId)."
-        },
-        "relatedEntityType": {
-          "type": "string",
-          "description": "The type of entity referred to by 'relatedEntityId' (e.g., 'Campaign', 'Post', 'Chatroom', 'Event')."
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "activityType",
-        "description",
-        "activityDate"
-      ]
-    },
-    "CampaignTimelineUpdate": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "CampaignTimelineUpdate",
-      "type": "object",
-      "description": "An update posted by the campaign creator to inform participants about progress or changes.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the CampaignTimelineUpdate entity."
-        },
-        "campaignId": {
-          "type": "string",
-          "description": "Reference to the Campaign this update belongs to. (Relationship: Campaign 1:N CampaignTimelineUpdate)"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the timeline update."
-        },
-        "description": {
-          "type": "string",
-          "description": "The detailed content of the update."
-        },
-        "updateDate": {
-          "type": "string",
-          "description": "The date and time when the update was posted.",
-          "format": "date-time"
-        },
-        "mediaUrls": {
-          "type": "array",
-          "description": "URLs to images or videos related to the update, stored externally.",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "campaignId",
-        "title",
-        "description",
-        "updateDate"
-      ]
-    },
-    "VolunteerRole": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "VolunteerRole",
-      "type": "object",
-      "description": "A specific role available for volunteers within a campaign.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the VolunteerRole entity."
-        },
-        "campaignId": {
-          "type": "string",
-          "description": "Reference to the Campaign this role is part of. (Relationship: Campaign 1:N VolunteerRole)"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the volunteer role (e.g., 'Event Organizer', 'Social Media Manager')."
-        },
-        "description": {
-          "type": "string",
-          "description": "A detailed description of the responsibilities for this role."
-        },
-        "requiredSkills": {
-          "type": "array",
-          "description": "A list of skills or qualifications preferred for this role.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "spotsAvailable": {
-          "type": "number",
-          "description": "The number of available spots for this volunteer role."
-        },
-        "assignedUserIds": {
-          "type": "array",
-          "description": "References to Users currently assigned to this volunteer role. (Relationship: VolunteerRole N:N User)",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "campaignId",
-        "title",
-        "description"
-      ]
-    },
-    "Idea": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Idea",
-      "type": "object",
-      "description": "A project idea suggested by users through the 'Idea Box' feature.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Idea entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the suggested idea."
-        },
-        "description": {
-          "type": "string",
-          "description": "A detailed description of the idea and its potential impact."
-        },
-        "submitterId": {
-          "type": "string",
-          "description": "Reference to the User who submitted this idea. (Relationship: User 1:N Idea)"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the idea was submitted.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status of the idea (e.g., 'new', 'under_review', 'approved', 'implemented', 'rejected')."
-        },
-        "upvoteUserIds": {
-          "type": "array",
-          "description": "References to Users who have upvoted this idea. (Relationship: Idea N:N User)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "downvoteUserIds": {
-          "type": "array",
-          "description": "References to Users who have downvoted this idea. (Relationship: Idea N:N User)",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "title",
-        "description",
-        "submitterId",
-        "createdAt",
-        "status"
-      ]
-    },
-    "Feedback": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Feedback",
-      "type": "object",
-      "description": "User feedback or suggestions for improving the platform.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Feedback entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the User who submitted the feedback. Optional for guest feedback. (Relationship: User 1:N Feedback)"
-        },
-        "content": {
-          "type": "string",
-          "description": "The content of the feedback or suggestion."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the feedback was submitted.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status of the feedback (e.g., 'new', 'reviewed', 'resolved')."
-        }
-      },
-      "required": [
-        "id",
-        "content",
-        "createdAt",
-        "status"
       ]
     }
   },
@@ -834,151 +231,11 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "User profiles, with public read access to certain fields and private write access for the user. Includes 'isCreator' and 'isAdmin' boolean fields for role-based access. 'profilePictureUrl' stores a URL to an image hosted on Supabase.",
+          "description": "User profiles. Blobs stored on Supabase.",
           "params": [
             {
               "name": "userId",
-              "description": "Unique ID of the user, corresponding to Firebase Authentication UID."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/following/{followedUserId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Subcollection to track users followed by a specific user. This supports N:N relationships efficiently and enables path-based security rules. Documents here are simple existence markers for `followedUserId`.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who is following."
-            },
-            {
-              "name": "followedUserId",
-              "description": "The ID of the user being followed."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/favoriteChatrooms/{chatroomId}",
-        "definition": {
-          "entityName": "Chatroom",
-          "schema": {
-            "$ref": "#/backend/entities/Chatroom"
-          },
-          "description": "Subcollection to track chatrooms marked as favorite by a specific user. Documents here are simple existence markers for `chatroomId`.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who favorited the chatroom."
-            },
-            {
-              "name": "chatroomId",
-              "description": "The ID of the chatroom marked as favorite."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/rsvps/{eventId}",
-        "definition": {
-          "entityName": "Event",
-          "schema": {
-            "$ref": "#/backend/entities/Event"
-          },
-          "description": "Subcollection to track events a user has RSVP'd to. Documents here are simple existence markers for `eventId`.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who RSVP'd."
-            },
-            {
-              "name": "eventId",
-              "description": "The ID of the event the user RSVP'd to."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/upvotes/{ideaId}",
-        "definition": {
-          "entityName": "Idea",
-          "schema": {
-            "$ref": "#/backend/entities/Idea"
-          },
-          "description": "Subcollection to track ideas a user has upvoted. Documents here are simple existence markers for `ideaId`.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who upvoted the idea."
-            },
-            {
-              "name": "ideaId",
-              "description": "The ID of the idea that was upvoted."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/downvotes/{ideaId}",
-        "definition": {
-          "entityName": "Idea",
-          "schema": {
-            "$ref": "#/backend/entities/Idea"
-          },
-          "description": "Subcollection to track ideas a user has downvoted. Documents here are simple existence markers for `ideaId`.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who downvoted the idea."
-            },
-            {
-              "name": "ideaId",
-              "description": "The ID of the idea that was downvoted."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/userBadges/{badgeId}",
-        "definition": {
-          "entityName": "UserBadge",
-          "schema": {
-            "$ref": "#/backend/entities/UserBadge"
-          },
-          "description": "Badges awarded to a specific user. Access is typically private for the user to manage, but may be publicly readable on user profiles.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user to whom the badge belongs."
-            },
-            {
-              "name": "badgeId",
-              "description": "Unique ID of the user badge."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/userActivities/{activityId}",
-        "definition": {
-          "entityName": "UserActivity",
-          "schema": {
-            "$ref": "#/backend/entities/UserActivity"
-          },
-          "description": "Records of individual actions performed by a user. This data is private to the user and administrators.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The ID of the user who performed the activity."
-            },
-            {
-              "name": "activityId",
-              "description": "Unique ID of the user activity record."
+              "description": "Unique ID matching Firebase Auth UID."
             }
           ]
         }
@@ -990,147 +247,11 @@
           "schema": {
             "$ref": "#/backend/entities/Campaign"
           },
-          "description": "Publicly visible campaigns (e.g., 'active', 'completed', 'cancelled' status). Read access is public; write access is restricted to the 'creatorId' or 'isAdmin'. 'mediaUrls' stores URLs to external media.",
+          "description": "Public expeditions. Media URLs point to Supabase.",
           "params": [
             {
               "name": "campaignId",
               "description": "Unique ID of the public campaign."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_drafts/{campaignId}",
-        "definition": {
-          "entityName": "Campaign",
-          "schema": {
-            "$ref": "#/backend/entities/Campaign"
-          },
-          "description": "Campaigns in draft or pending approval status, accessible only by the 'creatorId' or 'isAdmin'. This segregation supports QAPs.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "Unique ID of the draft or pending campaign."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_public/{campaignId}/comments/{commentId}",
-        "definition": {
-          "entityName": "Comment",
-          "schema": {
-            "$ref": "#/backend/entities/Comment"
-          },
-          "description": "Comments on publicly visible campaigns. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence. The 'entityType' and 'entityId' fields are redundant given the path structure.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the campaign this comment belongs to."
-            },
-            {
-              "name": "commentId",
-              "description": "Unique ID of the comment."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_drafts/{campaignId}/comments/{commentId}",
-        "definition": {
-          "entityName": "Comment",
-          "schema": {
-            "$ref": "#/backend/entities/Comment"
-          },
-          "description": "Comments on draft/pending campaigns. Access restricted by parent campaign's rules. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the draft/pending campaign this comment belongs to."
-            },
-            {
-              "name": "commentId",
-              "description": "Unique ID of the comment."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_public/{campaignId}/timelineUpdates/{updateId}",
-        "definition": {
-          "entityName": "CampaignTimelineUpdate",
-          "schema": {
-            "$ref": "#/backend/entities/CampaignTimelineUpdate"
-          },
-          "description": "Timeline updates for publicly visible campaigns. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence. 'mediaUrls' stores URLs to external media.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the campaign this timeline update belongs to."
-            },
-            {
-              "name": "updateId",
-              "description": "Unique ID of the campaign timeline update."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_drafts/{campaignId}/timelineUpdates/{updateId}",
-        "definition": {
-          "entityName": "CampaignTimelineUpdate",
-          "schema": {
-            "$ref": "#/backend/entities/CampaignTimelineUpdate"
-          },
-          "description": "Timeline updates for draft/pending campaigns. Access restricted by parent campaign's rules. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the draft/pending campaign this timeline update belongs to."
-            },
-            {
-              "name": "updateId",
-              "description": "Unique ID of the campaign timeline update."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_public/{campaignId}/volunteerRoles/{roleId}",
-        "definition": {
-          "entityName": "VolunteerRole",
-          "schema": {
-            "$ref": "#/backend/entities/VolunteerRole"
-          },
-          "description": "Volunteer roles for publicly visible campaigns. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence. 'assignedUserIds' acts as a membership map.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the campaign this volunteer role is part of."
-            },
-            {
-              "name": "roleId",
-              "description": "Unique ID of the volunteer role."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/campaigns_drafts/{campaignId}/volunteerRoles/{roleId}",
-        "definition": {
-          "entityName": "VolunteerRole",
-          "schema": {
-            "$ref": "#/backend/entities/VolunteerRole"
-          },
-          "description": "Volunteer roles for draft/pending campaigns. Access restricted by parent campaign's rules. Includes denormalized 'campaignCreatorId' and 'campaignStatus' for Authorization Independence.",
-          "params": [
-            {
-              "name": "campaignId",
-              "description": "The ID of the draft/pending campaign this volunteer role is part of."
-            },
-            {
-              "name": "roleId",
-              "description": "Unique ID of the volunteer role."
             }
           ]
         }
@@ -1142,83 +263,11 @@
           "schema": {
             "$ref": "#/backend/entities/Post"
           },
-          "description": "Posts that have been approved and are publicly visible. Read access is public; write access is restricted to the 'authorId' or 'isAdmin'. This segregation supports QAPs.",
+          "description": "Approved journal entries. Media stored on Supabase.",
           "params": [
             {
               "name": "postId",
               "description": "Unique ID of the approved post."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/posts_drafts/{postId}",
-        "definition": {
-          "entityName": "Post",
-          "schema": {
-            "$ref": "#/backend/entities/Post"
-          },
-          "description": "Posts in draft status, accessible only by the 'authorId' or 'isAdmin'. This segregation supports QAPs.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "Unique ID of the draft post."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/posts_approved/{postId}/comments/{commentId}",
-        "definition": {
-          "entityName": "Comment",
-          "schema": {
-            "$ref": "#/backend/entities/Comment"
-          },
-          "description": "Comments on approved posts. Includes denormalized 'postAuthorId' and 'postStatus' for Authorization Independence.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "The ID of the approved post this comment belongs to."
-            },
-            {
-              "name": "commentId",
-              "description": "Unique ID of the comment."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/posts_drafts/{postId}/comments/{commentId}",
-        "definition": {
-          "entityName": "Comment",
-          "schema": {
-            "$ref": "#/backend/entities/Comment"
-          },
-          "description": "Comments on draft posts. Access restricted by parent post's rules. Includes denormalized 'postAuthorId' and 'postStatus' for Authorization Independence.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "The ID of the draft post this comment belongs to."
-            },
-            {
-              "name": "commentId",
-              "description": "Unique ID of the comment."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/tags/{tagId}",
-        "definition": {
-          "entityName": "Tag",
-          "schema": {
-            "$ref": "#/backend/entities/Tag"
-          },
-          "description": "Global list of tags used for categorizing content. Generally publicly readable and admin-managed for writes.",
-          "params": [
-            {
-              "name": "tagId",
-              "description": "Unique ID of the tag."
             }
           ]
         }
@@ -1230,119 +279,11 @@
           "schema": {
             "$ref": "#/backend/entities/Chatroom"
           },
-          "description": "Chatroom information. The document includes the 'creatorId' and a 'members' map for efficient authorization checks. Publicly browsable for basic info, but private for sensitive details/messages.",
+          "description": "Chatroom metadata.",
           "params": [
             {
               "name": "chatroomId",
               "description": "Unique ID of the chatroom."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/chatrooms/{chatroomId}/messages/{messageId}",
-        "definition": {
-          "entityName": "Message",
-          "schema": {
-            "$ref": "#/backend/entities/Message"
-          },
-          "description": "Messages within a specific chatroom. Includes denormalized 'chatroomCreatorId' and 'chatroomMembers' map (containing user IDs and roles) for Authorization Independence. 'mediaUrl' stores a URL to external media.",
-          "params": [
-            {
-              "name": "chatroomId",
-              "description": "The ID of the chatroom this message belongs to."
-            },
-            {
-              "name": "messageId",
-              "description": "Unique ID of the message."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/chatrooms/{chatroomId}/messages/{messageId}/reactions/{reactionId}",
-        "definition": {
-          "entityName": "Reaction",
-          "schema": {
-            "$ref": "#/backend/entities/Reaction"
-          },
-          "description": "Reactions to a specific message. Includes denormalized 'chatroomId', 'chatroomCreatorId', and 'chatroomMembers' map for Authorization Independence.",
-          "params": [
-            {
-              "name": "chatroomId",
-              "description": "The ID of the chatroom where the message was posted."
-            },
-            {
-              "name": "messageId",
-              "description": "The ID of the message this reaction is for."
-            },
-            {
-              "name": "reactionId",
-              "description": "Unique ID of the reaction."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/events/{eventId}",
-        "definition": {
-          "entityName": "Event",
-          "schema": {
-            "$ref": "#/backend/entities/Event"
-          },
-          "description": "Publicly visible events. 'mediaUrl' stores a URL to external media. 'rsvpUserIds' is now managed via a subcollection `/users/{userId}/rsvps/{eventId}`.",
-          "params": [
-            {
-              "name": "eventId",
-              "description": "Unique ID of the event."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/ideas_public/{ideaId}",
-        "definition": {
-          "entityName": "Idea",
-          "schema": {
-            "$ref": "#/backend/entities/Idea"
-          },
-          "description": "Publicly visible ideas (e.g., 'approved', 'implemented', or 'public' status) available for voting. Read access is public; write access for voting updates. Segregated for QAPs.",
-          "params": [
-            {
-              "name": "ideaId",
-              "description": "Unique ID of the publicly available idea."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/ideas_pending_review/{ideaId}",
-        "definition": {
-          "entityName": "Idea",
-          "schema": {
-            "$ref": "#/backend/entities/Idea"
-          },
-          "description": "Ideas in 'new', 'under_review', or 'rejected' status, accessible only by the 'submitterId' or 'isAdmin'. This segregation supports QAPs.",
-          "params": [
-            {
-              "name": "ideaId",
-              "description": "Unique ID of the idea pending review."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/feedback/{feedbackId}",
-        "definition": {
-          "entityName": "Feedback",
-          "schema": {
-            "$ref": "#/backend/entities/Feedback"
-          },
-          "description": "User feedback, primarily private to the submitter and administrators. 'userId' is optional for guest feedback.",
-          "params": [
-            {
-              "name": "feedbackId",
-              "description": "Unique ID of the feedback entry."
             }
           ]
         }
@@ -1354,16 +295,15 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "A collection for defining global administrators. The existence of a document for a user's UID in this collection grants administrative privileges (DBAC: Existence over Content).",
+          "description": "Admin privilege marker.",
           "params": [
             {
               "name": "adminId",
-              "description": "The UID of the user who is an administrator."
+              "description": "UID of the administrator."
             }
           ]
         }
       }
-    ],
-    "reasoning": "The Firestore data structure is designed with a strong emphasis on Authorization Independence and Quality Assurance Predicates (QAPs) to ensure robust security rules and efficient queries. The core strategy revolves around **denormalization of authorization context** and **structural segregation of data based on its security posture**.\n\n**Authorization Independence via Denormalization:**\nTo eliminate the need for `get()` calls in security rules, which can break atomic operations and be hard to debug, critical authorization attributes are denormalized. For instance:\n*   Documents in subcollections like `campaigns/{campaignId}/timelineUpdates`, `campaigns/{campaignId}/volunteerRoles`, `posts/{postId}/comments`, `chatrooms/{chatroomId}/messages`, and `messages/{messageId}/reactions` will include denormalized fields from their parent entities. This includes `campaignCreatorId`, `campaignStatus`, `postAuthorId`, `postStatus`, `chatroomCreatorId`, and `chatroomMembers` map. This allows security rules to evaluate access directly on the requested document without having to fetch the parent document, thus ensuring atomic and efficient authorization checks.\n*   For user-specific relationships (e.g., following, favorite chatrooms, RSVPs, upvotes/downvotes), instead of storing large arrays of IDs on the main User document, dedicated subcollections like `/users/{userId}/following/{followedUserId}` are created. This allows granular, path-based ownership rules (`request.auth.uid == userId`) and prevents large document reads for authorization checks.\n\n**Quality Assurance Predicates (QAPs) through Structural Segregation:**\nQAPs mandate that security rules are not filters, meaning a `list` operation should only return documents that the user is authorized to see. Mixing documents with different security requirements in a single collection makes this impossible without breaking `list` operations or resorting to inefficient client-side filtering. To address this:\n*   **Campaigns, Posts, and Ideas** are segregated into separate top-level collections based on their `status` or visibility. For example, `/campaigns_public/{campaignId}` holds active, completed, or cancelled campaigns that are public, while `/campaigns_drafts/{campaignId}` holds pending or draft campaigns accessible only to the creator and admins. This ensures that a `list` query on `campaigns_public` will *only* return publicly accessible items, simplifying security rules to a basic `allow read: true` (with write rules checking `creatorId` and `isAdmin`). The same logic applies to `posts_approved` vs. `posts_drafts` and `ideas_public` vs. `ideas_pending_review`.\n*   **Roles:** Global administrative roles are managed via a dedicated collection `/roles_admin/{userId}`. The existence of a document at this path (`get(/databases/$(database)/documents/roles_admin/$(request.auth.uid)).exists()`) serves as an efficient and explicit DBAC mechanism for checking admin privileges.\n\nThis structure ensures clear, explicit, and easily debuggable security rules, enhances scalability by avoiding costly lookups, and supports robust query patterns without violating QAP principles. Blobs and images are explicitly stated to be stored on Supabase, so Firestore will only store URLs as references, aligning with best practices for external media storage."
+    ]
   }
 }

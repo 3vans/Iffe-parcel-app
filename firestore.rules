@@ -2,21 +2,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * APP SECURITY CORE PHILOSOPHY
-     * This ruleset enforces a strict Ownership and Role-based access model designed for high-scale community interaction.
-     *
-     * 1. DATA SEGREGATION (QAPs): Data is split into separate collections based on visibility (e.g., campaigns_public vs. campaigns_drafts). 
-     *    This ensures that 'list' operations never leak unauthorized content and remain high-performance.
-     *
-     * 2. AUTHORIZATION INDEPENDENCE: To avoid costly get() calls, authorization metadata (like creatorId or member maps) 
-     *    is denormalized directly onto child documents (comments, updates, messages).
-     *
-     * 3. ADMINISTRATIVE OVERRIDE: A dedicated /roles_admin collection serves as the source of truth for platform moderators.
-     *
-     * 4. EXTERNAL MEDIA: All blobs (images/videos) are referenced via URLs (Supabase). Rules only secure the metadata stored in Firestore.
-     */
-
     // --- Helper Functions ---
 
     function isSignedIn() {
@@ -31,198 +16,36 @@ service cloud.firestore {
       return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    // Used for updates/deletes to ensure existence and ownership in one check
-    function isExistingOwner(ownerId) {
-      return resource != null && (request.auth.uid == ownerId || isAdmin());
-    }
-
-    // Helper for membership-based access in chatrooms or volunteer roles
-    function isMember(membersMap) {
-      return isSignedIn() && membersMap[request.auth.uid] != null;
-    }
-
-    // --- User Profile & Private Data ---
-
-    /**
-     * @description Access rules for user profiles. Profiles are public, but writes are restricted to the owner.
-     * @path /users/{userId}
-     * @allow (create) if auth.uid matches userId.
-     * @deny (update) if the user is not the owner or an admin.
-     * @principle Self-creation and ownership-based writes.
-     */
+    // --- User Profile ---
     match /users/{userId} {
       allow get, list: if true;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
-
-      // User-specific subcollections: Ownership is implied by path
-      match /{allSubcollections=**} {
-        allow get, list, create, update, delete: if isOwner(userId);
-      }
     }
 
-    // --- Campaigns (Public & Drafts) ---
-
-    /**
-     * @description Publicly visible campaigns. Anyone can read; creators/admins manage.
-     * @path /campaigns_public/{campaignId}
-     * @allow (list) for all users to browse active campaigns.
-     * @principle Public read with owner-only writes.
-     */
+    // --- Campaigns (Public) ---
     match /campaigns_public/{campaignId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.creatorId);
-
-      match /comments/{commentId} {
-        allow get, list: if true;
-        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-        allow update, delete: if isExistingOwner(resource.data.authorId);
-      }
-
-      match /timelineUpdates/{updateId} {
-        allow get, list: if true;
-        allow create, update, delete: if isExistingOwner(resource.data.campaignCreatorId);
-      }
-
-      match /volunteerRoles/{roleId} {
-        allow get, list: if true;
-        allow create, update, delete: if isExistingOwner(resource.data.campaignCreatorId);
-      }
+      allow write: if isAdmin();
     }
 
-    /**
-     * @description Draft campaigns pending approval. Restricted to creator and admins.
-     * @path /campaigns_drafts/{campaignId}
-     * @deny (list) for general users to prevent seeing unapproved content.
-     * @principle Structural segregation for data privacy.
-     */
-    match /campaigns_drafts/{campaignId} {
-      allow get, list: if isSignedIn() && (request.auth.uid == resource.data.creatorId || isAdmin());
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.creatorId);
-      allow delete: if isExistingOwner(resource.data.creatorId);
-
-      match /{sub=**} {
-        // Subcollections inherit the owner/admin restriction via denormalized fields
-        allow read, write: if isSignedIn() && (request.auth.uid == resource.data.campaignCreatorId || isAdmin());
-      }
-    }
-
-    // --- Posts (Approved & Drafts) ---
-
-    /**
-     * @description Approved community posts. Publicly readable.
-     * @path /posts_approved/{postId}
-     * @allow (get) for all visitors.
-     * @principle Public consumption with author management.
-     */
+    // --- Posts (Approved) ---
     match /posts_approved/{postId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.authorId);
-
-      match /comments/{commentId} {
-        allow get, list: if true;
-        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-        allow update, delete: if isExistingOwner(resource.data.authorId);
-      }
+      allow write: if isSignedIn();
     }
 
-    match /posts_drafts/{postId} {
-      allow get, list: if isSignedIn() && (request.auth.uid == resource.data.authorId || isAdmin());
-      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.authorId);
-
-      match /comments/{commentId} {
-        allow get, list, write: if isSignedIn() && (request.auth.uid == resource.data.postAuthorId || isAdmin());
-      }
-    }
-
-    // --- Tags ---
-
-    /**
-     * @description Categorization tags. Admin managed.
-     * @path /tags/{tagId}
-     */
-    match /tags/{tagId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    // --- Chatrooms & Messaging ---
-
-    /**
-     * @description Chatroom metadata. Basic info is public, but messages require membership.
-     * @path /chatrooms/{chatroomId}
-     * @principle Resource-specific roles via membership maps.
-     */
+    // --- Chatrooms ---
     match /chatrooms/{chatroomId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.creatorId);
-
-      match /messages/{messageId} {
-        // Membership check using the denormalized map
-        allow get, list: if isMember(resource.data.chatroomMembers);
-        allow create: if isSignedIn() && isMember(request.resource.data.chatroomMembers);
-        allow update, delete: if isExistingOwner(resource.data.senderId);
-
-        match /reactions/{reactionId} {
-          allow get, list: if isMember(resource.data.chatroomMembers);
-          allow create: if isSignedIn() && isMember(request.resource.data.chatroomMembers);
-          allow update, delete: if isExistingOwner(resource.data.userId);
-        }
-      }
-    }
-
-    // --- Events ---
-
-    /**
-     * @description Public events. Managed by hosts or admins.
-     * @path /events/{eventId}
-     */
-    match /events/{eventId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.hostId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.hostId);
-    }
-
-    // --- Idea Box ---
-
-    match /ideas_public/{ideaId} {
-      allow get, list: if true;
-      // Voting is handled by updates; rule allows updating vote arrays if signed in
-      allow create: if isSignedIn() && request.resource.data.submitterId == request.auth.uid;
-      allow update: if isSignedIn(); 
-      allow delete: if isExistingOwner(resource.data.submitterId);
-    }
-
-    match /ideas_pending_review/{ideaId} {
-      allow get, list: if isSignedIn() && (request.auth.uid == resource.data.submitterId || isAdmin());
-      allow create: if isSignedIn() && request.resource.data.submitterId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.submitterId);
-    }
-
-    // --- Feedback ---
-
-    match /feedback/{feedbackId} {
-      allow get: if isSignedIn() && (request.auth.uid == resource.data.userId || isAdmin());
-      allow list: if isAdmin();
-      allow create: if true; // Allows guest feedback as per IR
-      allow update, delete: if isAdmin();
+      allow write: if isSignedIn();
     }
 
     // --- Admin Roles ---
-
-    /**
-     * @description Collection for global admins. Existence of document = Admin status.
-     * @path /roles_admin/{adminId}
-     */
     match /roles_admin/{adminId} {
       allow read: if isSignedIn();
-      allow write: if isAdmin(); // Only existing admins can designate new ones
+      allow write: if isAdmin();
     }
   }
 }

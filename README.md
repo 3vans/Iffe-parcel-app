@@ -3,24 +3,35 @@
 
 A professional adventure tourism platform built with Next.js, Firebase, and Tailwind CSS.
 
-## 🛠 Database Implementation Guide
+## 🏗 Database Implementation Roadmap
 
-The application is currently configured with a **Service Layer Architecture** (`src/lib/services/cms-service.ts`). This layer acts as a bridge between your UI and Firestore.
+The application uses a **Hybrid-Storage Architecture**:
+- **Firebase Firestore**: Structured content, metadata, real-time messaging, and user profiles.
+- **Firebase Authentication**: User identity management.
+- **Supabase Storage**: Large binary objects (Photos, Videos, PDF Documents).
 
-### Current Data Flow
-1.  **Frontend**: Calls a function (e.g., `fetchCampaigns()`).
-2.  **Service Layer**: Attempts to query the Firestore collection.
-3.  **Fallback**: If Firestore is empty or unreachable, the service returns a hardcoded "Seed" array. This ensures the site never looks broken during implementation.
+### Implementation Phases
 
-### Collection Mapping
-| Feature | Firestore Collection | Admin Management |
-| :--- | :--- | :--- |
-| **Tours** | `/campaigns` | Admin > Expeditions |
-| **Journal** | `/posts` | Admin > Content Moderation |
-| **Gallery** | `/gallery` | Admin > Media Library |
-| **Builder Items** | `/packages`, `/addons` | Admin > Inventory & Prices |
-| **Announcements** | `/announcements` | Dashboard (Broadcasting) |
-| **Private Docs** | `/user_documents` | Admin > User Management (Planned) |
+1.  **Phase 1: Setup & User Profiles**
+    *   Integrate Firebase Auth.
+    *   Establish the `/users` collection.
+    *   *Supabase Goal*: Handle profile picture uploads.
+
+2.  **Phase 2: Expedition Management**
+    *   Migrate static tour data to `/campaigns_public`.
+    *   Implement Admin CRUD logic for tour itineraries.
+
+3.  **Phase 3: Community Content**
+    *   Implement `/posts_approved` (Journal) and `/gallery`.
+    *   *Supabase Goal*: All high-res safari imagery.
+
+4.  **Phase 4: Custom Builder & Inventory**
+    *   Populate `/packages` and `/addons`.
+    *   Connect the `CustomSafariBuilder` to dynamic pricing data.
+
+5.  **Phase 5: Real-time Interaction**
+    *   Finalize the `/chatrooms` message streams.
+    *   Implement the `/ideas` voting engine.
 
 ## 🔐 Administrator Credentials
 To access the Admin Panel (`/admin`), use these credentials:
