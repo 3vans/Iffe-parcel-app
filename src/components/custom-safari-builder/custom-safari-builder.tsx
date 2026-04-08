@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -8,9 +9,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin, Mountain, Gem, MapPlus, UserPlus } from 'lucide-react';
-import { calculatePricing, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
+import { Sparkles, Package, ListChecks, Trophy, ArrowRight, Info, ChevronDown, Bird, Zap, Users as UsersIcon, Star, MapPin, Mountain, Gem, MapPlus, UserPlus, Loader2 } from 'lucide-react';
+import { calculatePricing, saveCustomBooking, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 const categoryIcons: Record<string, any> = {
   'Wildlife': Bird,
@@ -38,11 +40,13 @@ interface CustomSafariBuilderProps {
 }
 
 export default function CustomSafariBuilder({ initialPackages, initialAddons }: CustomSafariBuilderProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [numPeople, setNumPeople] = useState<string>("1");
   const [selectedPackage, setSelectedPackage] = useState<BuilderPackage | null>(initialPackages[1] || initialPackages[0] || null);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const travelerCount = useMemo(() => {
     const count = parseInt(numPeople);
@@ -101,15 +105,36 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
     }
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (travelerCount < 1) {
         toast({ title: "Traveller Count Required", description: "Please enter at least 1 traveller.", variant: "destructive" });
         return;
     }
-    toast({
-      title: "Custom Safari Request Prepared",
-      description: "Our experts will contact you to finalize your bespoke itinerary for " + travelerCount + " travelers.",
-    });
+
+    setIsSubmitting(true);
+    try {
+      await saveCustomBooking({
+        userId: user?.uid || 'guest',
+        userEmail: user?.email || 'not provided',
+        userName: user?.displayName || 'Anonymous Explorer',
+        basePackage: selectedPackage?.name,
+        groupSize: travelerCount,
+        selectedAddons: selectedAddons.map(a => a.name),
+        pricing: pricing,
+        status: 'pending'
+      });
+
+      toast({
+        title: "Bespoke Safari Request Sent!",
+        description: "Your dream itinerary has been captured. Our adventure specialists will contact you within 24 hours.",
+      });
+      
+      // Optional: reset builder or redirect
+    } catch (err) {
+      toast({ title: "Submission Failed", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!selectedPackage) return null;
@@ -432,9 +457,9 @@ export default function CustomSafariBuilder({ initialPackages, initialAddons }: 
                 <Button 
                     className="w-full bg-accent text-stone-950 hover:bg-white hover:scale-[1.02] font-black h-16 text-lg rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(251,191,36,0.3)] active:scale-95 disabled:opacity-50 disabled:grayscale" 
                     onClick={handleBooking}
-                    disabled={travelerCount < 1}
+                    disabled={travelerCount < 1 || isSubmitting}
                 >
-                  REQUEST ITINERARY <ArrowRight className="ml-3 h-6 w-6" />
+                  {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : "REQUEST ITINERARY"} <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </CardFooter>
             </Card>

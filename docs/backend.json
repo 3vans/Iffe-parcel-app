@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -82,46 +83,30 @@
           "description": "A brief overview of the campaign's purpose and goals."
         },
         "storyline": {
-          "type": "string",
-          "description": "The detailed narrative or story behind the campaign."
+          "type": "array",
+          "description": "A list of strings detailing the tour experience.",
+          "items": { "type": "string" }
         },
-        "budgetGoal": {
-          "type": "number",
-          "description": "The target fundraising or pricing goal."
+        "region": {
+          "type": "string",
+          "enum": ["Western", "Eastern", "Northern", "Central", "Other"]
         },
         "currentRaised": {
           "type": "number",
-          "description": "The current rating or funds progress."
-        },
-        "startDate": {
-          "type": "string",
-          "description": "The date and time when the campaign officially started.",
-          "format": "date-time"
-        },
-        "endDate": {
-          "type": "string",
-          "description": "The date and time when the campaign is scheduled to end.",
-          "format": "date-time"
+          "description": "The traveller rating or funds progress."
         },
         "status": {
           "type": "string",
           "description": "The current status (e.g., 'active', 'completed', 'cancelled')."
-        },
-        "creatorId": {
-          "type": "string",
-          "description": "Reference to the User who created this campaign."
         },
         "createdAt": {
           "type": "string",
           "description": "Timestamp when the campaign was created.",
           "format": "date-time"
         },
-        "mediaUrls": {
-          "type": "array",
-          "description": "URLs to images or videos related to the campaign, stored on Supabase.",
-          "items": {
-            "type": "string"
-          }
+        "imageUrl": {
+          "type": "string",
+          "description": "Primary visual for the campaign."
         }
       },
       "required": [
@@ -129,9 +114,39 @@
         "title",
         "description",
         "status",
-        "creatorId",
         "createdAt"
       ]
+    },
+    "Package": {
+      "title": "Package",
+      "type": "object",
+      "description": "Base safari package pricing and metadata for the custom builder.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "basePrice": { "type": "number" },
+        "durationDays": { "type": "number" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "isPopular": { "type": "boolean" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "name", "basePrice", "durationDays", "isActive"]
+    },
+    "Addon": {
+      "title": "Addon",
+      "type": "object",
+      "description": "Optional activities, luxury upgrades, and trip extensions.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "category": { "type": "string", "enum": ["activity", "luxury", "extension"] },
+        "subCategory": { "type": "string" },
+        "region": { "type": "string" },
+        "bundleEligible": { "type": "boolean" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "name", "price", "category", "isActive"]
     },
     "Post": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -163,11 +178,6 @@
           "type": "string",
           "description": "Timestamp when the post was created.",
           "format": "date-time"
-        },
-        "mediaUrl": {
-          "type": "string",
-          "description": "URL to the featured image, stored on Supabase.",
-          "format": "uri"
         }
       },
       "required": [
@@ -176,42 +186,6 @@
         "content",
         "authorId",
         "status",
-        "createdAt"
-      ]
-    },
-    "Chatroom": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Chatroom",
-      "type": "object",
-      "description": "Represents a live chatroom.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Chatroom entity."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the chatroom."
-        },
-        "topic": {
-          "type": "string",
-          "description": "The main topic."
-        },
-        "creatorId": {
-          "type": "string",
-          "description": "Reference to the User who created this chatroom."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when created.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "topic",
-        "creatorId",
         "createdAt"
       ]
     }
@@ -263,7 +237,7 @@
           "schema": {
             "$ref": "#/backend/entities/Post"
           },
-          "description": "Approved journal entries. Media stored on Supabase.",
+          "description": "Approved journal entries.",
           "params": [
             {
               "name": "postId",
@@ -273,33 +247,47 @@
         }
       },
       {
-        "path": "/chatrooms/{chatroomId}",
+        "path": "/packages/{packageId}",
         "definition": {
-          "entityName": "Chatroom",
+          "entityName": "Package",
           "schema": {
-            "$ref": "#/backend/entities/Chatroom"
+            "$ref": "#/backend/entities/Package"
           },
-          "description": "Chatroom metadata.",
+          "description": "Base safari package definitions.",
           "params": [
             {
-              "name": "chatroomId",
-              "description": "Unique ID of the chatroom."
+              "name": "packageId",
+              "description": "Unique ID for the base pricing foundation."
             }
           ]
         }
       },
       {
-        "path": "/roles_admin/{adminId}",
+        "path": "/addons/{addonId}",
         "definition": {
-          "entityName": "User",
+          "entityName": "Addon",
           "schema": {
-            "$ref": "#/backend/entities/User"
+            "$ref": "#/backend/entities/Addon"
           },
-          "description": "Admin privilege marker.",
+          "description": "Selectable upgrades and activities.",
           "params": [
             {
-              "name": "adminId",
-              "description": "UID of the administrator."
+              "name": "addonId",
+              "description": "Unique ID for an add-on item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/custom_bookings/{bookingId}",
+        "definition": {
+          "entityName": "Object",
+          "schema": { "type": "object" },
+          "description": "Captured requests from the Bespoke Safari Builder.",
+          "params": [
+            {
+              "name": "bookingId",
+              "description": "Unique ID for the bespoke request."
             }
           ]
         }

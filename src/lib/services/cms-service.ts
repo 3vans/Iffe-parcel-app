@@ -1,3 +1,4 @@
+
 import { db, storage } from '@/lib/firebase';
 import { 
   collection, 
@@ -314,6 +315,14 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
   };
 }
 
+export async function saveCustomBooking(data: any) {
+  const docRef = await addDoc(collection(db, 'custom_bookings'), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
 // --- PROMOTIONS ---
 
 export async function fetchPromotions(): Promise<Promotion[]> {
@@ -346,8 +355,6 @@ export async function deletePromotion(id: string) {
 // --- GALLERY ---
 
 export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
-  // NOTE: This currently uses Firebase Storage as the blob engine.
-  // To use Supabase, swap this function's internals while maintaining the Firestore metadata write.
   const storagePath = `gallery/${Date.now()}_${file.name}`;
   const storageRef = ref(storage, storagePath);
   
