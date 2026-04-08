@@ -1,33 +1,39 @@
-# iffe-travels
 
-This is a professional adventure tourism platform built with Next.js, Firebase, and Tailwind CSS.
+# iffe-travels (e-Rotary Hub)
 
-## Administrator Credentials (Prototype)
-To access the Admin Panel (/admin), use the following credentials:
+A professional adventure tourism platform built with Next.js, Firebase, and Tailwind CSS.
+
+## 🛠 Database Implementation Guide
+
+The application is currently configured with a **Service Layer Architecture** (`src/lib/services/cms-service.ts`). This layer acts as a bridge between your UI and Firestore.
+
+### Current Data Flow
+1.  **Frontend**: Calls a function (e.g., `fetchCampaigns()`).
+2.  **Service Layer**: Attempts to query the Firestore collection.
+3.  **Fallback**: If Firestore is empty or unreachable, the service returns a hardcoded "Seed" array. This ensures the site never looks broken during implementation.
+
+### Collection Mapping
+| Feature | Firestore Collection | Admin Management |
+| :--- | :--- | :--- |
+| **Tours** | `/campaigns` | Admin > Expeditions |
+| **Journal** | `/posts` | Admin > Content Moderation |
+| **Gallery** | `/gallery` | Admin > Media Library |
+| **Builder Items** | `/packages`, `/addons` | Admin > Inventory & Prices |
+| **Announcements** | `/announcements` | Dashboard (Broadcasting) |
+| **Private Docs** | `/user_documents` | Admin > User Management (Planned) |
+
+## 🔐 Administrator Credentials
+To access the Admin Panel (`/admin`), use these credentials:
 - **Email**: `admin@iffe-travels.com`
 - **Password**: `admin123` (Suggested)
 
-### Setup Instructions
-1. **Firebase Console**: Go to the [Firebase Console](https://console.firebase.google.com/).
-2. **Authentication**: Select your project, go to **Build > Authentication > Users**.
-3. **Add User**: Click "Add user", enter the email `admin@iffe-travels.com` and the password `admin123`.
-4. **Login**: Use these credentials in the app's login modal. The system will automatically recognize the email and route you to the `/admin` dashboard.
+**Setup Steps**:
+1. Go to the Firebase Console > Build > Authentication.
+2. Add a new user with the email above.
+3. Once logged in, the system will automatically recognize the email and grant access to the `/admin` suite.
 
-## Project Architecture & Strategic Phases
-
-The creation of the Iffe-Travels platform follows five strategic phases:
-
-1.  **Phase 1: Foundation & Infrastructure**: Establishing the Next.js App Router foundation and direct Firebase initialization.
-2.  **Phase 2: Authentication & Security Framework**: Utilizing a custom `AuthContext.tsx` for real-time session management. Role-based redirects are performed client-side based on the administrator email defined in the environment.
-3.  **Phase 3: Traveler Experience (The Dashboard)**: A centralized `/dashboard` for travelers featuring announcements, secure document access, and support chat.
-4.  **Phase 4: Administrative Business Engine**: The `/admin` suite for managing tours, pricing, and content. This connects directly to Firestore collections defined in `docs/backend.json`.
-5.  **Phase 5: Data Synchronization**: Ensuring that tour itineraries and pricing managed in the Admin panel are reflected instantly on the public storefront.
-
-## Local Development
-
-```bash
-npm install
-npm run dev
-```
-
-Your app will be running at [http://localhost:9002](http://localhost:9002).
+## 🚀 Key Features
+- **Custom Safari Builder**: A layered pricing engine for bespoke trips.
+- **Visual Highlights**: An interactive, draggable "Film Strip" of top destinations.
+- **Idea Box**: Community-driven destination voting.
+- **User Dashboard**: Secure access to personal itineraries and support.

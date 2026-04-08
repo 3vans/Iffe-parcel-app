@@ -4,12 +4,56 @@
     "Package": {
       "title": "Package",
       "type": "object",
+      "description": "Base foundation for the custom safari builder.",
       "properties": {
         "id": { "type": "string" },
         "name": { "type": "string" },
         "basePrice": { "type": "number" },
         "durationDays": { "type": "number" },
+        "features": { "type": "array", "items": { "type": "string" } },
         "isActive": { "type": "boolean" }
+      }
+    },
+    "Addon": {
+      "title": "Addon",
+      "type": "object",
+      "description": "Optional activities or upgrades for safaris.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "category": { "type": "string", "enum": ["activity", "luxury", "extension"] },
+        "subCategory": { "type": "string" },
+        "isActive": { "type": "boolean" }
+      }
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "type": "object",
+      "description": "A specific tour or expedition listing.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "shortDescription": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "region": { "type": "string", "enum": ["Western", "Eastern", "Northern", "Central", "Other"] },
+        "currentAmount": { "type": "number", "description": "Used as traveller rating percentage" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "type": "object",
+      "description": "Community or admin journal entries.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "content": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["Published", "Hidden", "Reported"] },
+        "createdAt": { "type": "string", "format": "date-time" }
       }
     },
     "Announcement": {
@@ -22,8 +66,7 @@
         "content": { "type": "string" },
         "priority": { "type": "string", "enum": ["low", "medium", "high"] },
         "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["title", "content", "createdAt"]
+      }
     },
     "UserDocument": {
       "title": "UserDocument",
@@ -36,45 +79,29 @@
         "fileUrl": { "type": "string" },
         "type": { "type": "string", "enum": ["Certificate", "Itinerary", "Invoice", "Other"] },
         "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "title", "fileUrl"]
+      }
     },
-    "SupportMessage": {
-      "title": "SupportMessage",
+    "Idea": {
+      "title": "Idea",
       "type": "object",
-      "description": "Messages in a private chat thread between user and support.",
+      "description": "Community suggestions for new dream trips.",
       "properties": {
         "id": { "type": "string" },
-        "threadId": { "type": "string" },
-        "senderId": { "type": "string" },
-        "text": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "votes": { "type": "number" },
+        "voters": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["New", "Under Review", "Approved", "Implemented"] }
       }
     }
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/announcements",
-        "definition": {
-          "entityName": "Announcement",
-          "description": "Public broadcasts for logged-in travelers."
-        }
-      },
-      {
-        "path": "/user_documents",
-        "definition": {
-          "entityName": "UserDocument",
-          "description": "Private documents restricted by userId."
-        }
-      },
-      {
-        "path": "/support_threads/{userId}/messages",
-        "definition": {
-          "entityName": "SupportMessage",
-          "description": "Private communication history between a traveler and admin."
-        }
-      }
-    ]
+    "/packages": { "schema": "Package", "description": "Base safari starting points." },
+    "/addons": { "schema": "Addon", "description": "Individual activities and upgrades." },
+    "/campaigns": { "schema": "Campaign", "description": "Public tour itineraries." },
+    "/posts": { "schema": "BlogPost", "description": "Journal entries and travel stories." },
+    "/announcements": { "schema": "Announcement", "description": "Site-wide updates." },
+    "/user_documents": { "schema": "UserDocument", "description": "Private traveller files." },
+    "/ideas": { "schema": "Idea", "description": "Community wishlist and voting." }
   }
 }
