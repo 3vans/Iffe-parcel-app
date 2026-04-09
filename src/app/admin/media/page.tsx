@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -127,7 +126,11 @@ export default function AdminMediaPage() {
       imageForm.reset();
       setImageFile(null);
     } catch (error) {
-      toast({ title: "Upload Failed", description: "Make sure you have enabled Storage in Firebase Console.", variant: "destructive" });
+      toast({ 
+        title: "Upload Failed", 
+        description: "Check your Supabase configuration and 'media' bucket permissions.", 
+        variant: "destructive" 
+      });
     } finally {
       setIsSubmittingImage(false);
     }
@@ -192,14 +195,14 @@ export default function AdminMediaPage() {
       <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="font-headline text-2xl">Media Library Management</CardTitle>
-          <CardDescription>Manage images and videos using live Firebase integration.</CardDescription>
+          <CardDescription>Manage images and videos using Supabase and Firestore.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           
           {/* IMAGE SECTION */}
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Image Gallery</h3>
+              <h3 className="font-semibold text-lg">Image Gallery (Supabase)</h3>
               <Dialog open={isUploadImageDialogOpen} onOpenChange={setIsUploadImageDialogOpen}>
                 <DialogTrigger asChild><Button><UploadCloud className="mr-2 h-4 w-4" /> Upload Image</Button></DialogTrigger>
                 <DialogContent className="sm:max-w-lg">
@@ -232,7 +235,7 @@ export default function AdminMediaPage() {
                     <DialogFooter>
                       <Button type="button" variant="outline" onClick={() => setIsUploadImageDialogOpen(false)} disabled={isSubmittingImage}>Cancel</Button>
                       <Button type="submit" disabled={isSubmittingImage} className="bg-primary hover:bg-primary/90">
-                        {isSubmittingImage ? 'Uploading...' : 'Upload to Firebase'}
+                        {isSubmittingImage ? 'Uploading...' : 'Upload to Supabase'}
                       </Button>
                     </DialogFooter>
                   </form>

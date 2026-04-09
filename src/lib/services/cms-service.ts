@@ -1,5 +1,5 @@
-
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { 
   collection, 
   addDoc, 
@@ -20,7 +20,6 @@ import {
   setDoc,
   type DocumentData
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 
 // --- TYPES ---
@@ -326,28 +325,39 @@ export async function deletePromotion(id: string) {
   await deleteDoc(doc(db, 'promotions', id));
 }
 
-// --- GALLERY ---
+// --- GALLERY (Hybrid Firestore + Supabase) ---
 
 export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
-  const storagePath = `gallery/${Date.now()}_${file.name}`;
-  const storageRef = ref(storage, storagePath);
-  
-  await uploadBytes(storageRef, file);
-  const downloadUrl = await getDownloadURL(storageRef);
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+  const filePath = `gallery/${fileName}`;
+
+  // 1. Upload to Supabase Storage
+  const { data, error: uploadError } = await supabase.storage
+    .from('media') // Make sure this bucket exists in Supabase
+    .upload(filePath, file);
+
+  if (uploadError) throw uploadError;
+
+  // 2. Get Public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('media')
+    .getPublicUrl(filePath);
   
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`) : [];
   
+  // 3. Save metadata to Firestore
   const docRef = await addDoc(collection(db, GALLERY_COLLECTION), {
-    src: downloadUrl,
+    src: publicUrl,
     alt: metadata.caption || 'Gallery Image',
     caption: metadata.caption || '',
     tags: tagsArray,
     dataAiHint: metadata.dataAiHint || 'safari photo',
-    storagePath: storagePath,
+    storagePath: filePath, // Store the Supabase path for deletion
     createdAt: serverTimestamp(),
   });
   
-  return { id: docRef.id, src: downloadUrl };
+  return { id: docRef.id, src: publicUrl };
 }
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
@@ -380,9 +390,16 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
 
 export async function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    const storageRef = ref(storage, storagePath);
-    await deleteObject(storageRef).catch(err => console.error("Storage delete error:", err));
+    // Delete from Supabase
+    const { error: deleteError } = await supabase.storage
+      .from('media')
+      .remove([storagePath]);
+    
+    if (deleteError) {
+      console.error("Supabase storage delete error:", deleteError);
+    }
   }
+  // Delete metadata from Firestore
   await deleteDoc(doc(db, GALLERY_COLLECTION, id));
 }
 
