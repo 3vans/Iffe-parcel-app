@@ -1,11 +1,9 @@
-
 {
   "entities": {
     "User": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a registered user of the platform, including participants and creators.",
+      "description": "Represents a registered traveler or admin.",
       "properties": {
         "id": { "type": "string" },
         "email": { "type": "string", "format": "email" },
@@ -20,113 +18,36 @@
         "followedUserIds": { "type": "array", "items": { "type": "string" } },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["id", "email", "username", "isCreator", "isAdmin", "createdAt"]
+      "required": ["id", "email", "username", "isAdmin", "createdAt"]
     },
     "Campaign": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Campaign",
       "type": "object",
-      "description": "Details about a community campaign or tour expedition.",
+      "description": "A tour expedition itinerary.",
       "properties": {
         "id": { "type": "string" },
         "title": { "type": "string" },
         "description": { "type": "string" },
         "shortDescription": { "type": "string" },
-        "storyline": { "type": "array", "items": { "type": "string" } },
         "region": { "type": "string", "enum": ["Western", "Eastern", "Northern", "Central", "Other"] },
         "currentAmount": { "type": "number" },
         "status": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
         "imageUrl": { "type": "string" },
         "tags": { "type": "array", "items": { "type": "string" } }
       },
-      "required": ["id", "title", "description", "status", "createdAt"]
+      "required": ["id", "title", "status"]
     },
-    "Package": {
-      "title": "Package",
+    "GalleryImage": {
+      "title": "GalleryImage",
       "type": "object",
-      "description": "Base safari package pricing and metadata for the custom builder.",
+      "description": "Metadata for photos stored in Supabase.",
       "properties": {
         "id": { "type": "string" },
-        "name": { "type": "string" },
-        "basePrice": { "type": "number" },
-        "durationDays": { "type": "number" },
-        "features": { "type": "array", "items": { "type": "string" } },
-        "isPopular": { "type": "boolean" },
-        "isActive": { "type": "boolean" }
-      },
-      "required": ["id", "name", "basePrice", "durationDays", "isActive"]
-    },
-    "Addon": {
-      "title": "Addon",
-      "type": "object",
-      "description": "Optional activities, luxury upgrades, and trip extensions.",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "category": { "type": "string", "enum": ["activity", "luxury", "extension"] },
-        "subCategory": { "type": "string" },
-        "region": { "type": "string" },
-        "bundleEligible": { "type": "boolean" },
-        "isActive": { "type": "boolean" }
-      },
-      "required": ["id", "name", "price", "category", "isActive"]
-    },
-    "Post": {
-      "title": "Post",
-      "type": "object",
-      "description": "Approved journal entries.",
-      "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "content": { "type": "string" },
-        "author": { "type": "string" },
-        "status": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "imageUrl": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } }
-      },
-      "required": ["id", "title", "content", "author", "status", "createdAt"]
-    },
-    "Chatroom": {
-      "title": "Chatroom",
-      "type": "object",
-      "description": "A channel for group discussion.",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "topic": { "type": "string" },
-        "userCount": { "type": "number" },
-        "lastActivity": { "type": "string" }
-      }
-    },
-    "Message": {
-      "title": "Message",
-      "type": "object",
-      "description": "An individual chat message.",
-      "properties": {
-        "id": { "type": "string" },
-        "text": { "type": "string" },
-        "senderId": { "type": "string" },
-        "senderName": { "type": "string" },
-        "senderAvatar": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Idea": {
-      "title": "Idea",
-      "type": "object",
-      "description": "Community destination suggestion.",
-      "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "description": { "type": "string" },
-        "submittedBy": { "type": "string" },
-        "votes": { "type": "number" },
-        "voters": { "type": "array", "items": { "type": "string" } },
-        "status": { "type": "string" },
-        "imageUrl": { "type": "string" }
+        "src": { "type": "string" },
+        "alt": { "type": "string" },
+        "caption": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "storagePath": { "type": "string" }
       }
     }
   },
@@ -144,28 +65,36 @@
         "definition": { "entityName": "Campaign", "schema": { "$ref": "#/backend/entities/Campaign" }, "description": "Public expeditions." }
       },
       {
+        "path": "/gallery/{imageId}",
+        "definition": { "entityName": "GalleryImage", "schema": { "$ref": "#/backend/entities/GalleryImage" }, "description": "Visual library metadata." }
+      },
+      {
         "path": "/posts_approved/{postId}",
-        "definition": { "entityName": "Post", "schema": { "$ref": "#/backend/entities/Post" }, "description": "Approved blog posts." }
+        "definition": { "schema": "object", "description": "Moderated blog posts." }
       },
       {
         "path": "/packages/{packageId}",
-        "definition": { "entityName": "Package", "schema": { "$ref": "#/backend/entities/Package" }, "description": "Base safari packages." }
+        "definition": { "schema": "object", "description": "Base safari foundations." }
       },
       {
         "path": "/addons/{addonId}",
-        "definition": { "entityName": "Addon", "schema": { "$ref": "#/backend/entities/Addon" }, "description": "Selectable activities." }
+        "definition": { "schema": "object", "description": "Optional activities." }
       },
       {
-        "path": "/chatrooms/{roomId}",
-        "definition": { "entityName": "Chatroom", "schema": { "$ref": "#/backend/entities/Chatroom" }, "description": "Active chat channels." }
-      },
-      {
-        "path": "/chatrooms/{roomId}/messages/{messageId}",
-        "definition": { "entityName": "Message", "schema": { "$ref": "#/backend/entities/Message" }, "description": "Messages within a room." }
+        "path": "/custom_bookings/{bookingId}",
+        "definition": { "schema": "object", "description": "Builder configurations." }
       },
       {
         "path": "/ideas/{ideaId}",
-        "definition": { "entityName": "Idea", "schema": { "$ref": "#/backend/entities/Idea" }, "description": "Community suggestions." }
+        "definition": { "schema": "object", "description": "Community suggestions." }
+      },
+      {
+        "path": "/chatrooms/{roomId}/messages/{messageId}",
+        "definition": { "schema": "object", "description": "Real-time messages." }
+      },
+      {
+        "path": "/videos/{videoId}",
+        "definition": { "schema": "object", "description": "Video library metadata." }
       }
     ]
   }

@@ -18,9 +18,12 @@ import {
   arrayUnion,
   arrayRemove,
   setDoc,
-  type DocumentData
+  type DocumentData,
+  type CollectionReference,
+  type DocumentReference
 } from 'firebase/firestore';
-import placeholderImages from '@/app/lib/placeholder-images.json';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 // --- TYPES ---
 
@@ -171,19 +174,31 @@ const GALLERY_COLLECTION = 'gallery';
 const CHATROOMS_COLLECTION = 'chatrooms';
 const IDEAS_COLLECTION = 'ideas';
 
+// --- HELPER FOR PERMISSION ERRORS ---
+
+function handleFirestoreError(error: any, context: SecurityRuleContext) {
+  if (error.code === 'permission-denied') {
+    const permissionError = new FirestorePermissionError(context);
+    errorEmitter.emit('permission-error', permissionError);
+  }
+}
+
 // --- USER PROFILE SERVICES ---
 
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   const docRef = doc(db, 'users', userId);
-  const docSnap = await getDoc(docRef);
-  
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      ...data,
-      memberSince: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) || 'Recently'
-    } as UserProfile;
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        memberSince: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) || 'Recently'
+      } as UserProfile;
+    }
+  } catch (error) {
+    handleFirestoreError(error, { path: docRef.path, operation: 'get' });
   }
   return null;
 }
@@ -203,7 +218,8 @@ export async function createUserProfile(userId: string, data: Partial<UserProfil
     createdAt: serverTimestamp(),
     ...data
   };
-  await setDoc(userRef, profile);
+  
+  setDoc(userRef, profile).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile }));
   return profile;
 }
 
@@ -214,7 +230,8 @@ export async function fetchBasePackages(): Promise<Package[]> {
     const q = query(collection(db, 'packages'), where('isActive', '==', true));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'packages', operation: 'list' });
     return [];
   }
 }
@@ -222,13 +239,12 @@ export async function fetchBasePackages(): Promise<Package[]> {
 export async function savePackage(pkg: Partial<Package>) {
   if (pkg.id) {
     const pkgRef = doc(db, 'packages', pkg.id);
-    await updateDoc(pkgRef, { ...pkg, updatedAt: serverTimestamp() });
+    const updateData = { ...pkg, updatedAt: serverTimestamp() };
+    updateDoc(pkgRef, updateData).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData }));
   } else {
-    await addDoc(collection(db, 'packages'), {
-      ...pkg,
-      isActive: true,
-      createdAt: serverTimestamp(),
-    });
+    const colRef = collection(db, 'packages');
+    const newData = { ...pkg, isActive: true, createdAt: serverTimestamp() };
+    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
@@ -237,7 +253,8 @@ export async function fetchAddons(): Promise<Addon[]> {
     const q = query(collection(db, 'addons'), where('isActive', '==', true));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Addon));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'addons', operation: 'list' });
     return [];
   }
 }
@@ -245,18 +262,18 @@ export async function fetchAddons(): Promise<Addon[]> {
 export async function saveAddon(addon: Partial<Addon>) {
   if (addon.id) {
     const addonRef = doc(db, 'addons', addon.id);
-    await updateDoc(addonRef, { ...addon, updatedAt: serverTimestamp() });
+    const updateData = { ...addon, updatedAt: serverTimestamp() };
+    updateDoc(addonRef, updateData).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'update', requestResourceData: updateData }));
   } else {
-    await addDoc(collection(db, 'addons'), {
-      ...addon,
-      isActive: true,
-      createdAt: serverTimestamp(),
-    });
+    const colRef = collection(db, 'addons');
+    const newData = { ...addon, isActive: true, createdAt: serverTimestamp() };
+    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
 export async function deleteAddon(id: string) {
-  await deleteDoc(doc(db, 'addons', id));
+  const addonRef = doc(db, 'addons', id);
+  deleteDoc(addonRef).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'delete' }));
 }
 
 export function calculatePricing(basePackage: Package, selectedAddons: Addon[], numPeople: number = 1) {
@@ -289,11 +306,13 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
 }
 
 export async function saveCustomBooking(data: any) {
-  const docRef = await addDoc(collection(db, 'custom_bookings'), {
-    ...data,
-    createdAt: serverTimestamp(),
+  const colRef = collection(db, 'custom_bookings');
+  const newData = { ...data, createdAt: serverTimestamp() };
+  const docRef = await addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
+  return docRef?.id;
 }
 
 // --- PROMOTIONS ---
@@ -303,7 +322,8 @@ export async function fetchPromotions(): Promise<Promotion[]> {
     const q = query(collection(db, 'promotions'), orderBy('endDate', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Promotion));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'promotions', operation: 'list' });
     return [];
   }
 }
@@ -311,18 +331,18 @@ export async function fetchPromotions(): Promise<Promotion[]> {
 export async function savePromotion(promo: Partial<Promotion>) {
   if (promo.id) {
     const ref = doc(db, 'promotions', promo.id);
-    await updateDoc(ref, { ...promo, updatedAt: serverTimestamp() });
+    const updateData = { ...promo, updatedAt: serverTimestamp() };
+    updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
   } else {
-    await addDoc(collection(db, 'promotions'), {
-      ...promo,
-      isActive: true,
-      createdAt: serverTimestamp(),
-    });
+    const colRef = collection(db, 'promotions');
+    const newData = { ...promo, isActive: true, createdAt: serverTimestamp() };
+    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
 export async function deletePromotion(id: string) {
-  await deleteDoc(doc(db, 'promotions', id));
+  const ref = doc(db, 'promotions', id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- GALLERY (Hybrid Firestore + Supabase) ---
@@ -332,58 +352,44 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
   const filePath = `gallery/${fileName}`;
 
-  // 1. Upload to Supabase Storage
   const { data, error: uploadError } = await supabase.storage
-    .from('media') // Make sure this bucket exists in Supabase
+    .from('media')
     .upload(filePath, file);
 
   if (uploadError) {
-    console.error("Supabase Storage API Error:", uploadError);
-    
-    // Specific check for RLS (Row Level Security) violation
-    if (uploadError.message.toLowerCase().includes('row-level security') || uploadError.message.toLowerCase().includes('rls')) {
-      throw new Error("Supabase RLS Error: Upload denied. Please go to your Supabase Dashboard > Storage > Policies and add an 'INSERT' policy for the 'media' bucket to allow file creation.");
-    }
-
-    if (uploadError.message === 'Failed to fetch') {
-      throw new Error("Connection Failed: Could not reach Supabase. Check if your project URL is correct and your internet connection is active.");
-    }
-    if (uploadError.message.includes('bucket')) {
-      throw new Error("Bucket Not Found: Ensure you have created a bucket named 'media' in your Supabase project and set it to 'Public'.");
+    if (uploadError.message.toLowerCase().includes('rls')) {
+      throw new Error("Supabase RLS Error: Ensure you have added an 'INSERT' policy for the 'media' bucket in your dashboard.");
     }
     throw new Error(`Supabase Error: ${uploadError.message}`);
   }
 
-  // 2. Get Public URL
-  const { data: { publicUrl } } = supabase.storage
-    .from('media')
-    .getPublicUrl(filePath);
-  
+  const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(filePath);
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`) : [];
   
-  // 3. Save metadata to Firestore
-  const docRef = await addDoc(collection(db, GALLERY_COLLECTION), {
+  const colRef = collection(db, GALLERY_COLLECTION);
+  const newData = {
     src: publicUrl,
     alt: metadata.caption || 'Gallery Image',
     caption: metadata.caption || '',
     tags: tagsArray,
     dataAiHint: metadata.dataAiHint || 'safari photo',
-    storagePath: filePath, // Store the Supabase path for deletion
+    storagePath: filePath,
     createdAt: serverTimestamp(),
+  };
+
+  const docRef = await addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
   
-  return { id: docRef.id, src: publicUrl };
+  return { id: docRef?.id, src: publicUrl };
 }
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
   try {
     const galleryRef = collection(db, GALLERY_COLLECTION);
     let q = query(galleryRef, orderBy('createdAt', 'desc'));
-    
-    if (count) {
-      q = query(q, limit(count));
-    }
-      
+    if (count) q = query(q, limit(count));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -399,50 +405,42 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
       };
     });
   } catch (error) {
+    handleFirestoreError(error, { path: GALLERY_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    // Delete from Supabase
-    const { error: deleteError } = await supabase.storage
-      .from('media')
-      .remove([storagePath]);
-    
-    if (deleteError) {
-      console.error("Supabase storage delete error:", deleteError);
-    }
+    await supabase.storage.from('media').remove([storagePath]);
   }
-  // Delete metadata from Firestore
-  await deleteDoc(doc(db, GALLERY_COLLECTION, id));
+  const ref = doc(db, GALLERY_COLLECTION, id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- BLOG ---
 
 export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
-  const docRef = await addDoc(collection(db, POSTS_COLLECTION), {
+  const colRef = collection(db, POSTS_COLLECTION);
+  const newData = {
     ...data,
     status: 'Published',
     commentCount: 0,
     createdAt: serverTimestamp(),
+  };
+  const docRef = await addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
+  return docRef?.id;
 }
 
 export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
   try {
     const postsRef = collection(db, POSTS_COLLECTION);
     let q = query(postsRef, orderBy('createdAt', 'desc'));
-    
-    if (status && status !== 'all') {
-      q = query(q, where('status', '==', status));
-    }
-    
-    if (count) {
-      q = query(q, limit(count));
-    }
-    
+    if (status && status !== 'all') q = query(q, where('status', '==', status));
+    if (count) q = query(q, limit(count));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -452,14 +450,16 @@ export async function fetchBlogPosts(status?: string, count?: number): Promise<B
         date: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
       } as BlogPost;
     });
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: POSTS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function getBlogPost(id: string): Promise<BlogPost | null> {
+  const postRef = doc(db, POSTS_COLLECTION, id);
   try {
-    const docSnap = await getDoc(doc(db, POSTS_COLLECTION, id));
+    const docSnap = await getDoc(postRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
@@ -468,26 +468,32 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
         date: data.createdAt?.toDate?.()?.toLocaleDateString() || 'Recently',
       } as BlogPost;
     }
-  } catch (e) {}
+  } catch (error) {
+    handleFirestoreError(error, { path: postRef.path, operation: 'get' });
+  }
   return null;
 }
 
 export async function updatePostStatus(id: string, status: BlogPost['status']) {
-  await updateDoc(doc(db, POSTS_COLLECTION, id), { status });
+  const postRef = doc(db, POSTS_COLLECTION, id);
+  updateDoc(postRef, { status }).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'update', requestResourceData: { status } }));
 }
 
 export async function deleteBlogPost(id: string) {
-  await deleteDoc(doc(db, POSTS_COLLECTION, id));
+  const postRef = doc(db, POSTS_COLLECTION, id);
+  deleteDoc(postRef).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'delete' }));
 }
 
 // --- VIDEOS ---
 
 export async function addVideo(video: Omit<VideoItem, 'id'>) {
-  const docRef = await addDoc(collection(db, 'videos'), {
-    ...video,
-    createdAt: serverTimestamp(),
+  const colRef = collection(db, 'videos');
+  const newData = { ...video, createdAt: serverTimestamp() };
+  const docRef = await addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
+  return docRef?.id;
 }
 
 export async function fetchVideos(): Promise<VideoItem[]> {
@@ -495,13 +501,15 @@ export async function fetchVideos(): Promise<VideoItem[]> {
     const q = query(collection(db, 'videos'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoItem));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'videos', operation: 'list' });
     return [];
   }
 }
 
 export async function deleteVideo(id: string) {
-  await deleteDoc(doc(db, 'videos', id));
+  const ref = doc(db, 'videos', id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- CAMPAIGNS (Expeditions) ---
@@ -509,56 +517,53 @@ export async function deleteVideo(id: string) {
 export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]> {
   try {
     const campaignsRef = collection(db, CAMPAIGNS_COLLECTION);
-    const q = featuredOnly 
-      ? query(campaignsRef, where('featured', '==', true))
-      : query(campaignsRef);
-    
+    const q = featuredOnly ? query(campaignsRef, where('featured', '==', true)) : query(campaignsRef);
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Campaign));
   } catch (error) {
+    handleFirestoreError(error, { path: CAMPAIGNS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function getCampaignById(id: string): Promise<Campaign | null> {
+  const ref = doc(db, CAMPAIGNS_COLLECTION, id);
   try {
-    const docSnap = await getDoc(doc(db, CAMPAIGNS_COLLECTION, id));
-    if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as Campaign;
-    }
-  } catch (e) {}
+    const docSnap = await getDoc(ref);
+    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as Campaign;
+  } catch (error) {
+    handleFirestoreError(error, { path: ref.path, operation: 'get' });
+  }
   return null;
 }
 
 export async function saveCampaign(campaign: Partial<Campaign>) {
   if (campaign.id) {
     const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
-    await updateDoc(ref, { ...campaign, updatedAt: serverTimestamp() });
+    const updateData = { ...campaign, updatedAt: serverTimestamp() };
+    updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
   } else {
-    await addDoc(collection(db, CAMPAIGNS_COLLECTION), {
-      ...campaign,
-      status: 'active',
-      createdAt: serverTimestamp(),
-    });
+    const colRef = collection(db, CAMPAIGNS_COLLECTION);
+    const newData = { ...campaign, status: 'active', createdAt: serverTimestamp() };
+    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
 export async function deleteCampaign(id: string) {
-  await deleteDoc(doc(db, CAMPAIGNS_COLLECTION, id));
+  const ref = doc(db, CAMPAIGNS_COLLECTION, id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- IDEAS ---
 
 export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
-  const docRef = await addDoc(collection(db, IDEAS_COLLECTION), {
-    ...data,
-    votes: 0,
-    voters: [],
-    status: 'New',
-    commentsCount: 0,
-    createdAt: serverTimestamp(),
+  const colRef = collection(db, IDEAS_COLLECTION);
+  const newData = { ...data, votes: 0, voters: [], status: 'New', commentsCount: 0, createdAt: serverTimestamp() };
+  const docRef = await addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
+  return docRef?.id;
 }
 
 export async function fetchIdeas(): Promise<Idea[]> {
@@ -573,24 +578,16 @@ export async function fetchIdeas(): Promise<Idea[]> {
         dateSubmitted: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
       } as Idea;
     });
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: IDEAS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
   const ideaRef = doc(db, IDEAS_COLLECTION, ideaId);
-  if (hasVoted) {
-    await updateDoc(ideaRef, {
-      votes: increment(-1),
-      voters: arrayRemove(userId)
-    });
-  } else {
-    await updateDoc(ideaRef, {
-      votes: increment(1),
-      voters: arrayUnion(userId)
-    });
-  }
+  const updateData = hasVoted ? { votes: increment(-1), voters: arrayRemove(userId) } : { votes: increment(1), voters: arrayUnion(userId) };
+  updateDoc(ideaRef, updateData).catch(err => handleFirestoreError(err, { path: ideaRef.path, operation: 'update', requestResourceData: updateData }));
 }
 
 // --- CHATROOMS & MESSAGES ---
@@ -599,42 +596,24 @@ export async function fetchChatrooms(): Promise<Chatroom[]> {
   try {
     const q = query(collection(db, CHATROOMS_COLLECTION), orderBy('name', 'asc'));
     const snapshot = await getDocs(q);
-    if (snapshot.empty) {
-      // Seed initial rooms if empty
-      const rooms = [
-        { name: 'General Discussion', topic: 'Talk about anything Rotary related!', userCount: 0, lastActivity: 'Now' },
-        { name: 'Project Brainstorming', topic: 'Ideas for new community projects.', userCount: 0, lastActivity: 'Now' },
-        { name: 'Support', topic: 'Get help with platform features.', userCount: 0, lastActivity: 'Now' }
-      ];
-      for (const r of rooms) {
-        await addDoc(collection(db, CHATROOMS_COLLECTION), r);
-      }
-      return fetchChatrooms();
-    }
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chatroom));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: CHATROOMS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
-  await addDoc(collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), {
-    ...message,
-    createdAt: serverTimestamp(),
-  });
-  // Update room last activity
-  await updateDoc(doc(db, CHATROOMS_COLLECTION, roomId), {
-    lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-  });
+  const colRef = collection(db, CHATROOMS_COLLECTION, roomId, 'messages');
+  const roomRef = doc(db, CHATROOMS_COLLECTION, roomId);
+  const newData = { ...message, createdAt: serverTimestamp() };
+  
+  addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+  updateDoc(roomRef, { lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
 }
 
 export function subscribeToMessages(roomId: string, callback: (messages: ChatMessage[]) => void) {
-  const q = query(
-    collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), 
-    orderBy('createdAt', 'asc'), 
-    limit(50)
-  );
-  
+  const q = query(collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), orderBy('createdAt', 'asc'), limit(50));
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => {
       const data = doc.data();
@@ -645,9 +624,10 @@ export function subscribeToMessages(roomId: string, callback: (messages: ChatMes
       } as ChatMessage;
     });
     callback(messages);
-  });
+  }, (err) => handleFirestoreError(err, { path: `chatrooms/${roomId}/messages`, operation: 'list' }));
 }
 
 export async function deleteChatMessage(roomId: string, messageId: string) {
-  await deleteDoc(doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId));
+  const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
