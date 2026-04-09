@@ -92,7 +92,7 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
                   {packageDetails.includedTours.map(tour => (
                     <Card key={tour.id} className="overflow-hidden group transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
                       <div className="relative h-40 w-full bg-muted">
-                         <Image src={tour.imageUrl} alt={tour.title} layout="fill" objectFit="cover" data-ai-hint={tour.dataAiHint} className="transition-transform duration-300 group-hover:scale-105" />
+                         <Image src={tour.imageUrl} alt={tour.title} layout="fill" objectFit="cover" data-ai-hint={tour.dataAiHint} className="transition-transform duration-300 group-hover:scale-110" />
                       </div>
                       <CardHeader>
                          <CardTitle className="text-lg font-semibold">{tour.title}</CardTitle>

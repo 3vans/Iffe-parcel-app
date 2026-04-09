@@ -31,12 +31,45 @@
         "description": { "type": "string" },
         "shortDescription": { "type": "string" },
         "region": { "type": "string", "enum": ["Western", "Eastern", "Northern", "Central", "Other"] },
+        "goal": { "type": "number" },
         "currentAmount": { "type": "number" },
         "status": { "type": "string" },
         "imageUrl": { "type": "string" },
         "tags": { "type": "array", "items": { "type": "string" } }
       },
       "required": ["id", "title", "status"]
+    },
+    "Package": {
+      "title": "Package",
+      "type": "object",
+      "description": "A base safari foundation package.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "basePrice": { "type": "number" },
+        "priceDescription": { "type": "string" },
+        "durationDays": { "type": "number" },
+        "durationText": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "imageUrl": { "type": "string" },
+        "isPopular": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "includedTours": { "type": "array", "items": { "type": "string" } },
+        "sampleItinerary": { 
+          "type": "array", 
+          "items": { 
+            "type": "object",
+            "properties": {
+              "day": { "type": "number" },
+              "activity": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
     },
     "GalleryImage": {
       "title": "GalleryImage",
@@ -81,16 +114,16 @@
         "definition": { "entityName": "Campaign", "schema": { "$ref": "#/backend/entities/Campaign" }, "description": "Public expeditions." }
       },
       {
+        "path": "/packages/{packageId}",
+        "definition": { "entityName": "Package", "schema": { "$ref": "#/backend/entities/Package" }, "description": "Agency safari foundations." }
+      },
+      {
         "path": "/gallery/{imageId}",
         "definition": { "entityName": "GalleryImage", "schema": { "$ref": "#/backend/entities/GalleryImage" }, "description": "Visual library metadata." }
       },
       {
         "path": "/posts_approved/{postId}",
         "definition": { "schema": "object", "description": "Moderated blog posts." }
-      },
-      {
-        "path": "/packages/{packageId}",
-        "definition": { "schema": "object", "description": "Base safari foundations." }
       },
       {
         "path": "/addons/{addonId}",

@@ -1,4 +1,6 @@
 
+'use client';
+
 import { db } from '@/lib/firebase';
 import { supabase } from '@/lib/supabase';
 import { 
