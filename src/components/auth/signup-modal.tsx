@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, ShieldAlert } from "lucide-react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { createUserProfile } from "@/lib/services/cms-service";
@@ -18,7 +18,7 @@ interface SignupModalProps {
   initialStep?: AccountType | null;
 }
 
-type AccountType = "user" | "erotaract";
+type AccountType = "user" | "erotaract" | "admin";
 
 export default function SignupModal({ open, onOpenChange, initialStep = null }: SignupModalProps) {
   const [step, setStep] = useState(initialStep ? 2 : 1);
@@ -93,16 +93,18 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
       await updateProfile(user, { displayName: name });
 
       // 3. Create Profile in Firestore
+      const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@iffe-travels.com';
+      
       await createUserProfile(user.uid, {
         email: email,
         displayName: name,
-        isCreator: selectedAccountType === 'erotaract', // Explorer club members can suggest destinations
-        isAdmin: email === process.env.NEXT_PUBLIC_ADMIN_EMAIL,
+        isCreator: selectedAccountType === 'erotaract' || selectedAccountType === 'admin', 
+        isAdmin: selectedAccountType === 'admin' || email.toLowerCase() === adminEmail.toLowerCase(),
       });
 
       toast({
         title: "Registration Successful!",
-        description: "Welcome to the iffe-travels community.",
+        description: selectedAccountType === 'admin' ? "Administrator account created." : "Welcome to the iffe-travels community.",
       });
       handleCloseModal();
     } catch (error: any) {
@@ -136,6 +138,7 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
             {step === 1 && "Choose the type of account you'd like to create."}
             {step === 2 && currentAccountType === "user" && "Sign up for a free user account."}
             {step === 2 && currentAccountType === "erotaract" && "Join the Explorer's Club (Paid Membership)."}
+            {step === 2 && currentAccountType === "admin" && "Initial Administrator Setup."}
           </DialogDescription>
         </DialogHeader>
 
@@ -156,13 +159,36 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
                   <span className="text-xs text-muted-foreground">Post stories, suggest destinations, and get a verified badge.</span>
                 </div>
               </Label>
+              {/* TEMPORARY ADMIN OPTION */}
+              <Label htmlFor="acc-type-admin" className="flex items-center space-x-3 p-3 border rounded-md border-destructive/20 bg-destructive/5 hover:bg-destructive/10 cursor-pointer has-[:checked]:bg-destructive/20 has-[:checked]:border-destructive">
+                <RadioGroupItem value="admin" id="acc-type-admin" />
+                <div>
+                  <span className="font-semibold block text-destructive flex items-center">
+                    <ShieldAlert className="h-3 w-3 mr-1" /> Administrator (Temporary Setup)
+                  </span>
+                  <span className="text-xs text-muted-foreground">Use this to register your initial admin account.</span>
+                </div>
+              </Label>
             </RadioGroup>
             <Button onClick={handleNext} className="w-full bg-primary hover:bg-primary/90">Next</Button>
           </div>
         )}
 
-        {step === 2 && currentAccountType === "user" && (
-          <form onSubmit={(e) => { e.preventDefault(); handleApiSubmit('user'); }} className="space-y-4 py-4">
+        {step === 2 && currentAccountType && (
+          <form onSubmit={(e) => { 
+            e.preventDefault(); 
+            handleApiSubmit(currentAccountType); 
+          }} className="space-y-4 py-4">
+            {currentAccountType === 'admin' && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md mb-4">
+                <p className="text-xs text-destructive font-bold uppercase flex items-center">
+                  <ShieldAlert className="h-3 w-3 mr-1" /> Warning: Admin Setup
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  Registration will grant full platform access. Use the email defined in your environment variables for full compatibility.
+                </p>
+              </div>
+            )}
             <div>
               <Label htmlFor="user-name">Full Name</Label>
               <Input id="user-name" value={name} onChange={(e) => setName(e.target.value)} required disabled={isLoading} />
@@ -176,45 +202,10 @@ export default function SignupModal({ open, onOpenChange, initialStep = null }: 
               <Input id="user-password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} />
             </div>
             <DialogFooter>
-              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account...</> : "Create Free Account"}
+              <Button type="submit" className={cn("w-full h-12 text-base font-bold", currentAccountType === 'admin' ? "bg-destructive hover:bg-destructive/90" : "bg-accent text-accent-foreground hover:bg-accent/90")} disabled={isLoading}>
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : currentAccountType === 'admin' ? "Register Administrator" : "Create Account"}
               </Button>
             </DialogFooter>
-          </form>
-        )}
-
-        {step === 2 && currentAccountType === "erotaract" && (
-           <form onSubmit={(e) => { 
-                e.preventDefault(); 
-                toast({ title: "Payment Gateway", description: "In a production app, you would be redirected to a secure payment provider here." });
-                handleApiSubmit('erotaract');
-            }} className="py-4 space-y-4">
-            <p className="text-muted-foreground text-center">You're applying to become a member of the Explorer's Club!</p>
-            <div>
-              <Label htmlFor="erotaract-name">Full Name</Label>
-              <Input id="erotaract-name" value={name} onChange={(e) => setName(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div>
-              <Label htmlFor="erotaract-email">Email</Label>
-              <Input id="erotaract-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div>
-              <Label htmlFor="erotaract-password">Password</Label>
-              <Input id="erotaract-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div className="p-3 border rounded-md bg-muted/30">
-                <h4 className="font-semibold text-primary mb-1">Membership Benefits:</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
-                    <li>Post travel stories and photos</li>
-                    <li>Suggest and vote on new destinations</li>
-                    <li>Exclusive access to special events</li>
-                    <li>Verified member badge</li>
-                </ul>
-            </div>
-            <p className="text-sm font-semibold text-center">Membership Fee: $50 per year.</p>
-            <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
-              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : "Proceed to Payment (Simulated)"}
-            </Button>
           </form>
         )}
       </DialogContent>
