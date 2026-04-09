@@ -11,6 +11,7 @@ import { ArrowLeft, Loader2, ShieldAlert } from "lucide-react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { createUserProfile } from "@/lib/services/cms-service";
+import { cn } from "@/lib/utils";
 
 interface SignupModalProps {
   open: boolean;
