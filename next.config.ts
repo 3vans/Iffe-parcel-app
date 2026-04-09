@@ -41,6 +41,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'dazvjpomkccleussvyqk.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   // Increase server action timeout for video generation
