@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -203,6 +203,7 @@ export default function AdminInventoryPage() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
+                    <TableHead>Region</TableHead>
                     <TableHead>Price (USD)</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -212,6 +213,7 @@ export default function AdminInventoryPage() {
                     <TableRow key={addon.id}>
                       <TableCell className="font-medium">{addon.name}</TableCell>
                       <TableCell className="capitalize text-xs text-muted-foreground">{addon.subCategory || addon.category}</TableCell>
+                      <TableCell className="text-xs font-bold text-stone-500 uppercase tracking-widest">{addon.region || 'N/A'}</TableCell>
                       <TableCell className="text-accent font-bold">${addon.price}</TableCell>
                       <TableCell className="text-right space-x-1">
                         <Button variant="ghost" size="icon" onClick={() => setEditingAddon(addon)}>
@@ -459,6 +461,22 @@ export default function AdminInventoryPage() {
                         <option value="Nature & Scenic">Nature & Scenic</option>
                     </select>
                 </div>
+            </div>
+            <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                    <MapPin className="h-3 w-3" /> Region (Optional)
+                </Label>
+                <select 
+                    className="w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background"
+                    value={editingAddon?.region || ''}
+                    onChange={(e) => setEditingAddon(prev => prev ? { ...prev, region: e.target.value as any } : null)}
+                >
+                    <option value="">None / General</option>
+                    <option value="Central">Central</option>
+                    <option value="Western">Western</option>
+                    <option value="Eastern">Eastern</option>
+                    <option value="Northern">Northern</option>
+                </select>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditingAddon(null)}>Cancel</Button>

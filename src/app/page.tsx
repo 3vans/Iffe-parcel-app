@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -15,11 +16,13 @@ import FifaCardCarousel from '@/components/fifa-card-carousel';
 import Hero from '@/components/layout/hero';
 import ERotaractSignupTrigger from '@/components/auth/erotaract-signup-trigger';
 import fifaCardData from '@/app/lib/fifa-card-data.json';
-import { fetchBlogPosts, fetchGalleryImages, type BlogPost, type GalleryImage } from '@/lib/services/cms-service';
+import { fetchBlogPosts, fetchGalleryImages, fetchBasePackages, fetchAddons, type BlogPost, type GalleryImage, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
 import TestimonialSection from '@/components/testimonial-section';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import CampaignCarousel from '@/components/campaign-carousel';
+import CustomSafariBuilder from '@/components/custom-safari-builder/custom-safari-builder';
+import AnimatedSection from '@/components/animated-section';
 
 interface FeedItemBase {
   id: string;
@@ -50,6 +53,8 @@ export default function Home() {
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCarouselImage, setActiveCarouselImage] = useState<string | null>(null);
+    const [livePackages, setLivePackages] = useState<BuilderPackage[]>([]);
+    const [builderAddons, setBuilderAddons] = useState<Addon[]>([]);
     const { toast } = useToast();
 
     const featuredCampaigns = [
@@ -126,16 +131,17 @@ export default function Home() {
     ];
 
     useEffect(() => {
-      const loadFeed = async () => {
+      const loadData = async () => {
         setIsLoading(true);
         try {
-          const [posts, images] = await Promise.all([
+          const [posts, images, pkgs, addons] = await Promise.all([
             fetchBlogPosts('Published', 3),
-            fetchGalleryImages(2)
+            fetchGalleryImages(2),
+            fetchBasePackages(),
+            fetchAddons()
           ]);
 
           const items: FeedItem[] = [];
-          
           posts.forEach(p => items.push({ id: p.id, type: 'blog', post: p }));
           images.forEach(img => items.push({ id: img.id, type: 'gallery', image: img }));
           
@@ -149,13 +155,15 @@ export default function Home() {
           });
 
           setFeedItems(items.sort(() => Math.random() - 0.5));
+          setLivePackages(pkgs);
+          setBuilderAddons(addons);
         } catch (err) {
-          console.error("Feed load error:", err);
+          console.error("Home data load error:", err);
         } finally {
           setIsLoading(false);
         }
       };
-      loadFeed();
+      loadData();
     }, []);
 
     const handleQuickInquiry = (e: React.FormEvent) => {
@@ -217,6 +225,14 @@ export default function Home() {
             <CampaignCarousel campaigns={featuredCampaigns} />
           </AnimatedCard>
         </section>
+
+        {/* Dynamic Custom Builder Section */}
+        <AnimatedSection className="container mx-auto px-4">
+            <CustomSafariBuilder 
+                initialPackages={livePackages} 
+                initialAddons={builderAddons} 
+            />
+        </AnimatedSection>
 
         {/* Quick Safari Inquiry Section */}
         <section>
