@@ -2,16 +2,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, Header, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Edit2, Plus, Trash2, Loader2, Save, X, Database } from "lucide-react";
+import { Textarea } from '@/components/ui/textarea';
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { fetchBasePackages, fetchAddons, savePackage, saveAddon, deleteAddon, type Package, type Addon } from '@/lib/services/cms-service';
+import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function AdminInventoryPage() {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -19,7 +21,7 @@ export default function AdminInventoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+  const [editingPackage, setEditingPackage] = useState<Partial<Package> | null>(null);
   const [editingAddon, setEditingAddon] = useState<Addon | null>(null);
 
   useEffect(() => {
@@ -44,11 +46,22 @@ export default function AdminInventoryPage() {
     if (!editingPackage) return;
     try {
       await savePackage(editingPackage);
-      toast({ title: "Package Updated" });
+      toast({ title: editingPackage.id ? "Package Updated" : "Package Added" });
       setEditingPackage(null);
       loadData();
     } catch (err) {
-      toast({ title: "Update Failed", variant: "destructive" });
+      toast({ title: "Operation Failed", variant: "destructive" });
+    }
+  };
+
+  const handleDeletePackage = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this package? This cannot be undone.")) return;
+    try {
+      await deletePackage(id);
+      toast({ title: "Package Removed" });
+      loadData();
+    } catch (err) {
+      toast({ title: "Delete Failed", variant: "destructive" });
     }
   };
 
@@ -76,6 +89,27 @@ export default function AdminInventoryPage() {
     }
   };
 
+  const addItineraryDay = () => {
+    const currentItinerary = editingPackage?.sampleItinerary || [];
+    const nextDay = currentItinerary.length + 1;
+    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '' };
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
+  };
+
+  const removeItineraryDay = (index: number) => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    currentItinerary.splice(index, 1);
+    // Re-index days
+    const reindexed = currentItinerary.map((item, i) => ({ ...item, day: i + 1 }));
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: reindexed } : null);
+  };
+
+  const updateItineraryItem = (index: number, field: keyof ItineraryItem, value: any) => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    currentItinerary[index] = { ...currentItinerary[index], [field]: value };
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
   if (isLoading) {
     return <div className="flex justify-center py-20"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
   }
@@ -91,23 +125,41 @@ export default function AdminInventoryPage() {
 
       <Tabs defaultValue="packages" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:max-w-md">
-          <TabsTrigger value="packages">Base Packages</TabsTrigger>
+          <TabsTrigger value="packages">Agency Packages</TabsTrigger>
           <TabsTrigger value="addons">Add-ons (Activities)</TabsTrigger>
         </TabsList>
 
         <TabsContent value="packages">
           <Card>
-            <CardHeader>
-              <CardTitle>Base Foundations</CardTitle>
-              <CardDescription>Edit the primary starting points for custom safaris.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Tour Packages</CardTitle>
+                <CardDescription>Primary tour offerings shown on the public packages page.</CardDescription>
+              </div>
+              <Button onClick={() => setEditingPackage({ 
+                name: '', 
+                subtitle: '', 
+                description: '', 
+                basePrice: 0, 
+                priceDescription: 'per person',
+                durationDays: 1,
+                durationText: '',
+                features: [],
+                imageUrl: '',
+                isActive: true,
+                sampleItinerary: []
+              })}>
+                <Plus className="mr-2 h-4 w-4" /> Create New Package
+              </Button>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Base Price (USD)</TableHead>
+                    <TableHead>Price</TableHead>
                     <TableHead>Duration</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -117,9 +169,13 @@ export default function AdminInventoryPage() {
                       <TableCell className="font-bold">{pkg.name}</TableCell>
                       <TableCell className="text-accent font-black">${pkg.basePrice}</TableCell>
                       <TableCell>{pkg.durationDays} Days</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell>{pkg.isActive ? 'Active' : 'Inactive'}</TableCell>
+                      <TableCell className="text-right space-x-1">
                         <Button variant="ghost" size="icon" onClick={() => setEditingPackage(pkg)}>
                           <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeletePackage(pkg.id)}>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -176,30 +232,179 @@ export default function AdminInventoryPage() {
 
       {/* Package Edit Modal */}
       <Dialog open={!!editingPackage} onOpenChange={() => setEditingPackage(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-4xl overflow-y-auto max-h-[90vh]">
           <DialogHeader>
-            <DialogTitle>Edit Package: {editingPackage?.name}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-accent" />
+              {editingPackage?.id ? 'Edit Package' : 'Create Agency Package'}
+            </DialogTitle>
+            <DialogDescription>These details will appear on the Safari Packages and details pages.</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleUpdatePackage} className="space-y-4 py-4">
+          <form onSubmit={handleUpdatePackage} className="space-y-8 py-4">
+            
+            {/* Core Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Package Name</Label>
+                    <Input 
+                        value={editingPackage?.name || ''} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, name: e.target.value }))}
+                        required
+                        placeholder="e.g. Explorer Package"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Dynamic Slug (for URL)</Label>
+                    <Input 
+                        value={editingPackage?.slug || ''} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') }))}
+                        required
+                        placeholder="explorer-package"
+                    />
+                </div>
+            </div>
+
             <div className="space-y-2">
-              <Label>Base Price (USD)</Label>
+              <Label className="font-bold uppercase text-[10px] tracking-widest">Subtitle / Teaser</Label>
               <Input 
-                type="number" 
-                value={editingPackage?.basePrice || 0} 
-                onChange={(e) => setEditingPackage(prev => prev ? { ...prev, basePrice: parseInt(e.target.value) } : null)}
+                value={editingPackage?.subtitle || ''} 
+                onChange={(e) => setEditingPackage(prev => ({ ...prev, subtitle: e.target.value }))}
+                placeholder="A short, catchy line about the trip..."
               />
             </div>
+
             <div className="space-y-2">
-              <Label>Duration (Days)</Label>
-              <Input 
-                type="number" 
-                value={editingPackage?.durationDays || 0} 
-                onChange={(e) => setEditingPackage(prev => prev ? { ...prev, durationDays: parseInt(e.target.value) } : null)}
+              <Label className="font-bold uppercase text-[10px] tracking-widest">Full Description</Label>
+              <Textarea 
+                value={editingPackage?.description || ''} 
+                onChange={(e) => setEditingPackage(prev => ({ ...prev, description: e.target.value }))}
+                rows={4}
+                placeholder="Detailed overview of the package experience..."
               />
             </div>
-            <DialogFooter>
+
+            {/* Pricing & Duration */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Base Price (USD)</Label>
+                    <Input 
+                        type="number"
+                        value={editingPackage?.basePrice || 0} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, basePrice: parseInt(e.target.value) }))}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Duration (Days)</Label>
+                    <Input 
+                        type="number"
+                        value={editingPackage?.durationDays || 1} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, durationDays: parseInt(e.target.value) }))}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Duration Text (Display)</Label>
+                    <Input 
+                        value={editingPackage?.durationText || ''} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, durationText: e.target.value }))}
+                        placeholder="e.g. 4 Days / 3 Nights"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Image URL</Label>
+                    <Input 
+                        value={editingPackage?.imageUrl || ''} 
+                        onChange={(e) => setEditingPackage(prev => ({ ...prev, imageUrl: e.target.value }))}
+                        placeholder="https://..."
+                    />
+                </div>
+                <div className="flex items-center gap-6 h-full pt-6">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox 
+                            id="isPopular" 
+                            checked={!!editingPackage?.isPopular} 
+                            onCheckedChange={(val) => setEditingPackage(prev => ({ ...prev, isPopular: !!val }))}
+                        />
+                        <Label htmlFor="isPopular" className="text-sm font-bold">Featured / Most Popular</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox 
+                            id="isActive" 
+                            checked={!!editingPackage?.isActive} 
+                            onCheckedChange={(val) => setEditingPackage(prev => ({ ...prev, isActive: !!val }))}
+                        />
+                        <Label htmlFor="isActive" className="text-sm font-bold">Published (Live)</Label>
+                    </div>
+                </div>
+            </div>
+
+            {/* Features List */}
+            <div className="space-y-2">
+                <Label className="font-bold uppercase text-[10px] tracking-widest">Package Features (One per line)</Label>
+                <Textarea 
+                    value={editingPackage?.features?.join('\n') || ''} 
+                    onChange={(e) => setEditingPackage(prev => ({ ...prev, features: e.target.value.split('\n').filter(f => f.trim()) }))}
+                    rows={4}
+                    placeholder="Source of the Nile Visit&#10;Sipi Falls Hike&#10;Coffee Tour"
+                />
+            </div>
+
+            {/* Itinerary Editor */}
+            <div className="space-y-4 border-t pt-6">
+                <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                        <LayoutList className="h-4 w-4 text-accent" /> Sample Itinerary
+                    </h4>
+                    <Button type="button" variant="outline" size="sm" onClick={addItineraryDay}>
+                        <Plus className="h-3 w-3 mr-1" /> Add Day
+                    </Button>
+                </div>
+                
+                <div className="space-y-4">
+                    {(editingPackage?.sampleItinerary || []).map((item, index) => (
+                        <div key={index} className="p-4 bg-muted/30 border rounded-lg relative group">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="md:col-span-1">
+                                    <Label className="text-[10px] font-bold uppercase opacity-50">Day {item.day}</Label>
+                                    <Input 
+                                        value={item.activity} 
+                                        onChange={(e) => updateItineraryItem(index, 'activity', e.target.value)} 
+                                        placeholder="Activity Title" 
+                                        className="mt-1"
+                                    />
+                                </div>
+                                <div className="md:col-span-3">
+                                    <Label className="text-[10px] font-bold uppercase opacity-50">Description</Label>
+                                    <Textarea 
+                                        value={item.description} 
+                                        onChange={(e) => updateItineraryItem(index, 'description', e.target.value)} 
+                                        placeholder="What happens on this day?" 
+                                        className="mt-1 h-20"
+                                    />
+                                </div>
+                            </div>
+                            <Button 
+                                type="button" 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeItineraryDay(index)}
+                            >
+                                <Trash className="h-3 w-3" />
+                            </Button>
+                        </div>
+                    ))}
+                    {(editingPackage?.sampleItinerary || []).length === 0 && (
+                        <p className="text-center text-xs text-muted-foreground py-4 italic">No itinerary days added yet.</p>
+                    )}
+                </div>
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0 sticky bottom-0 bg-background pt-4 border-t">
               <Button type="button" variant="outline" onClick={() => setEditingPackage(null)}>Cancel</Button>
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" className="bg-primary hover:bg-primary/90">Save Package</Button>
             </DialogFooter>
           </form>
         </DialogContent>

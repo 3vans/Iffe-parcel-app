@@ -104,14 +104,29 @@ export interface Campaign {
   status?: 'active' | 'completed' | 'cancelled';
 }
 
+export interface ItineraryItem {
+  day: number;
+  activity: string;
+  description: string;
+}
+
 export interface Package {
   id: string;
   name: string;
+  slug: string;
+  subtitle: string;
+  description: string;
   basePrice: number;
+  priceDescription: string;
   durationDays: number;
+  durationText: string;
   features: string[];
+  imageUrl: string;
+  dataAiHint?: string;
   isPopular?: boolean;
   isActive: boolean;
+  includedTours: string[];
+  sampleItinerary: ItineraryItem[];
 }
 
 export interface Addon {
@@ -174,6 +189,7 @@ const POSTS_COLLECTION = 'posts_approved';
 const GALLERY_COLLECTION = 'gallery';
 const CHATROOMS_COLLECTION = 'chatrooms';
 const IDEAS_COLLECTION = 'ideas';
+const PACKAGES_COLLECTION = 'packages';
 
 // --- HELPER FOR PERMISSION ERRORS ---
 
@@ -224,29 +240,52 @@ export async function createUserProfile(userId: string, data: Partial<UserProfil
   return profile;
 }
 
-// --- BUILDER SERVICES ---
+// --- BUILDER & AGENCY PACKAGES SERVICES ---
 
 export async function fetchBasePackages(): Promise<Package[]> {
   try {
-    const q = query(collection(db, 'packages'), where('isActive', '==', true));
+    const q = query(collection(db, PACKAGES_COLLECTION), where('isActive', '==', true));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
   } catch (error) {
-    handleFirestoreError(error, { path: 'packages', operation: 'list' });
+    handleFirestoreError(error, { path: PACKAGES_COLLECTION, operation: 'list' });
     return [];
+  }
+}
+
+export async function getPackageBySlug(slug: string): Promise<Package | null> {
+  try {
+    const q = query(collection(db, PACKAGES_COLLECTION), where('slug', '==', slug), limit(1));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    const docSnap = snapshot.docs[0];
+    return { id: docSnap.id, ...docSnap.data() } as Package;
+  } catch (error) {
+    handleFirestoreError(error, { path: PACKAGES_COLLECTION, operation: 'list' });
+    return null;
   }
 }
 
 export async function savePackage(pkg: Partial<Package>) {
   if (pkg.id) {
-    const pkgRef = doc(db, 'packages', pkg.id);
+    const pkgRef = doc(db, PACKAGES_COLLECTION, pkg.id);
     const updateData = { ...pkg, updatedAt: serverTimestamp() };
     updateDoc(pkgRef, updateData).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData }));
   } else {
-    const colRef = collection(db, 'packages');
-    const newData = { ...pkg, isActive: true, createdAt: serverTimestamp() };
+    const colRef = collection(db, PACKAGES_COLLECTION);
+    const newData = { 
+      ...pkg, 
+      isActive: true, 
+      slug: pkg.slug || pkg.name?.toLowerCase().replace(/\s+/g, '-') || `package-${Date.now()}`,
+      createdAt: serverTimestamp() 
+    };
     addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
   }
+}
+
+export async function deletePackage(id: string) {
+  const pkgRef = doc(db, PACKAGES_COLLECTION, id);
+  deleteDoc(pkgRef).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' }));
 }
 
 export async function fetchAddons(): Promise<Addon[]> {

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -27,12 +28,14 @@ type ItineraryItem = {
 }
 
 type PackageDetails = {
+    id: string;
     slug: string;
-    title: string;
+    name: string;
     subtitle: string;
-    price: string;
+    price: string; // The UI uses basePrice converted to string
+    basePrice: number;
     priceDescription: string;
-    duration: string;
+    durationText: string;
     description: string;
     includedTours: Tour[];
     sampleItinerary: ItineraryItem[];
@@ -52,14 +55,14 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
   const handleBooking = () => {
     toast({
       title: "Booking Request (Simulated)",
-      description: `Your request for the ${packageDetails.title} has been noted. We'll contact you shortly!`,
+      description: `Your request for the ${packageDetails.name} has been noted. We'll contact you shortly!`,
     });
   };
 
   return (
     <div className="space-y-12">
       <HeroSection 
-        title={packageDetails.title}
+        title={packageDetails.name}
         subtitle={packageDetails.subtitle}
         imageUrl={packageDetails.heroImage.src}
         dataAiHint={packageDetails.heroImage.hint}
@@ -77,51 +80,57 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
           <div className="lg:col-span-2 space-y-8">
             <AnimatedSection>
               <h2 className="font-headline text-2xl font-bold text-primary mb-4">About This Package</h2>
-              <p className="text-muted-foreground leading-relaxed">{packageDetails.description}</p>
-            </AnimatedSection>
-            
-            <AnimatedSection>
-              <h2 className="font-headline text-2xl font-bold text-primary mb-4">Included Tours</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                {packageDetails.includedTours.map(tour => (
-                  <Card key={tour.id} className="overflow-hidden group transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
-                    <div className="relative h-40 w-full">
-                       <Image src={tour.imageUrl} alt={tour.title} layout="fill" objectFit="cover" data-ai-hint={tour.dataAiHint} className="transition-transform duration-300 group-hover:scale-105" />
-                    </div>
-                    <CardHeader>
-                       <CardTitle className="text-lg font-semibold">{tour.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                       <p className="text-sm text-muted-foreground line-clamp-2">{tour.shortDescription}</p>
-                    </CardContent>
-                    <CardFooter>
-                       <Button variant="link" asChild className="p-0 text-accent">
-                         <Link href={`/campaigns/${tour.id}`}>View Tour Details <ArrowRight className="ml-1 h-4 w-4"/></Link>
-                       </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+              <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                {packageDetails.description}
               </div>
             </AnimatedSection>
+            
+            {packageDetails.includedTours.length > 0 && (
+              <AnimatedSection>
+                <h2 className="font-headline text-2xl font-bold text-primary mb-4">Included Tours</h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {packageDetails.includedTours.map(tour => (
+                    <Card key={tour.id} className="overflow-hidden group transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1">
+                      <div className="relative h-40 w-full bg-muted">
+                         <Image src={tour.imageUrl} alt={tour.title} layout="fill" objectFit="cover" data-ai-hint={tour.dataAiHint} className="transition-transform duration-300 group-hover:scale-105" />
+                      </div>
+                      <CardHeader>
+                         <CardTitle className="text-lg font-semibold">{tour.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                         <p className="text-sm text-muted-foreground line-clamp-2">{tour.shortDescription}</p>
+                      </CardContent>
+                      <CardFooter>
+                         <Button variant="link" asChild className="p-0 text-accent">
+                           <Link href={`/campaigns/${tour.id}`}>View Tour Details <ArrowRight className="ml-1 h-4 w-4"/></Link>
+                         </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </AnimatedSection>
+            )}
 
-             <AnimatedSection>
-              <h2 className="font-headline text-2xl font-bold text-primary mb-4">Sample Itinerary</h2>
-               <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
-                {packageDetails.sampleItinerary.map((item, index) => (
-                  <AccordionItem key={item.day} value={`item-${index}`}>
-                    <AccordionTrigger className="font-semibold text-lg hover:no-underline">
-                        <div className="flex items-center gap-3">
-                           <div className="bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm">{item.day}</div>
-                            {item.activity}
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pl-11 border-l-2 border-primary/20 ml-4">
-                      <p className="text-muted-foreground">{item.description}</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </AnimatedSection>
+            {packageDetails.sampleItinerary.length > 0 && (
+              <AnimatedSection>
+                <h2 className="font-headline text-2xl font-bold text-primary mb-4">Sample Itinerary</h2>
+                 <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+                  {packageDetails.sampleItinerary.map((item, index) => (
+                    <AccordionItem key={item.day} value={`item-${index}`}>
+                      <AccordionTrigger className="font-semibold text-lg hover:no-underline">
+                          <div className="flex items-center gap-3">
+                             <div className="bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm">{item.day}</div>
+                              {item.activity}
+                          </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pl-11 border-l-2 border-primary/20 ml-4">
+                        <p className="text-muted-foreground whitespace-pre-line">{item.description}</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </AnimatedSection>
+            )}
           </div>
 
           {/* Sticky Sidebar */}
@@ -134,12 +143,12 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
                   <CardContent className="space-y-3">
                      <div className="flex items-center text-foreground">
                         <DollarSign className="h-5 w-5 mr-3 text-accent"/>
-                        <span className="font-bold text-2xl">{`$${packageDetails.price}`}</span>
+                        <span className="font-bold text-2xl">${packageDetails.basePrice.toLocaleString()}</span>
                         <span className="text-sm text-muted-foreground ml-1.5">{packageDetails.priceDescription}</span>
                     </div>
                      <div className="flex items-center text-muted-foreground">
                         <Clock className="h-5 w-5 mr-3 text-accent"/>
-                        <span>{packageDetails.duration}</span>
+                        <span>{packageDetails.durationText}</span>
                     </div>
                     <div className="flex items-center text-muted-foreground">
                         <Map className="h-5 w-5 mr-3 text-accent"/>
