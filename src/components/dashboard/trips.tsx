@@ -1,10 +1,11 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Mountain, MapPin, Calendar, ExternalLink, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Mountain, Calendar, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 const joinedCampaigns = [
