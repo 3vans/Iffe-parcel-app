@@ -177,7 +177,7 @@ const IDEAS_COLLECTION = 'ideas';
 // --- HELPER FOR PERMISSION ERRORS ---
 
 function handleFirestoreError(error: any, context: SecurityRuleContext) {
-  if (error.code === 'permission-denied') {
+  if (error.code === 'permission-denied' || error.code === 'permission-denied') {
     const permissionError = new FirestorePermissionError(context);
     errorEmitter.emit('permission-error', permissionError);
   }
@@ -364,7 +364,7 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   }
 
   const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(filePath);
-  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`) : [];
+  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
   const colRef = collection(db, GALLERY_COLLECTION);
   const newData = {
@@ -383,6 +383,20 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   });
   
   return { id: docRef?.id, src: publicUrl };
+}
+
+export async function updateGalleryImage(id: string, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+  const ref = doc(db, GALLERY_COLLECTION, id);
+  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
+  
+  const updateData = {
+    caption: metadata.caption || '',
+    tags: tagsArray,
+    dataAiHint: metadata.dataAiHint || 'safari photo',
+    updatedAt: serverTimestamp(),
+  };
+
+  updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
 }
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
@@ -412,7 +426,11 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
 
 export async function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    await supabase.storage.from('media').remove([storagePath]);
+    try {
+      await supabase.storage.from('media').remove([storagePath]);
+    } catch (err) {
+      console.error("Supabase file removal snag:", err);
+    }
   }
   const ref = doc(db, GALLERY_COLLECTION, id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));

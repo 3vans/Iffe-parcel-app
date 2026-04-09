@@ -20,7 +20,7 @@ service cloud.firestore {
     // --- User Profile ---
     match /users/{userId} {
       allow get, list: if true;
-      allow create: if isOwner(userId);
+      allow create: if isSignedIn();
       allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
     }

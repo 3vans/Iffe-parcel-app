@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert } from "lucide-react";
+import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { 
   uploadGalleryImage, 
+  updateGalleryImage,
   fetchGalleryImages, 
   deleteGalleryImage, 
   addVideo, 
@@ -72,6 +73,7 @@ function getYoutubeVideoId(url: string): string | null {
 export default function AdminMediaPage() {
   const [isUploadImageDialogOpen, setIsUploadImageDialogOpen] = useState(false);
   const [isAddVideoDialogOpen, setIsAddVideoDialogOpen] = useState(false);
+  const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
   
   const [isSubmittingImage, setIsSubmittingImage] = useState(false);
   const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
@@ -82,18 +84,20 @@ export default function AdminMediaPage() {
   const [adminVideoItems, setAdminVideoItems] = useState<VideoItem[]>([]);
 
   const imageForm = useForm<ImageMediaFormValues>({ resolver: zodResolver(imageMediaSchema) });
+  const editImageForm = useForm<ImageMediaFormValues>({ resolver: zodResolver(imageMediaSchema) });
   const videoForm = useForm<VideoMediaFormValues>({ resolver: zodResolver(videoMediaSchema), defaultValues: { category: 'Destination Highlights' } });
 
   const watchedImageUrl = imageForm.watch('imageUrl');
 
   useEffect(() => {
-    const loadData = async () => {
-      const [images, videos] = await Promise.all([fetchGalleryImages(), fetchVideos()]);
-      setAdminGalleryImages(images);
-      setAdminVideoItems(videos);
-    };
     loadData();
   }, []);
+
+  const loadData = async () => {
+    const [images, videos] = await Promise.all([fetchGalleryImages(), fetchVideos()]);
+    setAdminGalleryImages(images);
+    setAdminVideoItems(videos);
+  };
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -115,7 +119,6 @@ export default function AdminMediaPage() {
     setIsSubmittingImage(true);
     
     try {
-      // Pre-flight Connection Check
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       
@@ -129,8 +132,7 @@ export default function AdminMediaPage() {
         dataAiHint: data.dataAiHint 
       });
       
-      const updatedImages = await fetchGalleryImages();
-      setAdminGalleryImages(updatedImages);
+      await loadData();
       toast({ title: "Image Uploaded Successfully!" });
       setIsUploadImageDialogOpen(false);
       imageForm.reset();
@@ -142,6 +144,35 @@ export default function AdminMediaPage() {
         description: error.message || "An unexpected error occurred. Please check the console for details.", 
         variant: "destructive" 
       });
+    } finally {
+      setIsSubmittingImage(false);
+    }
+  };
+
+  const handleEditImage = (img: GalleryImage) => {
+    setEditingImage(img);
+    editImageForm.reset({
+      caption: img.caption,
+      tags: img.tags?.join(', '),
+      dataAiHint: img.dataAiHint,
+      imageUrl: img.src
+    });
+  };
+
+  const onUpdateImageMedia: SubmitHandler<ImageMediaFormValues> = async (data) => {
+    if (!editingImage) return;
+    setIsSubmittingImage(true);
+    try {
+      await updateGalleryImage(editingImage.id, {
+        caption: data.caption,
+        tags: data.tags,
+        dataAiHint: data.dataAiHint
+      });
+      await loadData();
+      toast({ title: "Image Updated" });
+      setEditingImage(null);
+    } catch (err) {
+      toast({ title: "Update Failed", variant: "destructive" });
     } finally {
       setIsSubmittingImage(false);
     }
@@ -167,8 +198,7 @@ export default function AdminMediaPage() {
         thumbnailUrl: `https://i3.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
         dataAiHint: 'youtube video',
       });
-      const updatedVideos = await fetchVideos();
-      setAdminVideoItems(updatedVideos);
+      await loadData();
       toast({ title: "Video Added!" });
       videoForm.reset();
       setIsAddVideoDialogOpen(false);
@@ -180,11 +210,11 @@ export default function AdminMediaPage() {
   };
 
   const handleDeleteImage = async (id: string, storagePath?: string) => {
-    if (!confirm("Are you sure you want to delete this image?")) return;
+    if (!confirm("Are you sure you want to delete this image from both Supabase and Firestore?")) return;
     try {
       await deleteGalleryImage(id, storagePath);
       setAdminGalleryImages(prev => prev.filter(img => img.id !== id));
-      toast({ title: "Image Deleted" });
+      toast({ title: "Image Permanently Deleted" });
     } catch (err) {
       toast({ title: "Delete Failed", variant: "destructive" });
     }
@@ -258,7 +288,10 @@ export default function AdminMediaPage() {
               {adminGalleryImages.map(img => (
                 <div key={img.id} className="relative group aspect-square rounded-md overflow-hidden bg-muted border">
                   <Image src={img.src} alt={img.alt} fill objectFit="cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <Button size="icon" variant="secondary" onClick={() => handleEditImage(img)}>
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
                     <Button size="icon" variant="destructive" onClick={() => handleDeleteImage(img.id, img.storagePath)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -338,6 +371,42 @@ export default function AdminMediaPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* EDIT IMAGE DIALOG */}
+      <Dialog open={!!editingImage} onOpenChange={() => setEditingImage(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-headline text-2xl text-primary">Edit Image Details</DialogTitle>
+            <DialogDescription>Update metadata for this gallery photo.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={editImageForm.handleSubmit(onUpdateImageMedia)} className="grid gap-4 py-4">
+            {editingImage && (
+              <div className="relative w-full aspect-video border rounded-md overflow-hidden bg-muted">
+                <Image src={editingImage.src} alt="Preview" fill style={{ objectFit: 'contain' }} />
+              </div>
+            )}
+            <div>
+              <Label htmlFor="edit-caption">Caption</Label>
+              <Input id="edit-caption" {...editImageForm.register('caption')} placeholder="Brief description..." disabled={isSubmittingImage} />
+            </div>
+            <div>
+              <Label htmlFor="edit-tags">Tags (comma separated)</Label>
+              <Input id="edit-tags" {...editImageForm.register('tags')} placeholder="#Safari, #Gorillas" disabled={isSubmittingImage} />
+            </div>
+            <div>
+              <Label htmlFor="edit-dataAiHint">AI Search Keywords (max 2 words)</Label>
+              <Input id="edit-dataAiHint" {...editImageForm.register('dataAiHint')} placeholder="gorilla forest" disabled={isSubmittingImage} />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setEditingImage(null)} disabled={isSubmittingImage}>Cancel</Button>
+              <Button type="submit" disabled={isSubmittingImage} className="bg-primary hover:bg-primary/90">
+                {isSubmittingImage ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
