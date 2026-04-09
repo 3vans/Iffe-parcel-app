@@ -339,7 +339,12 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
 
   if (uploadError) {
     console.error("Supabase Storage API Error:", uploadError);
-    // Provide specific help for common mistakes
+    
+    // Specific check for RLS (Row Level Security) violation
+    if (uploadError.message.toLowerCase().includes('row-level security') || uploadError.message.toLowerCase().includes('rls')) {
+      throw new Error("Supabase RLS Error: Upload denied. Please go to your Supabase Dashboard > Storage > Policies and add an 'INSERT' policy for the 'media' bucket to allow file creation.");
+    }
+
     if (uploadError.message === 'Failed to fetch') {
       throw new Error("Connection Failed: Could not reach Supabase. Check if your project URL is correct and your internet connection is active.");
     }
