@@ -114,10 +114,11 @@ const AppHeader = () => {
                   <Compass className="mr-1 h-4 w-4" /> Expeditions <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="w-64">
                  <DropdownMenuGroup>
                     <DropdownMenuLabel>Tours & Journeys</DropdownMenuLabel>
-                    <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />Tour Packages</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href="/campaigns"><Compass className="mr-2 h-4 w-4" />All Expeditions</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />Safari Packages</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/events"><CalendarClock className="mr-2 h-4 w-4" />Scheduled Departures</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
