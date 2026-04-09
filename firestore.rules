@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -27,6 +28,12 @@ service cloud.firestore {
 
     // --- Campaigns (Public) ---
     match /campaigns_public/{campaignId} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- Scheduled Departures ---
+    match /departures/{departureId} {
       allow get, list: if true;
       allow write: if isAdmin();
     }

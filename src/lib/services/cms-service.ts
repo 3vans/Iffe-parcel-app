@@ -106,6 +106,22 @@ export interface Campaign {
   status?: 'active' | 'completed' | 'cancelled';
 }
 
+export interface Departure {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  type: 'Online' | 'Offline' | 'Hybrid';
+  excerpt: string;
+  fullDescription: string;
+  imageUrl: string;
+  dataAiHint?: string;
+  rsvpLink?: string;
+  calendarLink?: string;
+  createdAt?: any;
+}
+
 export interface ItineraryItem {
   day: number;
   activity: string;
@@ -187,6 +203,7 @@ export interface ChatMessage {
 
 // --- CONSTANTS ---
 const CAMPAIGNS_COLLECTION = 'campaigns_public';
+const DEPARTURES_COLLECTION = 'departures';
 const POSTS_COLLECTION = 'posts_approved';
 const GALLERY_COLLECTION = 'gallery';
 const CHATROOMS_COLLECTION = 'chatrooms';
@@ -611,6 +628,48 @@ export async function saveCampaign(campaign: Partial<Campaign>) {
 
 export async function deleteCampaign(id: string) {
   const ref = doc(db, CAMPAIGNS_COLLECTION, id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+}
+
+// --- DEPARTURES (Scheduled Events) ---
+
+export async function fetchDepartures(): Promise<Departure[]> {
+  try {
+    const departuresRef = collection(db, DEPARTURES_COLLECTION);
+    const q = query(departuresRef, orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Departure));
+  } catch (error) {
+    handleFirestoreError(error, { path: DEPARTURES_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export async function getDepartureById(id: string): Promise<Departure | null> {
+  const ref = doc(db, DEPARTURES_COLLECTION, id);
+  try {
+    const docSnap = await getDoc(ref);
+    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as Departure;
+  } catch (error) {
+    handleFirestoreError(error, { path: ref.path, operation: 'get' });
+  }
+  return null;
+}
+
+export async function saveDeparture(departure: Partial<Departure>) {
+  if (departure.id) {
+    const ref = doc(db, DEPARTURES_COLLECTION, departure.id);
+    const updateData = { ...departure, updatedAt: serverTimestamp() };
+    updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+  } else {
+    const colRef = collection(db, DEPARTURES_COLLECTION);
+    const newData = { ...departure, createdAt: serverTimestamp() };
+    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+  }
+}
+
+export async function deleteDeparture(id: string) {
+  const ref = doc(db, DEPARTURES_COLLECTION, id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 

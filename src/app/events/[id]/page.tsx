@@ -1,91 +1,167 @@
 
 'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useParams, notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Tv, Info, Globe } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Tv, Info, Globe, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
+import { getDepartureById, type Departure } from '@/lib/services/cms-service';
 
-export default function EventDetailPage({ params }: { params: { id: string } }) {
-  // In a real app, you would fetch event data based on params.id
-  const mockEvent = {
-    id: params.id,
-    title: `Scheduled Departure: Tour ${params.id}`,
-    date: 'Dec 31, 2024',
-    time: 'All Day Event',
-    location: params.id === 'e1' ? 'Online (Zoom)' : 'Nairobi, Kenya',
-    type: params.id === 'e1' ? 'Online' as const : 'Offline' as const,
-    excerpt: `This is a placeholder description for the scheduled departure with ID ${params.id}. Join us for an exciting time!`,
-    fullDescription: `This is the detailed placeholder content for the tour with ID ${params.id}. We are planning an amazing trip that you won't want to miss. Stay tuned for updates on the detailed itinerary, accommodation, and specific activities. This tour aims to bring together like-minded adventurers for an unforgettable experience.`,
-    imageUrl: placeholderImages.eventDetailDefault.src,
-    imageWidth: placeholderImages.eventDetailDefault.width,
-    imageHeight: placeholderImages.eventDetailDefault.height,
-    dataAiHint: placeholderImages.eventDetailDefault.hint,
-    organizer: "iffe-travels",
-    rsvpLink: "#",
-  };
-
+export default function EventDetailPage() {
+  const { id } = useParams();
+  const [event, setEvent] = useState<Departure | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [ref, isVisible] = useScrollAnimation();
 
+  useEffect(() => {
+    const loadData = async () => {
+      if (!id) return;
+      try {
+        const data = await getDepartureById(id as string);
+        setEvent(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, [id]);
+
+  if (isLoading) {
+    return <div className="flex flex-col items-center justify-center py-32 space-y-4">
+      <Loader2 className="h-12 w-12 animate-spin text-accent" />
+      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Opening Itinerary...</p>
+    </div>;
+  }
+
+  if (!event) {
+    notFound();
+  }
+
   return (
-    <div ref={ref} className={cn('space-y-6 scroll-animate', isVisible && 'scroll-animate-in')}>
-      <Button variant="ghost" asChild>
+    <div ref={ref} className={cn('space-y-6 scroll-animate max-w-6xl mx-auto pb-20', isVisible && 'scroll-animate-in')}>
+      <Button variant="ghost" asChild className="mb-2 hover:bg-primary/5 hover:text-primary">
         <Link href="/events">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Departures
         </Link>
       </Button>
-      <Card className="shadow-xl overflow-hidden transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
-        {mockEvent.imageUrl && (
-          <div className="relative w-full bg-muted rounded-t-lg overflow-hidden aspect-[2/1]">
+
+      <Card className="shadow-2xl overflow-hidden border-none bg-card/80 backdrop-blur-sm">
+        {event.imageUrl && (
+          <div className="relative w-full aspect-[21/9] bg-muted overflow-hidden">
             <Image 
-              src={mockEvent.imageUrl} 
-              alt={mockEvent.title} 
+              src={event.imageUrl} 
+              alt={event.title} 
               className="object-cover" 
               fill
-              data-ai-hint={mockEvent.dataAiHint}
+              data-ai-hint={event.dataAiHint || "safari landscape"}
               priority
             />
-             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-            <CardTitle className="font-headline text-3xl md:text-4xl text-white absolute bottom-6 left-6 z-10 p-2 bg-black/30 rounded">{mockEvent.title}</CardTitle>
+             <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent"></div>
+             <div className="absolute bottom-8 left-8 right-8">
+                <Badge className="bg-accent text-stone-900 font-black mb-3 px-3 py-1 uppercase tracking-widest">{event.type}</Badge>
+                <CardTitle className="font-headline text-4xl md:text-6xl text-white font-black uppercase tracking-tighter leading-none">{event.title}</CardTitle>
+             </div>
           </div>
         )}
-        <CardContent className="p-6">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-4">
-              <section>
-                <h2 className="font-headline text-2xl font-semibold text-primary mb-2">About this Departure</h2>
-                <p className="text-muted-foreground leading-relaxed">{mockEvent.fullDescription}</p>
+        <CardContent className="p-8 md:p-12">
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="md:col-span-2 space-y-10">
+              <section className="space-y-4">
+                <h2 className="font-headline text-2xl font-black text-primary uppercase tracking-tight flex items-center gap-3">
+                    <div className="h-8 w-1.5 bg-accent rounded-full" />
+                    About this Departure
+                </h2>
+                <div className="prose prose-stone dark:prose-invert max-w-none">
+                    <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">{event.fullDescription}</p>
+                </div>
               </section>
-              <section>
-                 <h3 className="font-headline text-lg font-semibold text-primary mb-2">Hosted by</h3>
-                 <p className="text-muted-foreground">{mockEvent.organizer}</p>
+              
+              <section className="p-8 bg-muted/30 rounded-3xl border border-primary/5 flex items-center justify-between">
+                 <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Globe className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-primary leading-none mb-1">Official Agency Event</h3>
+                        <p className="text-xs text-muted-foreground">Verified and Guided by iffe-travels</p>
+                    </div>
+                 </div>
+                 <Button variant="outline" className="rounded-full font-bold border-primary/20" asChild>
+                    <Link href="/about">Learn More</Link>
+                 </Button>
               </section>
             </div>
-            <aside className="space-y-4 md:pt-8">
-              <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
-                <CardHeader>
-                  <CardTitle className="font-headline text-xl text-primary flex items-center"><Info className="mr-2 h-5 w-5 text-accent" />Trip Details</CardTitle>
+
+            <aside className="space-y-6">
+              <Card className="bg-stone-950 text-white border-none shadow-2xl rounded-3xl overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                <CardHeader className="p-8 pb-0">
+                  <CardTitle className="font-headline text-2xl text-accent flex items-center gap-2">
+                    <Info className="h-6 w-6" /> Itinerary Info
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 text-sm">
-                  <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-accent" /> {mockEvent.date}</p>
-                  <p className="flex items-center"><Clock className="h-4 w-4 mr-2 text-accent" /> {mockEvent.time}</p>
-                  <p className="flex items-center">
-                    {mockEvent.type === 'Online' ? <Tv className="h-4 w-4 mr-2 text-accent" /> : <Globe className="h-4 w-4 mr-2 text-accent" />}
-                    {mockEvent.location} <Badge variant="outline" className="ml-2">{mockEvent.type}</Badge>
-                  </p>
+                <CardContent className="p-8 space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 group">
+                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                            <CalendarDays className="h-5 w-5 text-accent" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Departure Date</p>
+                            <p className="font-bold">{event.date}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 group">
+                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                            <Clock className="h-5 w-5 text-accent" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Duration / Time</p>
+                            <p className="font-bold">{event.time}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 group">
+                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                            {event.type === 'Online' ? <Tv className="h-5 w-5 text-accent" /> : <MapPin className="h-5 w-5 text-accent" />}
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Location</p>
+                            <p className="font-bold">{event.location}</p>
+                        </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 border-t border-white/10 space-y-3">
+                    <Button className="w-full h-14 rounded-2xl bg-accent text-stone-900 hover:bg-white font-black uppercase tracking-widest shadow-lg shadow-accent/20 transition-all active:scale-95" asChild>
+                        <Link href={event.rsvpLink || '/contact'} target={event.rsvpLink ? '_blank' : undefined}>
+                            {event.type === 'Online' ? 'REGISTER NOW' : 'BOOK YOUR SPOT'}
+                        </Link>
+                    </Button>
+                    {event.calendarLink && (
+                        <Button variant="ghost" className="w-full text-stone-400 hover:text-white hover:bg-white/5 font-bold text-xs" asChild>
+                            <Link href={event.calendarLink} target="_blank">ADD TO CALENDAR</Link>
+                        </Button>
+                    )}
+                  </div>
                 </CardContent>
-                <CardFooter>
-                   <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" asChild>
-                    <Link href={mockEvent.rsvpLink || '#'} target={mockEvent.rsvpLink !== '#' ? '_blank' : undefined}>
-                        <Users className="mr-2 h-4 w-4" /> Book Your Spot
-                    </Link>
-                  </Button>
-                </CardFooter>
               </Card>
+              
+              <div className="text-center p-6 space-y-2">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Questions?</p>
+                <p className="text-sm font-medium text-muted-foreground">Our adventure specialists are available 24/7 to help you prepare.</p>
+                <Button variant="link" className="text-accent font-bold" asChild>
+                    <Link href="/contact">Contact Support</Link>
+                </Button>
+              </div>
             </aside>
           </div>
         </CardContent>

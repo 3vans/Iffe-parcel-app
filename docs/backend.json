@@ -39,6 +39,25 @@
       },
       "required": ["id", "title", "status"]
     },
+    "Departure": {
+      "title": "Departure",
+      "type": "object",
+      "description": "A scheduled group tour departure or event.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "location": { "type": "string" },
+        "type": { "type": "string", "enum": ["Online", "Offline", "Hybrid"] },
+        "excerpt": { "type": "string" },
+        "fullDescription": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "rsvpLink": { "type": "string" },
+        "calendarLink": { "type": "string" }
+      },
+      "required": ["id", "title", "date", "type"]
+    },
     "Package": {
       "title": "Package",
       "type": "object",
@@ -112,6 +131,10 @@
       {
         "path": "/campaigns_public/{campaignId}",
         "definition": { "entityName": "Campaign", "schema": { "$ref": "#/backend/entities/Campaign" }, "description": "Public expeditions." }
+      },
+      {
+        "path": "/departures/{departureId}",
+        "definition": { "entityName": "Departure", "schema": { "$ref": "#/backend/entities/Departure" }, "description": "Scheduled group tours." }
       },
       {
         "path": "/packages/{packageId}",
