@@ -1,25 +1,53 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Search } from "lucide-react";
+import { ArrowRight, CheckCircle2, Search, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import AnimatedSection from "@/components/animated-section";
 import TestimonialSection from "@/components/testimonial-section";
 import CustomSafariBuilder from "@/components/custom-safari-builder/custom-safari-builder";
-import { fetchBasePackages, fetchAddons, type Package as BuilderPackage } from "@/lib/services/cms-service";
+import { fetchBasePackages, fetchAddons, type Package as BuilderPackage, type Addon } from "@/lib/services/cms-service";
 import { cn } from "@/lib/utils";
 
-export default async function PackagesPage() {
-    // Fetch live packages from Firestore
-    const [livePackages, builderAddons] = await Promise.all([
-        fetchBasePackages(),
-        fetchAddons()
-    ]);
+export default function PackagesPage() {
+    const [livePackages, setLivePackages] = useState<BuilderPackage[]>([]);
+    const [builderAddons, setBuilderAddons] = useState<Addon[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const [pkgs, ads] = await Promise.all([
+                    fetchBasePackages(),
+                    fetchAddons()
+                ]);
+                setLivePackages(pkgs);
+                setBuilderAddons(ads);
+            } catch (err) {
+                console.error("Load packages error:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        load();
+    }, []);
 
     const heroImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
     const heroDataAiHint = 'mountain valley landscape';
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-accent" />
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Loading Packages...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-12">
@@ -27,9 +55,8 @@ export default async function PackagesPage() {
                 <Image
                     src={heroImage}
                     alt="Safari Packages"
-                    layout="fill"
-                    objectFit="cover"
-                    className="z-0"
+                    fill
+                    className="object-cover z-0"
                     data-ai-hint={heroDataAiHint}
                     priority
                 />
@@ -79,9 +106,8 @@ export default async function PackagesPage() {
                                     <Image 
                                         src={pkg.imageUrl} 
                                         alt={pkg.name} 
-                                        layout="fill" 
-                                        objectFit="cover" 
-                                        className="rounded-t-lg" 
+                                        fill
+                                        className="object-cover rounded-t-lg" 
                                         data-ai-hint={pkg.dataAiHint || "safari package"}
                                     />
                                     {pkg.isPopular && <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-md">Most Popular</div>}

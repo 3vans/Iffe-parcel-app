@@ -1,12 +1,12 @@
-import { notFound } from 'next/navigation';
+
+'use client';
+
+import { notFound, useParams } from 'next/navigation';
 import CampaignDetailClientPage from './client-page';
 import placeholderImages from '@/app/lib/placeholder-images.json';
-import { getCampaignById, fetchCampaigns, type Campaign } from '@/lib/services/cms-service';
-
-export interface RelatedTour {
-  id: string;
-  title: string;
-}
+import { getCampaignById, fetchCampaigns } from '@/lib/services/cms-service';
+import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const defaultActivities = [
     { title: 'Wild Game Drives', description: 'Search for lions, elephants, and other plains game across open savannahs.', image: 'galleryLioness' },
@@ -25,47 +25,66 @@ const defaultMeals = [
     { title: 'Bush Dining', description: 'Unique meals served under the open African sky.', image: 'ideaFamilySafari' }
 ];
 
-async function getDetailedCampaign(id: string): Promise<{ campaign: Campaign | undefined; relatedTours: RelatedTour[] }> {
-    // 1. Fetch the campaign from the campaigns_public collection
-    const campaign = await getCampaignById(id);
-    
-    if (!campaign) return { campaign: undefined, relatedTours: [] };
+export default function CampaignDetailPage() {
+  const { id } = useParams();
+  const [data, setData] = useState<{ campaign: any, relatedTours: any[] } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // 2. Enrich the data with defaults for missing CMS fields to ensure a rich UI
-    const enrichedCampaign = {
-        ...campaign,
-        storyline: campaign.storyline || [
-            "Experience the raw beauty of " + (campaign.region || "this region") + " Uganda.",
-            "Our expert guides ensure an authentic and safe journey.",
-            "Connect with nature and local communities in a meaningful way."
-        ],
-        organizer: campaign.organizer || 'iffe-travels',
-        volunteersNeeded: campaign.volunteersNeeded || 10,
-        volunteersSignedUp: campaign.volunteersSignedUp || 0,
-        activities: campaign.activities || defaultActivities,
-        accommodation: campaign.accommodation || defaultAccommodation,
-        meals: campaign.meals || defaultMeals,
-        imageWidth: 1200,
-        imageHeight: 600,
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return;
+      try {
+        const campaign = await getCampaignById(id as string);
+        if (!campaign) {
+            setData(null);
+            return;
+        }
+
+        const enrichedCampaign = {
+            ...campaign,
+            storyline: campaign.storyline || [
+                "Experience the raw beauty of " + (campaign.region || "this region") + " Uganda.",
+                "Our expert guides ensure an authentic and safe journey.",
+                "Connect with nature and local communities in a meaningful way."
+            ],
+            organizer: campaign.organizer || 'iffe-travels',
+            volunteersNeeded: campaign.volunteersNeeded || 10,
+            volunteersSignedUp: campaign.volunteersSignedUp || 0,
+            activities: campaign.activities || defaultActivities,
+            accommodation: campaign.accommodation || defaultAccommodation,
+            meals: campaign.meals || defaultMeals,
+            imageWidth: 1200,
+            imageHeight: 600,
+        };
+
+        const allCampaigns = await fetchCampaigns();
+        const related = allCampaigns
+            .filter(c => c.id !== id && c.tags?.some(tag => campaign.tags?.includes(tag)))
+            .slice(0, 3)
+            .map(c => ({ id: c.id, title: c.title }));
+
+        setData({ campaign: enrichedCampaign, relatedTours: related });
+      } catch (err) {
+        console.error("Load campaign detail error:", err);
+      } finally {
+        setIsLoading(false);
+      }
     };
+    load();
+  }, [id]);
 
-    // 3. Fetch related tours for the sidebar
-    const allCampaigns = await fetchCampaigns();
-    const related = allCampaigns
-        .filter(c => c.id !== id && c.tags?.some(tag => campaign.tags?.includes(tag)))
-        .slice(0, 3)
-        .map(c => ({ id: c.id, title: c.title }));
+  if (isLoading) {
+    return (
+        <div className="flex flex-col items-center justify-center py-32 space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-accent" />
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Opening Expedition...</p>
+        </div>
+    );
+  }
 
-    return { campaign: enrichedCampaign as any, relatedTours: related };
-}
-
-export default async function CampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const { campaign, relatedTours } = await getDetailedCampaign(id);
-
-  if (!campaign) {
+  if (!data?.campaign) {
     notFound();
   }
 
-  return <CampaignDetailClientPage campaign={campaign as any} relatedTours={relatedTours} />;
+  return <CampaignDetailClientPage campaign={data.campaign as any} relatedTours={data.relatedTours} />;
 }

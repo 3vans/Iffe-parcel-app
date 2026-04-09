@@ -285,24 +285,26 @@ export async function getPackageBySlug(slug: string): Promise<Package | null> {
   }
 }
 
-export async function savePackage(pkg: Partial<Package>) {
+export function savePackage(pkg: Partial<Package>) {
   if (pkg.id) {
     const pkgRef = doc(db, PACKAGES_COLLECTION, pkg.id);
     const updateData = { ...pkg, updatedAt: serverTimestamp() };
     updateDoc(pkgRef, updateData).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData }));
   } else {
     const colRef = collection(db, PACKAGES_COLLECTION);
+    const newRef = doc(colRef);
     const newData = { 
       ...pkg, 
+      id: newRef.id,
       isActive: true, 
       slug: pkg.slug || pkg.name?.toLowerCase().replace(/\s+/g, '-') || `package-${Date.now()}`,
       createdAt: serverTimestamp() 
     };
-    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+    setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
-export async function deletePackage(id: string) {
+export function deletePackage(id: string) {
   const pkgRef = doc(db, PACKAGES_COLLECTION, id);
   deleteDoc(pkgRef).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' }));
 }
@@ -318,19 +320,20 @@ export async function fetchAddons(): Promise<Addon[]> {
   }
 }
 
-export async function saveAddon(addon: Partial<Addon>) {
+export function saveAddon(addon: Partial<Addon>) {
   if (addon.id) {
     const addonRef = doc(db, 'addons', addon.id);
     const updateData = { ...addon, updatedAt: serverTimestamp() };
     updateDoc(addonRef, updateData).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'update', requestResourceData: updateData }));
   } else {
     const colRef = collection(db, 'addons');
-    const newData = { ...addon, isActive: true, createdAt: serverTimestamp() };
-    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+    const newRef = doc(colRef);
+    const newData = { ...addon, id: newRef.id, isActive: true, createdAt: serverTimestamp() };
+    setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
-export async function deleteAddon(id: string) {
+export function deleteAddon(id: string) {
   const addonRef = doc(db, 'addons', id);
   deleteDoc(addonRef).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'delete' }));
 }
@@ -364,14 +367,14 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
   };
 }
 
-export async function saveCustomBooking(data: any) {
+export function saveCustomBooking(data: any) {
   const colRef = collection(db, 'custom_bookings');
-  const newData = { ...data, createdAt: serverTimestamp() };
-  const docRef = await addDoc(colRef, newData).catch(err => {
-    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
-    throw err;
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, createdAt: serverTimestamp() };
+  setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
-  return docRef?.id;
+  return newRef.id;
 }
 
 // --- PROMOTIONS ---
@@ -387,19 +390,20 @@ export async function fetchPromotions(): Promise<Promotion[]> {
   }
 }
 
-export async function savePromotion(promo: Partial<Promotion>) {
+export function savePromotion(promo: Partial<Promotion>) {
   if (promo.id) {
     const ref = doc(db, 'promotions', promo.id);
     const updateData = { ...promo, updatedAt: serverTimestamp() };
     updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
   } else {
     const colRef = collection(db, 'promotions');
-    const newData = { ...promo, isActive: true, createdAt: serverTimestamp() };
-    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+    const newRef = doc(colRef);
+    const newData = { ...promo, id: newRef.id, isActive: true, createdAt: serverTimestamp() };
+    setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
-export async function deletePromotion(id: string) {
+export function deletePromotion(id: string) {
   const ref = doc(db, 'promotions', id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
@@ -426,7 +430,9 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
   const colRef = collection(db, GALLERY_COLLECTION);
+  const newRef = doc(colRef);
   const newData = {
+    id: newRef.id,
     src: publicUrl,
     alt: metadata.caption || 'Gallery Image',
     caption: metadata.caption || '',
@@ -436,15 +442,14 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
     createdAt: serverTimestamp(),
   };
 
-  const docRef = await addDoc(colRef, newData).catch(err => {
-    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
-    throw err;
+  setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
   
-  return { id: docRef?.id, src: publicUrl };
+  return { id: newRef.id, src: publicUrl };
 }
 
-export async function updateGalleryImage(id: string, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+export function updateGalleryImage(id: string, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
   const ref = doc(db, GALLERY_COLLECTION, id);
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
@@ -483,13 +488,9 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
   }
 }
 
-export async function deleteGalleryImage(id: string, storagePath?: string) {
+export function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    try {
-      await supabase.storage.from('media').remove([storagePath]);
-    } catch (err) {
-      console.error("Supabase file removal snag:", err);
-    }
+    supabase.storage.from('media').remove([storagePath]).catch(err => console.error("Supabase file removal snag:", err));
   }
   const ref = doc(db, GALLERY_COLLECTION, id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
@@ -497,19 +498,20 @@ export async function deleteGalleryImage(id: string, storagePath?: string) {
 
 // --- BLOG ---
 
-export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
+export function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
   const colRef = collection(db, POSTS_COLLECTION);
+  const newRef = doc(colRef);
   const newData = {
     ...data,
+    id: newRef.id,
     status: 'Published',
     commentCount: 0,
     createdAt: serverTimestamp(),
   };
-  const docRef = await addDoc(colRef, newData).catch(err => {
-    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
-    throw err;
+  setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
-  return docRef?.id;
+  return newRef.id;
 }
 
 export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
@@ -551,26 +553,26 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
   return null;
 }
 
-export async function updatePostStatus(id: string, status: BlogPost['status']) {
+export function updatePostStatus(id: string, status: BlogPost['status']) {
   const postRef = doc(db, POSTS_COLLECTION, id);
   updateDoc(postRef, { status }).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'update', requestResourceData: { status } }));
 }
 
-export async function deleteBlogPost(id: string) {
+export function deleteBlogPost(id: string) {
   const postRef = doc(db, POSTS_COLLECTION, id);
   deleteDoc(postRef).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'delete' }));
 }
 
 // --- VIDEOS ---
 
-export async function addVideo(video: Omit<VideoItem, 'id'>) {
+export function addVideo(video: Omit<VideoItem, 'id'>) {
   const colRef = collection(db, 'videos');
-  const newData = { ...video, createdAt: serverTimestamp() };
-  const docRef = await addDoc(colRef, newData).catch(err => {
-    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
-    throw err;
+  const newRef = doc(colRef);
+  const newData = { ...video, id: newRef.id, createdAt: serverTimestamp() };
+  setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
-  return docRef?.id;
+  return newRef.id;
 }
 
 export async function fetchVideos(): Promise<VideoItem[]> {
@@ -584,7 +586,7 @@ export async function fetchVideos(): Promise<VideoItem[]> {
   }
 }
 
-export async function deleteVideo(id: string) {
+export function deleteVideo(id: string) {
   const ref = doc(db, 'videos', id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
@@ -614,19 +616,20 @@ export async function getCampaignById(id: string): Promise<Campaign | null> {
   return null;
 }
 
-export async function saveCampaign(campaign: Partial<Campaign>) {
+export function saveCampaign(campaign: Partial<Campaign>) {
   if (campaign.id) {
     const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
     const updateData = { ...campaign, updatedAt: serverTimestamp() };
     updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
   } else {
     const colRef = collection(db, CAMPAIGNS_COLLECTION);
-    const newData = { ...campaign, status: 'active', createdAt: serverTimestamp() };
-    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+    const newRef = doc(colRef);
+    const newData = { ...campaign, id: newRef.id, status: 'active', createdAt: serverTimestamp() };
+    setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
-export async function deleteCampaign(id: string) {
+export function deleteCampaign(id: string) {
   const ref = doc(db, CAMPAIGNS_COLLECTION, id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
@@ -656,33 +659,34 @@ export async function getDepartureById(id: string): Promise<Departure | null> {
   return null;
 }
 
-export async function saveDeparture(departure: Partial<Departure>) {
+export function saveDeparture(departure: Partial<Departure>) {
   if (departure.id) {
     const ref = doc(db, DEPARTURES_COLLECTION, departure.id);
     const updateData = { ...departure, updatedAt: serverTimestamp() };
     updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
   } else {
     const colRef = collection(db, DEPARTURES_COLLECTION);
-    const newData = { ...departure, createdAt: serverTimestamp() };
-    addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+    const newRef = doc(colRef);
+    const newData = { ...departure, id: newRef.id, createdAt: serverTimestamp() };
+    setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
   }
 }
 
-export async function deleteDeparture(id: string) {
+export function deleteDeparture(id: string) {
   const ref = doc(db, DEPARTURES_COLLECTION, id);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- IDEAS ---
 
-export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
+export function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
   const colRef = collection(db, IDEAS_COLLECTION);
-  const newData = { ...data, votes: 0, voters: [], status: 'New', commentsCount: 0, createdAt: serverTimestamp() };
-  const docRef = await addDoc(colRef, newData).catch(err => {
-    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
-    throw err;
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, votes: 0, voters: [], status: 'New', commentsCount: 0, createdAt: serverTimestamp() };
+  setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
-  return docRef?.id;
+  return newRef.id;
 }
 
 export async function fetchIdeas(): Promise<Idea[]> {
@@ -703,7 +707,7 @@ export async function fetchIdeas(): Promise<Idea[]> {
   }
 }
 
-export async function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
+export function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
   const ideaRef = doc(db, IDEAS_COLLECTION, ideaId);
   const updateData = hasVoted ? { votes: increment(-1), voters: arrayRemove(userId) } : { votes: increment(1), voters: arrayUnion(userId) };
   updateDoc(ideaRef, updateData).catch(err => handleFirestoreError(err, { path: ideaRef.path, operation: 'update', requestResourceData: updateData }));
@@ -722,13 +726,13 @@ export async function fetchChatrooms(): Promise<Chatroom[]> {
   }
 }
 
-export async function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
+export function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
   const colRef = collection(db, CHATROOMS_COLLECTION, roomId, 'messages');
   const roomRef = doc(db, CHATROOMS_COLLECTION, roomId);
   const newData = { ...message, createdAt: serverTimestamp() };
   
   addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
-  updateDoc(roomRef, { lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
+  updateDoc(roomRef, { lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }).catch(err => handleFirestoreError(err, { path: roomRef.path, operation: 'update' }));
 }
 
 export function subscribeToMessages(roomId: string, callback: (messages: ChatMessage[]) => void) {
@@ -746,7 +750,7 @@ export function subscribeToMessages(roomId: string, callback: (messages: ChatMes
   }, (err) => handleFirestoreError(err, { path: `chatrooms/${roomId}/messages`, operation: 'list' }));
 }
 
-export async function deleteChatMessage(roomId: string, messageId: string) {
+export function deleteChatMessage(roomId: string, messageId: string) {
   const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
