@@ -1,3 +1,4 @@
+
 import { db } from '@/lib/firebase';
 import { supabase } from '@/lib/supabase';
 import { 
@@ -177,7 +178,7 @@ const IDEAS_COLLECTION = 'ideas';
 // --- HELPER FOR PERMISSION ERRORS ---
 
 function handleFirestoreError(error: any, context: SecurityRuleContext) {
-  if (error.code === 'permission-denied' || error.code === 'permission-denied') {
+  if (error.code === 'permission-denied' || error.message?.includes('permission')) {
     const permissionError = new FirestorePermissionError(context);
     errorEmitter.emit('permission-error', permissionError);
   }

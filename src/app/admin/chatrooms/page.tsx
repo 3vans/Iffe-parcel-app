@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Trash2, UserX, ShieldBan, VolumeX, MessageSquare, Users, PowerOff, MessageCircle, ShieldAlert, Loader2 } from "lucide-react";
+import { Send, Trash2, MessageSquare, PowerOff, MessageCircle, Loader2 } from "lucide-react";
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { fetchChatrooms, subscribeToMessages, sendMessage, deleteChatMessage, type Chatroom, type ChatMessage } from '@/lib/services/cms-service';
@@ -30,9 +30,14 @@ export default function AdminChatroomsPage() {
 
   useEffect(() => {
     const loadRooms = async () => {
-      const rooms = await fetchChatrooms();
-      setChatrooms(rooms);
-      setIsLoading(false);
+      try {
+        const rooms = await fetchChatrooms();
+        setChatrooms(rooms);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadRooms();
   }, []);
@@ -72,7 +77,7 @@ export default function AdminChatroomsPage() {
   };
   
   const handleDeleteMessage = async (messageId: string) => {
-    if (!selectedChatroomId || !confirm("Delete this message?")) return;
+    if (!selectedChatroomId || !confirm("Delete this message from history?")) return;
     try {
       await deleteChatMessage(selectedChatroomId, messageId);
       toast({ title: "Message Deleted" });
@@ -111,6 +116,9 @@ export default function AdminChatroomsPage() {
                 </div>
               </Button>
             ))}
+            {chatrooms.length === 0 && (
+              <p className="text-center text-xs text-muted-foreground py-10">No rooms found in Firestore.</p>
+            )}
           </CardContent>
         </ScrollArea>
       </Card>

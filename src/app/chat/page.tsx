@@ -31,12 +31,17 @@ export default function ChatPage() {
 
   useEffect(() => {
     const loadRooms = async () => {
-      const rooms = await fetchChatrooms();
-      setChatrooms(rooms);
-      if (rooms.length > 0) {
-        setSelectedRoomId(rooms[0].id);
+      try {
+        const rooms = await fetchChatrooms();
+        setChatrooms(rooms);
+        if (rooms.length > 0) {
+          setSelectedRoomId(rooms[0].id);
+        }
+      } catch (err) {
+        console.error("Failed to load rooms:", err);
+      } finally {
+        setIsLoadingRooms(false);
       }
-      setIsLoadingRooms(false);
     };
     loadRooms();
   }, []);
@@ -96,7 +101,7 @@ export default function ChatPage() {
         iconName="MessageCircle"
       />
       
-      <div ref={ref} className={cn('grid grid-cols-1 lg:grid-cols-4 gap-6 container mx-auto scroll-animate', isVisible && 'scroll-animate-in')}>
+      <div ref={ref} className={cn('grid grid-cols-1 lg:grid-cols-4 gap-6 container mx-auto px-4 scroll-animate', isVisible && 'scroll-animate-in')}>
         
         {/* Room List Sidebar */}
         <aside className="lg:col-span-1 space-y-4">
@@ -129,6 +134,9 @@ export default function ChatPage() {
                     <ChevronRight className={cn("h-4 w-4 transition-transform", selectedRoomId === room.id ? "rotate-90" : "group-hover:translate-x-1")} />
                   </button>
                 ))
+              )}
+              {!isLoadingRooms && chatrooms.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-4 italic">No active channels yet.</p>
               )}
             </div>
           </div>

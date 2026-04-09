@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -49,6 +50,21 @@
         "tags": { "type": "array", "items": { "type": "string" } },
         "storagePath": { "type": "string" }
       }
+    },
+    "Idea": {
+      "title": "Idea",
+      "type": "object",
+      "description": "A community-suggested destination or trip idea.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "submittedBy": { "type": "string" },
+        "votes": { "type": "number" },
+        "voters": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["New", "Under Review", "Approved", "Implemented"] },
+        "imageUrl": { "type": "string" }
+      }
     }
   },
   "auth": {
@@ -86,15 +102,11 @@
       },
       {
         "path": "/ideas/{ideaId}",
-        "definition": { "schema": "object", "description": "Community suggestions." }
+        "definition": { "entityName": "Idea", "schema": { "$ref": "#/backend/entities/Idea" }, "description": "Community suggestions." }
       },
       {
         "path": "/chatrooms/{roomId}/messages/{messageId}",
         "definition": { "schema": "object", "description": "Real-time messages." }
-      },
-      {
-        "path": "/videos/{videoId}",
-        "definition": { "schema": "object", "description": "Video library metadata." }
       }
     ]
   }
