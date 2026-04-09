@@ -337,7 +337,17 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
     .from('media') // Make sure this bucket exists in Supabase
     .upload(filePath, file);
 
-  if (uploadError) throw uploadError;
+  if (uploadError) {
+    console.error("Supabase Storage API Error:", uploadError);
+    // Provide specific help for common mistakes
+    if (uploadError.message === 'Failed to fetch') {
+      throw new Error("Connection Failed: Could not reach Supabase. Check if your project URL is correct and your internet connection is active.");
+    }
+    if (uploadError.message.includes('bucket')) {
+      throw new Error("Bucket Not Found: Ensure you have created a bucket named 'media' in your Supabase project and set it to 'Public'.");
+    }
+    throw new Error(`Supabase Error: ${uploadError.message}`);
+  }
 
   // 2. Get Public URL
   const { data: { publicUrl } } = supabase.storage

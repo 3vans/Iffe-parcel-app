@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Video as VideoIcon, Film, Trash2 } from "lucide-react";
+import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -113,22 +113,33 @@ export default function AdminMediaPage() {
       return;
     }
     setIsSubmittingImage(true);
+    
     try {
+      // Pre-flight Connection Check
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!url || url.includes('your-supabase-url') || !key || key.includes('your-supabase-anon-key')) {
+        throw new Error("Supabase Connection Error: Your .env file still contains placeholder credentials. Replace them with actual values from your Supabase Dashboard to enable uploads.");
+      }
+
       await uploadGalleryImage(imageFile, { 
         caption: data.caption, 
         tags: data.tags, 
         dataAiHint: data.dataAiHint 
       });
+      
       const updatedImages = await fetchGalleryImages();
       setAdminGalleryImages(updatedImages);
       toast({ title: "Image Uploaded Successfully!" });
       setIsUploadImageDialogOpen(false);
       imageForm.reset();
       setImageFile(null);
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Snag in Media Upload:", error);
       toast({ 
         title: "Upload Failed", 
-        description: "Check your Supabase configuration and 'media' bucket permissions.", 
+        description: error.message || "An unexpected error occurred. Please check the console for details.", 
         variant: "destructive" 
       });
     } finally {
