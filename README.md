@@ -1,37 +1,25 @@
 
-# iffe-travels (e-Rotary Hub)
+# e-Rotary Hub (iffe-travels)
 
-A professional adventure tourism platform built with Next.js, Firebase, and Tailwind CSS.
+A professional adventure tourism and community impact platform built with Next.js, Firebase, and Supabase.
 
-## 🏗 Database Implementation Roadmap
+## 🌟 Platform Vision
+e-Rotary Hub (iffe-travels) is a hybrid ecosystem designed to bridge high-end safari experiences with community engagement. It serves as the official portal for the **Iffe Explorer's Club**, combining bespoke travel planning with crowdsourced community projects.
 
-The application uses a **Hybrid-Storage Architecture**:
-- **Firebase Firestore**: Structured content, metadata, real-time messaging, and user profiles.
-- **Firebase Authentication**: User identity management.
-- **Supabase Storage**: Large binary objects (Photos, Videos, PDF Documents).
+## 🏗 Core Architecture
 
-### Implementation Phases
+### 1. The Expedition Engine (CMS)
+- **Live Inventory**: Managed via `/campaigns_public`. Admins can update itineraries, pricing, and availability in real-time.
+- **Bespoke Builder**: A dynamic pricing engine in the `/packages` and `/addons` collections that calculates group investment and applies "Wildlife Bundle" discounts.
 
-1.  **Phase 1: Setup & User Profiles (DONE ✅)**
-    *   Integrated Firebase Auth.
-    *   Established the `/users` collection with automated profile generation.
+### 2. The Community Layer (Social)
+- **Idea Box**: Crowdsourcing destination suggestions via an atomic voting engine in `/ideas`.
+- **Narrative Journal**: A moderated storytelling platform (`/posts_approved`) for travelers to share their experiences.
+- **Real-time Hub**: Secure support and community channels via room-aware chat architecture in `/chatrooms`.
 
-2.  **Phase 2: Expedition Management (DONE ✅)**
-    *   Migrated static tour data to `/campaigns_public`.
-    *   Implemented full Admin CRUD logic for tour itineraries.
-
-3.  **Phase 3: Media & Narrative (DONE ✅)**
-    *   Implemented live `/posts_approved` (Journal) and `/gallery`.
-    *   Enabled Admin moderation for stories and images.
-
-4.  **Phase 4: Custom Builder & Inventory (DONE ✅)**
-    *   Populated `/packages` and `/addons` collections.
-    *   Connected the `CustomSafariBuilder` to dynamic pricing and bundle logic.
-    *   Added `/custom_bookings` to capture bespoke trip requests.
-
-5.  **Phase 5: Real-time Interaction (DONE ✅)**
-    *   Finalized the `/chatrooms` message streams.
-    *   Implemented the `/ideas` voting engine for community destination suggestions.
+### 3. Media Strategy (Hybrid Storage)
+- **Firestore**: Stores structured metadata, tags, captions, and real-time message streams.
+- **Supabase Storage**: Hosts high-resolution binary objects (Photos and Videos) via the `media` bucket with specific RLS policies for public inserts.
 
 ## 🔐 Administrator Credentials
 To access the Admin Panel (`/admin`), use these credentials:
@@ -40,7 +28,7 @@ To access the Admin Panel (`/admin`), use these credentials:
 - **Password**: `ivan.ian`
 
 ## 🚀 Key Features
-- **Custom Safari Builder**: A live pricing engine for bespoke trips with bundle discounts.
-- **Visual Highlights**: An interactive, draggable "Film Strip" of top destinations.
-- **Idea Box**: Community-driven destination voting.
-- **User Dashboard**: Secure access to personal itineraries and support.
+- **Custom Safari Builder**: Live configuration of dream trips with instant pricing feedback.
+- **Visual Highlights**: An interactive, draggable "Film Strip" of top destinations on the home page.
+- **AI Itinerary Summarizer**: Uses Genkit to distill long descriptions into concise highlights for quick reading.
+- **Impact Dashboard**: Tracks traveler levels, points, and milestones to foster community growth.

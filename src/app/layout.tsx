@@ -10,8 +10,8 @@ import WhatsAppCTA from '@/components/layout/whatsapp-cta';
 import BottomNav from '@/components/layout/bottom-nav';
 
 export const metadata: Metadata = {
-  title: 'iffe-travels',
-  description: 'Your adventure into the wild awaits. Book unforgettable safari tours and expeditions.',
+  title: 'e-Rotary Hub | iffe-travels',
+  description: 'Your adventure into the wild awaits. Join the Iffe Explorer\'s Club for unforgettable safari tours and community-driven expeditions.',
   icons: null,
 };
 
