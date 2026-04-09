@@ -137,7 +137,7 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
                                         src={itemImage.src} 
                                         alt={item.title} 
                                         layout="fill" 
-                                        objectFit="cover" 
+                                        style={{ objectFit: 'cover' }} 
                                         data-ai-hint={itemImage.hint} 
                                         className="transition-transform duration-300 group-hover:scale-105"
                                     />
@@ -177,7 +177,7 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
                                     src={itemImage.src} 
                                     alt={item.title} 
                                     layout="fill" 
-                                    objectFit="cover" 
+                                    style={{ objectFit: 'cover' }} 
                                     data-ai-hint={itemImage.hint} 
                                     className="transition-transform duration-300 group-hover:scale-105"
                                 />
@@ -208,8 +208,15 @@ const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string
                 <div className="space-y-8">
                   {images.map((image, index) => (
                       <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
-                          <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group", index % 2 !== 0 && "md:order-last")}>
-                              <Image src={image.src} alt={`${title} view ${index+1}`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={image.hint} />
+                          <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
+                              <Image 
+                                src={image.src || placeholderImages.campaignDetailWildebeest.src} 
+                                alt={`${title} view ${index+1}`} 
+                                fill
+                                style={{ objectFit: 'cover' }} 
+                                className="transition-transform duration-300 group-hover:scale-105" 
+                                data-ai-hint={image.hint} 
+                              />
                           </div>
                           <div>
                               <p className="text-muted-foreground leading-relaxed">{texts[index] || ''}</p>
@@ -226,6 +233,9 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   const [ref, isVisible] = useScrollAnimation();
   const [endDate, setEndDate] = useState('');
 
+  // Fallback for missing campaign image
+  const [heroImgSrc, setHeroImgSrc] = useState(campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src);
+
   useEffect(() => {
     if (campaign?.endDate) {
       setEndDate(new Date(campaign.endDate).toLocaleDateString())
@@ -241,13 +251,14 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
       </Button>
 
       <Card className="overflow-hidden shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
-        <div className="relative w-full h-[300px] md:h-[400px]">
+        <div className="relative w-full h-[300px] md:h-[400px] bg-muted">
           <Image 
-            src={campaign.imageUrl} 
+            src={heroImgSrc} 
             alt={campaign.title} 
             fill 
-            className="object-cover" 
+            style={{ objectFit: 'cover' }} 
             data-ai-hint={campaign.dataAiHint}
+            onError={() => setHeroImgSrc(placeholderImages.campaignDetailWildebeest.src)}
             priority 
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -357,5 +368,3 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
-
-    

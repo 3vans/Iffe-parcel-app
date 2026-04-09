@@ -19,6 +19,7 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<Departure | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [ref, isVisible] = useScrollAnimation();
+  const [heroImgSrc, setHeroImgSrc] = useState(placeholderImages.eventDetailDefault.src);
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,6 +27,9 @@ export default function EventDetailPage() {
       try {
         const data = await getDepartureById(id as string);
         setEvent(data);
+        if (data?.imageUrl) {
+          setHeroImgSrc(data.imageUrl);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -55,23 +59,22 @@ export default function EventDetailPage() {
       </Button>
 
       <Card className="shadow-2xl overflow-hidden border-none bg-card/80 backdrop-blur-sm">
-        {event.imageUrl && (
-          <div className="relative w-full aspect-[21/9] bg-muted overflow-hidden">
-            <Image 
-              src={event.imageUrl} 
-              alt={event.title} 
-              className="object-cover" 
-              fill
-              data-ai-hint={event.dataAiHint || "safari landscape"}
-              priority
-            />
-             <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent"></div>
-             <div className="absolute bottom-8 left-8 right-8">
-                <Badge className="bg-accent text-stone-900 font-black mb-3 px-3 py-1 uppercase tracking-widest">{event.type}</Badge>
-                <CardTitle className="font-headline text-4xl md:text-6xl text-white font-black uppercase tracking-tighter leading-none">{event.title}</CardTitle>
-             </div>
-          </div>
-        )}
+        <div className="relative w-full aspect-[21/9] bg-muted overflow-hidden">
+          <Image 
+            src={heroImgSrc} 
+            alt={event.title} 
+            className="object-cover" 
+            fill
+            data-ai-hint={event.dataAiHint || "safari landscape"}
+            onError={() => setHeroImgSrc(placeholderImages.eventDetailDefault.src)}
+            priority
+          />
+           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent"></div>
+           <div className="absolute bottom-8 left-8 right-8">
+              <Badge className="bg-accent text-stone-900 font-black mb-3 px-3 py-1 uppercase tracking-widest">{event.type}</Badge>
+              <CardTitle className="font-headline text-4xl md:text-6xl text-white font-black uppercase tracking-tighter leading-none">{event.title}</CardTitle>
+           </div>
+        </div>
         <CardContent className="p-8 md:p-12">
           <div className="grid md:grid-cols-3 gap-12">
             <div className="md:col-span-2 space-y-10">

@@ -136,7 +136,7 @@ export default function AdminExpeditionsPage() {
                       <TableRow key={camp.id}>
                         <TableCell>
                           <div className="relative h-10 w-16 rounded overflow-hidden bg-muted">
-                            {camp.imageUrl ? (
+                            {camp.imageUrl && camp.imageUrl.trim() !== "" ? (
                               <Image src={camp.imageUrl} alt={camp.title} fill className="object-cover" />
                             ) : (
                               <ImageIcon className="h-full w-full p-2 text-muted-foreground" />

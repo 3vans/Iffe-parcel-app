@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -71,17 +72,18 @@ export default function CampaignsPage() {
   const AnimatedCard = ({ campaign }: { campaign: Campaign }) => {
     const [ref, isVisible] = useScrollAnimation();
     const progressPercentage = campaign.currentAmount || 0;
-    const [imgSrc, setImgSrc] = useState(campaign.imageUrl);
+    // Ensure we don't pass an empty string to Image src
+    const [imgSrc, setImgSrc] = useState(campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src);
 
     return (
         <div ref={ref} className={cn('scroll-animate h-full', isVisible && 'scroll-animate-in')}>
             <Card key={campaign.id} className="overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 flex flex-col h-full bg-card/80 backdrop-blur-sm border-primary/5">
-            <div className="relative w-full h-48">
+            <div className="relative w-full h-48 bg-muted">
                 <Image 
                     src={imgSrc} 
                     alt={campaign.title} 
-                    layout="fill" 
-                    objectFit="cover" 
+                    fill
+                    style={{ objectFit: 'cover' }}
                     data-ai-hint={campaign.dataAiHint || "safari adventure"} 
                     onError={() => setImgSrc(placeholderImages.campaignDetailWildebeest.src)}
                 />
