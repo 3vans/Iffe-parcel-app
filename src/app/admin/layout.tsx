@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard, Database, Map, Percent } from 'lucide-react';
+import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard, Database, Map, Percent, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RotarySpinner from '@/components/ui/rotary-spinner';
 import React from 'react';
@@ -26,16 +26,16 @@ interface AdminLayoutProps {
 }
 
 const adminNavItems = [
-  { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/inventory', label: 'Inventory & Prices', icon: Database },
   { href: '/admin/expeditions', label: 'Expeditions', icon: Map },
   { href: '/admin/promotions', label: 'Promos & Offers', icon: Percent },
-  { href: '/admin/users', label: 'User Management', icon: Users },
-  { href: '/admin/approvals', label: 'Approvals', icon: CheckSquare },
-  { href: '/admin/posts', label: 'Content Moderation', icon: FileText },
+  { href: '/admin/users', label: 'Traveler Management', icon: Users },
+  { href: '/admin/approvals', label: 'Content Approvals', icon: CheckSquare },
+  { href: '/admin/posts', label: 'Journal Moderation', icon: FileText },
   { href: '/admin/media', label: 'Media Library', icon: ImageIcon },
-  { href: '/admin/chatrooms', label: 'Chatrooms', icon: MessageSquare },
-  { href: '/admin/settings', label: 'Platform Settings', icon: Settings },
+  { href: '/admin/chatrooms', label: 'Support Channels', icon: MessageSquare },
+  { href: '/admin/settings', label: 'Agency Settings', icon: Settings },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
@@ -59,9 +59,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <Sidebar collapsible="icon" side="left" variant="sidebar" className="border-r bg-card text-card-foreground">
         <SidebarHeader className="p-2 py-3 border-b h-14 flex items-center">
           <Link href="/admin" className="flex items-center gap-2 group/logo">
-            <RotarySpinner size={28} className="text-primary" />
-            <span className="text-xl font-semibold text-primary group-data-[collapsible=icon]:hidden whitespace-nowrap">
-              Admin Panel
+            <Globe size={28} className="text-primary animate-pulse-slow" />
+            <span className="text-xl font-bold text-primary group-data-[collapsible=icon]:hidden whitespace-nowrap">
+              iffe-admin
             </span>
           </Link>
         </SidebarHeader>
@@ -99,8 +99,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <SidebarInset>
         <main ref={ref} className={cn('flex-1 overflow-y-auto p-6 scroll-animate', isVisible && 'scroll-animate-in')}>
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 my-6 rounded-md" role="alert">
-            <p className="font-bold">Developer Note:</p>
-            <p>Admin authentication is currently bypassed for testing. Remember to re-enable security checks.</p>
+            <p className="font-bold">Agency Control Panel:</p>
+            <p>Managing live inventory and expeditions for iffe-travels.</p>
           </div>
           {children}
         </main>
