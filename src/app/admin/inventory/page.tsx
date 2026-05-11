@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal, Type } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal, Type, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem, type ItinerarySection } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,7 +47,6 @@ export default function AdminInventoryPage() {
     e.preventDefault();
     if (!editingPackage) return;
     
-    // Non-blocking save
     savePackage(editingPackage)
       .then(() => {
         toast({ title: editingPackage.id ? "Package Updated" : "Package Added" });
@@ -58,7 +57,7 @@ export default function AdminInventoryPage() {
         console.error("Save package failed:", err);
         toast({ 
           title: "Operation Failed", 
-          description: "Check for missing required fields or invalid image URLs.",
+          description: "Check for missing required fields or invalid data.",
           variant: "destructive" 
         });
       });
@@ -102,7 +101,7 @@ export default function AdminInventoryPage() {
     }
   };
 
-  // --- Dynamic Array Helpers (Immutable Updates) ---
+  // --- Dynamic Array Helpers ---
 
   const addFeature = () => {
     setEditingPackage(prev => prev ? { ...prev, features: [...(prev.features || []), ''] } : null);
@@ -146,7 +145,16 @@ export default function AdminInventoryPage() {
   const removeItineraryDay = (index: number) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     currentItinerary.splice(index, 1);
-    // Re-index days
+    const reindexed = currentItinerary.map((item, i) => ({ ...item, day: i + 1 }));
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: reindexed } : null);
+  };
+
+  const moveItineraryDay = (index: number, direction: 'up' | 'down') => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentItinerary.length) return;
+    
+    [currentItinerary[index], currentItinerary[targetIndex]] = [currentItinerary[targetIndex], currentItinerary[index]];
     const reindexed = currentItinerary.map((item, i) => ({ ...item, day: i + 1 }));
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: reindexed } : null);
   };
@@ -163,10 +171,24 @@ export default function AdminInventoryPage() {
       id: `s-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       type,
       content: '',
-      imageLayout: type === 'image' ? 'full' : 'small' // Avoid undefined
+      imageLayout: type === 'image' ? 'full' : 'small'
     };
     const updatedDay = { ...currentItinerary[dayIndex] };
     updatedDay.sections = [...(updatedDay.sections || []), newSection];
+    currentItinerary[dayIndex] = updatedDay;
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
+  const moveItinerarySection = (dayIndex: number, sectionIndex: number, direction: 'up' | 'down') => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    const updatedDay = { ...currentItinerary[dayIndex] };
+    const updatedSections = [...(updatedDay.sections || [])];
+    const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
+    
+    if (targetIndex < 0 || targetIndex >= updatedSections.length) return;
+    
+    [updatedSections[sectionIndex], updatedSections[targetIndex]] = [updatedSections[targetIndex], updatedSections[sectionIndex]];
+    updatedDay.sections = updatedSections;
     currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
@@ -337,7 +359,6 @@ export default function AdminInventoryPage() {
           </DialogHeader>
           <form onSubmit={handleUpdatePackage} className="space-y-8 py-4">
             
-            {/* Core Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Package Name</Label>
@@ -345,7 +366,6 @@ export default function AdminInventoryPage() {
                         value={editingPackage?.name || ''} 
                         onChange={(e) => setEditingPackage(prev => ({ ...prev, name: e.target.value }))}
                         required
-                        placeholder="e.g. Explorer Package"
                     />
                 </div>
                 <div className="space-y-2">
@@ -354,7 +374,6 @@ export default function AdminInventoryPage() {
                         value={editingPackage?.slug || ''} 
                         onChange={(e) => setEditingPackage(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') }))}
                         required
-                        placeholder="explorer-package"
                     />
                 </div>
             </div>
@@ -364,7 +383,6 @@ export default function AdminInventoryPage() {
               <Input 
                 value={editingPackage?.subtitle || ''} 
                 onChange={(e) => setEditingPackage(prev => ({ ...prev, subtitle: e.target.value }))}
-                placeholder="A short, catchy line about the trip..."
               />
             </div>
 
@@ -374,11 +392,9 @@ export default function AdminInventoryPage() {
                 value={editingPackage?.description || ''} 
                 onChange={(e) => setEditingPackage(prev => ({ ...prev, description: e.target.value }))}
                 rows={4}
-                placeholder="Detailed overview of the package experience..."
               />
             </div>
 
-            {/* Pricing & Duration */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Base Price (USD)</Label>
@@ -401,7 +417,6 @@ export default function AdminInventoryPage() {
                     <Input 
                         value={editingPackage?.durationText || ''} 
                         onChange={(e) => setEditingPackage(prev => ({ ...prev, durationText: e.target.value }))}
-                        placeholder="e.g. 4 Days / 3 Nights"
                     />
                 </div>
             </div>
@@ -412,7 +427,6 @@ export default function AdminInventoryPage() {
                     <Input 
                         value={editingPackage?.imageUrl || ''} 
                         onChange={(e) => setEditingPackage(prev => ({ ...prev, imageUrl: e.target.value }))}
-                        placeholder="https://..."
                     />
                 </div>
                 <div className="flex items-center gap-6 h-full pt-6">
@@ -435,7 +449,6 @@ export default function AdminInventoryPage() {
                 </div>
             </div>
 
-            {/* Features & Inclusions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t pt-8">
               <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -452,7 +465,6 @@ export default function AdminInventoryPage() {
                           <Input 
                             value={feature} 
                             onChange={(e) => updateFeature(idx, e.target.value)} 
-                            placeholder="e.g. Sipi Falls Hike"
                             className="flex-grow"
                           />
                           <Button 
@@ -483,7 +495,6 @@ export default function AdminInventoryPage() {
                           <Input 
                             value={item} 
                             onChange={(e) => updateInclusion(idx, e.target.value)} 
-                            placeholder="e.g. 4x4 Safari Vehicle"
                             className="flex-grow"
                           />
                           <Button 
@@ -501,7 +512,6 @@ export default function AdminInventoryPage() {
               </div>
             </div>
 
-            {/* Itinerary Editor */}
             <div className="space-y-4 border-t pt-8">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -522,14 +532,38 @@ export default function AdminInventoryPage() {
                         <div key={dayIndex} className="p-6 bg-muted/30 border rounded-3xl relative group transition-all hover:bg-muted/50">
                             <div className="flex flex-col gap-6">
                                 <div className="flex justify-between items-center">
-                                    <div className="space-y-1 w-1/2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {day.day}</Label>
-                                        <Input 
-                                            value={day.activity} 
-                                            onChange={(e) => updateItineraryItem(dayIndex, 'activity', e.target.value)} 
-                                            placeholder="Activity Title" 
-                                            className="h-10 font-bold"
-                                        />
+                                    <div className="flex items-center gap-3 w-1/2">
+                                        <div className="flex flex-col">
+                                            <Button 
+                                                type="button" 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-5 w-5" 
+                                                disabled={dayIndex === 0}
+                                                onClick={() => moveItineraryDay(dayIndex, 'up')}
+                                            >
+                                                <ChevronUp className="h-3 w-3" />
+                                            </Button>
+                                            <Button 
+                                                type="button" 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-5 w-5"
+                                                disabled={dayIndex === (editingPackage?.sampleItinerary?.length || 0) - 1}
+                                                onClick={() => moveItineraryDay(dayIndex, 'down')}
+                                            >
+                                                <ChevronDown className="h-3 w-3" />
+                                            </Button>
+                                        </div>
+                                        <div className="space-y-1 flex-grow">
+                                            <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {day.day}</Label>
+                                            <Input 
+                                                value={day.activity} 
+                                                onChange={(e) => updateItineraryItem(dayIndex, 'activity', e.target.value)} 
+                                                placeholder="Activity Title" 
+                                                className="h-10 font-bold"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="flex gap-2">
                                         <Button type="button" variant="outline" size="sm" onClick={() => addItinerarySection(dayIndex, 'text')} className="h-8 text-[9px] font-black uppercase">
@@ -543,62 +577,86 @@ export default function AdminInventoryPage() {
 
                                 <div className="space-y-4">
                                     {(day.sections || []).map((section, sIdx) => (
-                                        <div key={section.id} className="p-4 bg-background/50 border rounded-2xl relative group/section shadow-sm">
-                                            {section.type === 'text' ? (
-                                                <div className="space-y-2">
-                                                    <Label className="text-[9px] font-bold uppercase text-muted-foreground">Narrative Block</Label>
-                                                    <Textarea 
-                                                        value={section.content}
-                                                        onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
-                                                        placeholder="Describe the experiences..."
-                                                        className="min-h-[100px]"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                    <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label className="text-[9px] font-bold uppercase text-muted-foreground">Image URL</Label>
-                                                            <Input 
-                                                                value={section.content}
-                                                                onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
-                                                                placeholder="https://..."
-                                                                className="text-xs"
-                                                            />
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label className="text-[9px] font-bold uppercase text-muted-foreground">Display Mode</Label>
-                                                            <Select 
-                                                                value={section.imageLayout || 'full'}
-                                                                onValueChange={(val: any) => updateItinerarySectionLayout(dayIndex, sIdx, val)}
-                                                            >
-                                                                <SelectTrigger className="h-9">
-                                                                    <SelectValue />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="small"><div className="flex items-center gap-2"><Layout className="h-3 w-3"/> Side Card</div></SelectItem>
-                                                                    <SelectItem value="full"><div className="flex items-center gap-2"><RectangleHorizontal className="h-3 w-3"/> Cinematic Wide</div></SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
+                                        <div key={section.id} className="p-4 bg-background/50 border rounded-2xl relative group/section shadow-sm flex gap-4">
+                                            <div className="flex flex-col shrink-0 opacity-0 group-hover/section:opacity-100 transition-opacity">
+                                                <Button 
+                                                    type="button" 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-6 w-6" 
+                                                    disabled={sIdx === 0}
+                                                    onClick={() => moveItinerarySection(dayIndex, sIdx, 'up')}
+                                                >
+                                                    <ChevronUp className="h-3 w-3" />
+                                                </Button>
+                                                <Button 
+                                                    type="button" 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-6 w-6"
+                                                    disabled={sIdx === (day.sections?.length || 0) - 1}
+                                                    onClick={() => moveItinerarySection(dayIndex, sIdx, 'down')}
+                                                >
+                                                    <ChevronDown className="h-3 w-3" />
+                                                </Button>
+                                            </div>
+
+                                            <div className="flex-grow">
+                                                {section.type === 'text' ? (
+                                                    <div className="space-y-2">
+                                                        <Label className="text-[9px] font-bold uppercase text-muted-foreground">Narrative Block</Label>
+                                                        <Textarea 
+                                                            value={section.content}
+                                                            onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
+                                                            className="min-h-[100px]"
+                                                        />
                                                     </div>
-                                                    <div className="relative">
-                                                        {section.content && (
-                                                            <div className={cn(
-                                                                "relative rounded-xl overflow-hidden border bg-muted shadow-inner h-full min-h-[100px]",
-                                                                section.imageLayout === 'full' ? 'aspect-video' : 'aspect-square max-w-[150px] mx-auto'
-                                                            )}>
-                                                                <img src={section.content} alt="Preview" className="object-cover w-full h-full" />
+                                                ) : (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                        <div className="space-y-4">
+                                                            <div className="space-y-2">
+                                                                <Label className="text-[9px] font-bold uppercase text-muted-foreground">Image URL</Label>
+                                                                <Input 
+                                                                    value={section.content}
+                                                                    onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
+                                                                    className="text-xs"
+                                                                />
                                                             </div>
-                                                        )}
+                                                            <div className="space-y-2">
+                                                                <Label className="text-[9px] font-bold uppercase text-muted-foreground">Display Mode</Label>
+                                                                <Select 
+                                                                    value={section.imageLayout || 'full'}
+                                                                    onValueChange={(val: any) => updateItinerarySectionLayout(dayIndex, sIdx, val)}
+                                                                >
+                                                                    <SelectTrigger className="h-9">
+                                                                        <SelectValue />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="small"><div className="flex items-center gap-2"><Layout className="h-3 w-3"/> Side Card</div></SelectItem>
+                                                                        <SelectItem value="full"><div className="flex items-center gap-2"><RectangleHorizontal className="h-3 w-3"/> Cinematic Wide</div></SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+                                                        </div>
+                                                        <div className="relative">
+                                                            {section.content && (
+                                                                <div className={cn(
+                                                                    "relative rounded-xl overflow-hidden border bg-muted shadow-inner h-full min-h-[100px]",
+                                                                    section.imageLayout === 'full' ? 'aspect-video' : 'aspect-square max-w-[150px] mx-auto'
+                                                                )}>
+                                                                    <img src={section.content} alt="Preview" className="object-cover w-full h-full" />
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
+                                            
                                             <Button 
                                                 type="button" 
                                                 variant="ghost" 
                                                 size="icon" 
-                                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white hover:bg-destructive/90 opacity-0 group-hover/section:opacity-100 transition-opacity shadow-lg"
+                                                className="h-6 w-6 rounded-full bg-destructive text-white hover:bg-destructive/90 opacity-0 group-hover/section:opacity-100 transition-opacity shadow-lg"
                                                 onClick={() => removeItinerarySection(dayIndex, sIdx)}
                                             >
                                                 <X className="h-3 w-3" />
