@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2, CheckCircle2, AlertTriangle, Info, ExternalLink } from "lucide-react";
+import { UploadCloud, Image as ImageIcon, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2, CheckCircle2, AlertTriangle, Info, ExternalLink } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
