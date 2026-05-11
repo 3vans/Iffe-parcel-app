@@ -33,7 +33,7 @@ import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/e
  * Recursively removes undefined values from an object,
  * as Firestore does not allow them in setDoc/updateDoc.
  */
-function cleanData(obj: any): any {
+export function cleanData(obj: any): any {
   if (obj === null || typeof obj !== 'object' || obj instanceof Date || obj?.toDate) {
     return obj;
   }
@@ -126,6 +126,7 @@ export interface Campaign {
   accommodation?: any[];
   meals?: any[];
   bookingTips?: string[];
+  sections?: ItinerarySection[];
   endDate?: string;
   status?: 'active' | 'completed' | 'cancelled';
 }
@@ -478,22 +479,33 @@ export function deletePromotion(id: string) {
   return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
-// --- GALLERY (Hybrid Firestore + Supabase) ---
+// --- ASSET STORAGE ---
 
-export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+/**
+ * Generic file upload to Supabase storage.
+ * Returns the public URL of the uploaded asset.
+ */
+export async function uploadFile(file: File, bucket: string = 'blobs', pathPrefix: string = 'assets'): Promise<string> {
   const fileExt = file.name.split('.').pop();
   const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-  const filePath = `gallery/${fileName}`;
+  const filePath = `${pathPrefix}/${fileName}`;
 
   const { data, error: uploadError } = await supabase.storage
-    .from('blobs')
+    .from(bucket)
     .upload(filePath, file);
 
   if (uploadError) {
     throw new Error(`Supabase Error: ${uploadError.message}`);
   }
 
-  const { data: { publicUrl } } = supabase.storage.from('blobs').getPublicUrl(filePath);
+  const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
+  return publicUrl;
+}
+
+// --- GALLERY (Hybrid Firestore + Supabase) ---
+
+export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+  const publicUrl = await uploadFile(file, 'blobs', 'gallery');
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
   const colRef = collection(db, GALLERY_COLLECTION);
@@ -505,7 +517,6 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
     caption: metadata.caption || '',
     tags: tagsArray,
     dataAiHint: metadata.dataAiHint || 'safari photo',
-    storagePath: filePath,
     createdAt: serverTimestamp(),
   });
 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
+import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, uploadFile, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from '@/lib/utils';
@@ -21,6 +20,7 @@ export default function AdminExpeditionsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [departures, setDepartures] = useState<Departure[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
   const [editingCampaign, setEditingCampaign] = useState<Partial<Campaign> | null>(null);
@@ -88,6 +88,24 @@ export default function AdminExpeditionsPage() {
       loadData();
     } catch (err) {
       toast({ title: "Delete Failed", variant: "destructive" });
+    }
+  };
+
+  // --- Image Upload Helpers ---
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const url = await uploadFile(file, 'blobs', 'expeditions');
+      callback(url);
+      toast({ title: "Image Uploaded Successfully" });
+    } catch (err: any) {
+      toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -355,11 +373,35 @@ export default function AdminExpeditionsPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="font-bold uppercase text-[10px] tracking-widest">Featured Hero Image URL</Label>
-                    <Input 
-                      value={editingCampaign?.imageUrl || ''} 
-                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, imageUrl: e.target.value }))}
-                    />
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Featured Hero Image</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        placeholder="Paste URL..."
+                        value={editingCampaign?.imageUrl || ''} 
+                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, imageUrl: e.target.value }))}
+                        className="flex-grow"
+                      />
+                      <div className="relative">
+                        <Input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          id="hero-upload"
+                          onChange={(e) => handleFileUpload(e, (url) => setEditingCampaign(prev => ({ ...prev, imageUrl: url })))}
+                        />
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          asChild 
+                          className="cursor-pointer"
+                          disabled={isUploading}
+                        >
+                          <label htmlFor="hero-upload">
+                            {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                          </label>
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Traveller Rating (%)</Label>
@@ -418,8 +460,35 @@ export default function AdminExpeditionsPage() {
                           ) : (
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
-                                <Label className="text-[9px] font-bold">Image URL</Label>
-                                <Input value={section.content} onChange={(e) => updateCampaignSection(idx, 'content', e.target.value)} className="text-xs" />
+                                <Label className="text-[9px] font-bold">Image Source</Label>
+                                <div className="flex gap-2">
+                                  <Input 
+                                    placeholder="Paste URL..."
+                                    value={section.content} 
+                                    onChange={(e) => updateCampaignSection(idx, 'content', e.target.value)} 
+                                    className="text-xs flex-grow" 
+                                  />
+                                  <div className="relative">
+                                    <Input 
+                                      type="file" 
+                                      accept="image/*" 
+                                      className="hidden" 
+                                      id={`section-upload-${idx}`}
+                                      onChange={(e) => handleFileUpload(e, (url) => updateCampaignSection(idx, 'content', url))}
+                                    />
+                                    <Button 
+                                      type="button" 
+                                      variant="outline" 
+                                      asChild 
+                                      className="h-8 w-8 p-0 cursor-pointer"
+                                      disabled={isUploading}
+                                    >
+                                      <label htmlFor={`section-upload-${idx}`}>
+                                        {isUploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <UploadCloud className="h-3 w-3" />}
+                                      </label>
+                                    </Button>
+                                  </div>
+                                </div>
                                 <Label className="text-[9px] font-bold mt-2 block">Layout Mode</Label>
                                 <Select value={section.imageLayout || 'full'} onValueChange={(val) => updateCampaignSection(idx, 'imageLayout', val)}>
                                   <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
