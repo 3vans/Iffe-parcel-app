@@ -1,4 +1,3 @@
-
 'use client';
 
 import { db } from '@/lib/firebase';
@@ -201,6 +200,14 @@ export interface ChatMessage {
   createdAt: any;
 }
 
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  createdAt: any;
+}
+
 // --- CONSTANTS ---
 const CAMPAIGNS_COLLECTION = 'campaigns_public';
 const DEPARTURES_COLLECTION = 'departures';
@@ -209,6 +216,7 @@ const GALLERY_COLLECTION = 'gallery';
 const CHATROOMS_COLLECTION = 'chatrooms';
 const IDEAS_COLLECTION = 'ideas';
 const PACKAGES_COLLECTION = 'packages';
+const ANNOUNCEMENTS_COLLECTION = 'announcements';
 
 // --- HELPER FOR PERMISSION ERRORS ---
 
@@ -257,6 +265,45 @@ export async function createUserProfile(userId: string, data: Partial<UserProfil
   
   setDoc(userRef, profile).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile }));
   return profile;
+}
+
+// --- ANNOUNCEMENTS ---
+
+export async function fetchAnnouncements(): Promise<Announcement[]> {
+  try {
+    const q = query(collection(db, ANNOUNCEMENTS_COLLECTION), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Announcement));
+  } catch (error) {
+    handleFirestoreError(error, { path: ANNOUNCEMENTS_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export function saveAnnouncement(announcement: Partial<Announcement>) {
+  const colRef = collection(db, ANNOUNCEMENTS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...announcement, id: newRef.id, createdAt: serverTimestamp() };
+  setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+  return newRef.id;
+}
+
+export function deleteAnnouncement(id: string) {
+  const ref = doc(db, ANNOUNCEMENTS_COLLECTION, id);
+  deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+}
+
+// --- BOOKINGS ---
+
+export async function fetchUserBookings(userId: string): Promise<any[]> {
+  try {
+    const q = query(collection(db, 'custom_bookings'), where('userId', '==', userId), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    handleFirestoreError(error, { path: 'custom_bookings', operation: 'list' });
+    return [];
+  }
 }
 
 // --- BUILDER & AGENCY PACKAGES SERVICES ---
