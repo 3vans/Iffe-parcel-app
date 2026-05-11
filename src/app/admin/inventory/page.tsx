@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2 } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -87,6 +86,40 @@ export default function AdminInventoryPage() {
     } catch (err) {
       toast({ title: "Delete Failed", variant: "destructive" });
     }
+  };
+
+  // --- Dynamic Array Helpers ---
+
+  const addFeature = () => {
+    setEditingPackage(prev => prev ? { ...prev, features: [...(prev.features || []), ''] } : null);
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    const newFeatures = [...(editingPackage?.features || [])];
+    newFeatures[index] = value;
+    setEditingPackage(prev => prev ? { ...prev, features: newFeatures } : null);
+  };
+
+  const removeFeature = (index: number) => {
+    const newFeatures = [...(editingPackage?.features || [])];
+    newFeatures.splice(index, 1);
+    setEditingPackage(prev => prev ? { ...prev, features: newFeatures } : null);
+  };
+
+  const addInclusion = () => {
+    setEditingPackage(prev => prev ? { ...prev, whatsIncluded: [...(prev.whatsIncluded || []), ''] } : null);
+  };
+
+  const updateInclusion = (index: number, value: string) => {
+    const newInclusions = [...(editingPackage?.whatsIncluded || [])];
+    newInclusions[index] = value;
+    setEditingPackage(prev => prev ? { ...prev, whatsIncluded: newInclusions } : null);
+  };
+
+  const removeInclusion = (index: number) => {
+    const newInclusions = [...(editingPackage?.whatsIncluded || [])];
+    newInclusions.splice(index, 1);
+    setEditingPackage(prev => prev ? { ...prev, whatsIncluded: newInclusions } : null);
   };
 
   const addItineraryDay = () => {
@@ -208,8 +241,7 @@ export default function AdminInventoryPage() {
                     <TableHead>Region</TableHead>
                     <TableHead>Price (USD)</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+                  </TableHeader>
                 <TableBody>
                   {addons.map((addon) => (
                     <TableRow key={addon.id}>
@@ -345,33 +377,79 @@ export default function AdminInventoryPage() {
             </div>
 
             {/* Features & Inclusions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-2">
-                  <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
-                    <CheckCircle2 className="h-3 w-3 text-accent" /> Package Highlights (One per line)
-                  </Label>
-                  <Textarea 
-                      value={editingPackage?.features?.join('\n') || ''} 
-                      onChange={(e) => setEditingPackage(prev => ({ ...prev, features: e.target.value.split('\n').filter(f => f.trim()) }))}
-                      rows={4}
-                      placeholder="Source of the Nile Visit&#10;Sipi Falls Hike&#10;Coffee Tour"
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t pt-8">
+              <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                      <CheckCircle2 className="h-3 w-3 text-accent" /> Package Highlights
+                    </Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addFeature} className="h-7 text-[10px] font-black uppercase">
+                      <Plus className="h-3 w-3 mr-1" /> Add
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                      {editingPackage?.features?.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-2 group">
+                          <Input 
+                            value={feature} 
+                            onChange={(e) => updateFeature(idx, e.target.value)} 
+                            placeholder="e.g. Sipi Falls Hike"
+                            className="flex-grow"
+                          />
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => removeFeature(idx)}
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {(!editingPackage?.features || editingPackage.features.length === 0) && (
+                        <p className="text-[10px] text-muted-foreground italic text-center py-2">No highlights added.</p>
+                      )}
+                  </div>
               </div>
-              <div className="space-y-2">
-                  <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
-                    <Sparkles className="h-3 w-3 text-accent" /> What's Included? (One per line)
-                  </Label>
-                  <Textarea 
-                      value={editingPackage?.whatsIncluded?.join('\n') || ''} 
-                      onChange={(e) => setEditingPackage(prev => ({ ...prev, whatsIncluded: e.target.value.split('\n').filter(f => f.trim()) }))}
-                      rows={4}
-                      placeholder="Professional English-speaking guide&#10;All park entry fees&#10;4x4 Safari Land Cruiser"
-                  />
+              <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                      <Sparkles className="h-3 w-3 text-accent" /> What's Included?
+                    </Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addInclusion} className="h-7 text-[10px] font-black uppercase">
+                      <Plus className="h-3 w-3 mr-1" /> Add
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                      {editingPackage?.whatsIncluded?.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2 group">
+                          <Input 
+                            value={item} 
+                            onChange={(e) => updateInclusion(idx, e.target.value)} 
+                            placeholder="e.g. 4x4 Safari Vehicle"
+                            className="flex-grow"
+                          />
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => removeInclusion(idx)}
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {(!editingPackage?.whatsIncluded || editingPackage.whatsIncluded.length === 0) && (
+                        <p className="text-[10px] text-muted-foreground italic text-center py-2">No inclusions added.</p>
+                      )}
+                  </div>
               </div>
             </div>
 
             {/* Itinerary Editor */}
-            <div className="space-y-4 border-t pt-6">
+            <div className="space-y-4 border-t pt-8">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         <LayoutList className="h-4 w-4 text-accent shrink-0" />
