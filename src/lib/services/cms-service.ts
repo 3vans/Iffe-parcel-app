@@ -486,14 +486,14 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
   const filePath = `gallery/${fileName}`;
 
   const { data, error: uploadError } = await supabase.storage
-    .from('blob')
+    .from('blobs')
     .upload(filePath, file);
 
   if (uploadError) {
     throw new Error(`Supabase Error: ${uploadError.message}`);
   }
 
-  const { data: { publicUrl } } = supabase.storage.from('blob').getPublicUrl(filePath);
+  const { data: { publicUrl } } = supabase.storage.from('blobs').getPublicUrl(filePath);
   const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
   const colRef = collection(db, GALLERY_COLLECTION);
@@ -557,7 +557,7 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
 
 export function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    supabase.storage.from('blob').remove([storagePath]).catch(err => console.error("Supabase file removal snag:", err));
+    supabase.storage.from('blobs').remove([storagePath]).catch(err => console.error("Supabase file removal snag:", err));
   }
   const ref = doc(db, GALLERY_COLLECTION, id);
   return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
@@ -819,4 +819,15 @@ export function subscribeToMessages(roomId: string, callback: (messages: ChatMes
 export function deleteChatMessage(roomId: string, messageId: string) {
   const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
   return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+}
+
+export async function fetchUserBookings(userId: string): Promise<any[]> {
+  try {
+    const q = query(collection(db, 'custom_bookings'), where('userId', '==', userId), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    handleFirestoreError(err, { path: 'custom_bookings', operation: 'list' });
+    return [];
+  }
 }
