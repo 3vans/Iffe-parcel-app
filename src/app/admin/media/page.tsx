@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2 } from "lucide-react";
+import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from 'next/link';
 import { 
   uploadGalleryImage, 
@@ -78,6 +79,7 @@ export default function AdminMediaPage() {
   const [isSubmittingImage, setIsSubmittingImage] = useState(false);
   const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'unconfigured' | 'error'>('checking');
 
   const { toast } = useToast();
   const [adminGalleryImages, setAdminGalleryImages] = useState<GalleryImage[]>([]); 
@@ -91,12 +93,28 @@ export default function AdminMediaPage() {
 
   useEffect(() => {
     loadData();
+    checkConnection();
   }, []);
 
+  const checkConnection = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!url || url === '' || url.includes('your-supabase-url') || !key || key === '' || key.includes('your-supabase-anon-key')) {
+      setConnectionStatus('unconfigured');
+    } else {
+      setConnectionStatus('connected');
+    }
+  };
+
   const loadData = async () => {
-    const [images, videos] = await Promise.all([fetchGalleryImages(), fetchVideos()]);
-    setAdminGalleryImages(images);
-    setAdminVideoItems(videos);
+    try {
+        const [images, videos] = await Promise.all([fetchGalleryImages(), fetchVideos()]);
+        setAdminGalleryImages(images);
+        setAdminVideoItems(videos);
+    } catch (err) {
+        console.error("Load failed:", err);
+    }
   };
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,10 +137,7 @@ export default function AdminMediaPage() {
     setIsSubmittingImage(true);
     
     try {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!url || url.includes('your-supabase-url') || !key || key.includes('your-supabase-anon-key')) {
+      if (connectionStatus === 'unconfigured') {
         throw new Error("Supabase Connection Error: Your .env file still contains placeholder credentials. Replace them with actual values from your Supabase Dashboard to enable uploads.");
       }
 
@@ -235,17 +250,37 @@ export default function AdminMediaPage() {
     <div className="space-y-6">
       <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Media Library Management</CardTitle>
-          <CardDescription>Manage images and videos using Supabase and Firestore.</CardDescription>
+          <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="font-headline text-2xl">Media Library Management</CardTitle>
+                <CardDescription>Manage images and videos using Supabase and Firestore.</CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                {connectionStatus === 'checking' && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                {connectionStatus === 'connected' && <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100"><CheckCircle2 className="h-3 w-3 mr-1" /> Supabase Linked</Badge>}
+                {connectionStatus === 'unconfigured' && <Badge variant="destructive"><AlertTriangle className="h-3 w-3 mr-1" /> Config Required</Badge>}
+              </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-8">
+
+          {connectionStatus === 'unconfigured' && (
+            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Supabase Connection Required</AlertTitle>
+                <AlertDescription>
+                    To enable image uploads, you must provide your actual Supabase credentials in your <code>.env</code> file. 
+                    Replace the placeholders for <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.
+                </AlertDescription>
+            </Alert>
+          )}
           
           {/* IMAGE SECTION */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Image Gallery (Supabase)</h3>
               <Dialog open={isUploadImageDialogOpen} onOpenChange={setIsUploadImageDialogOpen}>
-                <DialogTrigger asChild><Button><UploadCloud className="mr-2 h-4 w-4" /> Upload Image</Button></DialogTrigger>
+                <DialogTrigger asChild><Button disabled={connectionStatus === 'unconfigured'}><UploadCloud className="mr-2 h-4 w-4" /> Upload Image</Button></DialogTrigger>
                 <DialogContent className="sm:max-w-lg">
                   <DialogHeader>
                     <DialogTitle className="font-headline text-2xl text-primary">Upload Gallery Image</DialogTitle>
