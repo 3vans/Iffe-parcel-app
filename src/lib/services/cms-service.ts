@@ -127,6 +127,7 @@ export interface ItineraryItem {
   activity: string;
   description: string;
   imageUrl?: string;
+  imageLayout?: 'small' | 'full';
 }
 
 export interface Package {

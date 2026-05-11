@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AdminInventoryPage() {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -126,7 +127,7 @@ export default function AdminInventoryPage() {
   const addItineraryDay = () => {
     const currentItinerary = editingPackage?.sampleItinerary || [];
     const nextDay = currentItinerary.length + 1;
-    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '', imageUrl: '' };
+    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '', imageUrl: '', imageLayout: 'small' };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
   };
 
@@ -470,40 +471,71 @@ export default function AdminInventoryPage() {
                 <div className="space-y-6">
                     {(editingPackage?.sampleItinerary || []).map((item, index) => (
                         <div key={index} className="p-6 bg-muted/30 border rounded-2xl relative group transition-all hover:bg-muted/50">
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                <div className="md:col-span-1 space-y-4">
-                                    <div>
+                            <div className="flex flex-col gap-6">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                    <div className="space-y-1">
                                         <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {item.day}</Label>
                                         <Input 
                                             value={item.activity} 
                                             onChange={(e) => updateItineraryItem(index, 'activity', e.target.value)} 
                                             placeholder="Activity Title" 
-                                            className="mt-1 font-bold"
+                                            className="h-10 font-bold"
                                         />
                                     </div>
-                                    <div>
-                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Section Image URL</Label>
-                                        <Input 
-                                            value={item.imageUrl || ''} 
-                                            onChange={(e) => updateItineraryItem(index, 'imageUrl', e.target.value)} 
-                                            placeholder="https://..." 
-                                            className="mt-1 text-xs"
-                                        />
-                                        {item.imageUrl && (
-                                            <div className="relative aspect-video mt-2 rounded-lg overflow-hidden border">
-                                                <img src={item.imageUrl} alt="Preview" className="object-cover w-full h-full" />
-                                            </div>
-                                        )}
+                                    <div className="space-y-1 w-full sm:w-auto">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Layout Mode</Label>
+                                        <Select 
+                                            value={item.imageLayout || 'small'} 
+                                            onValueChange={(val: any) => updateItineraryItem(index, 'imageLayout', val)}
+                                        >
+                                            <SelectTrigger className="h-10 w-full sm:w-[180px] bg-background">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="small">
+                                                    <div className="flex items-center gap-2">
+                                                        <Layout className="h-3.5 w-3.5" /> Small (Side)
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="full">
+                                                    <div className="flex items-center gap-2">
+                                                        <RectangleHorizontal className="h-3.5 w-3.5" /> Full Width (Top)
+                                                    </div>
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
-                                <div className="md:col-span-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Detailed Narrative</Label>
-                                    <Textarea 
-                                        value={item.description} 
-                                        onChange={(e) => updateItineraryItem(index, 'description', e.target.value)} 
-                                        placeholder="Describe the experiences and sights for this day..." 
-                                        className="mt-1 h-32 leading-relaxed"
-                                    />
+
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    <div className="md:col-span-1 space-y-4">
+                                        <div>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Section Image URL</Label>
+                                            <Input 
+                                                value={item.imageUrl || ''} 
+                                                onChange={(e) => updateItineraryItem(index, 'imageUrl', e.target.value)} 
+                                                placeholder="https://..." 
+                                                className="mt-1 text-xs"
+                                            />
+                                            {item.imageUrl && (
+                                                <div className={cn(
+                                                    "relative mt-2 rounded-lg overflow-hidden border bg-muted shadow-inner",
+                                                    item.imageLayout === 'full' ? 'aspect-video' : 'aspect-square'
+                                                )}>
+                                                    <img src={item.imageUrl} alt="Preview" className="object-cover w-full h-full" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-3">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Detailed Narrative</Label>
+                                        <Textarea 
+                                            value={item.description} 
+                                            onChange={(e) => updateItineraryItem(index, 'description', e.target.value)} 
+                                            placeholder="Describe the experiences and sights for this day..." 
+                                            className="mt-1 h-32 leading-relaxed"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <Button 

@@ -5,11 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Calendar, Check, Clock, DollarSign, HeartHandshake, Info, Map, Star, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Check, Clock, DollarSign, HeartHandshake, Info, Map, Star, Sparkles, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AnimatedSection from '@/components/animated-section';
 import HeroSection from '@/components/layout/hero-section';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
@@ -28,6 +28,7 @@ type ItineraryItem = {
     activity: string;
     description: string;
     imageUrl?: string;
+    imageLayout?: 'small' | 'full';
 }
 
 type PackageDetails = {
@@ -160,25 +161,46 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
                              <span className="text-left leading-tight">{item.activity}</span>
                           </div>
                       </AccordionTrigger>
-                      <AccordionContent className="mt-2 p-8 bg-muted/30 rounded-3xl border border-primary/5 overflow-hidden">
-                        <div className="grid md:grid-cols-5 gap-8 items-start">
-                            {item.imageUrl && (
-                                <div className="md:col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group/img">
-                                    <Image 
-                                        src={item.imageUrl} 
-                                        alt={`Day ${item.day}: ${item.activity}`} 
-                                        fill 
-                                        className="object-cover transition-transform duration-700 group-hover/img:scale-110" 
-                                    />
-                                    <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
+                      <AccordionContent className="mt-2 p-4 sm:p-8 bg-muted/30 rounded-3xl border border-primary/5 overflow-hidden">
+                        {item.imageLayout === 'full' ? (
+                            <div className="flex flex-col gap-8">
+                                {item.imageUrl && (
+                                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl group/img">
+                                        <Image 
+                                            src={item.imageUrl} 
+                                            alt={`Day ${item.day}: ${item.activity}`} 
+                                            fill 
+                                            className="object-cover transition-transform duration-700 group-hover/img:scale-110" 
+                                        />
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
+                                    </div>
+                                )}
+                                <div className="prose prose-stone dark:prose-invert max-w-none">
+                                    <p className="text-muted-foreground whitespace-pre-line leading-relaxed text-lg px-2">
+                                        {item.description}
+                                    </p>
                                 </div>
-                            )}
-                            <div className={cn("prose prose-stone dark:prose-invert max-w-none", item.imageUrl ? "md:col-span-3" : "md:col-span-5")}>
-                                <p className="text-muted-foreground whitespace-pre-line leading-relaxed text-lg">
-                                    {item.description}
-                                </p>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="grid md:grid-cols-5 gap-8 items-start">
+                                {item.imageUrl && (
+                                    <div className="md:col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group/img">
+                                        <Image 
+                                            src={item.imageUrl} 
+                                            alt={`Day ${item.day}: ${item.activity}`} 
+                                            fill 
+                                            className="object-cover transition-transform duration-700 group-hover/img:scale-110" 
+                                        />
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
+                                    </div>
+                                )}
+                                <div className={cn("prose prose-stone dark:prose-invert max-w-none", item.imageUrl ? "md:col-span-3" : "md:col-span-5")}>
+                                    <p className="text-muted-foreground whitespace-pre-line leading-relaxed text-lg">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                       </AccordionContent>
                     </AccordionItem>
                   ))}

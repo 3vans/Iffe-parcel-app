@@ -87,7 +87,8 @@
               "day": { "type": "number" },
               "activity": { "type": "string" },
               "description": { "type": "string" },
-              "imageUrl": { "type": "string" }
+              "imageUrl": { "type": "string" },
+              "imageLayout": { "type": "string", "enum": ["small", "full"] }
             }
           }
         }
