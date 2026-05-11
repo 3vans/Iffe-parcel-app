@@ -801,3 +801,4 @@ export function deleteChatMessage(roomId: string, messageId: string) {
   const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
+
