@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { UploadCloud, Video as VideoIcon, Film, Trash2, ShieldAlert, Edit2, Loader2, CheckCircle2, AlertTriangle, Info, ExternalLink } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -60,7 +60,7 @@ function getYoutubeVideoId(url: string): string | null {
     const patterns = [
         /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
         /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/,
-        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+        /(?:https?:\/\/)? /
     ];
     for (const pattern of patterns) {
         const match = url.match(pattern);
@@ -80,6 +80,7 @@ export default function AdminMediaPage() {
   const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'unconfigured' | 'error'>('checking');
+  const [showRlsHelp, setShowRlsHelp] = useState(false);
 
   const { toast } = useToast();
   const [adminGalleryImages, setAdminGalleryImages] = useState<GalleryImage[]>([]); 
@@ -152,8 +153,14 @@ export default function AdminMediaPage() {
       setIsUploadImageDialogOpen(false);
       imageForm.reset();
       setImageFile(null);
+      setShowRlsHelp(false);
     } catch (error: any) {
       console.error("Snag in Media Upload:", error);
+      
+      if (error.message?.includes('row-level security')) {
+        setShowRlsHelp(true);
+      }
+
       toast({ 
         title: "Upload Failed", 
         description: error.message || "An unexpected error occurred. Please check the console for details.", 
@@ -252,7 +259,7 @@ export default function AdminMediaPage() {
         <CardHeader>
           <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="font-headline text-2xl">Media Library Management</CardTitle>
+                <CardTitle className="font-headline text-2xl text-primary">Media Library Management</CardTitle>
                 <CardDescription>Manage images and videos using Supabase and Firestore.</CardDescription>
               </div>
               <div className="flex items-center gap-2">
@@ -274,17 +281,45 @@ export default function AdminMediaPage() {
                 </AlertDescription>
             </Alert>
           )}
+
+          {showRlsHelp && (
+             <Alert className="bg-amber-50 border-amber-200 text-amber-800">
+                <ShieldAlert className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="font-bold">Supabase Row-Level Security (RLS) Detected</AlertTitle>
+                <AlertDescription className="space-y-3 mt-2">
+                    <p className="text-sm">Your Supabase storage bucket exists, but it is currently preventing uploads due to security policies.</p>
+                    <div className="bg-white/50 p-3 rounded-md text-xs space-y-2 border border-amber-100">
+                        <p className="font-bold uppercase tracking-widest text-[10px] text-amber-600">Quick Fix Instructions:</p>
+                        <ol className="list-decimal pl-4 space-y-1">
+                            <li>Open your <strong>Supabase Dashboard</strong>.</li>
+                            <li>Go to <strong>Storage</strong> → <strong>Buckets</strong> → <strong>blobs</strong>.</li>
+                            <li>Click on the <strong>Policies</strong> tab.</li>
+                            <li>Add a new policy: <strong>Allow all operations for authenticated/public</strong>.</li>
+                            <li>Ensure <strong>INSERT</strong>, <strong>SELECT</strong>, and <strong>DELETE</strong> are enabled.</li>
+                            <li>Set the policy definition to <code>true</code>.</li>
+                        </ol>
+                    </div>
+                    <Button variant="outline" size="sm" asChild className="h-8 bg-white text-amber-700 border-amber-200">
+                        <Link href="https://supabase.com/docs/guides/storage/security/access-control" target="_blank">
+                            View Supabase Security Docs <ExternalLink className="ml-2 h-3 w-3" />
+                        </Link>
+                    </Button>
+                </AlertDescription>
+             </Alert>
+          )}
           
           {/* IMAGE SECTION */}
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Image Gallery (Supabase)</h3>
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <ImageIcon className="h-5 w-5 text-primary" /> Image Gallery (Supabase)
+              </h3>
               <Dialog open={isUploadImageDialogOpen} onOpenChange={setIsUploadImageDialogOpen}>
                 <DialogTrigger asChild><Button disabled={connectionStatus === 'unconfigured'}><UploadCloud className="mr-2 h-4 w-4" /> Upload Image</Button></DialogTrigger>
                 <DialogContent className="sm:max-w-lg">
                   <DialogHeader>
-                    <DialogTitle className="font-headline text-2xl text-primary">Upload Gallery Image</DialogTitle>
-                    <DialogDescription>Add a new photo to the public gallery.</DialogDescription>
+                    <DialogTitle className="font-headline text-2xl text-primary uppercase font-black">Upload Gallery Image</DialogTitle>
+                    <DialogDescription>Add a new high-resolution photo to the public gallery.</DialogDescription>
                   </DialogHeader>
                   <form onSubmit={imageForm.handleSubmit(onSubmitImageMedia)} className="grid gap-4 py-4">
                     <div>
@@ -302,7 +337,7 @@ export default function AdminMediaPage() {
                     </div>
                     <div>
                       <Label htmlFor="tags">Tags (comma separated)</Label>
-                      <Input id="tags" {...imageForm.register('tags')} placeholder="#Safari, #Gorillas" disabled={isSubmittingImage} />
+                      <Input id="tags" {...imageForm.register('tags')} placeholder="Safari, Wildlife, Sunset" disabled={isSubmittingImage} />
                     </div>
                     <div>
                       <Label htmlFor="dataAiHint">AI Search Keywords (max 2 words)</Label>
@@ -311,6 +346,7 @@ export default function AdminMediaPage() {
                     <DialogFooter>
                       <Button type="button" variant="outline" onClick={() => setIsUploadImageDialogOpen(false)} disabled={isSubmittingImage}>Cancel</Button>
                       <Button type="submit" disabled={isSubmittingImage} className="bg-primary hover:bg-primary/90">
+                        {isSubmittingImage ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <UploadCloud className="h-4 w-4 mr-2" />}
                         {isSubmittingImage ? 'Uploading...' : 'Upload to Supabase'}
                       </Button>
                     </DialogFooter>
@@ -342,12 +378,14 @@ export default function AdminMediaPage() {
           {/* VIDEO SECTION */}
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Video Library</h3>
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <Film className="h-5 w-5 text-primary" /> Video Library (YouTube)
+              </h3>
               <Dialog open={isAddVideoDialogOpen} onOpenChange={setIsAddVideoDialogOpen}>
                 <DialogTrigger asChild><Button><VideoIcon className="mr-2 h-4 w-4" /> Add YouTube Video</Button></DialogTrigger>
                 <DialogContent className="sm:max-w-xl">
                     <DialogHeader>
-                        <DialogTitle className="font-headline text-2xl text-primary">Add Video from YouTube</DialogTitle>
+                        <DialogTitle className="font-headline text-2xl text-primary uppercase font-black">Add Video from YouTube</DialogTitle>
                         <DialogDescription>Save video details to Firestore.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={videoForm.handleSubmit(onSubmitVideoMedia)} className="grid gap-4 py-4">
@@ -411,7 +449,7 @@ export default function AdminMediaPage() {
       <Dialog open={!!editingImage} onOpenChange={() => setEditingImage(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-headline text-2xl text-primary">Edit Image Details</DialogTitle>
+            <DialogTitle className="font-headline text-2xl text-primary uppercase font-black">Edit Image Details</DialogTitle>
             <DialogDescription>Update metadata for this gallery photo.</DialogDescription>
           </DialogHeader>
           <form onSubmit={editImageForm.handleSubmit(onUpdateImageMedia)} className="grid gap-4 py-4">
@@ -426,7 +464,7 @@ export default function AdminMediaPage() {
             </div>
             <div>
               <Label htmlFor="edit-tags">Tags (comma separated)</Label>
-              <Input id="edit-tags" {...editImageForm.register('tags')} placeholder="#Safari, #Gorillas" disabled={isSubmittingImage} />
+              <Input id="edit-tags" {...editImageForm.register('tags')} placeholder="Safari, Wildlife, Sunset" disabled={isSubmittingImage} />
             </div>
             <div>
               <Label htmlFor="edit-dataAiHint">AI Search Keywords (max 2 words)</Label>
