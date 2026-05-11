@@ -1,3 +1,4 @@
+
 'use client';
 
 import { db } from '@/lib/firebase';
@@ -125,6 +126,7 @@ export interface ItineraryItem {
   day: number;
   activity: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface Package {
@@ -138,11 +140,13 @@ export interface Package {
   durationDays: number;
   durationText: string;
   features: string[];
+  whatsIncluded?: string[];
   imageUrl: string;
   dataAiHint?: string;
   isPopular?: boolean;
   isActive: boolean;
   includedTours: string[];
+  itineraryTitle?: string;
   sampleItinerary: ItineraryItem[];
 }
 
@@ -801,4 +805,3 @@ export function deleteChatMessage(roomId: string, messageId: string) {
   const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
   deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
-

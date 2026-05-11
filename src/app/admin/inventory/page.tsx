@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -92,7 +92,7 @@ export default function AdminInventoryPage() {
   const addItineraryDay = () => {
     const currentItinerary = editingPackage?.sampleItinerary || [];
     const nextDay = currentItinerary.length + 1;
-    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '' };
+    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '', imageUrl: '' };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
   };
 
@@ -145,8 +145,10 @@ export default function AdminInventoryPage() {
                 durationDays: 1,
                 durationText: '',
                 features: [],
+                whatsIncluded: [],
                 imageUrl: '',
                 isActive: true,
+                itineraryTitle: 'Sample Itinerary',
                 sampleItinerary: []
               })}>
                 <Plus className="mr-2 h-4 w-4" /> Create New Package
@@ -342,71 +344,111 @@ export default function AdminInventoryPage() {
                 </div>
             </div>
 
-            {/* Features List */}
-            <div className="space-y-2">
-                <Label className="font-bold uppercase text-[10px] tracking-widest">Package Features (One per line)</Label>
-                <Textarea 
-                    value={editingPackage?.features?.join('\n') || ''} 
-                    onChange={(e) => setEditingPackage(prev => ({ ...prev, features: e.target.value.split('\n').filter(f => f.trim()) }))}
-                    rows={4}
-                    placeholder="Source of the Nile Visit&#10;Sipi Falls Hike&#10;Coffee Tour"
-                />
+            {/* Features & Inclusions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                  <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                    <CheckCircle2 className="h-3 w-3 text-accent" /> Package Highlights (One per line)
+                  </Label>
+                  <Textarea 
+                      value={editingPackage?.features?.join('\n') || ''} 
+                      onChange={(e) => setEditingPackage(prev => ({ ...prev, features: e.target.value.split('\n').filter(f => f.trim()) }))}
+                      rows={4}
+                      placeholder="Source of the Nile Visit&#10;Sipi Falls Hike&#10;Coffee Tour"
+                  />
+              </div>
+              <div className="space-y-2">
+                  <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                    <Sparkles className="h-3 w-3 text-accent" /> What's Included? (One per line)
+                  </Label>
+                  <Textarea 
+                      value={editingPackage?.whatsIncluded?.join('\n') || ''} 
+                      onChange={(e) => setEditingPackage(prev => ({ ...prev, whatsIncluded: e.target.value.split('\n').filter(f => f.trim()) }))}
+                      rows={4}
+                      placeholder="Professional English-speaking guide&#10;All park entry fees&#10;4x4 Safari Land Cruiser"
+                  />
+              </div>
             </div>
 
             {/* Itinerary Editor */}
             <div className="space-y-4 border-t pt-6">
-                <div className="flex justify-between items-center">
-                    <h4 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                        <LayoutList className="h-4 w-4 text-accent" /> Sample Itinerary
-                    </h4>
-                    <Button type="button" variant="outline" size="sm" onClick={addItineraryDay}>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <LayoutList className="h-4 w-4 text-accent shrink-0" />
+                        <Input 
+                            value={editingPackage?.itineraryTitle || 'Sample Itinerary'} 
+                            onChange={(e) => setEditingPackage(prev => prev ? { ...prev, itineraryTitle: e.target.value } : null)}
+                            className="h-8 font-black uppercase tracking-widest text-sm bg-muted/50 border-none"
+                            placeholder="Itinerary Title"
+                        />
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={addItineraryDay} className="shrink-0">
                         <Plus className="h-3 w-3 mr-1" /> Add Day
                     </Button>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {(editingPackage?.sampleItinerary || []).map((item, index) => (
-                        <div key={index} className="p-4 bg-muted/30 border rounded-lg relative group">
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div className="md:col-span-1">
-                                    <Label className="text-[10px] font-bold uppercase opacity-50">Day {item.day}</Label>
-                                    <Input 
-                                        value={item.activity} 
-                                        onChange={(e) => updateItineraryItem(index, 'activity', e.target.value)} 
-                                        placeholder="Activity Title" 
-                                        className="mt-1"
-                                    />
+                        <div key={index} className="p-6 bg-muted/30 border rounded-2xl relative group transition-all hover:bg-muted/50">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div className="md:col-span-1 space-y-4">
+                                    <div>
+                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {item.day}</Label>
+                                        <Input 
+                                            value={item.activity} 
+                                            onChange={(e) => updateItineraryItem(index, 'activity', e.target.value)} 
+                                            placeholder="Activity Title" 
+                                            className="mt-1 font-bold"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Section Image URL</Label>
+                                        <Input 
+                                            value={item.imageUrl || ''} 
+                                            onChange={(e) => updateItineraryItem(index, 'imageUrl', e.target.value)} 
+                                            placeholder="https://..." 
+                                            className="mt-1 text-xs"
+                                        />
+                                        {item.imageUrl && (
+                                            <div className="relative aspect-video mt-2 rounded-lg overflow-hidden border">
+                                                <img src={item.imageUrl} alt="Preview" className="object-cover w-full h-full" />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="md:col-span-3">
-                                    <Label className="text-[10px] font-bold uppercase opacity-50">Description</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Detailed Narrative</Label>
                                     <Textarea 
                                         value={item.description} 
                                         onChange={(e) => updateItineraryItem(index, 'description', e.target.value)} 
-                                        placeholder="What happens on this day?" 
-                                        className="mt-1 h-20"
+                                        placeholder="Describe the experiences and sights for this day..." 
+                                        className="mt-1 h-32 leading-relaxed"
                                     />
                                 </div>
                             </div>
                             <Button 
                                 type="button" 
-                                variant="ghost" 
+                                variant="destructive" 
                                 size="icon" 
-                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute -top-3 -right-3 h-8 w-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                                 onClick={() => removeItineraryDay(index)}
                             >
-                                <Trash className="h-3 w-3" />
+                                <Trash className="h-4 w-4" />
                             </Button>
                         </div>
                     ))}
                     {(editingPackage?.sampleItinerary || []).length === 0 && (
-                        <p className="text-center text-xs text-muted-foreground py-4 italic">No itinerary days added yet.</p>
+                        <div className="text-center py-10 border-2 border-dashed rounded-3xl opacity-40">
+                             <Calendar className="h-10 w-10 mx-auto mb-2" />
+                             <p className="text-xs font-black uppercase tracking-widest">No days configured</p>
+                        </div>
                     )}
                 </div>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0 sticky bottom-0 bg-background pt-4 border-t">
               <Button type="button" variant="outline" onClick={() => setEditingPackage(null)}>Cancel</Button>
-              <Button type="submit" className="bg-primary hover:bg-primary/90">Save Package</Button>
+              <Button type="submit" className="bg-primary hover:bg-primary/90 px-8 font-black uppercase tracking-widest">Save Package</Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -73,10 +73,12 @@
         "durationDays": { "type": "number" },
         "durationText": { "type": "string" },
         "features": { "type": "array", "items": { "type": "string" } },
+        "whatsIncluded": { "type": "array", "items": { "type": "string" } },
         "imageUrl": { "type": "string" },
         "isPopular": { "type": "boolean" },
         "isActive": { "type": "boolean" },
         "includedTours": { "type": "array", "items": { "type": "string" } },
+        "itineraryTitle": { "type": "string" },
         "sampleItinerary": { 
           "type": "array", 
           "items": { 
@@ -84,7 +86,8 @@
             "properties": {
               "day": { "type": "number" },
               "activity": { "type": "string" },
-              "description": { "type": "string" }
+              "description": { "type": "string" },
+              "imageUrl": { "type": "string" }
             }
           }
         }
