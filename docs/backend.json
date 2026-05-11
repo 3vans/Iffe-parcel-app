@@ -35,7 +35,28 @@
         "currentAmount": { "type": "number" },
         "status": { "type": "string" },
         "imageUrl": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } }
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "sections": { 
+          "type": "array", 
+          "items": { 
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string", "enum": ["text", "image"] },
+              "content": { "type": "string" },
+              "imageLayout": { "type": "string", "enum": ["small", "full"] }
+            }
+          }
+        },
+        "storyline": { "type": "array", "items": { "type": "string" } },
+        "activities": { "type": "array", "items": { "type": "object" } },
+        "accommodation": { "type": "array", "items": { "type": "object" } },
+        "meals": { "type": "array", "items": { "type": "object" } },
+        "bookingTips": { "type": "array", "items": { "type": "string" } },
+        "organizer": { "type": "string" },
+        "volunteersNeeded": { "type": "number" },
+        "volunteersSignedUp": { "type": "number" },
+        "endDate": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "title", "status"]
     },

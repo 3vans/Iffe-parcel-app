@@ -6,14 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, type Campaign, type Departure } from '@/lib/services/cms-service';
+import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AdminExpeditionsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -89,6 +91,78 @@ export default function AdminExpeditionsPage() {
     }
   };
 
+  // --- Campaign Sub-Editor Helpers ---
+
+  const addStoryline = () => {
+    setEditingCampaign(prev => prev ? { ...prev, storyline: [...(prev.storyline || []), ''] } : null);
+  };
+  const updateStoryline = (index: number, value: string) => {
+    const newStory = [...(editingCampaign?.storyline || [])];
+    newStory[index] = value;
+    setEditingCampaign(prev => prev ? { ...prev, storyline: newStory } : null);
+  };
+  const removeStoryline = (index: number) => {
+    const newStory = [...(editingCampaign?.storyline || [])];
+    newStory.splice(index, 1);
+    setEditingCampaign(prev => prev ? { ...prev, storyline: newStory } : null);
+  };
+
+  const addBookingTip = () => {
+    setEditingCampaign(prev => prev ? { ...prev, bookingTips: [...(prev.bookingTips || []), ''] } : null);
+  };
+  const updateBookingTip = (index: number, value: string) => {
+    const newTips = [...(editingCampaign?.bookingTips || [])];
+    newTips[index] = value;
+    setEditingCampaign(prev => prev ? { ...prev, bookingTips: newTips } : null);
+  };
+  const removeBookingTip = (index: number) => {
+    const newTips = [...(editingCampaign?.bookingTips || [])];
+    newTips.splice(index, 1);
+    setEditingCampaign(prev => prev ? { ...prev, bookingTips: newTips } : null);
+  };
+
+  const addArrayItem = (field: 'activities' | 'accommodation' | 'meals') => {
+    const newItem = { title: '', description: '', image: '' };
+    setEditingCampaign(prev => prev ? { ...prev, [field]: [...(prev[field] || []), newItem] } : null);
+  };
+  const updateArrayItem = (field: 'activities' | 'accommodation' | 'meals', index: number, key: string, value: any) => {
+    const items = [...(editingCampaign?.[field] || [])];
+    items[index] = { ...items[index], [key]: value };
+    setEditingCampaign(prev => prev ? { ...prev, [field]: items } : null);
+  };
+  const removeArrayItem = (field: 'activities' | 'accommodation' | 'meals', index: number) => {
+    const items = [...(editingCampaign?.[field] || [])];
+    items.splice(index, 1);
+    setEditingCampaign(prev => prev ? { ...prev, [field]: items } : null);
+  };
+
+  const addCampaignSection = (type: 'text' | 'image') => {
+    const newSection: ItinerarySection = {
+      id: `c-s-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      type,
+      content: '',
+      imageLayout: type === 'image' ? 'full' : 'small'
+    };
+    setEditingCampaign(prev => prev ? { ...prev, sections: [...(prev.sections || []), newSection] } : null);
+  };
+  const moveCampaignSection = (index: number, direction: 'up' | 'down') => {
+    const sections = [...(editingCampaign?.sections || [])];
+    const target = direction === 'up' ? index - 1 : index + 1;
+    if (target < 0 || target >= sections.length) return;
+    [sections[index], sections[target]] = [sections[target], sections[index]];
+    setEditingCampaign(prev => prev ? { ...prev, sections: sections } : null);
+  };
+  const updateCampaignSection = (index: number, key: keyof ItinerarySection, value: any) => {
+    const sections = [...(editingCampaign?.sections || [])];
+    sections[index] = { ...sections[index], [key]: value };
+    setEditingCampaign(prev => prev ? { ...prev, sections: sections } : null);
+  };
+  const removeCampaignSection = (index: number) => {
+    const sections = [...(editingCampaign?.sections || [])];
+    sections.splice(index, 1);
+    setEditingCampaign(prev => prev ? { ...prev, sections: sections } : null);
+  };
+
   if (isLoading) {
     return <div className="flex justify-center py-20"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
   }
@@ -115,7 +189,21 @@ export default function AdminExpeditionsPage() {
                 <CardTitle>Public Expeditions</CardTitle>
                 <CardDescription>Manage the foundational itineraries shown on the Tours page.</CardDescription>
               </div>
-              <Button onClick={() => setEditingCampaign({ title: '', description: '', region: 'Western', goal: 100, currentAmount: 0, tags: [] })}>
+              <Button onClick={() => setEditingCampaign({ 
+                title: '', 
+                description: '', 
+                region: 'Western', 
+                goal: 100, 
+                currentAmount: 0, 
+                tags: [], 
+                storyline: [], 
+                activities: [], 
+                accommodation: [], 
+                meals: [], 
+                bookingTips: [], 
+                sections: [],
+                organizer: 'iffe-travels'
+              })}>
                 <Plus className="mr-2 h-4 w-4" /> New Itinerary
               </Button>
             </CardHeader>
@@ -216,79 +304,251 @@ export default function AdminExpeditionsPage() {
 
       {/* Campaign Modal */}
       <Dialog open={!!editingCampaign} onOpenChange={() => setEditingCampaign(null)}>
-        <DialogContent className="sm:max-w-3xl overflow-y-auto max-h-[90vh]">
+        <DialogContent className="sm:max-w-5xl overflow-y-auto max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-accent" />
-              {editingCampaign?.id ? 'Edit Itinerary' : 'Create Tour Itinerary'}
+              {editingCampaign?.id ? 'Edit Expedition' : 'Create Tour Expedition'}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCampaignSubmit} className="space-y-6 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+          <form onSubmit={handleCampaignSubmit} className="py-4">
+            <Tabs defaultValue="general" className="w-full">
+              <TabsList className="grid grid-cols-5 w-full mb-8">
+                <TabsTrigger value="general">General</TabsTrigger>
+                <TabsTrigger value="narrative">Narrative</TabsTrigger>
+                <TabsTrigger value="experience">Experience</TabsTrigger>
+                <TabsTrigger value="lodging">Lodging & Meals</TabsTrigger>
+                <TabsTrigger value="logistics">Logistics</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="general" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Expedition Title</Label>
                     <Input 
-                        value={editingCampaign?.title || ''} 
-                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, title: e.target.value }))}
-                        required
+                      value={editingCampaign?.title || ''} 
+                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, title: e.target.value }))}
+                      required
                     />
-                </div>
-                <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Region</Label>
                     <select 
-                        className="w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background"
-                        value={editingCampaign?.region || 'Western'}
-                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, region: e.target.value as any }))}
+                      className="w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background"
+                      value={editingCampaign?.region || 'Western'}
+                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, region: e.target.value as any }))}
                     >
-                        <option value="Western">Western</option>
-                        <option value="Eastern">Eastern</option>
-                        <option value="Northern">Northern</option>
-                        <option value="Central">Central</option>
-                        <option value="Other">Other</option>
+                      <option value="Western">Western</option>
+                      <option value="Eastern">Eastern</option>
+                      <option value="Northern">Northern</option>
+                      <option value="Central">Central</option>
+                      <option value="Other">Other</option>
                     </select>
+                  </div>
                 </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="font-bold uppercase text-[10px] tracking-widest">Teaser Description</Label>
-              <Input 
-                value={editingCampaign?.shortDescription || ''} 
-                onChange={(e) => setEditingCampaign(prev => ({ ...prev, shortDescription: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="font-bold uppercase text-[10px] tracking-widest">Full Description</Label>
-              <Textarea 
-                value={editingCampaign?.description || ''} 
-                onChange={(e) => setEditingCampaign(prev => ({ ...prev, description: e.target.value }))}
-                rows={4}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label className="font-bold uppercase text-[10px] tracking-widest">Featured Image URL</Label>
+                  <Label className="font-bold uppercase text-[10px] tracking-widest">Teaser Description (Card View)</Label>
+                  <Input 
+                    value={editingCampaign?.shortDescription || ''} 
+                    onChange={(e) => setEditingCampaign(prev => ({ ...prev, shortDescription: e.target.value }))}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Featured Hero Image URL</Label>
                     <Input 
-                        value={editingCampaign?.imageUrl || ''} 
-                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, imageUrl: e.target.value }))}
+                      value={editingCampaign?.imageUrl || ''} 
+                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, imageUrl: e.target.value }))}
                     />
-                </div>
-                <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                     <Label className="font-bold uppercase text-[10px] tracking-widest">Traveller Rating (%)</Label>
                     <Input 
-                        type="number"
-                        value={editingCampaign?.currentAmount || 0} 
-                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, currentAmount: parseInt(e.target.value) }))}
+                      type="number"
+                      value={editingCampaign?.currentAmount || 0} 
+                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, currentAmount: parseInt(e.target.value) }))}
                     />
+                  </div>
                 </div>
-            </div>
-            <DialogFooter>
+                <div className="space-y-2">
+                  <Label className="font-bold uppercase text-[10px] tracking-widest">Tour Operator / Organizer</Label>
+                  <Input 
+                    value={editingCampaign?.organizer || 'iffe-travels'} 
+                    onChange={(e) => setEditingCampaign(prev => ({ ...prev, organizer: e.target.value }))}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="narrative" className="space-y-8">
+                <div className="space-y-2">
+                  <Label className="font-bold uppercase text-[10px] tracking-widest">Legacy Intro Narrative</Label>
+                  <Textarea 
+                    value={editingCampaign?.description || ''} 
+                    onChange={(e) => setEditingCampaign(prev => ({ ...prev, description: e.target.value }))}
+                    rows={4}
+                    placeholder="Classic text intro..."
+                  />
+                </div>
+
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                      <Layout className="h-3 w-3 text-accent" /> Dynamic Content Modules
+                    </Label>
+                    <div className="flex gap-2">
+                      <Button type="button" variant="outline" size="sm" onClick={() => addCampaignSection('text')} className="h-7 text-[10px] font-black">
+                        + Narrative Block
+                      </Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => addCampaignSection('image')} className="h-7 text-[10px] font-black">
+                        + Visual Module
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {(editingCampaign?.sections || []).map((section, idx) => (
+                      <div key={section.id} className="p-4 bg-muted/30 border rounded-2xl relative group/section shadow-sm flex gap-4">
+                        <div className="flex flex-col shrink-0 opacity-0 group-hover/section:opacity-100 transition-opacity">
+                          <Button type="button" variant="ghost" size="icon" className="h-6 w-6" disabled={idx === 0} onClick={() => moveCampaignSection(idx, 'up')}><ChevronUp className="h-3 w-3" /></Button>
+                          <Button type="button" variant="ghost" size="icon" className="h-6 w-6" disabled={idx === (editingCampaign?.sections?.length || 0) - 1} onClick={() => moveCampaignSection(idx, 'down')}><ChevronDown className="h-3 w-3" /></Button>
+                        </div>
+                        <div className="flex-grow">
+                          {section.type === 'text' ? (
+                            <Textarea value={section.content} onChange={(e) => updateCampaignSection(idx, 'content', e.target.value)} placeholder="Enter narrative text..." />
+                          ) : (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label className="text-[9px] font-bold">Image URL</Label>
+                                <Input value={section.content} onChange={(e) => updateCampaignSection(idx, 'content', e.target.value)} className="text-xs" />
+                                <Label className="text-[9px] font-bold mt-2 block">Layout Mode</Label>
+                                <Select value={section.imageLayout || 'full'} onValueChange={(val) => updateCampaignSection(idx, 'imageLayout', val)}>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="small">Side Card</SelectItem>
+                                    <SelectItem value="full">Cinematic Wide</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="relative border rounded-xl overflow-hidden bg-muted">
+                                {section.content && <img src={section.content} alt="Preview" className="object-cover w-full h-full" />}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeCampaignSection(idx)}><X className="h-3 w-3" /></Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="experience" className="space-y-8">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Storyline Hooks</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addStoryline} className="h-7 text-[10px]">+ Add Hook</Button>
+                  </div>
+                  {editingCampaign?.storyline?.map((hook, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input value={hook} onChange={(e) => updateStoryline(idx, e.target.value)} />
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeStoryline(idx)}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Activities</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('activities')} className="h-7 text-[10px]">+ Add Activity</Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {editingCampaign?.activities?.map((item: any, idx: number) => (
+                      <div key={idx} className="p-4 border rounded-xl bg-muted/20 space-y-2 relative">
+                        <Input placeholder="Title" value={item.title} onChange={(e) => updateArrayItem('activities', idx, 'title', e.target.value)} className="font-bold" />
+                        <Textarea placeholder="Description" value={item.description} onChange={(e) => updateArrayItem('activities', idx, 'description', e.target.value)} rows={2} className="text-xs" />
+                        <Input placeholder="Image URL or Placeholder Key" value={item.image} onChange={(e) => updateArrayItem('activities', idx, 'image', e.target.value)} className="text-[10px]" />
+                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 text-destructive" onClick={() => removeArrayItem('activities', idx)}><X className="h-3 w-3" /></Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="lodging" className="space-y-8">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Accommodation Options</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('accommodation')} className="h-7 text-[10px]">+ Add Accommodation</Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {editingCampaign?.accommodation?.map((item: any, idx: number) => (
+                      <div key={idx} className="p-4 border rounded-xl bg-muted/20 space-y-2 relative">
+                        <Input placeholder="Lodge Name" value={item.title} onChange={(e) => updateArrayItem('accommodation', idx, 'title', e.target.value)} className="font-bold" />
+                        <Textarea placeholder="Description" value={item.description} onChange={(e) => updateArrayItem('accommodation', idx, 'description', e.target.value)} rows={2} className="text-xs" />
+                        <Input placeholder="Image URL/Key" value={item.image} onChange={(e) => updateArrayItem('accommodation', idx, 'image', e.target.value)} className="text-[10px]" />
+                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 text-destructive" onClick={() => removeArrayItem('accommodation', idx)}><X className="h-3 w-3" /></Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Dining & Meals</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('meals')} className="h-7 text-[10px]">+ Add Meal Type</Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {editingCampaign?.meals?.map((item: any, idx: number) => (
+                      <div key={idx} className="p-4 border rounded-xl bg-muted/20 space-y-2 relative">
+                        <Input placeholder="Meal Style" value={item.title} onChange={(e) => updateArrayItem('meals', idx, 'title', e.target.value)} className="font-bold" />
+                        <Textarea placeholder="Details" value={item.description} onChange={(e) => updateArrayItem('meals', idx, 'description', e.target.value)} rows={2} className="text-xs" />
+                        <Input placeholder="Image URL/Key" value={item.image} onChange={(e) => updateArrayItem('meals', idx, 'image', e.target.value)} className="text-[10px]" />
+                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 text-destructive" onClick={() => removeArrayItem('meals', idx)}><X className="h-3 w-3" /></Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="logistics" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Volunteer Spots Needed</Label>
+                    <Input type="number" value={editingCampaign?.volunteersNeeded || 0} onChange={(e) => setEditingCampaign(prev => ({ ...prev, volunteersNeeded: parseInt(e.target.value) }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Current Sign-ups</Label>
+                    <Input type="number" value={editingCampaign?.volunteersSignedUp || 0} onChange={(e) => setEditingCampaign(prev => ({ ...prev, volunteersSignedUp: parseInt(e.target.value) }))} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-bold uppercase text-[10px] tracking-widest">Target End Date</Label>
+                  <Input type="date" value={editingCampaign?.endDate ? new Date(editingCampaign.endDate).toISOString().split('T')[0] : ''} onChange={(e) => setEditingCampaign(prev => ({ ...prev, endDate: e.target.value }))} />
+                </div>
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Booking & Safari Tips</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addBookingTip} className="h-7 text-[10px]">+ Add Tip</Button>
+                  </div>
+                  {editingCampaign?.bookingTips?.map((tip, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input value={tip} onChange={(e) => updateBookingTip(idx, e.target.value)} />
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeBookingTip(idx)}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            <DialogFooter className="mt-8 border-t pt-6">
               <Button type="button" variant="outline" onClick={() => setEditingCampaign(null)}>Cancel</Button>
-              <Button type="submit">Save Itinerary</Button>
+              <Button type="submit" className="bg-primary hover:bg-primary/90">Save Expedition Changes</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Departure Modal */}
+      {/* Departure Modal (Keep as is) */}
       <Dialog open={!!editingDeparture} onOpenChange={() => setEditingDeparture(null)}>
         <DialogContent className="sm:max-w-3xl overflow-y-auto max-h-[90vh]">
           <DialogHeader>

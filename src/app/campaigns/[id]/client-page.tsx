@@ -16,6 +16,13 @@ import placeholderImages from '@/app/lib/placeholder-images.json';
 import { type RelatedTour } from './page';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
+interface ItinerarySection {
+    id: string;
+    type: 'text' | 'image';
+    content: string;
+    imageLayout?: 'small' | 'full';
+}
+
 interface Campaign {
   id: string;
   title: string;
@@ -24,6 +31,7 @@ interface Campaign {
   imageHeight: number;
   dataAiHint?: string;
   description: string;
+  sections?: ItinerarySection[];
   storyline: string[];
   budget: number;
   goal: number;
@@ -34,9 +42,9 @@ interface Campaign {
   endDate: string;
   volunteersNeeded: number;
   volunteersSignedUp: number;
-  activities: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  accommodation: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  meals: { title: string; description: string; image: keyof typeof placeholderImages }[];
+  activities: { title: string; description: string; image: string }[];
+  accommodation: { title: string; description: string; image: string }[];
+  meals: { title: string; description: string; image: string }[];
   shortDescription?: string;
   bookingTips?: string[];
 }
@@ -118,7 +126,7 @@ const AnimatedSection = ({ children, className }: { children: React.ReactNode, c
     );
 };
 
-const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[]}) => {
+const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[]}) => {
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -128,8 +136,9 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
             <ScrollArea>
                 <div className="flex space-x-6 pb-4">
                     {items.map((item, index) => {
-                        const itemImage = placeholderImages[item.image];
-                        if (!itemImage) return null;
+                        // Support both keys and absolute URLs
+                        const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
+                        if (!itemImage.src) return null;
                         return (
                             <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] flex-shrink-0">
                                 <div className="relative w-full aspect-[16/9] bg-muted">
@@ -159,7 +168,7 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
 };
 
 
-const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[] }) => {
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -168,8 +177,8 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {items.map((item, index) => {
-                    const itemImage = placeholderImages[item.image];
-                    if (!itemImage) return null;
+                    const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
+                    if (!itemImage.src) return null;
                     return (
                         <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
                             <div className="relative w-full aspect-[16/9] bg-muted">
@@ -271,7 +280,33 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
 
               <AnimatedSection>
                 <h2 className="font-headline text-2xl font-semibold text-primary">About this Tour</h2>
-                <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+                <div className="space-y-6">
+                    {/* Render standard description if no modular sections exist */}
+                    {(!campaign.sections || campaign.sections.length === 0) && (
+                        <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+                    )}
+                    
+                    {/* Render dynamic modular sections */}
+                    {(campaign.sections || []).map((section, idx) => (
+                        <div key={section.id || idx}>
+                            {section.type === 'text' ? (
+                                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{section.content}</p>
+                            ) : (
+                                <div className={cn(
+                                    "relative overflow-hidden rounded-2xl shadow-xl bg-muted group/img",
+                                    section.imageLayout === 'full' ? "aspect-video w-full" : "w-full md:w-2/3 aspect-[4/3] mx-auto"
+                                )}>
+                                    <Image 
+                                        src={section.content} 
+                                        alt={`Tour visual ${idx}`} 
+                                        fill 
+                                        className="object-cover"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
               </AnimatedSection>
 
                <ExperienceSection
@@ -300,7 +335,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                         <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-foreground font-semibold">{campaign.organizer}</p>
+                        <p className="text-foreground font-semibold">{campaign.organizer || 'iffe-travels'}</p>
                     </CardContent>
                     <CardHeader className='pt-0'>
                         <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5"/>Responsible & Authentic Travel</CardTitle>

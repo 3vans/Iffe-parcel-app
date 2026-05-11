@@ -40,9 +40,10 @@ export default function CampaignDetailPage() {
             return;
         }
 
+        // Apply defaults only if data is explicitly missing to ensure Admin edits are respected
         const enrichedCampaign = {
             ...campaign,
-            storyline: campaign.storyline || [
+            storyline: (campaign.storyline && campaign.storyline.length > 0) ? campaign.storyline : [
                 "Experience the raw beauty of " + (campaign.region || "this region") + " Uganda.",
                 "Our expert guides ensure an authentic and safe journey.",
                 "Connect with nature and local communities in a meaningful way."
@@ -50,9 +51,9 @@ export default function CampaignDetailPage() {
             organizer: campaign.organizer || 'iffe-travels',
             volunteersNeeded: campaign.volunteersNeeded || 10,
             volunteersSignedUp: campaign.volunteersSignedUp || 0,
-            activities: campaign.activities || defaultActivities,
-            accommodation: campaign.accommodation || defaultAccommodation,
-            meals: campaign.meals || defaultMeals,
+            activities: (campaign.activities && campaign.activities.length > 0) ? campaign.activities : defaultActivities,
+            accommodation: (campaign.accommodation && campaign.accommodation.length > 0) ? campaign.accommodation : defaultAccommodation,
+            meals: (campaign.meals && campaign.meals.length > 0) ? campaign.meals : defaultMeals,
             imageWidth: 1200,
             imageHeight: 600,
         };
