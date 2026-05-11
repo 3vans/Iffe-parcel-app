@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,23 +36,32 @@ export default function AdminInventoryPage() {
       setPackages(pkgs);
       setAddons(ads);
     } catch (err) {
+      console.error("Load failed:", err);
       toast({ title: "Failed to load inventory", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUpdatePackage = async (e: React.FormEvent) => {
+  const handleUpdatePackage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPackage) return;
-    try {
-      await savePackage(editingPackage);
-      toast({ title: editingPackage.id ? "Package Updated" : "Package Added" });
-      setEditingPackage(null);
-      loadData();
-    } catch (err) {
-      toast({ title: "Operation Failed", variant: "destructive" });
-    }
+    
+    // Non-blocking save
+    savePackage(editingPackage)
+      .then(() => {
+        toast({ title: editingPackage.id ? "Package Updated" : "Package Added" });
+        setEditingPackage(null);
+        loadData();
+      })
+      .catch((err) => {
+        console.error("Save package failed:", err);
+        toast({ 
+          title: "Operation Failed", 
+          description: "Check for missing required fields or invalid image URLs.",
+          variant: "destructive" 
+        });
+      });
   };
 
   const handleDeletePackage = async (id: string) => {
@@ -67,17 +75,20 @@ export default function AdminInventoryPage() {
     }
   };
 
-  const handleUpdateAddon = async (e: React.FormEvent) => {
+  const handleUpdateAddon = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAddon) return;
-    try {
-      await saveAddon(editingAddon);
-      toast({ title: editingAddon.id ? "Addon Updated" : "Addon Added" });
-      setEditingAddon(null);
-      loadData();
-    } catch (err) {
-      toast({ title: "Operation Failed", variant: "destructive" });
-    }
+    
+    saveAddon(editingAddon)
+      .then(() => {
+        toast({ title: editingAddon.id ? "Addon Updated" : "Addon Added" });
+        setEditingAddon(null);
+        loadData();
+      })
+      .catch((err) => {
+        console.error("Save addon failed:", err);
+        toast({ title: "Operation Failed", variant: "destructive" });
+      });
   };
 
   const handleDeleteAddon = async (id: string) => {
@@ -91,7 +102,7 @@ export default function AdminInventoryPage() {
     }
   };
 
-  // --- Dynamic Array Helpers ---
+  // --- Dynamic Array Helpers (Immutable Updates) ---
 
   const addFeature = () => {
     setEditingPackage(prev => prev ? { ...prev, features: [...(prev.features || []), ''] } : null);
@@ -126,7 +137,7 @@ export default function AdminInventoryPage() {
   };
 
   const addItineraryDay = () => {
-    const currentItinerary = editingPackage?.sampleItinerary || [];
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const nextDay = currentItinerary.length + 1;
     const newItem: ItineraryItem = { day: nextDay, activity: '', sections: [] };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
@@ -152,27 +163,41 @@ export default function AdminInventoryPage() {
       id: `s-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       type,
       content: '',
-      imageLayout: type === 'image' ? 'full' : undefined
+      imageLayout: type === 'image' ? 'full' : 'small' // Avoid undefined
     };
-    currentItinerary[dayIndex].sections = [...(currentItinerary[dayIndex].sections || []), newSection];
+    const updatedDay = { ...currentItinerary[dayIndex] };
+    updatedDay.sections = [...(updatedDay.sections || []), newSection];
+    currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
 
   const updateItinerarySection = (dayIndex: number, sectionIndex: number, value: string) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
-    currentItinerary[dayIndex].sections[sectionIndex].content = value;
+    const updatedDay = { ...currentItinerary[dayIndex] };
+    const updatedSections = [...(updatedDay.sections || [])];
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], content: value };
+    updatedDay.sections = updatedSections;
+    currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
 
   const updateItinerarySectionLayout = (dayIndex: number, sectionIndex: number, layout: 'small' | 'full') => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
-    currentItinerary[dayIndex].sections[sectionIndex].imageLayout = layout;
+    const updatedDay = { ...currentItinerary[dayIndex] };
+    const updatedSections = [...(updatedDay.sections || [])];
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], imageLayout: layout };
+    updatedDay.sections = updatedSections;
+    currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
 
   const removeItinerarySection = (dayIndex: number, sectionIndex: number) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
-    currentItinerary[dayIndex].sections.splice(sectionIndex, 1);
+    const updatedDay = { ...currentItinerary[dayIndex] };
+    const updatedSections = [...(updatedDay.sections || [])];
+    updatedSections.splice(sectionIndex, 1);
+    updatedDay.sections = updatedSections;
+    currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
 
@@ -214,7 +239,7 @@ export default function AdminInventoryPage() {
                 whatsIncluded: [],
                 imageUrl: '',
                 isActive: true,
-                itineraryTitle: 'Sample Itinerary',
+                itineraryTitle: 'The Journey',
                 sampleItinerary: []
               })}>
                 <Plus className="mr-2 h-4 w-4" /> Create New Package
@@ -441,9 +466,6 @@ export default function AdminInventoryPage() {
                           </Button>
                         </div>
                       ))}
-                      {(!editingPackage?.features || editingPackage.features.length === 0) && (
-                        <p className="text-[10px] text-muted-foreground italic text-center py-2">No highlights added.</p>
-                      )}
                   </div>
               </div>
               <div className="space-y-4">
@@ -475,26 +497,22 @@ export default function AdminInventoryPage() {
                           </Button>
                         </div>
                       ))}
-                      {(!editingPackage?.whatsIncluded || editingPackage.whatsIncluded.length === 0) && (
-                        <p className="text-[10px] text-muted-foreground italic text-center py-2">No inclusions added.</p>
-                      )}
                   </div>
               </div>
             </div>
 
             {/* Itinerary Editor */}
             <div className="space-y-4 border-t pt-8">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <LayoutList className="h-4 w-4 text-accent shrink-0" />
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <LayoutList className="h-4 w-4 text-accent" />
                         <Input 
-                            value={editingPackage?.itineraryTitle || 'Sample Itinerary'} 
+                            value={editingPackage?.itineraryTitle || 'The Journey'} 
                             onChange={(e) => setEditingPackage(prev => prev ? { ...prev, itineraryTitle: e.target.value } : null)}
-                            className="h-8 font-black uppercase tracking-widest text-sm bg-muted/50 border-none"
-                            placeholder="Itinerary Title"
+                            className="h-8 font-black uppercase tracking-widest text-sm bg-muted/50 border-none w-[250px]"
                         />
                     </div>
-                    <Button type="button" variant="outline" size="sm" onClick={addItineraryDay} className="shrink-0">
+                    <Button type="button" variant="outline" size="sm" onClick={addItineraryDay}>
                         <Plus className="h-3 w-3 mr-1" /> Add Day
                     </Button>
                 </div>
@@ -503,8 +521,8 @@ export default function AdminInventoryPage() {
                     {(editingPackage?.sampleItinerary || []).map((day, dayIndex) => (
                         <div key={dayIndex} className="p-6 bg-muted/30 border rounded-3xl relative group transition-all hover:bg-muted/50">
                             <div className="flex flex-col gap-6">
-                                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                                    <div className="space-y-1 w-full sm:w-1/2">
+                                <div className="flex justify-between items-center">
+                                    <div className="space-y-1 w-1/2">
                                         <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {day.day}</Label>
                                         <Input 
                                             value={day.activity} 
@@ -533,7 +551,7 @@ export default function AdminInventoryPage() {
                                                         value={section.content}
                                                         onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
                                                         placeholder="Describe the experiences..."
-                                                        className="min-h-[120px] leading-relaxed"
+                                                        className="min-h-[100px]"
                                                     />
                                                 </div>
                                             ) : (
@@ -565,16 +583,12 @@ export default function AdminInventoryPage() {
                                                         </div>
                                                     </div>
                                                     <div className="relative">
-                                                        {section.content ? (
+                                                        {section.content && (
                                                             <div className={cn(
                                                                 "relative rounded-xl overflow-hidden border bg-muted shadow-inner h-full min-h-[100px]",
                                                                 section.imageLayout === 'full' ? 'aspect-video' : 'aspect-square max-w-[150px] mx-auto'
                                                             )}>
                                                                 <img src={section.content} alt="Preview" className="object-cover w-full h-full" />
-                                                            </div>
-                                                        ) : (
-                                                            <div className="h-full border-2 border-dashed rounded-xl flex items-center justify-center opacity-20">
-                                                                <ImageIcon className="h-8 w-8" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -591,9 +605,6 @@ export default function AdminInventoryPage() {
                                             </Button>
                                         </div>
                                     ))}
-                                    {(day.sections || []).length === 0 && (
-                                        <p className="text-[10px] text-muted-foreground italic text-center py-4">No content blocks added for this day yet. Use the buttons above to start building.</p>
-                                    )}
                                 </div>
                             </div>
                             <Button 
@@ -607,12 +618,6 @@ export default function AdminInventoryPage() {
                             </Button>
                         </div>
                     ))}
-                    {(editingPackage?.sampleItinerary || []).length === 0 && (
-                        <div className="text-center py-10 border-2 border-dashed rounded-3xl opacity-40">
-                             <Calendar className="h-10 w-10 mx-auto mb-2" />
-                             <p className="text-xs font-black uppercase tracking-widest">No days configured</p>
-                        </div>
-                    )}
                 </div>
             </div>
 
