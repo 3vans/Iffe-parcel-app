@@ -86,9 +86,18 @@
             "properties": {
               "day": { "type": "number" },
               "activity": { "type": "string" },
-              "description": { "type": "string" },
-              "imageUrl": { "type": "string" },
-              "imageLayout": { "type": "string", "enum": ["small", "full"] }
+              "sections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "type": { "type": "string", "enum": ["text", "image"] },
+                    "content": { "type": "string" },
+                    "imageLayout": { "type": "string", "enum": ["small", "full"] }
+                  }
+                }
+              }
             }
           }
         }

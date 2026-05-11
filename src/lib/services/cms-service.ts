@@ -122,12 +122,17 @@ export interface Departure {
   createdAt?: any;
 }
 
+export interface ItinerarySection {
+  id: string;
+  type: 'text' | 'image';
+  content: string;
+  imageLayout?: 'small' | 'full';
+}
+
 export interface ItineraryItem {
   day: number;
   activity: string;
-  description: string;
-  imageUrl?: string;
-  imageLayout?: 'small' | 'full';
+  sections: ItinerarySection[];
 }
 
 export interface Package {

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal, Type } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem } from '@/lib/services/cms-service';
+import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem, type ItinerarySection } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -127,7 +128,7 @@ export default function AdminInventoryPage() {
   const addItineraryDay = () => {
     const currentItinerary = editingPackage?.sampleItinerary || [];
     const nextDay = currentItinerary.length + 1;
-    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '', imageUrl: '', imageLayout: 'small' };
+    const newItem: ItineraryItem = { day: nextDay, activity: '', sections: [] };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
   };
 
@@ -142,6 +143,36 @@ export default function AdminInventoryPage() {
   const updateItineraryItem = (index: number, field: keyof ItineraryItem, value: any) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     currentItinerary[index] = { ...currentItinerary[index], [field]: value };
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
+  const addItinerarySection = (dayIndex: number, type: 'text' | 'image') => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    const newSection: ItinerarySection = {
+      id: `s-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      type,
+      content: '',
+      imageLayout: type === 'image' ? 'full' : undefined
+    };
+    currentItinerary[dayIndex].sections = [...(currentItinerary[dayIndex].sections || []), newSection];
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
+  const updateItinerarySection = (dayIndex: number, sectionIndex: number, value: string) => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    currentItinerary[dayIndex].sections[sectionIndex].content = value;
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
+  const updateItinerarySectionLayout = (dayIndex: number, sectionIndex: number, layout: 'small' | 'full') => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    currentItinerary[dayIndex].sections[sectionIndex].imageLayout = layout;
+    setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
+  };
+
+  const removeItinerarySection = (dayIndex: number, sectionIndex: number) => {
+    const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
+    currentItinerary[dayIndex].sections.splice(sectionIndex, 1);
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
 
@@ -352,7 +383,7 @@ export default function AdminInventoryPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label className="font-bold uppercase text-[10px] tracking-widest">Image URL</Label>
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Hero Image URL</Label>
                     <Input 
                         value={editingPackage?.imageUrl || ''} 
                         onChange={(e) => setEditingPackage(prev => ({ ...prev, imageUrl: e.target.value }))}
@@ -468,74 +499,101 @@ export default function AdminInventoryPage() {
                     </Button>
                 </div>
                 
-                <div className="space-y-6">
-                    {(editingPackage?.sampleItinerary || []).map((item, index) => (
-                        <div key={index} className="p-6 bg-muted/30 border rounded-2xl relative group transition-all hover:bg-muted/50">
+                <div className="space-y-8">
+                    {(editingPackage?.sampleItinerary || []).map((day, dayIndex) => (
+                        <div key={dayIndex} className="p-6 bg-muted/30 border rounded-3xl relative group transition-all hover:bg-muted/50">
                             <div className="flex flex-col gap-6">
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                    <div className="space-y-1">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {item.day}</Label>
+                                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                                    <div className="space-y-1 w-full sm:w-1/2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Day {day.day}</Label>
                                         <Input 
-                                            value={item.activity} 
-                                            onChange={(e) => updateItineraryItem(index, 'activity', e.target.value)} 
+                                            value={day.activity} 
+                                            onChange={(e) => updateItineraryItem(dayIndex, 'activity', e.target.value)} 
                                             placeholder="Activity Title" 
                                             className="h-10 font-bold"
                                         />
                                     </div>
-                                    <div className="space-y-1 w-full sm:w-auto">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Layout Mode</Label>
-                                        <Select 
-                                            value={item.imageLayout || 'small'} 
-                                            onValueChange={(val: any) => updateItineraryItem(index, 'imageLayout', val)}
-                                        >
-                                            <SelectTrigger className="h-10 w-full sm:w-[180px] bg-background">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="small">
-                                                    <div className="flex items-center gap-2">
-                                                        <Layout className="h-3.5 w-3.5" /> Small (Side)
-                                                    </div>
-                                                </SelectItem>
-                                                <SelectItem value="full">
-                                                    <div className="flex items-center gap-2">
-                                                        <RectangleHorizontal className="h-3.5 w-3.5" /> Full Width (Top)
-                                                    </div>
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    <div className="flex gap-2">
+                                        <Button type="button" variant="outline" size="sm" onClick={() => addItinerarySection(dayIndex, 'text')} className="h-8 text-[9px] font-black uppercase">
+                                            <Type className="h-3 w-3 mr-1" /> + Narrative
+                                        </Button>
+                                        <Button type="button" variant="outline" size="sm" onClick={() => addItinerarySection(dayIndex, 'image')} className="h-8 text-[9px] font-black uppercase">
+                                            <ImageIcon className="h-3 w-3 mr-1" /> + Visual
+                                        </Button>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                    <div className="md:col-span-1 space-y-4">
-                                        <div>
-                                            <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Section Image URL</Label>
-                                            <Input 
-                                                value={item.imageUrl || ''} 
-                                                onChange={(e) => updateItineraryItem(index, 'imageUrl', e.target.value)} 
-                                                placeholder="https://..." 
-                                                className="mt-1 text-xs"
-                                            />
-                                            {item.imageUrl && (
-                                                <div className={cn(
-                                                    "relative mt-2 rounded-lg overflow-hidden border bg-muted shadow-inner",
-                                                    item.imageLayout === 'full' ? 'aspect-video' : 'aspect-square'
-                                                )}>
-                                                    <img src={item.imageUrl} alt="Preview" className="object-cover w-full h-full" />
+                                <div className="space-y-4">
+                                    {(day.sections || []).map((section, sIdx) => (
+                                        <div key={section.id} className="p-4 bg-background/50 border rounded-2xl relative group/section shadow-sm">
+                                            {section.type === 'text' ? (
+                                                <div className="space-y-2">
+                                                    <Label className="text-[9px] font-bold uppercase text-muted-foreground">Narrative Block</Label>
+                                                    <Textarea 
+                                                        value={section.content}
+                                                        onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
+                                                        placeholder="Describe the experiences..."
+                                                        className="min-h-[120px] leading-relaxed"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="space-y-4">
+                                                        <div className="space-y-2">
+                                                            <Label className="text-[9px] font-bold uppercase text-muted-foreground">Image URL</Label>
+                                                            <Input 
+                                                                value={section.content}
+                                                                onChange={(e) => updateItinerarySection(dayIndex, sIdx, e.target.value)}
+                                                                placeholder="https://..."
+                                                                className="text-xs"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <Label className="text-[9px] font-bold uppercase text-muted-foreground">Display Mode</Label>
+                                                            <Select 
+                                                                value={section.imageLayout || 'full'}
+                                                                onValueChange={(val: any) => updateItinerarySectionLayout(dayIndex, sIdx, val)}
+                                                            >
+                                                                <SelectTrigger className="h-9">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="small"><div className="flex items-center gap-2"><Layout className="h-3 w-3"/> Side Card</div></SelectItem>
+                                                                    <SelectItem value="full"><div className="flex items-center gap-2"><RectangleHorizontal className="h-3 w-3"/> Cinematic Wide</div></SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative">
+                                                        {section.content ? (
+                                                            <div className={cn(
+                                                                "relative rounded-xl overflow-hidden border bg-muted shadow-inner h-full min-h-[100px]",
+                                                                section.imageLayout === 'full' ? 'aspect-video' : 'aspect-square max-w-[150px] mx-auto'
+                                                            )}>
+                                                                <img src={section.content} alt="Preview" className="object-cover w-full h-full" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-full border-2 border-dashed rounded-xl flex items-center justify-center opacity-20">
+                                                                <ImageIcon className="h-8 w-8" />
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
+                                            <Button 
+                                                type="button" 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white hover:bg-destructive/90 opacity-0 group-hover/section:opacity-100 transition-opacity shadow-lg"
+                                                onClick={() => removeItinerarySection(dayIndex, sIdx)}
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </Button>
                                         </div>
-                                    </div>
-                                    <div className="md:col-span-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">Detailed Narrative</Label>
-                                        <Textarea 
-                                            value={item.description} 
-                                            onChange={(e) => updateItineraryItem(index, 'description', e.target.value)} 
-                                            placeholder="Describe the experiences and sights for this day..." 
-                                            className="mt-1 h-32 leading-relaxed"
-                                        />
-                                    </div>
+                                    ))}
+                                    {(day.sections || []).length === 0 && (
+                                        <p className="text-[10px] text-muted-foreground italic text-center py-4">No content blocks added for this day yet. Use the buttons above to start building.</p>
+                                    )}
                                 </div>
                             </div>
                             <Button 
@@ -543,7 +601,7 @@ export default function AdminInventoryPage() {
                                 variant="destructive" 
                                 size="icon" 
                                 className="absolute -top-3 -right-3 h-8 w-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => removeItineraryDay(index)}
+                                onClick={() => removeItineraryDay(dayIndex)}
                             >
                                 <Trash className="h-4 w-4" />
                             </Button>
