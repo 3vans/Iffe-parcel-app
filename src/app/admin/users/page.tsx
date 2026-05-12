@@ -7,11 +7,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert, Lock } from "lucide-react";
+import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert, Lock, Star, Map, Info } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { fetchAllUsers, createUserProfile, updateUserProfile, type UserProfile } from '@/lib/services/cms-service';
+import { fetchAllUsers, createUserProfile, updateUserProfile, fetchCampaigns, type UserProfile, type Campaign } from '@/lib/services/cms-service';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 
@@ -23,6 +23,7 @@ import { firebaseConfig } from "@/firebase/config";
 export default function AdminUsersPage() {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -33,19 +34,25 @@ export default function AdminUsersPage() {
     email: '',
     displayName: '',
     password: '',
-    isCreator: false,
-    isAdmin: false
+    tier: 'user' as 'user' | 'creator' | 'admin',
+    level: 'Novice Explorer',
+    points: 0,
+    assignedExpedition: ''
   });
 
   useEffect(() => {
-    loadUsers();
+    loadData();
   }, []);
 
-  const loadUsers = async () => {
+  const loadData = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchAllUsers();
-      setUsers(data);
+      const [userData, campData] = await Promise.all([
+        fetchAllUsers(),
+        fetchCampaigns()
+      ]);
+      setUsers(userData);
+      setCampaigns(campData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -58,7 +65,7 @@ export default function AdminUsersPage() {
     try {
         await updateUserProfile(user.id, { status: newStatus });
         toast({ title: `User ${newStatus === 'approved' ? 'Unsuspended' : 'Suspended'}` });
-        loadUsers();
+        loadData();
     } catch (err) {
         toast({ title: "Operation failed", variant: "destructive" });
     }
@@ -73,36 +80,35 @@ export default function AdminUsersPage() {
     
     setIsSubmitting(true);
     
-    // To create a user without signing out the current admin session, 
-    // we use a secondary Firebase app instance.
     let secondaryApp;
     try {
       secondaryApp = initializeApp(firebaseConfig, `SecondaryApp-${Date.now()}`);
       const secondaryAuth = getAuth(secondaryApp);
       
-      // 1. Create the real Auth user
       const userCredential = await createUserWithEmailAndPassword(secondaryAuth, newUser.email, newUser.password);
       const uid = userCredential.user.uid;
 
-      // 2. Set the display name in Auth
       await updateProfile(userCredential.user, { displayName: newUser.displayName });
 
-      // 3. Create the Firestore profile linked to the UID
+      // Create the profile with explicit tier and level mapping
       await createUserProfile(uid, {
         email: newUser.email,
         displayName: newUser.displayName,
-        isCreator: newUser.isCreator,
-        isAdmin: newUser.isAdmin,
+        isCreator: newUser.tier === 'creator' || newUser.tier === 'admin',
+        isAdmin: newUser.tier === 'admin',
+        level: newUser.level,
+        points: newUser.points,
+        bio: newUser.assignedExpedition ? `Assigned to: ${newUser.assignedExpedition}` : 'New explorer at iffe-travels.'
       });
       
       toast({ 
-        title: "Viable Account Created", 
-        description: `Successfully registered ${newUser.displayName}. They can now login using their email and password.` 
+        title: "Account Created Successfully", 
+        description: `Registered ${newUser.displayName} as ${newUser.tier === 'admin' ? 'Admin' : newUser.tier === 'creator' ? 'Club Member' : 'Standard Traveler'}.` 
       });
       
       setIsCreateModalOpen(false);
-      setNewUser({ email: '', displayName: '', password: '', isCreator: false, isAdmin: false });
-      loadUsers();
+      setNewUser({ email: '', displayName: '', password: '', tier: 'user', level: 'Novice Explorer', points: 0, assignedExpedition: '' });
+      loadData();
     } catch (err: any) {
         console.error("Auth Creation Snag:", err);
         toast({ 
@@ -120,7 +126,7 @@ export default function AdminUsersPage() {
   
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) || user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'all' || (roleFilter === 'admin' && user.isAdmin) || (roleFilter === 'creator' && user.isCreator);
+    const matchesRole = roleFilter === 'all' || (roleFilter === 'admin' && user.isAdmin) || (roleFilter === 'creator' && user.isCreator && !user.isAdmin);
     return matchesSearch && matchesRole;
   });
 
@@ -144,20 +150,23 @@ export default function AdminUsersPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Input 
-              placeholder="Search by name or email..." 
-              className="w-full sm:max-w-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="relative flex-grow">
+               <Input 
+                placeholder="Search by name or email..." 
+                className="w-full h-11 rounded-xl pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Plus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground rotate-45" />
+            </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by role" />
+              <SelectTrigger className="w-full sm:w-[220px] h-11 rounded-xl">
+                <SelectValue placeholder="Filter by Tier" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="all">All Tiers</SelectItem>
                 <SelectItem value="admin">Administrators</SelectItem>
-                <SelectItem value="creator">Explorer Club</SelectItem>
+                <SelectItem value="creator">Explorer Club (Verified)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -168,9 +177,9 @@ export default function AdminUsersPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Tier</TableHead>
+                  <TableHead>Account Tier</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Joined</TableHead>
+                  <TableHead>Level</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -180,19 +189,27 @@ export default function AdminUsersPage() {
                     <TableCell className="font-bold">{user.displayName}</TableCell>
                     <TableCell className="text-muted-foreground">{user.email}</TableCell>
                     <TableCell>
-                        <Badge variant={user.isAdmin ? 'destructive' : 'secondary'} className="uppercase text-[9px] font-black">
-                            {user.isAdmin ? 'Admin' : user.isCreator ? "Club Member" : "Traveler"}
+                        <Badge 
+                          variant={user.isAdmin ? 'destructive' : user.isCreator ? 'default' : 'secondary'} 
+                          className={cn(
+                            "uppercase text-[9px] font-black px-2.5 py-0.5",
+                            user.isCreator && !user.isAdmin ? "bg-accent text-accent-foreground" : ""
+                          )}
+                        >
+                            {user.isAdmin ? 'Admin' : user.isCreator ? "Club Member" : "Standard"}
                         </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge 
-                        variant={user.status === 'suspended' ? 'destructive' : 'default'}
-                        className="capitalize text-[10px]"
+                        variant={user.status === 'suspended' ? 'destructive' : 'outline'}
+                        className="capitalize text-[10px] border-primary/20"
                       >
                         {user.status || 'Active'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-stone-500 font-medium">{user.memberSince}</TableCell>
+                    <TableCell className="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                      {user.level || 'Novice'} ({user.points || 0} pts)
+                    </TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button variant="ghost" size="icon" onClick={() => handleToggleStatus(user)} title={user.status === 'suspended' ? 'Unsuspend' : 'Suspend'}>
                         {user.status === 'suspended' ? <UserCheck className="h-4 w-4 text-green-600" /> : <UserX className="h-4 w-4 text-orange-500" />}
@@ -205,73 +222,133 @@ export default function AdminUsersPage() {
             </Table>
           </div>
           {filteredUsers.length === 0 && (
-            <p className="text-center text-muted-foreground py-20 italic">No users found in the registry.</p>
+            <p className="text-center text-muted-foreground py-20 italic">No users found matching your search.</p>
           )}
         </CardContent>
       </Card>
 
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-xl border-white/10">
+        <DialogContent className="sm:max-w-xl bg-card/95 backdrop-blur-xl border-white/10 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-                <DialogTitle className="font-headline text-2xl text-primary uppercase font-black">Add New Traveler</DialogTitle>
-                <DialogDescription>Register a new client account in Firebase Auth.</DialogDescription>
+                <DialogTitle className="font-headline text-2xl text-primary uppercase font-black">Register New Traveler</DialogTitle>
+                <DialogDescription>Create a viable client account with a linked tier and expedition interest.</DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleCreateTraveler} className="space-y-4 py-4">
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Full Name</Label>
-                    <Input 
-                        value={newUser.displayName} 
-                        onChange={e => setNewUser(prev => ({ ...prev, displayName: e.target.value }))}
-                        placeholder="e.g. Jane Doe"
-                        required
-                        className="h-11 rounded-xl"
-                    />
+            <form onSubmit={handleCreateTraveler} className="space-y-6 py-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Full Name</Label>
+                      <Input 
+                          value={newUser.displayName} 
+                          onChange={e => setNewUser(prev => ({ ...prev, displayName: e.target.value }))}
+                          placeholder="e.g. Jane Doe"
+                          required
+                          className="h-11 rounded-xl"
+                      />
+                  </div>
+                  <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Email Address</Label>
+                      <Input 
+                          type="email"
+                          value={newUser.email} 
+                          onChange={e => setNewUser(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="jane@example.com"
+                          required
+                          className="h-11 rounded-xl"
+                      />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Email Address</Label>
-                    <Input 
-                        type="email"
-                        value={newUser.email} 
-                        onChange={e => setNewUser(prev => ({ ...prev, email: e.target.value }))}
-                        placeholder="jane@example.com"
-                        required
-                        className="h-11 rounded-xl"
-                    />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Account Tier</Label>
+                      <Select value={newUser.tier} onValueChange={(val: any) => setNewUser(prev => ({ ...prev, tier: val }))}>
+                          <SelectTrigger className="h-11 rounded-xl">
+                              <SelectValue placeholder="Choose Role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="user">Standard Traveler</SelectItem>
+                              <SelectItem value="creator">Explorer's Club (Verified Member)</SelectItem>
+                              <SelectItem value="admin">Platform Administrator</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  </div>
+                  <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Temporary Password</Label>
+                      <div className="relative">
+                          <Input 
+                              type="password"
+                              value={newUser.password} 
+                              onChange={e => setNewUser(prev => ({ ...prev, password: e.target.value }))}
+                              placeholder="Min 6 chars"
+                              required
+                              className="h-11 rounded-xl pr-10"
+                          />
+                          <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                      </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Temporary Password</Label>
-                    <div className="relative">
-                        <Input 
-                            type="password"
-                            value={newUser.password} 
-                            onChange={e => setNewUser(prev => ({ ...prev, password: e.target.value }))}
-                            placeholder="Min 6 characters"
-                            required
-                            className="h-11 rounded-xl pr-10"
-                        />
-                        <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+
+                <div className="pt-4 border-t border-primary/5 space-y-4">
+                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent flex items-center gap-2">
+                    <Star className="h-3 w-3" /> Advanced Classification
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Starting Level</Label>
+                        <Select value={newUser.level} onValueChange={(val) => setNewUser(prev => ({ ...prev, level: val }))}>
+                            <SelectTrigger className="h-11 rounded-xl">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Novice Explorer">Novice Explorer</SelectItem>
+                                <SelectItem value="Bronze Traveler">Bronze Traveler</SelectItem>
+                                <SelectItem value="Silver Scout">Silver Scout</SelectItem>
+                                <SelectItem value="Gold Pathfinder">Gold Pathfinder</SelectItem>
+                                <SelectItem value="Elite Voyager">Elite Voyager</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Initial Impact Points</Label>
+                        <Input 
+                            type="number"
+                            value={newUser.points} 
+                            onChange={e => setNewUser(prev => ({ ...prev, points: parseInt(e.target.value) || 0 }))}
+                            className="h-11 rounded-xl"
+                        />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Primary Tour Association (Optional)</Label>
+                      <Select value={newUser.assignedExpedition} onValueChange={(val) => setNewUser(prev => ({ ...prev, assignedExpedition: val }))}>
+                          <SelectTrigger className="h-11 rounded-xl">
+                              <SelectValue placeholder="Associate with an expedition for tracking..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {campaigns.map(c => (
+                                <SelectItem key={c.id} value={c.title}>{c.title}</SelectItem>
+                              ))}
+                              {campaigns.length === 0 && <SelectItem value="none" disabled>No expeditions found</SelectItem>}
+                          </SelectContent>
+                      </Select>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 pt-2">
-                    <input 
-                        type="checkbox" 
-                        id="isCreator" 
-                        checked={newUser.isCreator} 
-                        onChange={e => setNewUser(prev => ({ ...prev, isCreator: e.target.checked }))}
-                        className="h-4 w-4 rounded border-primary/20 accent-primary"
-                    />
-                    <Label htmlFor="isCreator" className="text-xs font-bold text-primary">Add to Explorer's Club (Verified Tier)</Label>
-                </div>
+
                 <div className="p-4 bg-accent/5 border border-accent/20 rounded-2xl flex items-start gap-3">
                     <ShieldAlert className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <p className="text-[10px] text-accent/80 leading-relaxed font-medium">
-                        This will create a <strong>viable account</strong>. The client can immediately use these credentials to log in and track their safari progress.
-                    </p>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-accent font-black uppercase tracking-widest">Viable Credential Notice</p>
+                      <p className="text-[10px] text-accent/80 leading-relaxed font-medium">
+                          This creates a functional <strong>Firebase Auth</strong> record. The traveler can immediately log in to access their assigned itineraries and track the planning process.
+                      </p>
+                    </div>
                 </div>
-                <DialogFooter className="pt-4">
+
+                <DialogFooter className="pt-4 gap-2">
                     <Button type="button" variant="ghost" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
-                    <Button type="submit" className="bg-primary hover:bg-primary/90 h-12 px-8 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20" disabled={isSubmitting}>
-                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Register traveler"}
+                    <Button type="submit" className="bg-primary hover:bg-primary/90 h-12 px-8 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex-grow" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <UserPlus className="h-4 w-4 mr-2" />}
+                        {isSubmitting ? "Processing..." : "Register & Provision User"}
                     </Button>
                 </DialogFooter>
             </form>
@@ -280,3 +357,4 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+
