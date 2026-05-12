@@ -1,61 +1,111 @@
 
 'use client';
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Edit2, Trash2, UserCheck, UserX } from "lucide-react";
+import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'user' | 'community' | 'online' | 'admin';
-  status: 'pending' | 'approved' | 'suspended';
-  clubName?: string;
-  signupDate: string;
-}
-
-const mockUsers: User[] = [
-  { id: 'u1', name: 'Alice Wonderland', email: 'alice@example.com', role: 'admin', status: 'approved', signupDate: '2023-01-10' },
-  { id: 'u2', name: 'Bob The Builder', email: 'bob@example.com', role: 'community', status: 'approved', clubName: 'Rotaract Club of Townsville', signupDate: '2023-02-15' },
-  { id: 'u3', name: 'Charlie Chaplin', email: 'charlie@example.com', role: 'user', status: 'approved', signupDate: '2023-03-20' },
-  { id: 'u4', name: 'Diana Prince', email: 'diana@example.com', role: 'online', status: 'approved', signupDate: '2023-04-05' },
-  { id: 'u5', name: 'Edward Scissorhands', email: 'edward@example.com', role: 'community', status: 'pending', clubName: 'Rotaract Club of Suburbia', signupDate: '2023-05-01' },
-  { id: 'u6', name: 'Fiona Gallagher', email: 'fiona@example.com', role: 'user', status: 'suspended', signupDate: '2023-05-10' },
-];
+import { fetchAllUsers, createUserProfile, updateUserProfile, type UserProfile } from '@/lib/services/cms-service';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 
 export default function AdminUsersPage() {
   const { toast } = useToast();
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAction = (action: string, userName: string) => {
-    toast({
-      title: `Action: ${action}`,
-      description: `Simulated '${action}' for user ${userName}. Implement actual logic.`,
-    });
+  const [newUser, setNewUser] = useState({
+    email: '',
+    displayName: '',
+    isCreator: false,
+    isAdmin: false
+  });
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetchAllUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (user: UserProfile) => {
+    const newStatus = user.status === 'suspended' ? 'approved' : 'suspended';
+    try {
+        await updateUserProfile(user.id, { status: newStatus });
+        toast({ title: `User ${newStatus === 'approved' ? 'Unsuspended' : 'Suspended'}` });
+        loadUsers();
+    } catch (err) {
+        toast({ title: "Operation failed", variant: "destructive" });
+    }
+  };
+
+  const handleCreateTraveler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUser.email || !newUser.displayName) return;
+    
+    setIsSubmitting(true);
+    try {
+      // In this prototype, we simulate creation by adding a Firestore profile.
+      // The traveler will "claim" this email when they sign up with the same email.
+      const mockUid = `traveler_${Date.now()}`;
+      await createUserProfile(mockUid, newUser);
+      
+      toast({ 
+        title: "Traveler Profile Created", 
+        description: "The client can now register with this email to access their dashboard." 
+      });
+      setIsCreateModalOpen(false);
+      setNewUser({ email: '', displayName: '', isCreator: false, isAdmin: false });
+      loadUsers();
+    } catch (err) {
+        toast({ title: "Failed to create profile", variant: "destructive" });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
   
-  const filteredUsers = mockUsers.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    return matchesSearch && matchesRole && matchesStatus;
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) || user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = roleFilter === 'all' || (roleFilter === 'admin' && user.isAdmin) || (roleFilter === 'creator' && user.isCreator);
+    return matchesSearch && matchesRole;
   });
+
+  if (isLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
+  }
 
   return (
     <div className="space-y-6">
-      <Card className="transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold font-headline text-primary">Traveler Management</h1>
+        <Button onClick={() => setIsCreateModalOpen(true)} className="bg-primary">
+            <UserPlus className="mr-2 h-4 w-4" /> Create Traveler
+        </Button>
+      </div>
+
+      <Card className="transition-all duration-300 ease-out hover:shadow-lg">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">User Management</CardTitle>
-          <CardDescription>View, filter, and manage all platform users.</CardDescription>
+          <CardTitle>User Database</CardTitle>
+          <CardDescription>Monitor platform access and traveler tiers.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -71,21 +121,8 @@ export default function AdminUsersPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="community">Community</SelectItem>
-                <SelectItem value="online">e-Rotaract Online</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
+                <SelectItem value="admin">Administrators</SelectItem>
+                <SelectItem value="creator">Explorer Club</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -96,38 +133,36 @@ export default function AdminUsersPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
+                  <TableHead>Tier</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Club</TableHead>
-                  <TableHead>Signed Up</TableHead>
+                  <TableHead>Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUsers.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell><Badge variant={user.role === 'admin' ? 'destructive' : 'secondary'}>{user.role}</Badge></TableCell>
+                    <TableCell className="font-bold">{user.displayName}</TableCell>
+                    <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                    <TableCell>
+                        <Badge variant={user.isAdmin ? 'destructive' : 'secondary'} className="uppercase text-[9px] font-black">
+                            {user.isAdmin ? 'Admin' : user.isCreator ? "Club Member" : "Traveler"}
+                        </Badge>
+                    </TableCell>
                     <TableCell>
                       <Badge 
-                        variant={user.status === 'approved' ? 'default' : user.status === 'pending' ? 'outline' : 'destructive'}
-                        className={cn(user.status === 'approved' && 'bg-green-500/20 text-green-700 border-green-500/30', user.status === 'pending' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30')}
+                        variant={user.status === 'suspended' ? 'destructive' : 'default'}
+                        className="capitalize text-[10px]"
                       >
-                        {user.status}
+                        {user.status || 'Active'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{user.clubName || 'N/A'}</TableCell>
-                    <TableCell>{user.signupDate}</TableCell>
+                    <TableCell className="text-xs text-stone-500 font-medium">{user.memberSince}</TableCell>
                     <TableCell className="text-right space-x-1">
-                      <Button variant="ghost" size="icon" onClick={() => handleAction('View Profile', user.name)}><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleAction('Edit User', user.name)}><Edit2 className="h-4 w-4" /></Button>
-                      {user.status !== 'suspended' ? 
-                        <Button variant="ghost" size="icon" className="text-orange-500 hover:text-orange-600" onClick={() => handleAction('Suspend User', user.name)}><UserX className="h-4 w-4" /></Button>
-                        :
-                        <Button variant="ghost" size="icon" className="text-green-500 hover:text-green-600" onClick={() => handleAction('Unsuspend User', user.name)}><UserCheck className="h-4 w-4" /></Button>
-                      }
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/80" onClick={() => handleAction('Delete User', user.name)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleToggleStatus(user)}>
+                        {user.status === 'suspended' ? <UserCheck className="h-4 w-4 text-green-600" /> : <UserX className="h-4 w-4 text-orange-500" />}
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -135,10 +170,61 @@ export default function AdminUsersPage() {
             </Table>
           </div>
           {filteredUsers.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">No users match the current filters.</p>
+            <p className="text-center text-muted-foreground py-20 italic">No users found in the registry.</p>
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>Add New Traveler</DialogTitle>
+                <DialogDescription>Manually create a profile for a client.</DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleCreateTraveler} className="space-y-4 py-4">
+                <div className="space-y-2">
+                    <Label>Full Name</Label>
+                    <Input 
+                        value={newUser.displayName} 
+                        onChange={e => setNewUser(prev => ({ ...prev, displayName: e.target.value }))}
+                        placeholder="e.g. Jane Doe"
+                        required
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label>Email Address</Label>
+                    <Input 
+                        type="email"
+                        value={newUser.email} 
+                        onChange={e => setNewUser(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="jane@example.com"
+                        required
+                    />
+                </div>
+                <div className="flex items-center space-x-2 pt-2">
+                    <input 
+                        type="checkbox" 
+                        id="isCreator" 
+                        checked={newUser.isCreator} 
+                        onChange={e => setNewUser(prev => ({ ...prev, isCreator: e.target.checked }))}
+                    />
+                    <Label htmlFor="isCreator" className="text-xs">Add to Explorer's Club (Member Tier)</Label>
+                </div>
+                <div className="p-3 bg-muted/30 rounded-lg flex items-start gap-3">
+                    <ShieldAlert className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">
+                        This creates a profile placeholder. The client must still register via the website using this email to set their own password and claim the account.
+                    </p>
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Profile"}
+                    </Button>
+                </DialogFooter>
+            </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

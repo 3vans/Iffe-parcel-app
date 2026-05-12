@@ -6,29 +6,49 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from '@/components/ui/badge';
-import { Mail, CheckCircle2, MessageCircle, ArrowRight, Loader2, Calendar, User, Tag, Sparkles } from "lucide-react";
-import { fetchAllInquiries } from '@/lib/services/cms-service';
+import { Mail, CheckCircle2, MessageCircle, ArrowRight, Loader2, Calendar, User, Tag, Sparkles, UserPlus, ShieldCheck } from "lucide-react";
+import { fetchAllInquiries, updateBookingStatus, fetchAllUsers } from '@/lib/services/cms-service';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminInquiriesPage() {
   const [inquiries, setInquiries] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
+  const [assignUserMode, setAssignUserMode] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
-    loadInquiries();
+    loadData();
   }, []);
 
-  const loadInquiries = async () => {
+  const loadData = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchAllInquiries();
-      setInquiries(data);
+      const [inqData, userData] = await Promise.all([fetchAllInquiries(), fetchAllUsers()]);
+      setInquiries(inqData);
+      setUsers(userData);
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleApproveAndAssign = async (userId: string) => {
+      if (!selectedInquiry) return;
+      try {
+          await updateBookingStatus(selectedInquiry.id, 'confirmed', userId);
+          toast({ title: "Request Confirmed", description: "Trip has been assigned to the traveler dashboard." });
+          setSelectedInquiry(null);
+          setAssignUserMode(false);
+          loadData();
+      } catch (err) {
+          toast({ title: "Failed to confirm", variant: "destructive" });
+      }
   };
 
   const getBadgeVariant = (status: string) => {
@@ -129,7 +149,7 @@ export default function AdminInquiriesPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!selectedInquiry} onOpenChange={() => setSelectedInquiry(null)}>
+      <Dialog open={!!selectedInquiry} onOpenChange={() => { setSelectedInquiry(null); setAssignUserMode(false); }}>
         <DialogContent className="sm:max-w-2xl">
           {selectedInquiry && (
             <>
@@ -186,13 +206,33 @@ export default function AdminInquiriesPage() {
                     </div>
                 </div>
 
-                {selectedInquiry.meta?.inspirationImage && (
-                    <div className="space-y-2">
-                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Inspiration Visual</Label>
-                         <div className="relative aspect-video rounded-xl overflow-hidden border">
-                            <img src={selectedInquiry.meta.inspirationImage} className="object-cover w-full h-full" alt="User inspiration" />
-                         </div>
+                {assignUserMode ? (
+                    <div className="space-y-4 p-4 border-2 border-accent/20 rounded-2xl bg-accent/5 animate-in fade-in slide-in-from-top-2">
+                        <Label className="text-xs font-black uppercase tracking-widest text-accent flex items-center gap-2">
+                            <UserPlus className="h-3 w-3" /> Select Traveler to Assign
+                        </Label>
+                        <Select onValueChange={handleApproveAndAssign}>
+                            <SelectTrigger className="bg-white">
+                                <SelectValue placeholder="Search traveler by name..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {users.map(u => (
+                                    <SelectItem key={u.id} value={u.id}>{u.displayName} ({u.email})</SelectItem>
+                                ))}
+                                {users.length === 0 && <SelectItem value="none" disabled>No travelers found</SelectItem>}
+                            </SelectContent>
+                        </Select>
+                        <p className="text-[10px] text-muted-foreground italic">Assigning will push this itinerary to the traveler's secure dashboard.</p>
                     </div>
+                ) : (
+                    selectedInquiry.type === 'Custom Trip' && selectedInquiry.status !== 'confirmed' && (
+                        <Button 
+                            className="bg-accent text-accent-foreground hover:bg-accent/90 h-12 font-black uppercase tracking-widest"
+                            onClick={() => setAssignUserMode(true)}
+                        >
+                            <CheckCircle2 className="mr-2 h-5 w-5" /> Confirm & Assign to Traveler
+                        </Button>
+                    )
                 )}
               </div>
               <div className="flex justify-end gap-3 mt-4">

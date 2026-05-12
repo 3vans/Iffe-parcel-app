@@ -21,9 +21,6 @@ import {
   arrayUnion,
   arrayRemove,
   setDoc,
-  type DocumentData,
-  type CollectionReference,
-  type DocumentReference
 } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
@@ -66,9 +63,10 @@ export interface UserProfile {
   isAdmin: boolean;
   points: number;
   level: string;
-  memberSince: string;
+  memberSince?: string;
   followedUserIds: string[];
   createdAt: any;
+  status?: 'pending' | 'approved' | 'suspended';
 }
 
 export interface GalleryImage {
@@ -269,6 +267,21 @@ function handleFirestoreError(error: any, context: SecurityRuleContext) {
 
 // --- USER PROFILE SERVICES ---
 
+export async function fetchAllUsers(): Promise<UserProfile[]> {
+  try {
+    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        memberSince: doc.data().createdAt?.toDate?.()?.toLocaleDateString() || 'Recently'
+    } as UserProfile));
+  } catch (error) {
+    handleFirestoreError(error, { path: 'users', operation: 'list' });
+    return [];
+  }
+}
+
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   const docRef = doc(db, 'users', userId);
   try {
@@ -296,6 +309,7 @@ export function createUserProfile(userId: string, data: Partial<UserProfile>) {
     bio: data.bio || 'New explorer at iffe-travels.',
     isCreator: data.isCreator || false,
     isAdmin: data.isAdmin || false,
+    status: 'approved',
     points: 0,
     level: 'Novice Explorer',
     followedUserIds: [],
@@ -304,6 +318,12 @@ export function createUserProfile(userId: string, data: Partial<UserProfile>) {
   });
   
   return setDoc(userRef, profile).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile }));
+}
+
+export function updateUserProfile(userId: string, data: Partial<UserProfile>) {
+    const userRef = doc(db, 'users', userId);
+    const cleaned = cleanData(data);
+    return updateDoc(userRef, cleaned).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'update', requestResourceData: cleaned }));
 }
 
 // --- ANNOUNCEMENTS ---
@@ -451,6 +471,13 @@ export function saveCustomBooking(data: any) {
   });
 }
 
+export function updateBookingStatus(id: string, status: string, userId?: string) {
+    const ref = doc(db, CUSTOM_BOOKINGS_COLLECTION, id);
+    const updateData: any = { status, updatedAt: serverTimestamp() };
+    if (userId) updateData.userId = userId;
+    return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+}
+
 // --- CONTACT & INQUIRIES SERVICES ---
 
 export function submitContactMessage(data: { name: string, email: string, message: string }) {
@@ -480,47 +507,15 @@ export async function fetchAllInquiries(): Promise<any[]> {
     ]);
 
     const items: any[] = [];
-    custom.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Custom Trip' }));
-    contact.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Contact Message' }));
-    standard.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Standard Booking' }));
+    custom.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Custom Trip', collection: CUSTOM_BOOKINGS_COLLECTION }));
+    contact.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Contact Message', collection: CONTACT_MESSAGES_COLLECTION }));
+    standard.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Standard Booking', collection: BOOKINGS_COLLECTION }));
 
     return items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
   } catch (err) {
     console.error("Fetch inquiries error:", err);
     return [];
   }
-}
-
-// --- PROMOTIONS ---
-
-export async function fetchPromotions(): Promise<Promotion[]> {
-  try {
-    const q = query(collection(db, 'promotions'), orderBy('endDate', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Promotion));
-  } catch (error) {
-    handleFirestoreError(error, { path: 'promotions', operation: 'list' });
-    return [];
-  }
-}
-
-export function savePromotion(promo: Partial<Promotion>) {
-  const cleanedPromo = cleanData(promo);
-  if (promo.id) {
-    const ref = doc(db, 'promotions', promo.id);
-    const updateData = { ...cleanedPromo, updatedAt: serverTimestamp() };
-    return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
-  } else {
-    const colRef = collection(db, 'promotions');
-    const newRef = doc(colRef);
-    const newData = { ...cleanedPromo, id: newRef.id, isActive: true, createdAt: serverTimestamp() };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
-  }
-}
-
-export function deletePromotion(id: string) {
-  const ref = doc(db, 'promotions', id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
 // --- ASSET STORAGE ---

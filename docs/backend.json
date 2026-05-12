@@ -60,25 +60,6 @@
       },
       "required": ["id", "title", "status"]
     },
-    "Departure": {
-      "title": "Departure",
-      "type": "object",
-      "description": "A scheduled group tour departure or event.",
-      "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "date": { "type": "string" },
-        "time": { "type": "string" },
-        "location": { "type": "string" },
-        "type": { "type": "string", "enum": ["Online", "Offline", "Hybrid"] },
-        "excerpt": { "type": "string" },
-        "fullDescription": { "type": "string" },
-        "imageUrl": { "type": "string" },
-        "rsvpLink": { "type": "string" },
-        "calendarLink": { "type": "string" }
-      },
-      "required": ["id", "title", "date", "type"]
-    },
     "Package": {
       "title": "Package",
       "type": "object",
@@ -103,39 +84,9 @@
         "sampleItinerary": { 
           "type": "array", 
           "items": { 
-            "type": "object",
-            "properties": {
-              "day": { "type": "number" },
-              "activity": { "type": "string" },
-              "sections": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string" },
-                    "type": { "type": "string", "enum": ["text", "image"] },
-                    "content": { "type": "string" },
-                    "imageLayout": { "type": "string", "enum": ["small", "full"] }
-                  }
-                }
-              }
-            }
+            "type": "object"
           }
         }
-      }
-    },
-    "Addon": {
-      "title": "Addon",
-      "type": "object",
-      "description": "An optional activity or upgrade for the safari builder.",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "category": { "type": "string", "enum": ["activity", "luxury", "extension"] },
-        "subCategory": { "type": "string", "enum": ["Wildlife", "Adventure", "Culture", "Nature & Scenic"] },
-        "region": { "type": "string", "enum": ["Central", "Western", "Eastern", "Northern"] },
-        "isActive": { "type": "boolean" }
       }
     },
     "CustomBooking": {
@@ -154,33 +105,6 @@
         "status": { "type": "string", "enum": ["pending", "contacted", "confirmed", "cancelled"] },
         "createdAt": { "type": "string", "format": "date-time" }
       }
-    },
-    "ContactMessage": {
-      "title": "ContactMessage",
-      "type": "object",
-      "description": "A message submitted via the general contact form.",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "email": { "type": "string" },
-        "message": { "type": "string" },
-        "status": { "type": "string", "enum": ["unread", "read", "replied"] },
-        "createdAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Booking": {
-      "title": "Booking",
-      "type": "object",
-      "description": "A standard destination booking request.",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "email": { "type": "string" },
-        "packageName": { "type": "string" },
-        "travelDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"] },
-        "createdAt": { "type": "string", "format": "date-time" }
-      }
     }
   },
   "auth": {
@@ -193,44 +117,12 @@
         "definition": { "entityName": "User", "schema": { "$ref": "#/backend/entities/User" }, "description": "User profiles." }
       },
       {
-        "path": "/campaigns_public/{campaignId}",
-        "definition": { "entityName": "Campaign", "schema": { "$ref": "#/backend/entities/Campaign" }, "description": "Public expeditions." }
-      },
-      {
-        "path": "/departures/{departureId}",
-        "definition": { "entityName": "Departure", "schema": { "$ref": "#/backend/entities/Departure" }, "description": "Scheduled group tours." }
-      },
-      {
-        "path": "/packages/{packageId}",
-        "definition": { "entityName": "Package", "schema": { "$ref": "#/backend/entities/Package" }, "description": "Agency safari foundations." }
-      },
-      {
-        "path": "/addons/{addonId}",
-        "definition": { "entityName": "Addon", "schema": { "$ref": "#/backend/entities/Addon" }, "description": "Optional activities." }
-      },
-      {
         "path": "/custom_bookings/{bookingId}",
-        "definition": { "entityName": "CustomBooking", "schema": { "$ref": "#/backend/entities/CustomBooking" }, "description": "Builder configurations." }
+        "definition": { "entityName": "CustomBooking", "schema": { "$ref": "#/backend/entities/CustomBooking" }, "description": "Client itineraries and process tracking." }
       },
       {
-        "path": "/contact_messages/{messageId}",
-        "definition": { "entityName": "ContactMessage", "schema": { "$ref": "#/backend/entities/ContactMessage" }, "description": "User inquiries." }
-      },
-      {
-        "path": "/bookings/{bookingId}",
-        "definition": { "entityName": "Booking", "schema": { "$ref": "#/backend/entities/Booking" }, "description": "Standard bookings." }
-      },
-      {
-        "path": "/gallery/{imageId}",
-        "definition": { "entityName": "GalleryImage", "schema": { "$ref": "#/backend/entities/GalleryImage" }, "description": "Visual library metadata." }
-      },
-      {
-        "path": "/posts_approved/{postId}",
-        "definition": { "schema": "object", "description": "Moderated blog posts." }
-      },
-      {
-        "path": "/ideas/{ideaId}",
-        "definition": { "entityName": "Idea", "schema": { "$ref": "#/backend/entities/Idea" }, "description": "Community suggestions." }
+        "path": "/announcements/{announcementId}",
+        "definition": { "schema": "object", "description": "Platform broadcast notices." }
       }
     ]
   }
