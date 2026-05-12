@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -6,7 +5,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck, HelpCircle, FilePen, Map, Info } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck, HelpCircle, FilePen, Map, Info, Globe, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -100,23 +99,6 @@ const NextStepsCard: React.FC = () => {
     );
 };
 
-const SemulikiInfoCard: React.FC = () => {
-    return (
-        <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
-            <CardHeader>
-                <CardTitle className="font-headline text-xl text-primary flex items-center">
-                    <Info className="mr-2 h-5 w-5"/>Good to Know
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>Semuliki is part of the Congo Basin ecosystem, making its flora and fauna distinct from other Ugandan parks.</p>
-                <p>The Sempaya Hot Springs are a key attraction. You can even boil eggs in the boiling water!</p>
-                <p>It's a prime birding destination with over 440 species, including many West African forest birds not found elsewhere in East Africa.</p>
-            </CardContent>
-        </Card>
-    )
-}
-
 const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
     const [ref, isVisible] = useScrollAnimation();
     return (
@@ -127,6 +109,9 @@ const AnimatedSection = ({ children, className }: { children: React.ReactNode, c
 };
 
 const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[]}) => {
+    const validItems = items?.filter(item => item.title || item.description) || [];
+    if (validItems.length === 0) return null;
+
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -135,16 +120,14 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
             </h3>
             <ScrollArea>
                 <div className="flex space-x-6 pb-4">
-                    {items.map((item, index) => {
-                        // Support both keys and absolute URLs
+                    {validItems.map((item, index) => {
                         const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
-                        if (!itemImage.src) return null;
                         return (
                             <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] flex-shrink-0">
                                 <div className="relative w-full aspect-[16/9] bg-muted">
                                     <Image 
-                                        src={itemImage.src} 
-                                        alt={item.title} 
+                                        src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
+                                        alt={item.title || title} 
                                         layout="fill" 
                                         style={{ objectFit: 'cover' }} 
                                         data-ai-hint={itemImage.hint} 
@@ -169,6 +152,9 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
 
 
 const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[] }) => {
+    const validItems = items?.filter(item => item.title || item.description) || [];
+    if (validItems.length === 0) return null;
+
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -176,17 +162,16 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
                 {title}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {items.map((item, index) => {
+                {validItems.map((item, index) => {
                     const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
-                    if (!itemImage.src) return null;
                     return (
                         <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
                             <div className="relative w-full aspect-[16/9] bg-muted">
                                 <Image 
-                                    src={itemImage.src} 
-                                    alt={item.title} 
+                                    src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
+                                    alt={item.title || title} 
                                     layout="fill" 
-                                    style={{ objectFit: 'cover' }} 
+                                    objectFit="cover" 
                                     data-ai-hint={itemImage.hint} 
                                     className="transition-transform duration-300 group-hover:scale-105"
                                 />
@@ -207,6 +192,8 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
 
 
 const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string, icon: React.ElementType, texts: string[], images: {src: string, hint?: string}[] }) => {
+    if (!texts || texts.length === 0) return null;
+
     return (
         <AnimatedSection>
             <div className="space-y-4">
@@ -215,23 +202,26 @@ const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string
                     {title}
                 </h3>
                 <div className="space-y-8">
-                  {images.map((image, index) => (
-                      <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
-                          <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
-                              <Image 
-                                src={image.src || placeholderImages.campaignDetailWildebeest.src} 
-                                alt={`${title} view ${index+1}`} 
-                                fill
-                                style={{ objectFit: 'cover' }} 
-                                className="transition-transform duration-300 group-hover:scale-105" 
-                                data-ai-hint={image.hint} 
-                              />
-                          </div>
-                          <div>
-                              <p className="text-muted-foreground leading-relaxed">{texts[index] || ''}</p>
-                          </div>
-                      </div>
-                  ))}
+                  {images.map((image, index) => {
+                      if (!texts[index]) return null;
+                      return (
+                        <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
+                            <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
+                                <Image 
+                                    src={image.src || placeholderImages.campaignDetailWildebeest.src} 
+                                    alt={`${title} view ${index+1}`} 
+                                    fill
+                                    style={{ objectFit: 'cover' }} 
+                                    className="transition-transform duration-300 group-hover:scale-105" 
+                                    data-ai-hint={image.hint} 
+                                />
+                            </div>
+                            <div>
+                                <p className="text-muted-foreground leading-relaxed">{texts[index]}</p>
+                            </div>
+                        </div>
+                      );
+                  })}
                 </div>
             </div>
         </AnimatedSection>
@@ -242,7 +232,6 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   const [ref, isVisible] = useScrollAnimation();
   const [endDate, setEndDate] = useState('');
 
-  // Fallback for missing campaign image
   const [heroImgSrc, setHeroImgSrc] = useState(campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src);
 
   useEffect(() => {
@@ -281,12 +270,10 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               <AnimatedSection>
                 <h2 className="font-headline text-2xl font-semibold text-primary">About this Tour</h2>
                 <div className="space-y-6">
-                    {/* Render standard description if no modular sections exist */}
                     {(!campaign.sections || campaign.sections.length === 0) && (
                         <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
                     )}
                     
-                    {/* Render dynamic modular sections */}
                     {(campaign.sections || []).map((section, idx) => (
                         <div key={section.id || idx}>
                             {section.type === 'text' ? (
@@ -297,7 +284,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                                     section.imageLayout === 'full' ? "aspect-video w-full" : "w-full md:w-2/3 aspect-[4/3] mx-auto"
                                 )}>
                                     <Image 
-                                        src={section.content} 
+                                        src={section.content || placeholderImages.campaignDetailWildebeest.src} 
                                         alt={`Tour visual ${idx}`} 
                                         fill 
                                         className="object-cover"
@@ -312,7 +299,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                <ExperienceSection
                 title="The Experience"
                 icon={Star}
-                texts={campaign.storyline}
+                texts={campaign.storyline || []}
                 images={[
                   { src: placeholderImages.gallerySafariGroup.src, hint: placeholderImages.gallerySafariGroup.hint },
                   { src: placeholderImages.blogLionPride.src, hint: placeholderImages.blogLionPride.hint },
@@ -332,20 +319,26 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 />
                 <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
-                        <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
+                        <CardTitle className="font-headline text-xl text-primary flex items-center">
+                            <div className="flex items-start gap-4">
+                                <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                    <Globe className="h-5 w-5 text-accent" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Operator</p>
+                                    <p className="text-foreground font-bold">{campaign.organizer || 'iffe-travels'}</p>
+                                </div>
+                            </div>
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-foreground font-semibold">{campaign.organizer || 'iffe-travels'}</p>
-                    </CardContent>
                     <CardHeader className='pt-0'>
-                        <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5"/>Responsible & Authentic Travel</CardTitle>
+                        <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-accent"/>Authentic Travel</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p className="text-sm text-muted-foreground">We are committed to responsible tourism practices that protect wildlife, support conservation efforts, and benefit local communities.</p>
                     </CardContent>
                 </Card>
                 <RelatedToursCard tours={relatedTours} />
-                {campaign.id === '21' && <SemulikiInfoCard />}
                 <NextStepsCard />
             </aside>
           </div>
@@ -354,19 +347,19 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               <ScrollableImageGrid
                 title="Activities"
                 icon={Activity}
-                items={campaign.activities}
+                items={campaign.activities || []}
               />
               
               <StaticImageGrid
                 title="Accommodation"
                 icon={BedDouble}
-                items={campaign.accommodation}
+                items={campaign.accommodation || []}
               />
 
               <StaticImageGrid
                 title="Meals"
                 icon={UtensilsCrossed}
-                items={campaign.meals}
+                items={campaign.meals || []}
               />
               
               {campaign.tags && campaign.tags.length > 0 && (
@@ -394,8 +387,8 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
             <Button variant="outline"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
           </div>
           <Button variant="link" asChild className="text-accent hover:text-accent/80">
-            <Link href={`/campaigns/${campaign.id}/updates`}>
-              View Full Itinerary <ExternalLink className="ml-2 h-4 w-4" />
+            <Link href={`/contact?interest=${campaign.id}`}>
+              Inquire for Details <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </CardFooter>
