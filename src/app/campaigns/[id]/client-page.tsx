@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -13,7 +12,6 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
-import { type RelatedTour } from './page';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface ItinerarySection {
@@ -32,7 +30,7 @@ interface Campaign {
   dataAiHint?: string;
   description: string;
   sections?: ItinerarySection[];
-  storyline: { text: string; image: string }[];
+  storyline: any[]; 
   budget: number;
   goal: number;
   currentAmount: number;
@@ -42,11 +40,16 @@ interface Campaign {
   endDate: string;
   volunteersNeeded: number;
   volunteersSignedUp: number;
-  activities: { title: string; description: string; image: string }[];
-  accommodation: { title: string; description: string; image: string }[];
-  meals: { title: string; description: string; image: string }[];
+  activities: any[];
+  accommodation: any[];
+  meals: any[];
   shortDescription?: string;
   bookingTips?: string[];
+}
+
+interface RelatedTour {
+    id: string;
+    title: string;
 }
 
 interface CampaignDetailClientPageProps {
@@ -55,7 +58,7 @@ interface CampaignDetailClientPageProps {
 }
 
 const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
-    if (tours.length === 0) return null;
+    if (!tours || tours.length === 0) return null;
 
     return (
         <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
@@ -66,8 +69,8 @@ const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
             </CardHeader>
             <CardContent className="space-y-2">
                 {tours.map(tour => (
-                    <Button key={tour.id} variant="link" asChild className="p-0 text-foreground hover:text-primary justify-start">
-                        <Link href={`/campaigns/${tour.id}`}>{tour.title}</Link>
+                    <Button key={tour.id} variant="link" asChild className="p-0 text-foreground hover:text-primary justify-start w-full">
+                        <Link href={`/campaigns/${tour.id}`} className="truncate block">{tour.title}</Link>
                     </Button>
                 ))}
             </CardContent>
@@ -100,17 +103,21 @@ const NextStepsCard: React.FC = () => {
     );
 };
 
-const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+const AnimatedSection = ({ children, className, id }: { children: React.ReactNode, className?: string, id?: string }) => {
     const [ref, isVisible] = useScrollAnimation();
     return (
-        <section ref={ref} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
+        <section ref={ref} id={id} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
             {children}
         </section>
     );
 };
 
-const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string; description: string; image: string}[]}) => {
-    const validItems = items?.filter(item => item.title || item.description) || [];
+const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[]}) => {
+    const validItems = items?.map(item => {
+        if (typeof item === 'string') return { title: item, description: '', image: '' };
+        return item;
+    }).filter(item => item?.title || item?.description) || [];
+
     if (validItems.length === 0) return null;
 
     return (
@@ -138,9 +145,11 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
                                 <CardHeader>
                                     <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
                                 </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                                </CardContent>
+                                {item.description && (
+                                    <CardContent>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </CardContent>
+                                )}
                             </Card>
                         );
                     })}
@@ -151,9 +160,12 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
     );
 };
 
+const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
+    const validItems = items?.map(item => {
+        if (typeof item === 'string') return { title: item, description: '', image: '' };
+        return item;
+    }).filter(item => item?.title || item?.description) || [];
 
-const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string; description: string; image: string}[] }) => {
-    const validItems = items?.filter(item => item.title || item.description) || [];
     if (validItems.length === 0) return null;
 
     return (
@@ -180,9 +192,11 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
                             <CardHeader>
                                 <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </CardContent>
+                            {item.description && (
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </CardContent>
+                            )}
                         </Card>
                     );
                 })}
@@ -191,8 +205,7 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
     );
 };
 
-
-const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: { text: string; image: string }[] }) => {
+const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
     if (!items || items.length === 0) return null;
 
     return (
@@ -204,8 +217,13 @@ const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: 
                 </h3>
                 <div className="space-y-8">
                   {items.map((item, index) => {
-                      if (!item.text) return null;
-                      const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
+                      const text = typeof item === 'string' ? item : item?.text;
+                      const image = typeof item === 'string' ? '' : item?.image;
+
+                      if (!text) return null;
+                      
+                      const itemImage = placeholderImages[image as keyof typeof placeholderImages] || { src: image, hint: 'safari visual' };
+                      
                       return (
                         <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
                             <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
@@ -219,7 +237,7 @@ const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: 
                                 />
                             </div>
                             <div>
-                                <p className="text-muted-foreground leading-relaxed">{item.text}</p>
+                                <p className="text-muted-foreground leading-relaxed">{text}</p>
                             </div>
                         </div>
                       );
@@ -238,12 +256,16 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
 
   useEffect(() => {
     if (campaign?.endDate) {
-      setEndDate(new Date(campaign.endDate).toLocaleDateString())
+      try {
+        setEndDate(new Date(campaign.endDate).toLocaleDateString());
+      } catch (e) {
+        setEndDate(campaign.endDate);
+      }
     }
   }, [campaign?.endDate]);
   
   return (
-    <div ref={ref} className={cn('space-y-8 scroll-animate', isVisible && 'scroll-animate-in')}>
+    <div ref={ref} className={cn('space-y-8 scroll-animate container mx-auto px-4 py-8', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-2">
         <Link href="/campaigns">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
@@ -310,9 +332,9 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                     campaignTitle={campaign.title}
                     currentAmount={campaign.currentAmount}
                     goal={campaign.goal}
-                    endDate={endDate}
-                    volunteersSignedUp={campaign.volunteersSignedUp}
-                    volunteersNeeded={campaign.volunteersNeeded}
+                    endDate={campaign.endDate}
+                    volunteersSignedUp={campaign.volunteersSignedUp || 0}
+                    volunteersNeeded={campaign.volunteersNeeded || 10}
                 />
                 <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>

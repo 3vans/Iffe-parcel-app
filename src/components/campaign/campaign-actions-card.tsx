@@ -31,15 +31,19 @@ export default function CampaignActionsCard({
 
   useEffect(() => {
       if(endDate) {
-          setFormattedEndDate(new Date(endDate).toLocaleDateString());
+          try {
+            setFormattedEndDate(new Date(endDate).toLocaleDateString());
+          } catch (e) {
+            setFormattedEndDate(endDate);
+          }
       }
   }, [endDate]);
 
   const rating = currentAmount || 0;
   const totalNeeded = volunteersNeeded || 10;
   const currentJoined = volunteersSignedUp || 0;
-  const spotsLeft = totalNeeded - currentJoined;
-  const availabilityPercent = (currentJoined / totalNeeded) * 100;
+  const spotsLeft = Math.max(0, totalNeeded - currentJoined);
+  const availabilityPercent = Math.min(100, (currentJoined / totalNeeded) * 100);
 
   const handleBookNow = () => {
     toast({
@@ -101,9 +105,8 @@ export default function CampaignActionsCard({
         <Button 
             className="w-full h-14 bg-accent text-accent-foreground hover:bg-accent/90 font-black uppercase tracking-widest shadow-lg shadow-accent/20"
             onClick={handleBookNow}
-            disabled={spotsLeft <= 0}
         >
-            <HeartHandshake className="mr-2 h-5 w-5" /> {spotsLeft > 0 ? 'Reserve My Spot' : 'Waitlist Only'}
+            <HeartHandshake className="mr-2 h-5 w-5" /> Reserve My Spot
         </Button>
       </CardContent>
        <CardFooter className="bg-muted/20 py-4">
