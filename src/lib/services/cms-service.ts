@@ -117,7 +117,7 @@ export interface Campaign {
   currentAmount: number;
   tags: string[];
   featured?: boolean;
-  storyline?: string[];
+  storyline?: any[]; // Flexible array of storyline objects { text, image }
   organizer?: string;
   volunteersNeeded?: number;
   volunteersSignedUp?: number;

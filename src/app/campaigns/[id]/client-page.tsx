@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -31,7 +32,7 @@ interface Campaign {
   dataAiHint?: string;
   description: string;
   sections?: ItinerarySection[];
-  storyline: string[];
+  storyline: { text: string; image: string }[];
   budget: number;
   goal: number;
   currentAmount: number;
@@ -191,8 +192,8 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
 };
 
 
-const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string, icon: React.ElementType, texts: string[], images: {src: string, hint?: string}[] }) => {
-    if (!texts || texts.length === 0) return null;
+const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: { text: string; image: string }[] }) => {
+    if (!items || items.length === 0) return null;
 
     return (
         <AnimatedSection>
@@ -202,22 +203,23 @@ const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string
                     {title}
                 </h3>
                 <div className="space-y-8">
-                  {images.map((image, index) => {
-                      if (!texts[index]) return null;
+                  {items.map((item, index) => {
+                      if (!item.text) return null;
+                      const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
                       return (
                         <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
                             <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
                                 <Image 
-                                    src={image.src || placeholderImages.campaignDetailWildebeest.src} 
+                                    src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
                                     alt={`${title} view ${index+1}`} 
                                     fill
                                     style={{ objectFit: 'cover' }} 
                                     className="transition-transform duration-300 group-hover:scale-105" 
-                                    data-ai-hint={image.hint} 
+                                    data-ai-hint={itemImage.hint || 'safari moment'} 
                                 />
                             </div>
                             <div>
-                                <p className="text-muted-foreground leading-relaxed">{texts[index]}</p>
+                                <p className="text-muted-foreground leading-relaxed">{item.text}</p>
                             </div>
                         </div>
                       );
@@ -299,12 +301,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                <ExperienceSection
                 title="The Experience"
                 icon={Star}
-                texts={campaign.storyline || []}
-                images={[
-                  { src: placeholderImages.gallerySafariGroup.src, hint: placeholderImages.gallerySafariGroup.hint },
-                  { src: placeholderImages.blogLionPride.src, hint: placeholderImages.blogLionPride.hint },
-                  { src: placeholderImages.fifaCardGorilla.src, hint: placeholderImages.fifaCardGorilla.hint },
-                ]}
+                items={campaign.storyline || []}
               />
             </div>
 

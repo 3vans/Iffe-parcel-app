@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -112,11 +113,11 @@ export default function AdminExpeditionsPage() {
   // --- Campaign Sub-Editor Helpers ---
 
   const addStoryline = () => {
-    setEditingCampaign(prev => prev ? { ...prev, storyline: [...(prev.storyline || []), ''] } : null);
+    setEditingCampaign(prev => prev ? { ...prev, storyline: [...(prev.storyline || []), { text: '', image: '' }] } : null);
   };
-  const updateStoryline = (index: number, value: string) => {
+  const updateStoryline = (index: number, key: string, value: string) => {
     const newStory = [...(editingCampaign?.storyline || [])];
-    newStory[index] = value;
+    newStory[index] = { ...(newStory[index] || { text: '', image: '' }), [key]: value };
     setEditingCampaign(prev => prev ? { ...prev, storyline: newStory } : null);
   };
   const removeStoryline = (index: number) => {
@@ -514,15 +515,63 @@ export default function AdminExpeditionsPage() {
               <TabsContent value="experience" className="space-y-8">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <Label className="font-bold uppercase text-[10px] tracking-widest">Storyline Hooks</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={addStoryline} className="h-7 text-[10px]">+ Add Hook</Button>
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">The Experience (Storyline Visuals)</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addStoryline} className="h-7 text-[10px]">+ Add Experience Moment</Button>
                   </div>
-                  {editingCampaign?.storyline?.map((hook, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <Input value={hook} onChange={(e) => updateStoryline(idx, e.target.value)} />
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeStoryline(idx)}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  ))}
+                  <div className="grid gap-4">
+                    {(editingCampaign?.storyline || []).map((item, idx) => (
+                      <div key={idx} className="p-4 border rounded-2xl bg-muted/20 space-y-4 relative group">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[9px] font-bold uppercase">Description / Narrative</Label>
+                                <Textarea 
+                                    value={item.text || ''} 
+                                    onChange={(e) => updateStoryline(idx, 'text', e.target.value)} 
+                                    placeholder="Tell the story of this specific experience..."
+                                    rows={3}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[9px] font-bold uppercase">Associated Visual</Label>
+                                <div className="flex gap-2">
+                                    <Input 
+                                        value={item.image || ''} 
+                                        onChange={(e) => updateStoryline(idx, 'image', e.target.value)} 
+                                        placeholder="Image URL..."
+                                        className="text-xs flex-grow"
+                                    />
+                                    <div className="relative">
+                                        <Input 
+                                          type="file" 
+                                          accept="image/*" 
+                                          className="hidden" 
+                                          id={`storyline-upload-${idx}`}
+                                          onChange={(e) => handleFileUpload(e, (url) => updateStoryline(idx, 'image', url))}
+                                        />
+                                        <Button 
+                                          type="button" 
+                                          variant="outline" 
+                                          asChild 
+                                          className="h-10 w-10 p-0 cursor-pointer"
+                                          disabled={isUploading}
+                                        >
+                                          <label htmlFor={`storyline-upload-${idx}`}>
+                                            {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                                          </label>
+                                        </Button>
+                                    </div>
+                                </div>
+                                {item.image && (
+                                    <div className="mt-2 relative aspect-video rounded-lg overflow-hidden border bg-muted h-20">
+                                        <img src={item.image} alt="Preview" className="object-cover w-full h-full" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeStoryline(idx)}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-4 pt-4 border-t">

@@ -25,6 +25,12 @@ const defaultMeals = [
     { title: 'Bush Dining', description: 'Unique meals served under the open African sky.', image: 'ideaFamilySafari' }
 ];
 
+const defaultStoryline = [
+    { text: "Experience the raw beauty of the African wild through our expert lens.", image: "gallerySafariGroup" },
+    { text: "Our expert guides ensure an authentic and safe journey into the heart of nature.", image: "blogLionPride" },
+    { text: "Connect with nature and local communities in a meaningful and responsible way.", image: "fifaCardGorilla" }
+];
+
 export default function CampaignDetailPage() {
   const { id } = useParams();
   const [data, setData] = useState<{ campaign: any, relatedTours: any[] } | null>(null);
@@ -43,11 +49,7 @@ export default function CampaignDetailPage() {
         // Apply defaults only if data is explicitly missing to ensure Admin edits are respected
         const enrichedCampaign = {
             ...campaign,
-            storyline: (campaign.storyline && campaign.storyline.length > 0) ? campaign.storyline : [
-                "Experience the raw beauty of " + (campaign.region || "this region") + " Uganda.",
-                "Our expert guides ensure an authentic and safe journey.",
-                "Connect with nature and local communities in a meaningful way."
-            ],
+            storyline: (campaign.storyline && campaign.storyline.length > 0) ? campaign.storyline : defaultStoryline,
             organizer: campaign.organizer || 'iffe-travels',
             volunteersNeeded: campaign.volunteersNeeded || 10,
             volunteersSignedUp: campaign.volunteersSignedUp || 0,
