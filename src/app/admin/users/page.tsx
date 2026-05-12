@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert, Lock, Star, Map, Info } from "lucide-react";
+import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert, Lock, Star, Map, Info, ShieldX } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -61,10 +60,20 @@ export default function AdminUsersPage() {
   };
 
   const handleToggleStatus = async (user: UserProfile) => {
-    const newStatus = user.status === 'suspended' ? 'approved' : 'suspended';
+    const isCurrentlySuspended = user.status === 'suspended';
+    const newStatus = isCurrentlySuspended ? 'approved' : 'suspended';
+    
+    // Clarify that suspension is permanent until un-suspended
+    if (!isCurrentlySuspended && !confirm("Permanently suspend this traveler's access? They will be blocked from their dashboard until manually un-suspended.")) {
+        return;
+    }
+
     try {
         await updateUserProfile(user.id, { status: newStatus });
-        toast({ title: `User ${newStatus === 'approved' ? 'Unsuspended' : 'Suspended'}` });
+        toast({ 
+            title: isCurrentlySuspended ? 'Access Restored' : 'Account Suspended', 
+            description: isCurrentlySuspended ? `Enabled access for ${user.displayName}.` : `Revoked all access for ${user.displayName} (Permanent until un-suspended).`
+        });
         loadData();
     } catch (err) {
         toast({ title: "Operation failed", variant: "destructive" });
@@ -202,17 +211,28 @@ export default function AdminUsersPage() {
                     <TableCell>
                       <Badge 
                         variant={user.status === 'suspended' ? 'destructive' : 'outline'}
-                        className="capitalize text-[10px] border-primary/20"
+                        className={cn(
+                            "capitalize text-[10px] border-primary/20 flex items-center w-fit gap-1",
+                            user.status === 'suspended' ? "bg-red-50 text-red-600 border-red-200" : ""
+                        )}
                       >
+                        {user.status === 'suspended' && <ShieldX className="h-2.5 w-2.5" />}
                         {user.status || 'Active'}
+                        {user.status === 'suspended' && <span className="ml-1 text-[8px] font-black opacity-60">(PERMANENT)</span>}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-[10px] font-black uppercase tracking-widest text-primary/70">
                       {user.level || 'Novice'} ({user.points || 0} pts)
                     </TableCell>
                     <TableCell className="text-right space-x-1">
-                      <Button variant="ghost" size="icon" onClick={() => handleToggleStatus(user)} title={user.status === 'suspended' ? 'Unsuspend' : 'Suspend'}>
-                        {user.status === 'suspended' ? <UserCheck className="h-4 w-4 text-green-600" /> : <UserX className="h-4 w-4 text-orange-500" />}
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handleToggleStatus(user)} 
+                        title={user.status === 'suspended' ? 'Unsuspend' : 'Suspend Access (Permanent)'}
+                        className={user.status === 'suspended' ? "text-green-600" : "text-orange-500"}
+                      >
+                        {user.status === 'suspended' ? <UserCheck className="h-4 w-4" /> : <ShieldAlert className="h-4 w-4" />}
                       </Button>
                       <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
@@ -357,4 +377,3 @@ export default function AdminUsersPage() {
     </div>
   );
 }
-

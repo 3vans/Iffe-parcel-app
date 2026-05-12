@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getUserProfile, type UserProfile } from "@/lib/services/cms-service";
 
@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  isSuspended: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   isAdmin: false,
+  isSuspended: false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -47,9 +49,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const isAdmin = profile?.isAdmin || user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isSuspended = profile?.status === 'suspended';
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin, isSuspended }}>
       {!loading && children}
     </AuthContext.Provider>
   );

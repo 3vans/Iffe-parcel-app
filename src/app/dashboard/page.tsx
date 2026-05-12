@@ -18,12 +18,14 @@ import {
   Settings, 
   User,
   AlertCircle,
-  Loader2
+  Loader2,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { useToast } from '@/hooks/use-toast';
 
 import DashboardAnnouncements from '@/components/dashboard/announcements';
 import DashboardDocuments from '@/components/dashboard/documents';
@@ -31,18 +33,28 @@ import DashboardChat from '@/components/dashboard/chat';
 import DashboardTrips from '@/components/dashboard/trips';
 
 export default function DashboardPage() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, isSuspended } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [ref, isVisible] = useScrollAnimation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/');
+    if (!loading) {
+      if (!user) {
+        router.push('/');
+      } else if (isSuspended) {
+        toast({
+          title: "Account Restricted",
+          description: "Your account has been suspended by an administrator. Please contact support.",
+          variant: "destructive"
+        });
+        signOut(auth).then(() => router.push('/'));
+      }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isSuspended, toast]);
 
-  if (loading || !user) {
+  if (loading || !user || isSuspended) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
