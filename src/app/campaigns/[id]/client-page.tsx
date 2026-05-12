@@ -108,7 +108,7 @@ const AnimatedSection = ({ children, className }: { children: React.ReactNode, c
     );
 };
 
-const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[]}) => {
+const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string; description: string; image: string}[]}) => {
     const validItems = items?.filter(item => item.title || item.description) || [];
     if (validItems.length === 0) return null;
 
@@ -151,7 +151,7 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
 };
 
 
-const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: string}[] }) => {
+const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string; description: string; image: string}[] }) => {
     const validItems = items?.filter(item => item.title || item.description) || [];
     if (validItems.length === 0) return null;
 
@@ -319,17 +319,15 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 />
                 <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
-                        <CardTitle className="font-headline text-xl text-primary flex items-center">
-                            <div className="flex items-start gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                                    <Globe className="h-5 w-5 text-accent" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Operator</p>
-                                    <p className="text-foreground font-bold">{campaign.organizer || 'iffe-travels'}</p>
-                                </div>
+                        <div className="flex items-start gap-4">
+                            <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                <Globe className="h-5 w-5 text-accent" />
                             </div>
-                        </CardTitle>
+                            <div>
+                                <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Operator</p>
+                                <p className="text-foreground font-bold">{campaign.organizer || 'iffe-travels'}</p>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardHeader className='pt-0'>
                         <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-accent"/>Authentic Travel</CardTitle>

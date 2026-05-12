@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, Users, HeartHandshake, Star, Info, LayoutList } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 interface CampaignActionsCardProps {
   campaignTitle: string;
