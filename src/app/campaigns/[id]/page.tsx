@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
@@ -56,6 +55,7 @@ export default function CampaignDetailPage() {
             activities: (campaign.activities && campaign.activities.length > 0) ? campaign.activities : defaultActivities,
             accommodation: (campaign.accommodation && campaign.accommodation.length > 0) ? campaign.accommodation : defaultAccommodation,
             meals: (campaign.meals && campaign.meals.length > 0) ? campaign.meals : defaultMeals,
+            bookingTips: campaign.bookingTips || [],
             imageWidth: 1200,
             imageHeight: 600,
         };
