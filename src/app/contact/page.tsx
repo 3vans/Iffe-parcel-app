@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
@@ -17,9 +17,10 @@ import placeholderImages from "@/app/lib/placeholder-images.json";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
 import HeroSection from "@/components/layout/hero-section";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TestimonialSection from '@/components/testimonial-section';
 import Link from 'next/link';
+import { submitContactMessage } from '@/lib/services/cms-service';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -71,27 +72,31 @@ export default function ContactPage() {
 
   const onSubmit: SubmitHandler<ContactFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: "Message Sent! (Simulated)",
-      description: "Thanks for reaching out. We'll get back to you shortly.",
-    });
-    reset();
-    setIsSubmitting(false);
+    try {
+      await submitContactMessage(data);
+      toast({
+        title: "Message Sent!",
+        description: "Thanks for reaching out. Our team will contact you shortly via email.",
+      });
+      reset();
+    } catch (err) {
+      toast({ title: "Failed to send message", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 pb-20">
       <HeroSection 
         title="Get in Touch"
-        subtitle="We'd love to hear from you. Whether you have a question about our tours, or anything else, our team is ready to answer all your questions."
+        subtitle="We'd love to hear from you. Whether you have a question about our tours or want to plan a custom safari, our team is ready to help."
         iconName="Mail"
         imageUrl={placeholderImages.teamJane.src}
         dataAiHint={placeholderImages.teamJane.hint}
       />
       
-      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl')}>
+      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl px-4')}>
         <AnimatedCard>
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary flex items-center"><Send className="mr-2 h-6 w-6 text-accent"/>Send Us a Message</CardTitle>
@@ -110,11 +115,11 @@ export default function ContactPage() {
               </div>
               <div>
                 <Label htmlFor="message" className="font-semibold">Your Message</Label>
-                <Textarea id="message" {...register('message')} rows={5} disabled={isSubmitting} />
+                <Textarea id="message" {...register('message')} rows={5} disabled={isSubmitting} placeholder="How can we help you plan your adventure?" />
                 {errors.message && <p className="text-sm text-destructive mt-1">{errors.message.message}</p>}
               </div>
-              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send Message'}
+              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 font-black uppercase tracking-widest" disabled={isSubmitting}>
+                {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> SENDING...</> : 'Send Message'}
               </Button>
             </form>
           </CardContent>
@@ -143,7 +148,7 @@ export default function ContactPage() {
         </div>
       </div>
       
-      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl')}>
+      <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl px-4')}>
         <AnimatedCard>
             <CardHeader>
                 <CardTitle className="font-headline text-2xl text-primary flex items-center">

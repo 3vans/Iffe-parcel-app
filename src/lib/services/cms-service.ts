@@ -1,3 +1,4 @@
+
 'use client';
 
 import { db } from '@/lib/firebase';
@@ -252,6 +253,9 @@ const CHATROOMS_COLLECTION = 'chatrooms';
 const IDEAS_COLLECTION = 'ideas';
 const PACKAGES_COLLECTION = 'packages';
 const ANNOUNCEMENTS_COLLECTION = 'announcements';
+const CUSTOM_BOOKINGS_COLLECTION = 'custom_bookings';
+const CONTACT_MESSAGES_COLLECTION = 'contact_messages';
+const BOOKINGS_COLLECTION = 'bookings';
 
 // --- HELPER FOR PERMISSION ERRORS ---
 
@@ -439,12 +443,52 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
 
 export function saveCustomBooking(data: any) {
   const cleanedData = cleanData(data);
-  const colRef = collection(db, 'custom_bookings');
+  const colRef = collection(db, CUSTOM_BOOKINGS_COLLECTION);
   const newRef = doc(colRef);
   const newData = { ...cleanedData, id: newRef.id, createdAt: serverTimestamp() };
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
   });
+}
+
+// --- CONTACT & INQUIRIES SERVICES ---
+
+export function submitContactMessage(data: { name: string, email: string, message: string }) {
+  const colRef = collection(db, CONTACT_MESSAGES_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, status: 'unread', createdAt: serverTimestamp() };
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+  });
+}
+
+export function submitBooking(data: { name: string, email: string, packageName: string, travelDate: Date }) {
+  const colRef = collection(db, BOOKINGS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, status: 'pending', createdAt: serverTimestamp() };
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+  });
+}
+
+export async function fetchAllInquiries(): Promise<any[]> {
+  try {
+    const [custom, contact, standard] = await Promise.all([
+      getDocs(query(collection(db, CUSTOM_BOOKINGS_COLLECTION), orderBy('createdAt', 'desc'))),
+      getDocs(query(collection(db, CONTACT_MESSAGES_COLLECTION), orderBy('createdAt', 'desc'))),
+      getDocs(query(collection(db, BOOKINGS_COLLECTION), orderBy('createdAt', 'desc')))
+    ]);
+
+    const items: any[] = [];
+    custom.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Custom Trip' }));
+    contact.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Contact Message' }));
+    standard.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Standard Booking' }));
+
+    return items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  } catch (err) {
+    console.error("Fetch inquiries error:", err);
+    return [];
+  }
 }
 
 // --- PROMOTIONS ---
@@ -834,11 +878,11 @@ export function deleteChatMessage(roomId: string, messageId: string) {
 
 export async function fetchUserBookings(userId: string): Promise<any[]> {
   try {
-    const q = query(collection(db, 'custom_bookings'), where('userId', '==', userId), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, CUSTOM_BOOKINGS_COLLECTION), where('userId', '==', userId), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (err) {
-    handleFirestoreError(err, { path: 'custom_bookings', operation: 'list' });
+    handleFirestoreError(err, { path: CUSTOM_BOOKINGS_COLLECTION, operation: 'list' });
     return [];
   }
 }

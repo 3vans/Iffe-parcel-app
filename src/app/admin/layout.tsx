@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard, Database, Map, Percent, Globe, CalendarClock } from 'lucide-react';
+import { Home, Users, CheckSquare, FileText, Image as ImageIcon, MessageSquare, Settings, LayoutDashboard, Database, Map, Percent, Globe, CalendarClock, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RotarySpinner from '@/components/ui/rotary-spinner';
 import React from 'react';
@@ -27,6 +27,7 @@ interface AdminLayoutProps {
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/inquiries', label: 'Inquiries & Leads', icon: Mail },
   { href: '/admin/inventory', label: 'Inventory & Prices', icon: Database },
   { href: '/admin/expeditions', label: 'Expeditions & Dates', icon: Map },
   { href: '/admin/promotions', label: 'Promos & Offers', icon: Percent },
