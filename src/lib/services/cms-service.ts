@@ -794,6 +794,37 @@ export function deleteDeparture(id: string) {
   return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
 }
 
+// --- PROMOTIONS ---
+
+export async function fetchPromotions(): Promise<Promotion[]> {
+  try {
+    const q = query(collection(db, 'promotions'), orderBy('title', 'asc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Promotion));
+  } catch (error) {
+    handleFirestoreError(error, { path: 'promotions', operation: 'list' });
+    return [];
+  }
+}
+
+export function savePromotion(promo: Partial<Promotion>) {
+  const cleaned = cleanData(promo);
+  if (promo.id) {
+    const ref = doc(db, 'promotions', promo.id);
+    return updateDoc(ref, cleaned).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: cleaned }));
+  } else {
+    const colRef = collection(db, 'promotions');
+    const newRef = doc(colRef);
+    const newData = { ...cleaned, id: newRef.id, createdAt: serverTimestamp() };
+    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+  }
+}
+
+export function deletePromotion(id: string) {
+  const ref = doc(db, 'promotions', id);
+  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+}
+
 // --- IDEAS ---
 
 export function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
