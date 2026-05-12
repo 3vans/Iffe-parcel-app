@@ -317,13 +317,21 @@ export function createUserProfile(userId: string, data: Partial<UserProfile>) {
     ...data
   });
   
-  return setDoc(userRef, profile).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile }));
+  return setDoc(userRef, profile).catch(err => {
+    handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile });
+    throw err;
+  });
 }
 
-export function updateUserProfile(userId: string, data: Partial<UserProfile>) {
+export async function updateUserProfile(userId: string, data: Partial<UserProfile>) {
     const userRef = doc(db, 'users', userId);
     const cleaned = cleanData(data);
-    return updateDoc(userRef, cleaned).catch(err => handleFirestoreError(err, { path: userRef.path, operation: 'update', requestResourceData: cleaned }));
+    try {
+        await updateDoc(userRef, cleaned);
+    } catch (err) {
+        handleFirestoreError(err, { path: userRef.path, operation: 'update', requestResourceData: cleaned });
+        throw err;
+    }
 }
 
 // --- ANNOUNCEMENTS ---
@@ -343,12 +351,18 @@ export function saveAnnouncement(announcement: Partial<Announcement>) {
   const colRef = collection(db, ANNOUNCEMENTS_COLLECTION);
   const newRef = doc(colRef);
   const newData = cleanData({ ...announcement, id: newRef.id, createdAt: serverTimestamp() });
-  return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
 }
 
 export function deleteAnnouncement(id: string) {
   const ref = doc(db, ANNOUNCEMENTS_COLLECTION, id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- BUILDER & AGENCY PACKAGES SERVICES ---
@@ -382,7 +396,10 @@ export function savePackage(pkg: Partial<Package>) {
   if (pkg.id) {
     const pkgRef = doc(db, PACKAGES_COLLECTION, pkg.id);
     const updateData = { ...cleanedPkg, updatedAt: serverTimestamp() };
-    return updateDoc(pkgRef, updateData).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData }));
+    return updateDoc(pkgRef, updateData).catch(err => {
+      handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
     const colRef = collection(db, PACKAGES_COLLECTION);
     const newRef = doc(colRef);
@@ -393,13 +410,19 @@ export function savePackage(pkg: Partial<Package>) {
       slug: pkg.slug || pkg.name?.toLowerCase().replace(/\s+/g, '-') || `package-${Date.now()}`,
       createdAt: serverTimestamp() 
     };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
   }
 }
 
 export function deletePackage(id: string) {
   const pkgRef = doc(db, PACKAGES_COLLECTION, id);
-  return deleteDoc(pkgRef).catch(err => handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' }));
+  return deleteDoc(pkgRef).catch(err => {
+    handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 export async function fetchAddons(): Promise<Addon[]> {
@@ -418,18 +441,27 @@ export function saveAddon(addon: Partial<Addon>) {
   if (addon.id) {
     const addonRef = doc(db, 'addons', addon.id);
     const updateData = { ...cleanedAddon, updatedAt: serverTimestamp() };
-    return updateDoc(addonRef, updateData).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'update', requestResourceData: updateData }));
+    return updateDoc(addonRef, updateData).catch(err => {
+      handleFirestoreError(err, { path: addonRef.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
     const colRef = collection(db, 'addons');
     const newRef = doc(colRef);
     const newData = { ...cleanedAddon, id: newRef.id, isActive: true, createdAt: serverTimestamp() };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
   }
 }
 
 export function deleteAddon(id: string) {
   const addonRef = doc(db, 'addons', id);
-  return deleteDoc(addonRef).catch(err => handleFirestoreError(err, { path: addonRef.path, operation: 'delete' }));
+  return deleteDoc(addonRef).catch(err => {
+    handleFirestoreError(err, { path: addonRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 export function calculatePricing(basePackage: Package, selectedAddons: Addon[], numPeople: number = 1) {
@@ -468,6 +500,7 @@ export function saveCustomBooking(data: any) {
   const newData = { ...cleanedData, id: newRef.id, createdAt: serverTimestamp() };
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -475,7 +508,10 @@ export function updateBookingStatus(id: string, status: string, userId?: string)
     const ref = doc(db, CUSTOM_BOOKINGS_COLLECTION, id);
     const updateData: any = { status, updatedAt: serverTimestamp() };
     if (userId) updateData.userId = userId;
-    return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
 }
 
 // --- CONTACT & INQUIRIES SERVICES ---
@@ -486,6 +522,7 @@ export function submitContactMessage(data: { name: string, email: string, messag
   const newData = { ...data, id: newRef.id, status: 'unread', createdAt: serverTimestamp() };
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -495,6 +532,7 @@ export function submitBooking(data: { name: string, email: string, packageName: 
   const newData = { ...data, id: newRef.id, status: 'pending', createdAt: serverTimestamp() };
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -561,6 +599,7 @@ export async function uploadGalleryImage(file: File, metadata: { caption?: strin
 
   await setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
   
   return { id: newRef.id, src: publicUrl };
@@ -577,7 +616,10 @@ export function updateGalleryImage(id: string, metadata: { caption?: string, tag
     updatedAt: serverTimestamp(),
   });
 
-  return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+  return updateDoc(ref, updateData).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+    throw err;
+  });
 }
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
@@ -610,7 +652,10 @@ export function deleteGalleryImage(id: string, storagePath?: string) {
     supabase.storage.from('blobs').remove([storagePath]).catch(err => console.error("Supabase file removal snag:", err));
   }
   const ref = doc(db, GALLERY_COLLECTION, id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- BLOG ---
@@ -627,6 +672,7 @@ export function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCoun
   });
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -671,12 +717,18 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
 
 export function updatePostStatus(id: string, status: BlogPost['status']) {
   const postRef = doc(db, POSTS_COLLECTION, id);
-  return updateDoc(postRef, { status }).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'update', requestResourceData: { status } }));
+  return updateDoc(postRef, { status }).catch(err => {
+    handleFirestoreError(err, { path: postRef.path, operation: 'update', requestResourceData: { status } });
+    throw err;
+  });
 }
 
 export function deleteBlogPost(id: string) {
   const postRef = doc(db, POSTS_COLLECTION, id);
-  return deleteDoc(postRef).catch(err => handleFirestoreError(err, { path: postRef.path, operation: 'delete' }));
+  return deleteDoc(postRef).catch(err => {
+    handleFirestoreError(err, { path: postRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- VIDEOS ---
@@ -687,6 +739,7 @@ export function addVideo(video: Omit<VideoItem, 'id'>) {
   const newData = cleanData({ ...video, id: newRef.id, createdAt: serverTimestamp() });
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -703,7 +756,10 @@ export async function fetchVideos(): Promise<VideoItem[]> {
 
 export function deleteVideo(id: string) {
   const ref = doc(db, 'videos', id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- CAMPAIGNS (Expeditions) ---
@@ -736,18 +792,27 @@ export function saveCampaign(campaign: Partial<Campaign>) {
   if (campaign.id) {
     const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
     const updateData = { ...cleanedData, updatedAt: serverTimestamp() };
-    return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
     const colRef = collection(db, CAMPAIGNS_COLLECTION);
     const newRef = doc(colRef);
     const newData = { ...cleanedData, id: newRef.id, status: 'active', createdAt: serverTimestamp() };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
   }
 }
 
 export function deleteCampaign(id: string) {
   const ref = doc(db, CAMPAIGNS_COLLECTION, id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- DEPARTURES (Scheduled Events) ---
@@ -780,18 +845,27 @@ export function saveDeparture(departure: Partial<Departure>) {
   if (departure.id) {
     const ref = doc(db, DEPARTURES_COLLECTION, departure.id);
     const updateData = { ...cleanedData, updatedAt: serverTimestamp() };
-    return updateDoc(ref, updateData).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData }));
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
     const colRef = collection(db, DEPARTURES_COLLECTION);
     const newRef = doc(colRef);
     const newData = { ...cleanedData, id: newRef.id, createdAt: serverTimestamp() };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
   }
 }
 
 export function deleteDeparture(id: string) {
   const ref = doc(db, DEPARTURES_COLLECTION, id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- PROMOTIONS ---
@@ -811,18 +885,27 @@ export function savePromotion(promo: Partial<Promotion>) {
   const cleaned = cleanData(promo);
   if (promo.id) {
     const ref = doc(db, 'promotions', promo.id);
-    return updateDoc(ref, cleaned).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: cleaned }));
+    return updateDoc(ref, cleaned).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: cleaned });
+      throw err;
+    });
   } else {
     const colRef = collection(db, 'promotions');
     const newRef = doc(colRef);
     const newData = { ...cleaned, id: newRef.id, createdAt: serverTimestamp() };
-    return setDoc(newRef, newData).catch(err => handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData }));
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
   }
 }
 
 export function deletePromotion(id: string) {
   const ref = doc(db, 'promotions', id);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- IDEAS ---
@@ -833,6 +916,7 @@ export function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | '
   const newData = cleanData({ ...data, id: newRef.id, votes: 0, voters: [], status: 'New', commentsCount: 0, createdAt: serverTimestamp() });
   return setDoc(newRef, newData).catch(err => {
     handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
 }
 
@@ -857,7 +941,10 @@ export async function fetchIdeas(): Promise<Idea[]> {
 export function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
   const ideaRef = doc(db, IDEAS_COLLECTION, ideaId);
   const updateData = hasVoted ? { votes: increment(-1), voters: arrayRemove(userId) } : { votes: increment(1), voters: arrayUnion(userId) };
-  return updateDoc(ideaRef, updateData).catch(err => handleFirestoreError(err, { path: ideaRef.path, operation: 'update', requestResourceData: updateData }));
+  return updateDoc(ideaRef, updateData).catch(err => {
+    handleFirestoreError(err, { path: ideaRef.path, operation: 'update', requestResourceData: updateData });
+    throw err;
+  });
 }
 
 // --- CHATROOMS & MESSAGES ---
@@ -878,7 +965,9 @@ export function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 't
   const roomRef = doc(db, CHATROOMS_COLLECTION, roomId);
   const newData = cleanData({ ...message, createdAt: serverTimestamp() });
   
-  addDoc(colRef, newData).catch(err => handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData }));
+  addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+  });
   return updateDoc(roomRef, { lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }).catch(err => handleFirestoreError(err, { path: roomRef.path, operation: 'update' }));
 }
 
@@ -899,7 +988,10 @@ export function subscribeToMessages(roomId: string, callback: (messages: ChatMes
 
 export function deleteChatMessage(roomId: string, messageId: string) {
   const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
-  return deleteDoc(ref).catch(err => handleFirestoreError(err, { path: ref.path, operation: 'delete' }));
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 export async function fetchUserBookings(userId: string): Promise<any[]> {

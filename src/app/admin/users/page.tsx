@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Edit2, Trash2, UserCheck, UserX, Plus, Loader2, UserPlus, ShieldAlert, Lock, Star, Map, Info, ShieldX } from "lucide-react";
+import { UserCheck, Plus, Loader2, UserPlus, ShieldAlert, Lock, Star, ShieldX, Trash2 } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -28,6 +29,7 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   const [newUser, setNewUser] = useState({
     email: '',
@@ -63,20 +65,22 @@ export default function AdminUsersPage() {
     const isCurrentlySuspended = user.status === 'suspended';
     const newStatus = isCurrentlySuspended ? 'approved' : 'suspended';
     
-    // Clarify that suspension is permanent until un-suspended
     if (!isCurrentlySuspended && !confirm("Permanently suspend this traveler's access? They will be blocked from their dashboard until manually un-suspended.")) {
         return;
     }
 
+    setProcessingId(user.id);
     try {
         await updateUserProfile(user.id, { status: newStatus });
         toast({ 
             title: isCurrentlySuspended ? 'Access Restored' : 'Account Suspended', 
             description: isCurrentlySuspended ? `Enabled access for ${user.displayName}.` : `Revoked all access for ${user.displayName} (Permanent until un-suspended).`
         });
-        loadData();
+        await loadData();
     } catch (err) {
-        toast({ title: "Operation failed", variant: "destructive" });
+        toast({ title: "Operation failed", description: "Check permissions or database connection.", variant: "destructive" });
+    } finally {
+        setProcessingId(null);
     }
   };
 
@@ -99,7 +103,6 @@ export default function AdminUsersPage() {
 
       await updateProfile(userCredential.user, { displayName: newUser.displayName });
 
-      // Create the profile with explicit tier and level mapping
       await createUserProfile(uid, {
         email: newUser.email,
         displayName: newUser.displayName,
@@ -117,7 +120,7 @@ export default function AdminUsersPage() {
       
       setIsCreateModalOpen(false);
       setNewUser({ email: '', displayName: '', password: '', tier: 'user', level: 'Novice Explorer', points: 0, assignedExpedition: '' });
-      loadData();
+      await loadData();
     } catch (err: any) {
         console.error("Auth Creation Snag:", err);
         toast({ 
@@ -229,10 +232,17 @@ export default function AdminUsersPage() {
                         variant="ghost" 
                         size="icon" 
                         onClick={() => handleToggleStatus(user)} 
+                        disabled={processingId === user.id}
                         title={user.status === 'suspended' ? 'Unsuspend' : 'Suspend Access (Permanent)'}
                         className={user.status === 'suspended' ? "text-green-600" : "text-orange-500"}
                       >
-                        {user.status === 'suspended' ? <UserCheck className="h-4 w-4" /> : <ShieldAlert className="h-4 w-4" />}
+                        {processingId === user.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : user.status === 'suspended' ? (
+                          <UserCheck className="h-4 w-4" />
+                        ) : (
+                          <ShieldAlert className="h-4 w-4" />
+                        )}
                       </Button>
                       <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
