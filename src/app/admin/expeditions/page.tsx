@@ -527,7 +527,7 @@ export default function AdminExpeditionsPage() {
 
                 <div className="space-y-4 pt-4 border-t">
                   <div className="flex justify-between items-center">
-                    <Label className="font-bold uppercase text-[10px] tracking-widest">Activities</Label>
+                    <Label className="font-bold uppercase text-[10px] tracking-widest">Activities (Managed here)</Label>
                     <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('activities')} className="h-7 text-[10px]">+ Add Activity</Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
