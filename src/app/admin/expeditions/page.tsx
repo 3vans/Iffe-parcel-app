@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud, DatabaseBackup } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud, DatabaseBackup, Download } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, uploadFile, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
 import Image from 'next/image';
@@ -47,6 +47,75 @@ export default function AdminExpeditionsPage() {
     }
   };
 
+  const handleDownloadTemplate = () => {
+    const template = [
+      {
+        "title": "Bwindi Primate Odyssey",
+        "shortDescription": "A deep dive into the ancient forests of Bwindi.",
+        "description": "Embark on an extraordinary journey into the Bwindi Impenetrable Forest...",
+        "region": "Western",
+        "goal": 100,
+        "currentAmount": 98,
+        "imageUrl": "https://picsum.photos/seed/bwindi/1200/600",
+        "organizer": "iffe-travels",
+        "volunteersNeeded": 15,
+        "volunteersSignedUp": 4,
+        "endDate": "2024-12-31",
+        "tags": ["#GorillaTrekking", "#Rainforest"],
+        "storyline": [
+          {
+            "text": "The trek begins at dawn...",
+            "image": "https://picsum.photos/seed/mist/800/600"
+          }
+        ],
+        "activities": [
+          {
+            "title": "Gorilla Habituation",
+            "description": "Spend 4 hours with a family...",
+            "image": "https://picsum.photos/seed/act1/400/300"
+          }
+        ],
+        "accommodation": [
+          {
+            "title": "Cloud's Mountain Gorilla Lodge",
+            "description": "High-altitude luxury...",
+            "image": "https://picsum.photos/seed/lodge1/400/300"
+          }
+        ],
+        "meals": [
+          {
+            "title": "Organic Farm-to-Table",
+            "description": "Meals prepared using local ingredients...",
+            "image": "https://picsum.photos/seed/meal1/400/300"
+          }
+        ],
+        "bookingTips": [
+          "Gorilla permits are limited to 8 per family per day; book early.",
+          "Bring waterproof hiking boots."
+        ],
+        "sections": [
+          {
+            "id": "s1",
+            "type": "text",
+            "content": "Bwindi is more than a forest; it's a living relic."
+          }
+        ]
+      }
+    ];
+
+    const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'iffe-expedition-template.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({ title: "Template Downloaded", description: "Use this file to structure your bulk import data." });
+  };
+
   const handleBulkImport = async () => {
     if (!bulkJson.trim()) return;
     setIsSubmittingImport(true);
@@ -56,7 +125,6 @@ export default function AdminExpeditionsPage() {
       
       let successCount = 0;
       for (const exp of expeditions) {
-        // Strip existing ID to force fresh creation if needed
         const { id, ...rest } = exp;
         await saveCampaign(rest);
         successCount++;
@@ -121,8 +189,6 @@ export default function AdminExpeditionsPage() {
     }
   };
 
-  // --- Image Upload Helpers ---
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -138,8 +204,6 @@ export default function AdminExpeditionsPage() {
       setIsUploading(false);
     }
   };
-
-  // --- Campaign Sub-Editor Helpers ---
 
   const addStoryline = () => {
     setEditingCampaign(prev => prev ? { ...prev, storyline: [...(prev.storyline || []), { text: '', image: '' }] } : null);
@@ -223,6 +287,9 @@ export default function AdminExpeditionsPage() {
           Expedition Management
         </h1>
         <div className="flex gap-2">
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-11 px-6 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all font-black uppercase text-xs tracking-widest">
+                <Download className="mr-2 h-4 w-4" /> Download Template
+            </Button>
             <Button variant="outline" onClick={() => setShowImportDialog(true)} className="h-11 px-6 rounded-xl border-accent text-accent hover:bg-accent hover:text-white transition-all font-black uppercase text-xs tracking-widest">
                 <DatabaseBackup className="mr-2 h-4 w-4" /> Bulk JSON Import
             </Button>
@@ -361,6 +428,12 @@ export default function AdminExpeditionsPage() {
                 <DialogDescription>Paste an array of expedition objects in JSON format to sync with Firestore.</DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
+                <div className="flex justify-between items-center">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">JSON Input Data</Label>
+                    <Button variant="link" size="sm" onClick={handleDownloadTemplate} className="h-6 text-[10px] p-0 text-accent font-black uppercase">
+                        Download Format Guide <Download className="ml-1 h-3 w-3" />
+                    </Button>
+                </div>
                 <Textarea 
                     placeholder='[ { "title": "New Tour", ... } ]' 
                     value={bulkJson} 
@@ -724,7 +797,7 @@ export default function AdminExpeditionsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Departure Modal (Keep as is) */}
+      {/* Departure Modal */}
       <Dialog open={!!editingDeparture} onOpenChange={() => setEditingDeparture(null)}>
         <DialogContent className="sm:max-w-3xl overflow-y-auto max-h-[90vh]">
           <DialogHeader>
