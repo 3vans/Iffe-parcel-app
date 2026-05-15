@@ -1,0 +1,71 @@
+
+[
+  {
+    "title": "Bwindi Primate Odyssey",
+    "shortDescription": "A deep dive into the ancient forests of Bwindi for a once-in-a-lifetime gorilla encounter.",
+    "description": "Embark on an extraordinary journey into the Bwindi Impenetrable Forest. This tour is designed for those seeking a profound connection with nature, specifically focusing on the majestic mountain gorillas and the unique biodiversity of the Albertine Rift.",
+    "region": "Western",
+    "goal": 100,
+    "currentAmount": 98,
+    "imageUrl": "https://picsum.photos/seed/bwindi/1200/600",
+    "organizer": "iffe-travels",
+    "volunteersNeeded": 15,
+    "volunteersSignedUp": 4,
+    "endDate": "2024-12-31",
+    "tags": ["#GorillaTrekking", "#Rainforest", "#PrimateSafari"],
+    "storyline": [
+      {
+        "text": "The trek begins at dawn, with the mist clinging to the ancient ferns of Bwindi.",
+        "image": "https://picsum.photos/seed/mist/800/600"
+      },
+      {
+        "text": "The moment of contact is silent and sacred, as you sit just meters away from a silverback.",
+        "image": "https://picsum.photos/seed/gorilla/800/600"
+      }
+    ],
+    "activities": [
+      {
+        "title": "Gorilla Habituation",
+        "description": "Spend 4 hours with a family under habituation for an extended study.",
+        "image": "https://picsum.photos/seed/act1/400/300"
+      },
+      {
+        "title": "Batwa Cultural Trail",
+        "description": "Learn ancient forest survival skills from the original inhabitants of the forest.",
+        "image": "https://picsum.photos/seed/act2/400/300"
+      }
+    ],
+    "accommodation": [
+      {
+        "title": "Cloud's Mountain Gorilla Lodge",
+        "description": "High-altitude luxury with individual stone cottages and private butler service.",
+        "image": "https://picsum.photos/seed/lodge1/400/300"
+      }
+    ],
+    "meals": [
+      {
+        "title": "Organic Farm-to-Table",
+        "description": "Meals prepared using local ingredients sourced directly from the Kisoro community.",
+        "image": "https://picsum.photos/seed/meal1/400/300"
+      }
+    ],
+    "bookingTips": [
+      "Gorilla permits are limited to 8 per family per day; book at least 6 months in advance.",
+      "Bring waterproof hiking boots with good grip for slippery jungle terrain.",
+      "Gardening gloves are highly recommended for grabbing vines during the trek."
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "type": "text",
+        "content": "Bwindi is more than a forest; it's a living relic of the Pleistocene era."
+      },
+      {
+        "id": "s2",
+        "type": "image",
+        "content": "https://picsum.photos/seed/wide/1200/400",
+        "imageLayout": "full"
+      }
+    ]
+  }
+]

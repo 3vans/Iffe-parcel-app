@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud, DatabaseBackup } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, uploadFile, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
 import Image from 'next/image';
@@ -22,6 +22,9 @@ export default function AdminExpeditionsPage() {
   const [departures, setDepartures] = useState<Departure[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isImporting, setIsSubmittingImport] = useState(false);
+  const [bulkJson, setBulkJson] = useState('');
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const { toast } = useToast();
 
   const [editingCampaign, setEditingCampaign] = useState<Partial<Campaign> | null>(null);
@@ -41,6 +44,32 @@ export default function AdminExpeditionsPage() {
       toast({ title: "Failed to load data", variant: "destructive" });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleBulkImport = async () => {
+    if (!bulkJson.trim()) return;
+    setIsSubmittingImport(true);
+    try {
+      const data = JSON.parse(bulkJson);
+      const expeditions = Array.isArray(data) ? data : [data];
+      
+      let successCount = 0;
+      for (const exp of expeditions) {
+        // Strip existing ID to force fresh creation if needed
+        const { id, ...rest } = exp;
+        await saveCampaign(rest);
+        successCount++;
+      }
+      
+      toast({ title: "Import Successful", description: `Added ${successCount} tour expeditions.` });
+      setBulkJson('');
+      setShowImportDialog(false);
+      loadData();
+    } catch (err: any) {
+      toast({ title: "Import Failed", description: "Invalid JSON format. Check template.", variant: "destructive" });
+    } finally {
+      setIsSubmittingImport(false);
     }
   };
 
@@ -193,22 +222,11 @@ export default function AdminExpeditionsPage() {
           <Map className="mr-3 h-8 w-8 text-accent" />
           Expedition Management
         </h1>
-      </div>
-
-      <Tabs defaultValue="itineraries" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:max-w-md">
-          <TabsTrigger value="itineraries">Tour Itineraries</TabsTrigger>
-          <TabsTrigger value="departures">Scheduled Departures</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="itineraries">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Public Expeditions</CardTitle>
-                <CardDescription>Manage the foundational itineraries shown on the Tours page.</CardDescription>
-              </div>
-              <Button onClick={() => setEditingCampaign({ 
+        <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowImportDialog(true)} className="h-11 px-6 rounded-xl border-accent text-accent hover:bg-accent hover:text-white transition-all font-black uppercase text-xs tracking-widest">
+                <DatabaseBackup className="mr-2 h-4 w-4" /> Bulk JSON Import
+            </Button>
+            <Button onClick={() => setEditingCampaign({ 
                 title: '', 
                 description: '', 
                 region: 'Western', 
@@ -222,9 +240,23 @@ export default function AdminExpeditionsPage() {
                 bookingTips: [], 
                 sections: [],
                 organizer: 'iffe-travels'
-              })}>
+            })} className="h-11 px-6 rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-black uppercase text-xs tracking-widest">
                 <Plus className="mr-2 h-4 w-4" /> New Itinerary
-              </Button>
+            </Button>
+        </div>
+      </div>
+
+      <Tabs defaultValue="itineraries" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:max-w-md">
+          <TabsTrigger value="itineraries">Tour Itineraries</TabsTrigger>
+          <TabsTrigger value="departures">Scheduled Departures</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="itineraries">
+          <Card>
+            <CardHeader>
+                <CardTitle>Public Expeditions</CardTitle>
+                <CardDescription>Manage the foundational itineraries shown on the Tours page.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -320,6 +352,32 @@ export default function AdminExpeditionsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Bulk Import Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+                <DialogTitle className="font-headline text-2xl uppercase font-black text-primary">Bulk Expedition Import</DialogTitle>
+                <DialogDescription>Paste an array of expedition objects in JSON format to sync with Firestore.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+                <Textarea 
+                    placeholder='[ { "title": "New Tour", ... } ]' 
+                    value={bulkJson} 
+                    onChange={(e) => setBulkJson(e.target.value)}
+                    rows={15}
+                    className="font-mono text-xs bg-muted/30 border-none rounded-xl"
+                />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setShowImportDialog(false)}>Cancel</Button>
+                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 px-8" onClick={handleBulkImport} disabled={isImporting || !bulkJson}>
+                    {isImporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <DatabaseBackup className="mr-2 h-4 w-4" />}
+                    Begin Import Process
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Campaign Modal */}
       <Dialog open={!!editingCampaign} onOpenChange={() => setEditingCampaign(null)}>
