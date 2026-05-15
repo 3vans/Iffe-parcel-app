@@ -13,7 +13,7 @@ import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar,
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem, type ItinerarySection } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from '@/checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from "@/lib/utils";
 
