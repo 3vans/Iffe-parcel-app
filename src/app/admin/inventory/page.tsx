@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,11 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal, Type, ChevronUp, ChevronDown } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Database, Sparkles, LayoutList, Calendar, Trash, MapPin, Image as ImageIcon, CheckCircle2, X, Layout, RectangleHorizontal, Type, ChevronUp, ChevronDown, Download, DatabaseBackup } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchBasePackages, fetchAddons, savePackage, deletePackage, saveAddon, deleteAddon, type Package, type Addon, type ItineraryItem, type ItinerarySection } from '@/lib/services/cms-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,9 @@ export default function AdminInventoryPage() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [addons, setAddons] = useState<Addon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isImporting, setIsImporting] = useState(false);
+  const [bulkJson, setBulkJson] = useState('');
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const { toast } = useToast();
 
   const [editingPackage, setEditingPackage] = useState<Partial<Package> | null>(null);
@@ -40,6 +44,74 @@ export default function AdminInventoryPage() {
       toast({ title: "Failed to load inventory", variant: "destructive" });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    const template = [
+      {
+        "name": "Ultimate Primate Safari",
+        "slug": "ultimate-primate-safari",
+        "subtitle": "Bwindi & Kibale Combined",
+        "description": "A comprehensive journey through Uganda's primate capitals.",
+        "basePrice": 4500,
+        "priceDescription": "per person",
+        "durationDays": 7,
+        "durationText": "7 Days / 6 Nights",
+        "features": ["Gorilla Trekking", "Chimp Tracking"],
+        "whatsIncluded": ["Transport", "Meals", "Accommodation"],
+        "imageUrl": "https://picsum.photos/seed/pkg1/1200/600",
+        "isActive": true,
+        "isPopular": true,
+        "includedTours": [],
+        "itineraryTitle": "The Primate Route",
+        "sampleItinerary": [
+          {
+            "day": 1,
+            "activity": "Arrival",
+            "sections": [
+              { "id": "s1", "type": "text", "content": "Welcome to Uganda. Transfer to your luxury lodge." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'iffe-package-template.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({ title: "Template Downloaded", description: "Use this file to structure your bulk package data." });
+  };
+
+  const handleBulkImport = async () => {
+    if (!bulkJson.trim()) return;
+    setIsImporting(true);
+    try {
+      const data = JSON.parse(bulkJson);
+      const pkgs = Array.isArray(data) ? data : [data];
+      
+      let successCount = 0;
+      for (const p of pkgs) {
+        const { id, ...rest } = p;
+        await savePackage(rest);
+        successCount++;
+      }
+      
+      toast({ title: "Import Successful", description: `Added ${successCount} tour packages.` });
+      setBulkJson('');
+      setShowImportDialog(false);
+      loadData();
+    } catch (err: any) {
+      toast({ title: "Import Failed", description: "Invalid JSON format. Check template.", variant: "destructive" });
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -101,18 +173,14 @@ export default function AdminInventoryPage() {
     }
   };
 
-  // --- Dynamic Array Helpers ---
-
   const addFeature = () => {
     setEditingPackage(prev => prev ? { ...prev, features: [...(prev.features || []), ''] } : null);
   };
-
   const updateFeature = (index: number, value: string) => {
     const newFeatures = [...(editingPackage?.features || [])];
     newFeatures[index] = value;
     setEditingPackage(prev => prev ? { ...prev, features: newFeatures } : null);
   };
-
   const removeFeature = (index: number) => {
     const newFeatures = [...(editingPackage?.features || [])];
     newFeatures.splice(index, 1);
@@ -122,13 +190,11 @@ export default function AdminInventoryPage() {
   const addInclusion = () => {
     setEditingPackage(prev => prev ? { ...prev, whatsIncluded: [...(prev.whatsIncluded || []), ''] } : null);
   };
-
   const updateInclusion = (index: number, value: string) => {
     const newInclusions = [...(editingPackage?.whatsIncluded || [])];
     newInclusions[index] = value;
     setEditingPackage(prev => prev ? { ...prev, whatsIncluded: newInclusions } : null);
   };
-
   const removeInclusion = (index: number) => {
     const newInclusions = [...(editingPackage?.whatsIncluded || [])];
     newInclusions.splice(index, 1);
@@ -141,24 +207,20 @@ export default function AdminInventoryPage() {
     const newItem: ItineraryItem = { day: nextDay, activity: '', sections: [] };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
   };
-
   const removeItineraryDay = (index: number) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     currentItinerary.splice(index, 1);
     const reindexed = currentItinerary.map((item, i) => ({ ...item, day: i + 1 }));
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: reindexed } : null);
   };
-
   const moveItineraryDay = (index: number, direction: 'up' | 'down') => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= currentItinerary.length) return;
-    
     [currentItinerary[index], currentItinerary[targetIndex]] = [currentItinerary[targetIndex], currentItinerary[index]];
     const reindexed = currentItinerary.map((item, i) => ({ ...item, day: i + 1 }));
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: reindexed } : null);
   };
-
   const updateItineraryItem = (index: number, field: keyof ItineraryItem, value: any) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     currentItinerary[index] = { ...currentItinerary[index], [field]: value };
@@ -178,21 +240,17 @@ export default function AdminInventoryPage() {
     currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
-
   const moveItinerarySection = (dayIndex: number, sectionIndex: number, direction: 'up' | 'down') => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const updatedDay = { ...currentItinerary[dayIndex] };
     const updatedSections = [...(updatedDay.sections || [])];
     const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
-    
     if (targetIndex < 0 || targetIndex >= updatedSections.length) return;
-    
     [updatedSections[sectionIndex], updatedSections[targetIndex]] = [updatedSections[targetIndex], updatedSections[sectionIndex]];
     updatedDay.sections = updatedSections;
     currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
-
   const updateItinerarySection = (dayIndex: number, sectionIndex: number, value: string) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const updatedDay = { ...currentItinerary[dayIndex] };
@@ -202,7 +260,6 @@ export default function AdminInventoryPage() {
     currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
-
   const updateItinerarySectionLayout = (dayIndex: number, sectionIndex: number, layout: 'small' | 'full') => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const updatedDay = { ...currentItinerary[dayIndex] };
@@ -212,7 +269,6 @@ export default function AdminInventoryPage() {
     currentItinerary[dayIndex] = updatedDay;
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: currentItinerary } : null);
   };
-
   const removeItinerarySection = (dayIndex: number, sectionIndex: number) => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const updatedDay = { ...currentItinerary[dayIndex] };
@@ -234,6 +290,14 @@ export default function AdminInventoryPage() {
           <Database className="mr-3 h-8 w-8 text-accent" />
           Inventory & Price Management
         </h1>
+        <div className="flex gap-2">
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-11 px-6 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all font-black uppercase text-xs tracking-widest">
+                <Download className="mr-2 h-4 w-4" /> Download Template
+            </Button>
+            <Button variant="outline" onClick={() => setShowImportDialog(true)} className="h-11 px-6 rounded-xl border-accent text-accent hover:bg-accent hover:text-white transition-all font-black uppercase text-xs tracking-widest">
+                <DatabaseBackup className="mr-2 h-4 w-4" /> Bulk JSON Import
+            </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="packages" className="w-full">
@@ -346,6 +410,38 @@ export default function AdminInventoryPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Bulk Import Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+                <DialogTitle className="font-headline text-2xl uppercase font-black text-primary">Bulk Package Import</DialogTitle>
+                <DialogDescription>Paste an array of package objects in JSON format to sync with Firestore.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+                <div className="flex justify-between items-center">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">JSON Input Data</Label>
+                    <Button variant="link" size="sm" onClick={handleDownloadTemplate} className="h-6 text-[10px] p-0 text-accent font-black uppercase">
+                        Download Format Guide <Download className="ml-1 h-3 w-3" />
+                    </Button>
+                </div>
+                <Textarea 
+                    placeholder='[ { "name": "New Package", ... } ]' 
+                    value={bulkJson} 
+                    onChange={(e) => setBulkJson(e.target.value)}
+                    rows={15}
+                    className="font-mono text-xs bg-muted/30 border-none rounded-xl"
+                />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setShowImportDialog(false)}>Cancel</Button>
+                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 px-8" onClick={handleBulkImport} disabled={isImporting || !bulkJson}>
+                    {isImporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <DatabaseBackup className="mr-2 h-4 w-4" />}
+                    Begin Import Process
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Package Edit Modal */}
       <Dialog open={!!editingPackage} onOpenChange={() => setEditingPackage(null)}>
