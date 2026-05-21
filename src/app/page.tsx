@@ -16,7 +16,7 @@ import FifaCardCarousel from '@/components/fifa-card-carousel';
 import Hero from '@/components/layout/hero';
 import ERotaractSignupTrigger from '@/components/auth/erotaract-signup-trigger';
 import fifaCardData from '@/app/lib/fifa-card-data.json';
-import { fetchBlogPosts, fetchGalleryImages, fetchBasePackages, fetchAddons, type BlogPost, type GalleryImage, type Package as BuilderPackage, type Addon } from '@/lib/services/cms-service';
+import { fetchBlogPosts, fetchGalleryImages, fetchBasePackages, fetchAddons, fetchCampaigns, type BlogPost, type GalleryImage, type Package as BuilderPackage, type Addon, type Campaign } from '@/lib/services/cms-service';
 import TestimonialSection from '@/components/testimonial-section';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -51,94 +51,23 @@ type FeedItem = CreatorFeedItem | BlogFeedItem | GalleryFeedItem;
 
 export default function Home() {
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
+    const [liveCampaigns, setLiveCampaigns] = useState<Campaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCarouselImage, setActiveCarouselImage] = useState<string | null>(null);
     const [livePackages, setLivePackages] = useState<BuilderPackage[]>([]);
     const [builderAddons, setBuilderAddons] = useState<Addon[]>([]);
     const { toast } = useToast();
 
-    const featuredCampaigns = [
-      { 
-        id: '1', 
-        title: 'Bwindi Gorilla Trekking', 
-        imageUrl: placeholderImages.campaignDetailGorilla.src, 
-        dataAiHint: 'mountain gorilla', 
-        shortDescription: 'An unforgettable encounter with the world\'s last remaining mountain gorillas.' 
-      },
-      { 
-        id: '2', 
-        title: 'Queen Elizabeth NP', 
-        imageUrl: placeholderImages.campaignQueenElizabeth.src, 
-        dataAiHint: 'tree climbing lion', 
-        shortDescription: 'Discover diverse ecosystems home to the iconic tree-climbing lions.' 
-      },
-      { 
-        id: '3', 
-        title: 'Murchison Falls', 
-        imageUrl: placeholderImages.campaignMurchison.src, 
-        dataAiHint: 'murchison falls', 
-        shortDescription: 'Witness the Nile River explode through a narrow gorge.' 
-      },
-      { 
-        id: '4', 
-        title: 'Kibale Forest', 
-        imageUrl: placeholderImages.campaignKibale.src, 
-        dataAiHint: 'chimpanzee forest', 
-        shortDescription: 'Track our closest relatives in the primate capital of the world.' 
-      },
-      { 
-        id: '8', 
-        title: 'Source of the Nile', 
-        imageUrl: placeholderImages.campaignSourceNile.src, 
-        dataAiHint: 'source of nile', 
-        shortDescription: 'Experience the magic of the beginning of the world\'s longest river.' 
-      },
-      { 
-        id: '11', 
-        title: 'Sipi Falls', 
-        imageUrl: placeholderImages.campaignSipi.src, 
-        dataAiHint: 'sipi falls', 
-        shortDescription: 'Hike the stunning waterfalls on the slopes of Mount Elgon.' 
-      },
-      { 
-        id: '17', 
-        title: 'Entebbe Botanical Gardens', 
-        imageUrl: placeholderImages.campaignEntebbe.src, 
-        dataAiHint: 'entebbe botanical', 
-        shortDescription: 'Nature, wildlife, and relaxation by Africa’s largest lake.' 
-      },
-      { 
-        id: '18', 
-        title: 'Ngamba Island Sanctuary', 
-        imageUrl: placeholderImages.campaignNgamba.src, 
-        dataAiHint: 'chimpanzee sanctuary', 
-        shortDescription: 'Visit a sanctuary for orphaned chimpanzees on Lake Victoria.' 
-      },
-      { 
-        id: '19', 
-        title: 'Mabira Forest Zip-Lining', 
-        imageUrl: placeholderImages.campaignMabira.src, 
-        dataAiHint: 'rainforest zip', 
-        shortDescription: 'Experience the thrill of zip-lining through a lush rainforest.' 
-      },
-      { 
-        id: '20', 
-        title: 'Ssese Islands Relaxation', 
-        imageUrl: placeholderImages.campaignSsese.src, 
-        dataAiHint: 'lake victoria island', 
-        shortDescription: 'Unwind on the beautiful beaches of the Ssese Islands.' 
-      },
-    ];
-
     useEffect(() => {
       const loadData = async () => {
         setIsLoading(true);
         try {
-          const [posts, images, pkgs, addons] = await Promise.all([
+          const [posts, images, pkgs, addons, campaigns] = await Promise.all([
             fetchBlogPosts('Published', 3),
             fetchGalleryImages(2),
             fetchBasePackages(),
-            fetchAddons()
+            fetchAddons(),
+            fetchCampaigns()
           ]);
 
           const items: FeedItem[] = [];
@@ -157,6 +86,7 @@ export default function Home() {
           setFeedItems(items.sort(() => Math.random() - 0.5));
           setLivePackages(pkgs);
           setBuilderAddons(addons);
+          setLiveCampaigns(campaigns);
         } catch (err) {
           console.error("Home data load error:", err);
         } finally {
@@ -219,10 +149,10 @@ export default function Home() {
           </AnimatedCard>
         </section>
 
-        {/* Featured Visual Carousel Section */}
+        {/* Dynamic Visual Carousel Section */}
         <section>
           <AnimatedCard className="border-none shadow-none bg-transparent h-auto">
-            <CampaignCarousel campaigns={featuredCampaigns} />
+            <CampaignCarousel campaigns={liveCampaigns.length > 0 ? liveCampaigns : []} />
           </AnimatedCard>
         </section>
 
@@ -366,7 +296,7 @@ export default function Home() {
             />
         </section>
 
-        {/* Trust & Authority - Moved below the Featured Expeditions section */}
+        {/* Trust & Authority */}
         <section>
             <AnimatedCard>
                 <Card className="bg-card/80 backdrop-blur-md border-primary/10 relative overflow-hidden flex flex-col">

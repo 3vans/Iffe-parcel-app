@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
@@ -27,11 +28,11 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
   const [isInteracting, setIsInteracting] = useState(false);
 
   // We triple the campaigns list to create a seamless infinite scroll experience
-  const displayCampaigns = [...campaigns, ...campaigns, ...campaigns];
+  const displayCampaigns = campaigns.length > 0 ? [...campaigns, ...campaigns, ...campaigns] : [];
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
-    if (!scrollContainer || isInteracting) return;
+    if (!scrollContainer || isInteracting || campaigns.length === 0) return;
 
     let animationFrameId: number;
     const autoScroll = () => {
@@ -55,17 +56,17 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
 
   // Set initial scroll position to the middle set for infinite effect
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && campaigns.length > 0) {
       const setWidth = scrollRef.current.scrollWidth / 3;
       scrollRef.current.scrollLeft = setWidth;
     }
-  }, []);
+  }, [campaigns.length]);
 
   if (!campaigns || campaigns.length === 0) {
     return (
-      <Card className="bg-muted/50">
-        <CardContent className="p-6 text-center text-muted-foreground">
-          No featured tours at the moment.
+      <Card className="bg-muted/50 rounded-3xl border-2 border-dashed">
+        <CardContent className="p-20 text-center text-muted-foreground font-bold uppercase tracking-widest">
+          No featured visual highlights available yet.
         </CardContent>
       </Card>
     );
@@ -132,10 +133,14 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
         >
           <div className="flex gap-4 w-max">
             {displayCampaigns.map((campaign, idx) => (
-              <div key={`${campaign.id}-${idx}`} className="relative w-[280px] md:w-[400px] shrink-0 group/strip border-x-8 border-stone-900 bg-stone-900 overflow-hidden shadow-inner transition-all duration-500 hover:brightness-110">
+              <Link 
+                key={`${campaign.id}-${idx}`} 
+                href={`/campaigns/${campaign.id}`}
+                className="relative w-[280px] md:w-[400px] shrink-0 group/strip border-x-8 border-stone-900 bg-stone-900 overflow-hidden shadow-inner transition-all duration-500 hover:brightness-110"
+              >
                 <div className="aspect-[16/10] relative rounded-lg overflow-hidden border border-white/10">
                   <Image
-                    src={campaign.imageUrl}
+                    src={campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src}
                     alt={campaign.title}
                     layout="fill"
                     objectFit="cover"
@@ -147,12 +152,12 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ campaigns }) => {
                   <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col justify-end h-full">
                     <h4 className="text-white font-headline text-lg font-bold truncate leading-none mb-1 whitespace-normal">{campaign.title}</h4>
                     <p className="text-white/60 text-[10px] line-clamp-1 mb-3 whitespace-normal">{campaign.shortDescription}</p>
-                    <Button variant="secondary" size="sm" asChild className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 h-7 text-[9px] font-black uppercase tracking-widest self-start rounded-full">
-                      <Link href={`/campaigns/${campaign.id}`} className="pointer-events-auto">Explore Tour</Link>
-                    </Button>
+                    <div className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 h-7 text-[9px] font-black uppercase tracking-widest self-start rounded-full px-4 flex items-center transition-all">
+                      Explore Tour
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
