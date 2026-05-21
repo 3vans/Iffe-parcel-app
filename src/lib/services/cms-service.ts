@@ -679,18 +679,47 @@ export function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCoun
 export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
   try {
     const postsRef = collection(db, POSTS_COLLECTION);
-    let q = query(postsRef, orderBy('createdAt', 'desc'));
-    if (status && status !== 'all') q = query(q, where('status', '==', status));
+    let q;
+    
+    // Attempt preferred query (requires composite index for status + createdAt)
+    if (status && status !== 'all') {
+      q = query(postsRef, where('status', '==', status), orderBy('createdAt', 'desc'));
+    } else {
+      q = query(postsRef, orderBy('createdAt', 'desc'));
+    }
+    
     if (count) q = query(q, limit(count));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        date: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
-      } as BlogPost;
-    });
+    
+    try {
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          date: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
+        } as BlogPost;
+      });
+    } catch (innerError: any) {
+      // Fallback for missing index error
+      if (innerError.code === 'failed-precondition' || innerError.message?.includes('index')) {
+        console.warn("Firestore index missing for fetchBlogPosts. Falling back to client-side sort.");
+        const fallbackQ = query(postsRef, limit(100)); // Fetch a larger set to sort locally
+        const snapshot = await getDocs(fallbackQ);
+        let results = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return { id: doc.id, ...data, date: data.createdAt?.toDate?.()?.toLocaleDateString() || 'Recently' } as BlogPost;
+        });
+        
+        if (status && status !== 'all') {
+            results = results.filter(p => p.status === status);
+        }
+        
+        results.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        return count ? results.slice(0, count) : results;
+      }
+      throw innerError;
+    }
   } catch (error) {
     handleFirestoreError(error, { path: POSTS_COLLECTION, operation: 'list' });
     return [];
