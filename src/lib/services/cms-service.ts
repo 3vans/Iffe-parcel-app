@@ -459,7 +459,7 @@ export function saveAddon(addon: Partial<Addon>) {
 export function deleteAddon(id: string) {
   const addonRef = doc(db, 'addons', id);
   return deleteDoc(addonRef).catch(err => {
-    handleFirestoreError(err, { path: addonRef.path, operation: 'delete' });
+    handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' });
     throw err;
   });
 }

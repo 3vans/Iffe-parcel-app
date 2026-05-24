@@ -8,9 +8,10 @@
     "rating": "98",
     "speed": "4 Days",
     "skill": "Sightseeing",
-    "image": "pkgExplorer",
-    "dataAiHint": "safari group happy",
-    "link": "/packages/explorer"
+    "image": "campaignSipi",
+    "dataAiHint": "sipi falls landscape",
+    "link": "/packages/explorer",
+    "price": "750"
   },
   {
     "id": "pkg-adventurer",
@@ -20,9 +21,10 @@
     "rating": "99",
     "speed": "7 Days",
     "skill": "Primate Trekking",
-    "image": "pkgAdventurer",
-    "dataAiHint": "mountain gorilla",
-    "link": "/packages/adventurer"
+    "image": "campaignBwindi",
+    "dataAiHint": "mountain gorilla forest",
+    "link": "/packages/adventurer",
+    "price": "4,500"
   },
   {
     "id": "pkg-ultimate",
@@ -32,9 +34,10 @@
     "rating": "97",
     "speed": "10 Days",
     "skill": "Big Five Safari",
-    "image": "pkgUltimate",
-    "dataAiHint": "safari sunset view",
-    "link": "/packages/ultimate"
+    "image": "campaignQueenElizabeth",
+    "dataAiHint": "savannah wildlife",
+    "link": "/packages/ultimate",
+    "price": "8,000"
   },
   {
     "id": "pkg-super-combi",
@@ -45,7 +48,8 @@
     "speed": "14 Days",
     "skill": "Full Expedition",
     "image": "campaignKidepo",
-    "dataAiHint": "kidepo valley",
-    "link": "/packages/super-combi"
+    "dataAiHint": "kidepo valley vista",
+    "link": "/packages/super-combi",
+    "price": "12,000"
   }
 ]

@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, UserCircle, MapPin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, UserCircle, MapPin, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import cardDataFromFile from '@/app/lib/fifa-card-data.json';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ export interface CardData {
   image: keyof typeof placeholderImages;
   dataAiHint: string;
   link: string;
+  price?: string;
 }
 
 interface FifaCardCarouselProps {
@@ -183,6 +185,11 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
                         }}
                     >
                          <div className="h-[200px] relative">
+                            {card.price && (
+                                <div className="absolute top-3 left-3 z-20 bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-lg font-black text-[10px] tracking-widest uppercase">
+                                    FROM ${card.price}
+                                </div>
+                            )}
                             <CardImage card={card} />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent flex justify-between items-end p-4 text-white">
                                 <div className="bg-black/70 px-3 py-1 rounded-full text-sm font-semibold">{card.speed}</div>
