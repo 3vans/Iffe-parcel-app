@@ -6,15 +6,21 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Summarizer from '@/components/summarizer';
-import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck, HelpCircle, FilePen, Map, Info } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageSquare, Share2, Tag, Compass, Activity, BedDouble, UtensilsCrossed, Camera, Users, PlayCircle, Star, ShieldCheck, HelpCircle, FilePen, Map, Info, Globe, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import CampaignActionsCard from '@/components/campaign/campaign-actions-card';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import placeholderImages from '@/app/lib/placeholder-images.json';
-import { type RelatedTour } from './page';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+
+interface ItinerarySection {
+    id: string;
+    type: 'text' | 'image';
+    content: string;
+    imageLayout?: 'small' | 'full';
+}
 
 interface Campaign {
   id: string;
@@ -24,7 +30,8 @@ interface Campaign {
   imageHeight: number;
   dataAiHint?: string;
   description: string;
-  storyline: string[];
+  sections?: ItinerarySection[];
+  storyline: any[]; 
   budget: number;
   goal: number;
   currentAmount: number;
@@ -34,11 +41,16 @@ interface Campaign {
   endDate: string;
   volunteersNeeded: number;
   volunteersSignedUp: number;
-  activities: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  accommodation: { title: string; description: string; image: keyof typeof placeholderImages }[];
-  meals: { title: string; description: string; image: keyof typeof placeholderImages }[];
+  activities: any[];
+  accommodation: any[];
+  meals: any[];
   shortDescription?: string;
   bookingTips?: string[];
+}
+
+interface RelatedTour {
+    id: string;
+    title: string;
 }
 
 interface CampaignDetailClientPageProps {
@@ -47,7 +59,7 @@ interface CampaignDetailClientPageProps {
 }
 
 const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
-    if (tours.length === 0) return null;
+    if (!tours || tours.length === 0) return null;
 
     return (
         <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
@@ -58,8 +70,8 @@ const RelatedToursCard: React.FC<{ tours: RelatedTour[] }> = ({ tours }) => {
             </CardHeader>
             <CardContent className="space-y-2">
                 {tours.map(tour => (
-                    <Button key={tour.id} variant="link" asChild className="p-0 text-foreground hover:text-primary justify-start">
-                        <Link href={`/campaigns/${tour.id}`}>{tour.title}</Link>
+                    <Button key={tour.id} variant="link" asChild className="p-0 text-foreground hover:text-primary justify-start w-full">
+                        <Link href={`/campaigns/${tour.id}`} className="truncate block">{tour.title}</Link>
                     </Button>
                 ))}
             </CardContent>
@@ -92,33 +104,23 @@ const NextStepsCard: React.FC = () => {
     );
 };
 
-const SemulikiInfoCard: React.FC = () => {
-    return (
-        <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
-            <CardHeader>
-                <CardTitle className="font-headline text-xl text-primary flex items-center">
-                    <Info className="mr-2 h-5 w-5"/>Good to Know
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>Semuliki is part of the Congo Basin ecosystem, making its flora and fauna distinct from other Ugandan parks.</p>
-                <p>The Sempaya Hot Springs are a key attraction. You can even boil eggs in the boiling water!</p>
-                <p>It's a prime birding destination with over 440 species, including many West African forest birds not found elsewhere in East Africa.</p>
-            </CardContent>
-        </Card>
-    )
-}
-
-const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+const AnimatedSection = ({ children, className, id }: { children: React.ReactNode, className?: string, id?: string }) => {
     const [ref, isVisible] = useScrollAnimation();
     return (
-        <section ref={ref} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
+        <section ref={ref} id={id} className={cn('scroll-animate space-y-4', isVisible && 'scroll-animate-in', className)}>
             {children}
         </section>
     );
 };
 
-const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[]}) => {
+const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[]}) => {
+    const validItems = items?.map(item => {
+        if (typeof item === 'string') return { title: item, description: '', image: '' };
+        return item;
+    }).filter(item => item?.title || item?.description) || [];
+
+    if (validItems.length === 0) return null;
+
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -127,17 +129,16 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
             </h3>
             <ScrollArea>
                 <div className="flex space-x-6 pb-4">
-                    {items.map((item, index) => {
-                        const itemImage = placeholderImages[item.image];
-                        if (!itemImage) return null;
+                    {validItems.map((item, index) => {
+                        const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
                         return (
                             <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] flex-shrink-0">
                                 <div className="relative w-full aspect-[16/9] bg-muted">
                                     <Image 
-                                        src={itemImage.src} 
-                                        alt={item.title} 
+                                        src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
+                                        alt={item.title || title} 
                                         layout="fill" 
-                                        objectFit="cover" 
+                                        style={{ objectFit: 'cover' }} 
                                         data-ai-hint={itemImage.hint} 
                                         className="transition-transform duration-300 group-hover:scale-105"
                                     />
@@ -145,9 +146,11 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
                                 <CardHeader>
                                     <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
                                 </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                                </CardContent>
+                                {item.description && (
+                                    <CardContent>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </CardContent>
+                                )}
                             </Card>
                         );
                     })}
@@ -158,8 +161,14 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
     );
 };
 
+const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
+    const validItems = items?.map(item => {
+        if (typeof item === 'string') return { title: item, description: '', image: '' };
+        return item;
+    }).filter(item => item?.title || item?.description) || [];
 
-const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: {title: string, description: string, image: keyof typeof placeholderImages}[] }) => {
+    if (validItems.length === 0) return null;
+
     return (
         <AnimatedSection>
             <h3 className="font-headline text-xl font-semibold text-primary flex items-center mb-4">
@@ -167,15 +176,14 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
                 {title}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {items.map((item, index) => {
-                    const itemImage = placeholderImages[item.image];
-                    if (!itemImage) return null;
+                {validItems.map((item, index) => {
+                    const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
                     return (
                         <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group">
                             <div className="relative w-full aspect-[16/9] bg-muted">
                                 <Image 
-                                    src={itemImage.src} 
-                                    alt={item.title} 
+                                    src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
+                                    alt={item.title || title} 
                                     layout="fill" 
                                     objectFit="cover" 
                                     data-ai-hint={itemImage.hint} 
@@ -185,9 +193,11 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
                             <CardHeader>
                                 <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </CardContent>
+                            {item.description && (
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </CardContent>
+                            )}
                         </Card>
                     );
                 })}
@@ -196,8 +206,9 @@ const StaticImageGrid = ({ title, icon: Icon, items }: { title: string, icon: Re
     );
 };
 
+const ExperienceSection = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
+    if (!items || items.length === 0) return null;
 
-const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string, icon: React.ElementType, texts: string[], images: {src: string, hint?: string}[] }) => {
     return (
         <AnimatedSection>
             <div className="space-y-4">
@@ -206,16 +217,32 @@ const ExperienceSection = ({ title, icon: Icon, texts, images }: { title: string
                     {title}
                 </h3>
                 <div className="space-y-8">
-                  {images.map((image, index) => (
-                      <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
-                          <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group", index % 2 !== 0 && "md:order-last")}>
-                              <Image src={image.src} alt={`${title} view ${index+1}`} layout="fill" className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={image.hint} />
-                          </div>
-                          <div>
-                              <p className="text-muted-foreground leading-relaxed">{texts[index] || ''}</p>
-                          </div>
-                      </div>
-                  ))}
+                  {items.map((item, index) => {
+                      const text = typeof item === 'string' ? item : item?.text;
+                      const image = typeof item === 'string' ? '' : item?.image;
+
+                      if (!text) return null;
+                      
+                      const itemImage = placeholderImages[image as keyof typeof placeholderImages] || { src: image, hint: 'safari visual' };
+                      
+                      return (
+                        <div key={index} className="grid md:grid-cols-2 gap-8 items-center">
+                            <div className={cn("relative aspect-[4/3] w-full rounded-lg overflow-hidden shadow-lg group bg-muted", index % 2 !== 0 && "md:order-last")}>
+                                <Image 
+                                    src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
+                                    alt={`${title} view ${index+1}`} 
+                                    fill
+                                    style={{ objectFit: 'cover' }} 
+                                    className="transition-transform duration-300 group-hover:scale-105" 
+                                    data-ai-hint={itemImage.hint || 'safari moment'} 
+                                />
+                            </div>
+                            <div>
+                                <p className="text-muted-foreground leading-relaxed">{text}</p>
+                            </div>
+                        </div>
+                      );
+                  })}
                 </div>
             </div>
         </AnimatedSection>
@@ -226,14 +253,20 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   const [ref, isVisible] = useScrollAnimation();
   const [endDate, setEndDate] = useState('');
 
+  const [heroImgSrc, setHeroImgSrc] = useState(campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src);
+
   useEffect(() => {
     if (campaign?.endDate) {
-      setEndDate(new Date(campaign.endDate).toLocaleDateString())
+      try {
+        setEndDate(new Date(campaign.endDate).toLocaleDateString());
+      } catch (e) {
+        setEndDate(campaign.endDate);
+      }
     }
   }, [campaign?.endDate]);
   
   return (
-    <div ref={ref} className={cn('space-y-8 scroll-animate', isVisible && 'scroll-animate-in')}>
+    <div ref={ref} className={cn('space-y-8 scroll-animate container mx-auto px-4 py-8', isVisible && 'scroll-animate-in')}>
       <Button variant="ghost" asChild className="mb-2">
         <Link href="/campaigns">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
@@ -241,13 +274,14 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
       </Button>
 
       <Card className="overflow-hidden shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
-        <div className="relative w-full h-[300px] md:h-[400px]">
+        <div className="relative w-full h-[300px] md:h-[400px] bg-muted">
           <Image 
-            src={campaign.imageUrl} 
+            src={heroImgSrc} 
             alt={campaign.title} 
             fill 
-            className="object-cover" 
+            style={{ objectFit: 'cover' }} 
             data-ai-hint={campaign.dataAiHint}
+            onError={() => setHeroImgSrc(placeholderImages.campaignDetailWildebeest.src)}
             priority 
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -260,18 +294,37 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
 
               <AnimatedSection>
                 <h2 className="font-headline text-2xl font-semibold text-primary">About this Tour</h2>
-                <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+                <div className="space-y-6">
+                    {(!campaign.sections || campaign.sections.length === 0) && (
+                        <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+                    )}
+                    
+                    {(campaign.sections || []).map((section, idx) => (
+                        <div key={section.id || idx}>
+                            {section.type === 'text' ? (
+                                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{section.content}</p>
+                            ) : (
+                                <div className={cn(
+                                    "relative overflow-hidden rounded-2xl shadow-xl bg-muted group/img",
+                                    section.imageLayout === 'full' ? "aspect-video w-full" : "w-full md:w-2/3 aspect-[4/3] mx-auto"
+                                )}>
+                                    <Image 
+                                        src={section.content || placeholderImages.campaignDetailWildebeest.src} 
+                                        alt={`Tour visual ${idx}`} 
+                                        fill 
+                                        className="object-cover"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
               </AnimatedSection>
 
                <ExperienceSection
                 title="The Experience"
                 icon={Star}
-                texts={campaign.storyline}
-                images={[
-                  { src: placeholderImages.gallerySafariGroup.src, hint: placeholderImages.gallerySafariGroup.hint },
-                  { src: placeholderImages.blogLionPride.src, hint: placeholderImages.blogLionPride.hint },
-                  { src: placeholderImages.fifaCardGorilla.src, hint: placeholderImages.fifaCardGorilla.hint },
-                ]}
+                items={campaign.storyline || []}
               />
             </div>
 
@@ -280,26 +333,30 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                     campaignTitle={campaign.title}
                     currentAmount={campaign.currentAmount}
                     goal={campaign.goal}
-                    endDate={endDate}
-                    volunteersSignedUp={campaign.volunteersSignedUp}
-                    volunteersNeeded={campaign.volunteersNeeded}
+                    endDate={campaign.endDate}
+                    volunteersSignedUp={campaign.volunteersSignedUp || 0}
+                    volunteersNeeded={campaign.volunteersNeeded || 10}
                 />
                 <Card className="bg-muted/30 transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
                     <CardHeader>
-                        <CardTitle className="font-headline text-xl text-primary flex items-center"><Compass className="mr-2 h-5 w-5"/>Tour Operator</CardTitle>
+                        <div className="flex items-start gap-4">
+                            <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                <Globe className="h-5 w-5 text-accent" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Operator</p>
+                                <p className="text-foreground font-bold">{campaign.organizer || 'iffe-travels'}</p>
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-foreground font-semibold">{campaign.organizer}</p>
-                    </CardContent>
                     <CardHeader className='pt-0'>
-                        <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5"/>Responsible & Authentic Travel</CardTitle>
+                        <CardTitle className="font-headline text-xl text-primary flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-accent"/>Authentic Travel</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p className="text-sm text-muted-foreground">We are committed to responsible tourism practices that protect wildlife, support conservation efforts, and benefit local communities.</p>
                     </CardContent>
                 </Card>
                 <RelatedToursCard tours={relatedTours} />
-                {campaign.id === '21' && <SemulikiInfoCard />}
                 <NextStepsCard />
             </aside>
           </div>
@@ -308,19 +365,19 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               <ScrollableImageGrid
                 title="Activities"
                 icon={Activity}
-                items={campaign.activities}
+                items={campaign.activities || []}
               />
               
               <StaticImageGrid
                 title="Accommodation"
                 icon={BedDouble}
-                items={campaign.accommodation}
+                items={campaign.accommodation || []}
               />
 
               <StaticImageGrid
                 title="Meals"
                 icon={UtensilsCrossed}
-                items={campaign.meals}
+                items={campaign.meals || []}
               />
               
               {campaign.tags && campaign.tags.length > 0 && (
@@ -348,8 +405,8 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
             <Button variant="outline"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
           </div>
           <Button variant="link" asChild className="text-accent hover:text-accent/80">
-            <Link href={`/campaigns/${campaign.id}/updates`}>
-              View Full Itinerary <ExternalLink className="ml-2 h-4 w-4" />
+            <Link href={`/contact?interest=${campaign.id}`}>
+              Inquire for Details <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </CardFooter>
@@ -357,5 +414,3 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
     </div>
   );
 }
-
-    

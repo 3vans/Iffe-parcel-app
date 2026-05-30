@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -69,10 +70,10 @@ const AppHeader = () => {
 
   const mobileNavItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/packages', label: 'Packages', icon: Package },
-    { href: '/campaigns', label: 'All Tours', icon: Compass },
+    { href: '/packages', label: 'Safari Packages', icon: Package },
+    { href: '/campaigns', label: 'All Expeditions', icon: Compass },
     { href: '/events', label: 'Departures', icon: CalendarClock },
-    { href: '/ideas', label: 'Dream Trips', icon: Lightbulb },
+    { href: '/ideas', label: 'Community Ideas', icon: Lightbulb },
     { href: '/blog', label: 'Journal', icon: Edit3 },
     { href: '/gallery', label: 'Gallery', icon: ImageIcon },
     { href: '/videos', label: 'Videos', icon: PlayCircle },
@@ -82,7 +83,7 @@ const AppHeader = () => {
   
   const mobileProfileItems = [
       { href: '/dashboard', label: 'Dashboard', icon: UserCircle },
-      { href: '/profile', label: 'My Trips', icon: MountainSnow },
+      { href: '/profile', label: 'My Travels', icon: MountainSnow },
   ];
 
   return (
@@ -110,20 +111,21 @@ const AppHeader = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
-                  <Compass className="mr-1 h-4 w-4" /> Destinations <ChevronDown className="ml-1 h-4 w-4" />
+                  <Compass className="mr-1 h-4 w-4" /> Expeditions <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="w-64">
                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Packages & Tours</DropdownMenuLabel>
-                    <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />All Packages</Link></DropdownMenuItem>
+                    <DropdownMenuLabel>Tours & Journeys</DropdownMenuLabel>
+                    <DropdownMenuItem asChild><Link href="/campaigns"><Compass className="mr-2 h-4 w-4" />All Expeditions</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />Safari Packages</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/events"><CalendarClock className="mr-2 h-4 w-4" />Scheduled Departures</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuLabel>Featured Locations</DropdownMenuLabel>
+                    <DropdownMenuLabel>Agency Highlights</DropdownMenuLabel>
                     <DropdownMenuItem asChild><Link href="/discover-jinja"><Waves className="mr-2 h-4 w-4" />Discover Jinja</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href="/sipi-falls"><MountainSnow className="mr-2 h-4 w-4" />Sipi Falls Experience</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href="/sipi-falls"><MountainSnow className="mr-2 h-4 w-4" />Sipi Falls Adventure</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -149,18 +151,18 @@ const AppHeader = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
-                  <PlusCircle className="mr-1 h-4 w-4" /> Create <ChevronDown className="ml-1 h-4 w-4" />
+                  <PlusCircle className="mr-1 h-4 w-4" /> Community <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem asChild><Link href="/ideas"><Lightbulb className="mr-2 h-4 w-4" />Suggest a Dream Trip</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link href="/blog/submit"><Edit3 className="mr-2 h-4 w-4" />Share a Story</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link href="/ideas"><Lightbulb className="mr-2 h-4 w-4" />Suggest a Destination</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link href="/blog/submit"><Edit3 className="mr-2 h-4 w-4" />Share Your Story</Link></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <Button variant="ghost" asChild>
               <Link href="/about">
-                <Info className="mr-1 h-4 w-4" /> About
+                <Info className="mr-1 h-4 w-4" /> Agency
               </Link>
             </Button>
             <Button variant="ghost" asChild>
@@ -175,7 +177,7 @@ const AppHeader = () => {
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} data-ai-hint="profile avatar" />
+                          <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} />
                           <AvatarFallback>{user.displayName?.substring(0,1).toUpperCase() ?? user.email?.substring(0,1).toUpperCase() ?? 'U'}</AvatarFallback>
                         </Avatar>
                         <span className="hidden xl:inline">{user.displayName || user.email}</span>
@@ -183,25 +185,25 @@ const AppHeader = () => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel>My Explorer Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                        <Link href="/dashboard">
-                        <User className="mr-2 h-4 w-4" /> Dashboard
+                        <User className="mr-2 h-4 w-4" /> Impact Dashboard
                        </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
                        <Link href="/profile">
-                        <MountainSnow className="mr-2 h-4 w-4" /> My Trips
+                        <MountainSnow className="mr-2 h-4 w-4" /> My Travels
                        </Link>
                     </DropdownMenuItem>
                     {user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
                       <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuLabel>Admin Tools</DropdownMenuLabel>
+                        <DropdownMenuLabel>Agency Control</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
                           <Link href="/admin" className="text-primary font-bold">
-                            <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Panel
+                            <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
                           </Link>
                         </DropdownMenuItem>
                       </>
@@ -216,7 +218,7 @@ const AppHeader = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline">
-                            Account <ChevronDown className="ml-2 h-4 w-4" />
+                            Sign In <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -224,7 +226,7 @@ const AppHeader = () => {
                             <LogIn className="mr-2 h-4 w-4"/> Login
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openSignupModal()}>
-                            <UserPlus className="mr-2 h-4 w-4"/> Sign Up
+                            <UserPlus className="mr-2 h-4 w-4"/> Join the Club
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -243,7 +245,7 @@ const AppHeader = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] sm:w-[320px] flex flex-col bg-card/95 backdrop-blur-lg p-0">
                 <SheetHeader className="p-4 border-b">
-                   <SheetTitle className="flex items-center gap-2 text-primary">
+                   <SheetTitle className="flex items-center gap-2 text-primary font-bold">
                      <Globe size={20} className="text-primary" /> iffe-travels
                   </SheetTitle>
                 </SheetHeader>
@@ -262,7 +264,7 @@ const AppHeader = () => {
                   {user && (
                       <>
                        <Separator className="my-4" />
-                        <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">My Account</p>
+                        <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">Explorer Portal</p>
                         {mobileProfileItems.map((item) => (
                             <SheetClose asChild key={item.href}>
                               <Link
@@ -281,7 +283,7 @@ const AppHeader = () => {
                               className="flex items-center p-3 rounded-md text-base font-bold text-primary hover:bg-muted transition-colors"
                             >
                               <LayoutDashboard className="mr-3 h-5 w-5 text-primary" />
-                              Admin Panel
+                              Admin Dashboard
                             </Link>
                           </SheetClose>
                         )}
@@ -305,7 +307,7 @@ const AppHeader = () => {
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full justify-start p-3 text-base bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => openSignupModal()}>
-                          <UserPlus className="mr-3 h-5 w-5"/> Sign Up
+                          <UserPlus className="mr-3 h-5 w-5"/> Join Agency Club
                         </Button>
                       </SheetClose>
                     </>

@@ -10,216 +10,125 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Trash2, UserX, ShieldBan, VolumeX, MessageSquare, Users, PowerOff, MessageCircle, ShieldAlert } from "lucide-react";
+import { Send, Trash2, MessageSquare, PowerOff, MessageCircle, Loader2 } from "lucide-react";
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
-
-interface Chatroom {
-  id: string;
-  name: string;
-  topic: string;
-  userCount: number;
-  lastActivity: string;
-}
-
-interface ChatParticipant {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  avatarWidth?: number;
-  avatarHeight?: number;
-  dataAiHint?: string;
-  role: 'user' | 'moderator';
-  isMuted?: boolean;
-  isBannedFromRoom?: boolean;
-  isGloballySuspended?: boolean;
-}
-
-interface ChatMessage {
-  id: string;
-  text: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar: string;
-  avatarWidth?: number;
-  avatarHeight?: number;
-  dataAiHint?: string;
-  timestamp: Date;
-  isOwnMessage?: boolean;
-}
-
-const mockAdminUser = {
-  id: 'admin',
-  name: 'Admin',
-  ...placeholderImages.adminAvatar,
-};
-
-const mockChatrooms: Chatroom[] = [
-  { id: 'cr1', name: 'General Discussion', topic: 'Talk about anything Rotary related!', userCount: 25, lastActivity: '5m ago' },
-  { id: 'cr2', name: 'Project Brainstorming', topic: 'Ideas for new community projects.', userCount: 12, lastActivity: '1h ago' },
-  { id: 'cr3', name: 'Tech Help & Support', topic: 'Get help with platform features.', userCount: 8, lastActivity: '30m ago' },
-];
-
-const mockParticipants: { [chatroomId: string]: ChatParticipant[] } = {
-  cr1: [
-    { id: 'u1', name: 'Alice Wonderland', avatarUrl: placeholderImages.userAlice.src, avatarWidth: placeholderImages.userAlice.width, avatarHeight: placeholderImages.userAlice.height, dataAiHint: placeholderImages.userAlice.hint, role: 'user' },
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: placeholderImages.userBob.src, avatarWidth: placeholderImages.userBob.width, avatarHeight: placeholderImages.userBob.height, dataAiHint: placeholderImages.userBob.hint, role: 'user' },
-    { id: 'u3', name: 'Charlie Chaplin', avatarUrl: placeholderImages.userCharlie.src, avatarWidth: placeholderImages.userCharlie.width, avatarHeight: placeholderImages.userCharlie.height, dataAiHint: placeholderImages.userCharlie.hint, role: 'moderator' },
-  ],
-  cr2: [
-    { id: 'u4', name: 'Diana Prince', avatarUrl: placeholderImages.userDiana.src, avatarWidth: placeholderImages.userDiana.width, avatarHeight: placeholderImages.userDiana.height, dataAiHint: placeholderImages.userDiana.hint, role: 'user' },
-    { id: 'u5', name: 'Edward Scissorhands', avatarUrl: placeholderImages.userEdward.src, avatarWidth: placeholderImages.userEdward.width, avatarHeight: placeholderImages.userEdward.height, dataAiHint: placeholderImages.userEdward.hint, role: 'user' },
-  ],
-  cr3: [
-    { id: 'u2', name: 'Bob The Builder', avatarUrl: placeholderImages.userBob.src, avatarWidth: placeholderImages.userBob.width, avatarHeight: placeholderImages.userBob.height, dataAiHint: placeholderImages.userBob.hint, role: 'user' },
-  ],
-};
-
-const mockMessages: { [chatroomId: string]: ChatMessage[] } = {
-  cr1: [
-    { id: 'm1', text: 'Hello everyone! Welcome to the general chat.', senderId: 'u3', senderName: 'Charlie Chaplin', senderAvatar: placeholderImages.userCharlie.src, avatarWidth: placeholderImages.userCharlie.width, avatarHeight: placeholderImages.userCharlie.height, dataAiHint: placeholderImages.userCharlie.hint, timestamp: new Date(Date.now() - 1000 * 60 * 10) },
-    { id: 'm2', text: 'Hi Charlie! Glad to be here.', senderId: 'u1', senderName: 'Alice Wonderland', senderAvatar: placeholderImages.userAlice.src, avatarWidth: placeholderImages.userAlice.width, avatarHeight: placeholderImages.userAlice.height, dataAiHint: placeholderImages.userAlice.hint, timestamp: new Date(Date.now() - 1000 * 60 * 8) },
-    { id: 'm3', text: 'What are we discussing today?', senderId: 'u2', senderName: 'Bob The Builder', senderAvatar: placeholderImages.userBob.src, avatarWidth: placeholderImages.userBob.width, avatarHeight: placeholderImages.userBob.height, dataAiHint: placeholderImages.userBob.hint, timestamp: new Date(Date.now() - 1000 * 60 * 5) },
-  ],
-  cr2: [
-    { id: 'm4', text: 'Any new project ideas for this quarter?', senderId: 'u4', senderName: 'Diana Prince', senderAvatar: placeholderImages.userDiana.src, avatarWidth: placeholderImages.userDiana.width, avatarHeight: placeholderImages.userDiana.height, dataAiHint: placeholderImages.userDiana.hint, timestamp: new Date(Date.now() - 1000 * 60 * 15) },
-  ],
-  cr3: [],
-};
-
+import { fetchChatrooms, subscribeToMessages, sendMessage, deleteChatMessage, type Chatroom, type ChatMessage } from '@/lib/services/cms-service';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AdminChatroomsPage() {
+  const { user: adminUser } = useAuth();
+  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
   const [selectedChatroomId, setSelectedChatroomId] = useState<string | null>(null);
   const [currentMessages, setCurrentMessages] = useState<ChatMessage[]>([]);
-  const [currentParticipants, setCurrentParticipants] = useState<ChatParticipant[]>([]);
   const [adminMessage, setAdminMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const selectedChatroom = mockChatrooms.find(cr => cr.id === selectedChatroomId);
+  const selectedChatroom = chatrooms.find(cr => cr.id === selectedChatroomId);
 
   useEffect(() => {
-    if (selectedChatroomId) {
-      setCurrentMessages(mockMessages[selectedChatroomId] || []);
-      const participantsForRoom = (mockParticipants[selectedChatroomId] || []).map(p => ({
-        ...p,
-        isMuted: p.isMuted ?? false,
-        isBannedFromRoom: p.isBannedFromRoom ?? false,
-        isGloballySuspended: p.isGloballySuspended ?? false,
-      }));
-      setCurrentParticipants(participantsForRoom);
-      setAdminMessage('');
-    } else {
+    const loadRooms = async () => {
+      try {
+        const rooms = await fetchChatrooms();
+        setChatrooms(rooms);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadRooms();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedChatroomId) {
       setCurrentMessages([]);
-      setCurrentParticipants([]);
+      return;
     }
+
+    const unsubscribe = subscribeToMessages(selectedChatroomId, (msgs) => {
+      setCurrentMessages(msgs);
+    });
+
+    return () => unsubscribe();
   }, [selectedChatroomId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages]);
 
-  const handleSelectChatroom = (chatroomId: string) => {
-    setSelectedChatroomId(chatroomId);
-  };
-
-  const handleAdminSendMessage = (e: React.FormEvent) => {
+  const handleAdminSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminMessage.trim() || !selectedChatroomId) return;
+    if (!adminMessage.trim() || !selectedChatroomId || !adminUser) return;
 
-    const newMessage: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      text: adminMessage,
-      senderId: mockAdminUser.id,
-      senderName: mockAdminUser.name,
-      senderAvatar: mockAdminUser.src,
-      avatarWidth: mockAdminUser.width,
-      avatarHeight: mockAdminUser.height,
-      dataAiHint: mockAdminUser.hint,
-      timestamp: new Date(),
-      isOwnMessage: true,
-    };
-    setCurrentMessages(prev => [...prev, newMessage]);
-    setAdminMessage('');
-    toast({ title: "Message Sent", description: `Your message was sent to "${selectedChatroom?.name}".` });
+    try {
+      await sendMessage(selectedChatroomId, {
+        text: adminMessage,
+        senderId: adminUser.uid,
+        senderName: "Iffe Admin",
+        senderAvatar: placeholderImages.adminAvatar.src,
+      });
+      setAdminMessage('');
+    } catch (err) {
+      toast({ title: "Failed to send", variant: "destructive" });
+    }
   };
   
-  const handleDeleteMessage = (messageId: string, messageText: string) => {
-    setCurrentMessages(prev => prev.filter(msg => msg.id !== messageId));
-    toast({ title: "Message Deleted", description: `Message "${messageText.substring(0,20)}..." deleted from ${selectedChatroom?.name || 'this chat'}. (Simulated)`, variant: "destructive" });
+  const handleDeleteMessage = async (messageId: string) => {
+    if (!selectedChatroomId || !confirm("Delete this message from history?")) return;
+    try {
+      await deleteChatMessage(selectedChatroomId, messageId);
+      toast({ title: "Message Deleted" });
+    } catch (err) {
+      toast({ title: "Delete Failed", variant: "destructive" });
+    }
   };
 
-  const handleUserAction = (action: 'Mute' | 'Kick' | 'BanFromRoom' | 'SuspendGlobal', userId: string, userName: string) => {
-    let toastDescription = '';
-    let toastVariant: "default" | "destructive" = "default";
-
-    setCurrentParticipants(prev => prev.map(p => {
-      if (p.id === userId) {
-        if (action === 'Mute') {
-          toastDescription = `${userName} has been ${p.isMuted ? 'unmuted' : 'muted'} in ${selectedChatroom?.name || 'this chat'}. (Simulated)`;
-          return { ...p, isMuted: !p.isMuted };
-        }
-        if (action === 'Kick') {
-          toastDescription = `${userName} has been kicked from ${selectedChatroom?.name || 'this chat'} for this session. (Simulated)`;
-          toastVariant = "destructive";
-          // For kick, we might visually remove them or just show a status. For simulation, we'll keep them but could filter out if needed.
-        }
-        if (action === 'BanFromRoom') {
-          toastDescription = `${userName} has been ${p.isBannedFromRoom ? 'unbanned from' : 'banned from'} ${selectedChatroom?.name || 'this chat'}. (Simulated)`;
-          toastVariant = "destructive";
-          return { ...p, isBannedFromRoom: !p.isBannedFromRoom, isMuted: !p.isBannedFromRoom ? true : p.isMuted }; // Banning also mutes
-        }
-        if (action === 'SuspendGlobal') {
-          toastDescription = `${userName} has been ${p.isGloballySuspended ? 'unsuspended globally' : 'globally suspended from all chats and platform features'}. (Simulated)`;
-          toastVariant = "destructive";
-          // Global suspension implies being banned/muted everywhere for this simulation
-          return { ...p, isGloballySuspended: !p.isGloballySuspended, isMuted: true, isBannedFromRoom: true };
-        }
-      }
-      return p;
-    }));
-
-    toast({
-      title: `User Action: ${action.replace(/([A-Z])/g, ' $1').trim()}`,
-      description: toastDescription,
-      variant: toastVariant,
-    });
-  };
+  if (isLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
+  }
 
   return (
-    <div className="flex flex-1 flex-col md:flex-row gap-4">
-      <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+    <div className="flex flex-1 flex-col md:flex-row gap-4 h-[calc(100vh-180px)]">
+      <Card className="w-full md:w-1/3 lg:w-1/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg">
         <CardHeader>
-          <CardTitle className="font-headline text-xl flex items-center"><MessageSquare className="mr-2 h-5 w-5 text-primary"/>Active Chatrooms</CardTitle>
-          <CardDescription>Select a room to monitor.</CardDescription>
+          <CardTitle className="font-headline text-xl flex items-center">
+            <MessageSquare className="mr-2 h-5 w-5 text-primary"/>
+            Active Channels
+          </CardTitle>
+          <CardDescription>Real-time monitoring</CardDescription>
         </CardHeader>
         <ScrollArea className="flex-grow">
           <CardContent className="space-y-2 p-4">
-            {mockChatrooms.map((room) => (
+            {chatrooms.map((room) => (
               <Button
                 key={room.id}
                 variant={selectedChatroomId === room.id ? 'secondary' : 'ghost'}
-                className="w-full justify-start text-left h-auto py-2"
-                onClick={() => handleSelectChatroom(room.id)}
+                className="w-full justify-start text-left h-auto py-3 rounded-xl"
+                onClick={() => setSelectedChatroomId(room.id)}
               >
                 <div>
-                  <div className="font-semibold flex items-center">{room.name} <Badge variant="outline" className="ml-2">{room.userCount}</Badge></div>
-                  <p className="text-xs text-muted-foreground">{room.topic}</p>
-                  <p className="text-xs text-muted-foreground/70">Last active: {room.lastActivity}</p>
+                  <div className="font-bold flex items-center text-primary">{room.name}</div>
+                  <p className="text-[10px] text-muted-foreground line-clamp-1">{room.topic}</p>
+                  <p className="text-[10px] text-muted-foreground/70 font-bold uppercase tracking-widest mt-1">Last activity: {room.lastActivity}</p>
                 </div>
               </Button>
             ))}
-             {mockChatrooms.length === 0 && <p className="text-muted-foreground text-sm text-center py-4">No active chatrooms.</p>}
+            {chatrooms.length === 0 && (
+              <p className="text-center text-xs text-muted-foreground py-10">No rooms found in Firestore.</p>
+            )}
           </CardContent>
         </ScrollArea>
       </Card>
 
-      <Card className="w-full md:w-2/3 lg:w-3/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1">
+      <Card className="w-full md:w-2/3 lg:w-3/4 flex flex-col transition-all duration-300 ease-out hover:shadow-lg">
         {!selectedChatroom ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center p-8">
-            <MessageCircle className="h-16 w-16 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold text-muted-foreground">No Chatroom Selected</h2>
-            <p className="text-muted-foreground">Please select a chatroom from the list to start monitoring.</p>
+            <MessageCircle className="h-16 w-16 text-muted-foreground/20 mb-4" />
+            <h2 className="text-xl font-headline font-black text-muted-foreground uppercase">Select a Channel</h2>
+            <p className="text-muted-foreground text-sm">Choose a room from the sidebar to monitor messages.</p>
           </div>
         ) : (
           <>
@@ -230,130 +139,70 @@ export default function AdminChatroomsPage() {
                   <CardDescription>{selectedChatroom.topic}</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive/10">
-                    <PowerOff className="mr-2 h-4 w-4"/> Close Room (Simulated)
+                    <PowerOff className="mr-2 h-4 w-4"/> Close Room
                 </Button>
               </div>
             </CardHeader>
             
-            <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
-              <div className="flex-grow flex flex-col">
-                <ScrollArea className="flex-grow bg-muted/10 p-4">
-                  <div className="space-y-4">
-                    {currentMessages.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={cn(
-                          'flex items-start space-x-2 max-w-[85%]',
-                          msg.isOwnMessage ? 'ml-auto flex-row-reverse space-x-reverse' : 'mr-auto'
-                        )}
-                      >
-                        <Avatar className="h-8 w-8 shrink-0">
-                          <AvatarImage asChild src={msg.senderAvatar} alt={msg.senderName}>
-                            <Image src={msg.senderAvatar} alt={msg.senderName} width={msg.avatarWidth || 32} height={msg.avatarHeight || 32} data-ai-hint={msg.dataAiHint} />
-                          </AvatarImage>
-                          <AvatarFallback>{msg.senderName?.substring(0, 1).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col group">
-                          <div
-                            className={cn(
-                              'p-2.5 rounded-lg shadow-sm text-sm',
-                              msg.isOwnMessage
-                                ? 'bg-primary text-primary-foreground rounded-br-none'
-                                : 'bg-card border rounded-bl-none'
-                            )}
+            <div className="flex-grow flex flex-col overflow-hidden">
+              <ScrollArea className="flex-grow bg-muted/10 p-4">
+                <div className="space-y-4">
+                  {currentMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={cn(
+                        'flex items-start gap-3 max-w-[85%]',
+                        msg.senderId === adminUser?.uid ? 'ml-auto flex-row-reverse' : 'mr-auto'
+                      )}
+                    >
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={msg.senderAvatar} />
+                        <AvatarFallback>{msg.senderName.substring(0, 1).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col group">
+                        <div
+                          className={cn(
+                            'p-3 rounded-2xl shadow-sm text-sm',
+                            msg.senderId === adminUser?.uid
+                              ? 'bg-primary text-primary-foreground rounded-tr-none'
+                              : 'bg-card border rounded-tl-none'
+                          )}
+                        >
+                          <p className="font-black text-[10px] mb-1 uppercase tracking-widest opacity-70">{msg.senderName}</p>
+                          <p>{msg.text}</p>
+                        </div>
+                        <div className="flex items-center justify-between gap-4 mt-1">
+                          <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-widest">{msg.timestamp}</p>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleDeleteMessage(msg.id)}
                           >
-                            <p className="font-medium mb-0.5">{msg.senderName}</p>
-                            <p>{msg.text}</p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className={cn(
-                                "text-xs mt-1 px-1 text-muted-foreground",
-                                msg.isOwnMessage ? 'text-right w-full' : ''
-                              )}
-                            >
-                              {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                            </p>
-                            {!msg.isOwnMessage && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => handleDeleteMessage(msg.id, msg.text)}
-                                title="Delete message"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            )}
-                          </div>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
                       </div>
-                    ))}
-                    {currentMessages.length === 0 && <p className="text-center text-muted-foreground py-8">No messages in this chatroom yet.</p>}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
-                <CardFooter className="p-3 border-t">
-                  <form onSubmit={handleAdminSendMessage} className="flex w-full items-center space-x-2">
-                    <Input
-                      type="text"
-                      placeholder="Type your admin message..."
-                      value={adminMessage}
-                      onChange={(e) => setAdminMessage(e.target.value)}
-                      className="flex-grow"
-                      autoComplete="off"
-                    />
-                    <Button type="submit" size="icon" className="bg-primary hover:bg-primary/90">
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </form>
-                </CardFooter>
-              </div>
-
-              <Card className="w-full lg:w-1/3 lg:max-w-xs border-0 border-l-0 lg:border-l rounded-none lg:rounded-l-none flex flex-col">
-                <CardHeader className="border-b">
-                    <CardTitle className="font-headline text-md flex items-center"><Users className="mr-2 h-5 w-5 text-primary"/>Participants ({currentParticipants.length})</CardTitle>
-                </CardHeader>
-                <ScrollArea className="flex-grow">
-                    <CardContent className="p-3 space-y-2">
-                    {currentParticipants.map(user => (
-                        <div key={user.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50 group">
-                          <div className="flex items-center space-x-2">
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage asChild src={user.avatarUrl} alt={user.name}>
-                                    <Image src={user.avatarUrl} alt={user.name} width={user.avatarWidth || 32} height={user.avatarHeight || 32} data-ai-hint={user.dataAiHint} />
-                                </AvatarImage>
-                                <AvatarFallback>{user.name.substring(0,1)}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                  <p className="text-sm font-medium flex items-center">
-                                    {user.name}
-                                    {user.isMuted && <Badge variant="outline" className="text-xs ml-1 px-1.5 py-0.5">Muted</Badge>}
-                                    {user.isBannedFromRoom && <Badge variant="destructive" className="text-xs ml-1 px-1.5 py-0.5">Banned</Badge>}
-                                    {user.isGloballySuspended && <Badge variant="destructive" className="text-xs ml-1 px-1.5 py-0.5">Suspended</Badge>}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">{user.role}</p>
-                              </div>
-                          </div>
-                          <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-yellow-600" onClick={() => handleUserAction('Mute', user.id, user.name)} title={user.isMuted ? "Unmute" : "Mute from Room"}>
-                                  <VolumeX className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-orange-600" onClick={() => handleUserAction('Kick', user.id, user.name)} title="Kick from Room (Session)">
-                                  <UserX className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-red-600" onClick={() => handleUserAction('BanFromRoom', user.id, user.name)} title={user.isBannedFromRoom ? "Unban from Room" : "Ban from Room"}>
-                                  <ShieldBan className="h-4 w-4" />
-                              </Button>
-                               <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-red-700" onClick={() => handleUserAction('SuspendGlobal', user.id, user.name)} title={user.isGloballySuspended ? "Unsuspend User (Global)" : "Suspend User (Global)"}>
-                                  <ShieldAlert className="h-4 w-4" />
-                              </Button>
-                          </div>
-                        </div>
-                    ))}
-                    {currentParticipants.length === 0 && <p className="text-muted-foreground text-sm text-center py-4">No participants in this room.</p>}
-                    </CardContent>
-                </ScrollArea>
-              </Card>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              </ScrollArea>
+              <CardFooter className="p-4 border-t">
+                <form onSubmit={handleAdminSendMessage} className="flex w-full items-center gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Type official admin message..."
+                    value={adminMessage}
+                    onChange={(e) => setAdminMessage(e.target.value)}
+                    className="flex-grow h-12 rounded-xl"
+                    autoComplete="off"
+                  />
+                  <Button type="submit" size="icon" className="h-12 w-12 bg-primary hover:bg-primary/90 rounded-xl">
+                    <Send className="h-5 w-5" />
+                  </Button>
+                </form>
+              </CardFooter>
             </div>
           </>
         )}

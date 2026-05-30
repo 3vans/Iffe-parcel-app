@@ -1,4 +1,8 @@
-import { db, storage } from '@/lib/firebase';
+
+'use client';
+
+import { db } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { 
   collection, 
   addDoc, 
@@ -17,12 +21,53 @@ import {
   arrayUnion,
   arrayRemove,
   setDoc,
-  type DocumentData
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import placeholderImages from '@/app/lib/placeholder-images.json';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+
+// --- UTILITIES ---
+
+/**
+ * Recursively removes undefined values from an object,
+ * as Firestore does not allow them in setDoc/updateDoc.
+ */
+export function cleanData(obj: any): any {
+  if (obj === null || typeof obj !== 'object' || obj instanceof Date || obj?.toDate) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(cleanData);
+  }
+
+  const cleaned: any = {};
+  Object.keys(obj).forEach((key) => {
+    const value = obj[key];
+    if (value !== undefined) {
+      cleaned[key] = cleanData(value);
+    }
+  });
+  return cleaned;
+}
 
 // --- TYPES ---
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  profilePictureUrl?: string;
+  isCreator: boolean;
+  isAdmin: boolean;
+  points: number;
+  level: string;
+  memberSince?: string;
+  followedUserIds: string[];
+  createdAt: any;
+  status?: 'pending' | 'approved' | 'suspended';
+}
 
 export interface GalleryImage {
   id: string;
@@ -72,7 +117,7 @@ export interface Campaign {
   currentAmount: number;
   tags: string[];
   featured?: boolean;
-  storyline?: string[];
+  storyline?: any[]; // Flexible array of storyline objects { text, image }
   organizer?: string;
   volunteersNeeded?: number;
   volunteersSignedUp?: number;
@@ -80,17 +125,59 @@ export interface Campaign {
   accommodation?: any[];
   meals?: any[];
   bookingTips?: string[];
+  sections?: ItinerarySection[];
   endDate?: string;
+  status?: 'active' | 'completed' | 'cancelled';
+}
+
+export interface Departure {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  type: 'Online' | 'Offline' | 'Hybrid';
+  excerpt: string;
+  fullDescription: string;
+  imageUrl: string;
+  dataAiHint?: string;
+  rsvpLink?: string;
+  calendarLink?: string;
+  createdAt?: any;
+}
+
+export interface ItinerarySection {
+  id: string;
+  type: 'text' | 'image';
+  content: string;
+  imageLayout?: 'small' | 'full';
+}
+
+export interface ItineraryItem {
+  day: number;
+  activity: string;
+  sections: ItinerarySection[];
 }
 
 export interface Package {
   id: string;
   name: string;
+  slug: string;
+  subtitle: string;
+  description: string;
   basePrice: number;
+  priceDescription: string;
   durationDays: number;
+  durationText: string;
   features: string[];
+  whatsIncluded?: string[];
+  imageUrl: string;
+  dataAiHint?: string;
   isPopular?: boolean;
   isActive: boolean;
+  includedTours: string[];
+  itineraryTitle?: string;
+  sampleItinerary: ItineraryItem[];
 }
 
 export interface Addon {
@@ -129,6 +216,14 @@ export interface Idea {
   commentsCount: number;
 }
 
+export interface Chatroom {
+  id: string;
+  name: string;
+  topic: string;
+  userCount: number;
+  lastActivity: string;
+}
+
 export interface ChatMessage {
   id: string;
   text: string;
@@ -139,97 +234,239 @@ export interface ChatMessage {
   createdAt: any;
 }
 
-// --- DEFAULTS ---
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  createdAt: any;
+}
 
-const DEFAULT_GALLERY_IMAGES: GalleryImage[] = [
-  { id: 'g1', src: placeholderImages.gallerySafariGroup.src, alt: 'Safari Group', dataAiHint: placeholderImages.gallerySafariGroup.hint, tags: ['#Safari', '#Group'], caption: 'Adventurers at sunset' },
-  { id: 'g2', src: placeholderImages.galleryElephant.src, alt: 'Elephant', dataAiHint: placeholderImages.galleryElephant.hint, tags: ['#Wildlife', '#Elephant'], caption: 'Majestic elephant by the river' },
-  { id: 'g3', src: placeholderImages.galleryLioness.src, alt: 'Lioness', dataAiHint: placeholderImages.galleryLioness.hint, tags: ['#Wildlife', '#Lions'], caption: 'Lioness with her cubs' },
-  { id: 'g4', src: placeholderImages.galleryBalloon.src, alt: 'Hot Air Balloon', dataAiHint: placeholderImages.galleryBalloon.hint, tags: ['#Adventure', '#Balloon'], caption: 'Soaring over the plains' },
-  { id: 'g5', src: placeholderImages.galleryGiraffe.src, alt: 'Giraffe', dataAiHint: placeholderImages.galleryGiraffe.hint, tags: ['#Wildlife', '#Giraffe'], caption: 'Giraffe at sunrise' },
-];
+// --- CONSTANTS ---
+const CAMPAIGNS_COLLECTION = 'campaigns_public';
+const DEPARTURES_COLLECTION = 'departures';
+const POSTS_COLLECTION = 'posts_approved';
+const GALLERY_COLLECTION = 'gallery';
+const CHATROOMS_COLLECTION = 'chatrooms';
+const IDEAS_COLLECTION = 'ideas';
+const PACKAGES_COLLECTION = 'packages';
+const ANNOUNCEMENTS_COLLECTION = 'announcements';
+const CUSTOM_BOOKINGS_COLLECTION = 'custom_bookings';
+const CONTACT_MESSAGES_COLLECTION = 'contact_messages';
+const BOOKINGS_COLLECTION = 'bookings';
 
-const DEFAULT_CAMPAIGNS: Campaign[] = [
-  { id: '1', title: 'Bwindi Gorilla Trekking', imageUrl: placeholderImages.campaignBwindi.src, dataAiHint: 'bwindi forest', shortDescription: 'World-famous gorilla trekking in a UNESCO World Heritage site.', description: 'Venture into the ancient Bwindi Impenetrable Forest for a face-to-face encounter with endangered mountain gorillas.', region: 'Western', goal: 100, currentAmount: 98, tags: ['#Gorilla', '#UNESCO'] },
-  { id: '2', title: 'Queen Elizabeth National Park', imageUrl: placeholderImages.campaignQueenElizabeth.src, dataAiHint: 'tree climbing lion', shortDescription: 'Spot tree-climbing lions and enjoy Kazinga Channel boat safaris.', description: 'Explore Ugandas most popular savanna park, famous for its diverse ecosystems and the iconic Ishasha tree-climbing lions.', region: 'Western', goal: 100, currentAmount: 95, tags: ['#Wildlife', '#Lions'] },
-  { id: '3', title: 'Murchison Falls Safari', imageUrl: placeholderImages.campaignMurchison.src, dataAiHint: 'murchison falls', shortDescription: 'See the powerful falls and diverse wildlife of Murchison.', description: 'Witness the Nile River explode through a narrow gorge at Murchison Falls, surrounded by elephants, giraffes, and hippos.', region: 'Western', goal: 100, currentAmount: 96, tags: ['#Wildlife', '#Waterfalls'] },
-  { id: '4', title: 'Kibale Forest Chimpanzee Trekking', imageUrl: placeholderImages.campaignKibale.src, dataAiHint: 'chimpanzee forest', shortDescription: 'Trek chimpanzees in the primate capital of East Africa.', description: 'Track our closest relatives through the lush rainforest of Kibale, home to 13 different primate species.', region: 'Western', goal: 100, currentAmount: 94, tags: ['#Chimpanzee', '#Primates'] },
-  { id: '8', title: 'Jinja - Source of the Nile', imageUrl: placeholderImages.campaignSourceNile.src, dataAiHint: 'source of nile', shortDescription: 'Discover the legendary source of the world\'s longest river.', description: 'Visit the historic point where the Great Nile begins its 6,000km journey to the Mediterranean Sea.', region: 'Eastern', goal: 100, currentAmount: 95, tags: ['#Jinja', '#RiverNile'] },
-  { id: '11', title: 'Sipi Falls Adventure', imageUrl: placeholderImages.campaignSipi.src, dataAiHint: 'sipi falls', shortDescription: 'Explore a series of beautiful waterfalls with coffee tours and hikes.', description: 'Hike to three stunning waterfalls and learn about local Arabica coffee production from farm to cup.', region: 'Eastern', goal: 100, currentAmount: 96, tags: ['#Waterfalls', '#Coffee'] },
-];
+// --- HELPER FOR PERMISSION ERRORS ---
 
-// --- BUILDER SERVICES ---
+function handleFirestoreError(error: any, context: SecurityRuleContext) {
+  console.error(`Firestore Error at ${context.path}:`, error);
+  if (error.code === 'permission-denied' || error.message?.includes('permission')) {
+    const permissionError = new FirestorePermissionError(context);
+    errorEmitter.emit('permission-error', permissionError);
+  }
+}
 
-export async function fetchBasePackages(): Promise<Package[]> {
+// --- USER PROFILE SERVICES ---
+
+export async function fetchAllUsers(): Promise<UserProfile[]> {
   try {
-    const q = query(collection(db, 'packages'), where('isActive', '==', true));
+    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      return [
-        { id: 'explorer', name: 'Explorer Package', basePrice: 750, durationDays: 4, features: ['Short Trip', 'Eastern Uganda'], isActive: true },
-        { id: 'adventurer', name: 'Adventurer Package', basePrice: 4500, durationDays: 7, features: ['Primate Focus', 'Lodge Stays'], isActive: true, isPopular: true },
-        { id: 'ultimate', name: 'Ultimate Safari', basePrice: 8000, durationDays: 10, features: ['All Major Parks', 'Full Circuit'], isActive: true }
-      ];
-    }
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
-  } catch (e) {
+    return snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        memberSince: doc.data().createdAt?.toDate?.()?.toLocaleDateString() || 'Recently'
+    } as UserProfile));
+  } catch (error) {
+    handleFirestoreError(error, { path: 'users', operation: 'list' });
     return [];
   }
 }
 
-export async function savePackage(pkg: Partial<Package>) {
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  const docRef = doc(db, 'users', userId);
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        memberSince: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) || 'Recently'
+      } as UserProfile;
+    }
+  } catch (error) {
+    handleFirestoreError(error, { path: docRef.path, operation: 'get' });
+  }
+  return null;
+}
+
+export function createUserProfile(userId: string, data: Partial<UserProfile>) {
+  const userRef = doc(db, 'users', userId);
+  const profile: Partial<UserProfile> = cleanData({
+    email: data.email || '',
+    displayName: data.displayName || 'Iffe Traveler',
+    username: data.username || data.email?.split('@')[0] || `user_${userId.substring(0, 5)}`,
+    bio: data.bio || 'New explorer at iffe-travels.',
+    isCreator: data.isCreator || false,
+    isAdmin: data.isAdmin || false,
+    status: 'approved',
+    points: 0,
+    level: 'Novice Explorer',
+    followedUserIds: [],
+    createdAt: serverTimestamp(),
+    ...data
+  });
+  
+  return setDoc(userRef, profile).catch(err => {
+    handleFirestoreError(err, { path: userRef.path, operation: 'write', requestResourceData: profile });
+    throw err;
+  });
+}
+
+export async function updateUserProfile(userId: string, data: Partial<UserProfile>) {
+    const userRef = doc(db, 'users', userId);
+    const cleaned = cleanData(data);
+    try {
+        await updateDoc(userRef, cleaned);
+    } catch (err) {
+        handleFirestoreError(err, { path: userRef.path, operation: 'update', requestResourceData: cleaned });
+        throw err;
+    }
+}
+
+// --- ANNOUNCEMENTS ---
+
+export async function fetchAnnouncements(): Promise<Announcement[]> {
+  try {
+    const q = query(collection(db, ANNOUNCEMENTS_COLLECTION), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Announcement));
+  } catch (error) {
+    handleFirestoreError(error, { path: ANNOUNCEMENTS_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export function saveAnnouncement(announcement: Partial<Announcement>) {
+  const colRef = collection(db, ANNOUNCEMENTS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = cleanData({ ...announcement, id: newRef.id, createdAt: serverTimestamp() });
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
+}
+
+export function deleteAnnouncement(id: string) {
+  const ref = doc(db, ANNOUNCEMENTS_COLLECTION, id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
+}
+
+// --- BUILDER & AGENCY PACKAGES SERVICES ---
+
+export async function fetchBasePackages(): Promise<Package[]> {
+  try {
+    const q = query(collection(db, PACKAGES_COLLECTION), where('isActive', '==', true));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
+  } catch (error) {
+    handleFirestoreError(error, { path: PACKAGES_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export async function getPackageBySlug(slug: string): Promise<Package | null> {
+  try {
+    const q = query(collection(db, PACKAGES_COLLECTION), where('slug', '==', slug), limit(1));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    const docSnap = snapshot.docs[0];
+    return { id: docSnap.id, ...docSnap.data() } as Package;
+  } catch (error) {
+    handleFirestoreError(error, { path: PACKAGES_COLLECTION, operation: 'list' });
+    return null;
+  }
+}
+
+export function savePackage(pkg: Partial<Package>) {
+  const cleanedPkg = cleanData(pkg);
   if (pkg.id) {
-    const pkgRef = doc(db, 'packages', pkg.id);
-    await updateDoc(pkgRef, { ...pkg, updatedAt: serverTimestamp() });
+    const pkgRef = doc(db, PACKAGES_COLLECTION, pkg.id);
+    const updateData = { ...cleanedPkg, updatedAt: serverTimestamp() };
+    return updateDoc(pkgRef, updateData).catch(err => {
+      handleFirestoreError(err, { path: pkgRef.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
-    await addDoc(collection(db, 'packages'), {
-      ...pkg,
-      isActive: true,
-      createdAt: serverTimestamp(),
+    const colRef = collection(db, PACKAGES_COLLECTION);
+    const newRef = doc(colRef);
+    const newData = { 
+      ...cleanedPkg, 
+      id: newRef.id,
+      isActive: true, 
+      slug: pkg.slug || pkg.name?.toLowerCase().replace(/\s+/g, '-') || `package-${Date.now()}`,
+      createdAt: serverTimestamp() 
+    };
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
     });
   }
+}
+
+export function deletePackage(id: string) {
+  const pkgRef = doc(db, PACKAGES_COLLECTION, id);
+  return deleteDoc(pkgRef).catch(err => {
+    handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 export async function fetchAddons(): Promise<Addon[]> {
   try {
     const q = query(collection(db, 'addons'), where('isActive', '==', true));
     const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      return [
-        { id: 'gorilla', name: 'Gorilla Trekking', price: 900, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
-        { id: 'chimp', name: 'Chimpanzee Tracking', price: 320, category: 'activity', subCategory: 'Wildlife', bundleEligible: true, isActive: true },
-        { id: 'big_five', name: 'Big Five Game Drive', price: 150, category: 'activity', subCategory: 'Wildlife', isActive: true },
-        { id: 'luxury_lodge', name: 'Luxury Lodge Upgrade', price: 1200, category: 'luxury', isActive: true },
-      ];
-    }
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Addon));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'addons', operation: 'list' });
     return [];
   }
 }
 
-export async function saveAddon(addon: Partial<Addon>) {
+export function saveAddon(addon: Partial<Addon>) {
+  const cleanedAddon = cleanData(addon);
   if (addon.id) {
     const addonRef = doc(db, 'addons', addon.id);
-    await updateDoc(addonRef, { ...addon, updatedAt: serverTimestamp() });
+    const updateData = { ...cleanedAddon, updatedAt: serverTimestamp() };
+    return updateDoc(addonRef, updateData).catch(err => {
+      handleFirestoreError(err, { path: addonRef.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
-    await addDoc(collection(db, 'addons'), {
-      ...addon,
-      isActive: true,
-      createdAt: serverTimestamp(),
+    const colRef = collection(db, 'addons');
+    const newRef = doc(colRef);
+    const newData = { ...cleanedAddon, id: newRef.id, isActive: true, createdAt: serverTimestamp() };
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
     });
   }
 }
 
-export async function deleteAddon(id: string) {
-  await deleteDoc(doc(db, 'addons', id));
+export function deleteAddon(id: string) {
+  const addonRef = doc(db, 'addons', id);
+  return deleteDoc(addonRef).catch(err => {
+    handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 export function calculatePricing(basePackage: Package, selectedAddons: Addon[], numPeople: number = 1) {
   const basePrice = basePackage.basePrice;
-  let addonsTotalPerPerson = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+  const addonsTotalPerPerson = selectedAddons.reduce((sum, addon) => sum + (addon.price || 0), 0);
   
   let discountAmountPerPerson = 0;
   const hasGorilla = selectedAddons.some(a => a.id === 'gorilla');
@@ -237,7 +474,7 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
   
   if (hasGorilla && hasChimp) {
     const wildlifeItems = selectedAddons.filter(a => a.id === 'gorilla' || a.id === 'chimp');
-    const wildlifeSum = wildlifeItems.reduce((sum, item) => sum + item.price, 0);
+    const wildlifeSum = wildlifeItems.reduce((sum, item) => sum + (item.price || 0), 0);
     discountAmountPerPerson = wildlifeSum * 0.05;
   }
 
@@ -256,70 +493,141 @@ export function calculatePricing(basePackage: Package, selectedAddons: Addon[], 
   };
 }
 
-// --- PROMOTIONS ---
+export function saveCustomBooking(data: any) {
+  const cleanedData = cleanData(data);
+  const colRef = collection(db, CUSTOM_BOOKINGS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...cleanedData, id: newRef.id, createdAt: serverTimestamp() };
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
+}
 
-export async function fetchPromotions(): Promise<Promotion[]> {
+export function updateBookingStatus(id: string, status: string, userId?: string) {
+    const ref = doc(db, CUSTOM_BOOKINGS_COLLECTION, id);
+    const updateData: any = { status, updatedAt: serverTimestamp() };
+    if (userId) updateData.userId = userId;
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
+}
+
+// --- CONTACT & INQUIRIES SERVICES ---
+
+export function submitContactMessage(data: { name: string, email: string, message: string }) {
+  const colRef = collection(db, CONTACT_MESSAGES_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, status: 'unread', createdAt: serverTimestamp() };
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
+}
+
+export function submitBooking(data: { name: string, email: string, packageName: string, travelDate: Date }) {
+  const colRef = collection(db, BOOKINGS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = { ...data, id: newRef.id, status: 'pending', createdAt: serverTimestamp() };
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
+}
+
+export async function fetchAllInquiries(): Promise<any[]> {
   try {
-    const q = query(collection(db, 'promotions'), orderBy('endDate', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Promotion));
-  } catch (e) {
+    const [custom, contact, standard] = await Promise.all([
+      getDocs(query(collection(db, CUSTOM_BOOKINGS_COLLECTION), orderBy('createdAt', 'desc'))),
+      getDocs(query(collection(db, CONTACT_MESSAGES_COLLECTION), orderBy('createdAt', 'desc'))),
+      getDocs(query(collection(db, BOOKINGS_COLLECTION), orderBy('createdAt', 'desc')))
+    ]);
+
+    const items: any[] = [];
+    custom.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Custom Trip', collection: CUSTOM_BOOKINGS_COLLECTION }));
+    contact.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Contact Message', collection: CONTACT_MESSAGES_COLLECTION }));
+    standard.docs.forEach(d => items.push({ ...d.data(), id: d.id, type: 'Standard Booking', collection: BOOKINGS_COLLECTION }));
+
+    return items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  } catch (err) {
+    console.error("Fetch inquiries error:", err);
     return [];
   }
 }
 
-export async function savePromotion(promo: Partial<Promotion>) {
-  if (promo.id) {
-    const ref = doc(db, 'promotions', promo.id);
-    await updateDoc(ref, { ...promo, updatedAt: serverTimestamp() });
-  } else {
-    await addDoc(collection(db, 'promotions'), {
-      ...promo,
-      isActive: true,
-      createdAt: serverTimestamp(),
-    });
+// --- ASSET STORAGE ---
+
+/**
+ * Generic file upload to Supabase storage.
+ * Returns the public URL of the uploaded asset.
+ */
+export async function uploadFile(file: File, bucket: string = 'blobs', pathPrefix: string = 'assets'): Promise<string> {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+  const filePath = `${pathPrefix}/${fileName}`;
+
+  const { data, error: uploadError } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file);
+
+  if (uploadError) {
+    throw new Error(`Supabase Error: ${uploadError.message}`);
   }
+
+  const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
+  return publicUrl;
 }
 
-export async function deletePromotion(id: string) {
-  await deleteDoc(doc(db, 'promotions', id));
-}
-
-// --- GALLERY ---
+// --- GALLERY (Hybrid Firestore + Supabase) ---
 
 export async function uploadGalleryImage(file: File, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
-  const storagePath = `gallery/${Date.now()}_${file.name}`;
-  const storageRef = ref(storage, storagePath);
+  const publicUrl = await uploadFile(file, 'blobs', 'gallery');
+  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
   
-  await uploadBytes(storageRef, file);
-  const downloadUrl = await getDownloadURL(storageRef);
-  
-  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`) : [];
-  
-  const docRef = await addDoc(collection(db, 'gallery'), {
-    src: downloadUrl,
+  const colRef = collection(db, GALLERY_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = cleanData({
+    id: newRef.id,
+    src: publicUrl,
     alt: metadata.caption || 'Gallery Image',
     caption: metadata.caption || '',
     tags: tagsArray,
     dataAiHint: metadata.dataAiHint || 'safari photo',
-    storagePath: storagePath,
     createdAt: serverTimestamp(),
   });
+
+  await setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
   
-  return { id: docRef.id, src: downloadUrl };
+  return { id: newRef.id, src: publicUrl };
+}
+
+export function updateGalleryImage(id: string, metadata: { caption?: string, tags?: string, dataAiHint?: string }) {
+  const ref = doc(db, GALLERY_COLLECTION, id);
+  const tagsArray = metadata.tags ? metadata.tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t.length > 1) : [];
+  
+  const updateData = cleanData({
+    caption: metadata.caption || '',
+    tags: tagsArray,
+    dataAiHint: metadata.dataAiHint || 'safari photo',
+    updatedAt: serverTimestamp(),
+  });
+
+  return updateDoc(ref, updateData).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+    throw err;
+  });
 }
 
 export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]> {
   try {
-    const galleryRef = collection(db, 'gallery');
-    const q = count 
-      ? query(galleryRef, limit(count))
-      : query(galleryRef);
-      
+    const galleryRef = collection(db, GALLERY_COLLECTION);
+    let q = query(galleryRef, orderBy('createdAt', 'desc'));
+    if (count) q = query(q, limit(count));
     const querySnapshot = await getDocs(q);
-    
-    if (querySnapshot.empty) return DEFAULT_GALLERY_IMAGES;
-
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
       return {
@@ -334,63 +642,94 @@ export async function fetchGalleryImages(count?: number): Promise<GalleryImage[]
       };
     });
   } catch (error) {
-    console.warn("Failed to fetch gallery from Firestore, using defaults", error);
-    return DEFAULT_GALLERY_IMAGES;
+    handleFirestoreError(error, { path: GALLERY_COLLECTION, operation: 'list' });
+    return [];
   }
 }
 
-export async function deleteGalleryImage(id: string, storagePath?: string) {
+export function deleteGalleryImage(id: string, storagePath?: string) {
   if (storagePath) {
-    const storageRef = ref(storage, storagePath);
-    await deleteObject(storageRef).catch(err => console.error("Storage delete error:", err));
+    supabase.storage.from('blobs').remove([storagePath]).catch(err => console.error("Supabase file removal snag:", err));
   }
-  await deleteDoc(doc(db, 'gallery', id));
+  const ref = doc(db, GALLERY_COLLECTION, id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- BLOG ---
 
-export async function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
-  const docRef = await addDoc(collection(db, 'posts'), {
+export function submitBlogPost(data: Omit<BlogPost, 'id' | 'date' | 'commentCount' | 'status'>) {
+  const colRef = collection(db, POSTS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = cleanData({
     ...data,
+    id: newRef.id,
     status: 'Published',
     commentCount: 0,
     createdAt: serverTimestamp(),
   });
-  return docRef.id;
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
+  });
 }
 
 export async function fetchBlogPosts(status?: string, count?: number): Promise<BlogPost[]> {
   try {
-    const postsRef = collection(db, 'posts');
+    const postsRef = collection(db, POSTS_COLLECTION);
     let q;
     
+    // Attempt preferred query (requires composite index for status + createdAt)
     if (status && status !== 'all') {
-      q = query(postsRef, where('status', '==', status));
+      q = query(postsRef, where('status', '==', status), orderBy('createdAt', 'desc'));
     } else {
-      q = query(postsRef);
+      q = query(postsRef, orderBy('createdAt', 'desc'));
     }
     
-    if (count) {
-      q = query(q, limit(count));
-    }
+    if (count) q = query(q, limit(count));
     
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        date: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
-      } as BlogPost;
-    });
-  } catch (e) {
+    try {
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          date: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
+        } as BlogPost;
+      });
+    } catch (innerError: any) {
+      // Fallback for missing index error
+      if (innerError.code === 'failed-precondition' || innerError.message?.includes('index')) {
+        console.warn("Firestore index missing for fetchBlogPosts. Falling back to client-side sort.");
+        const fallbackQ = query(postsRef, limit(100)); // Fetch a larger set to sort locally
+        const snapshot = await getDocs(fallbackQ);
+        let results = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return { id: doc.id, ...data, date: data.createdAt?.toDate?.()?.toLocaleDateString() || 'Recently' } as BlogPost;
+        });
+        
+        if (status && status !== 'all') {
+            results = results.filter(p => p.status === status);
+        }
+        
+        results.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        return count ? results.slice(0, count) : results;
+      }
+      throw innerError;
+    }
+  } catch (error) {
+    handleFirestoreError(error, { path: POSTS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
 export async function getBlogPost(id: string): Promise<BlogPost | null> {
+  const postRef = doc(db, POSTS_COLLECTION, id);
   try {
-    const docSnap = await getDoc(doc(db, 'posts', id));
+    const docSnap = await getDoc(postRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
@@ -399,106 +738,220 @@ export async function getBlogPost(id: string): Promise<BlogPost | null> {
         date: data.createdAt?.toDate?.()?.toLocaleDateString() || 'Recently',
       } as BlogPost;
     }
-  } catch (e) {}
+  } catch (error) {
+    handleFirestoreError(error, { path: postRef.path, operation: 'get' });
+  }
   return null;
 }
 
-export async function updatePostStatus(id: string, status: BlogPost['status']) {
-  await updateDoc(doc(db, 'posts', id), { status });
+export function updatePostStatus(id: string, status: BlogPost['status']) {
+  const postRef = doc(db, POSTS_COLLECTION, id);
+  return updateDoc(postRef, { status }).catch(err => {
+    handleFirestoreError(err, { path: postRef.path, operation: 'update', requestResourceData: { status } });
+    throw err;
+  });
 }
 
-export async function deleteBlogPost(id: string) {
-  await deleteDoc(doc(db, 'posts', id));
+export function deleteBlogPost(id: string) {
+  const postRef = doc(db, POSTS_COLLECTION, id);
+  return deleteDoc(postRef).catch(err => {
+    handleFirestoreError(err, { path: postRef.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- VIDEOS ---
 
-export async function addVideo(video: Omit<VideoItem, 'id'>) {
-  const docRef = await addDoc(collection(db, 'videos'), {
-    ...video,
-    createdAt: serverTimestamp(),
+export function addVideo(video: Omit<VideoItem, 'id'>) {
+  const colRef = collection(db, 'videos');
+  const newRef = doc(colRef);
+  const newData = cleanData({ ...video, id: newRef.id, createdAt: serverTimestamp() });
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
 }
 
 export async function fetchVideos(): Promise<VideoItem[]> {
   try {
-    const q = query(collection(db, 'videos'));
+    const q = query(collection(db, 'videos'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoItem));
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: 'videos', operation: 'list' });
     return [];
   }
 }
 
-export async function deleteVideo(id: string) {
-  await deleteDoc(doc(db, 'videos', id));
+export function deleteVideo(id: string) {
+  const ref = doc(db, 'videos', id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- CAMPAIGNS (Expeditions) ---
 
 export async function fetchCampaigns(featuredOnly?: boolean): Promise<Campaign[]> {
   try {
-    const campaignsRef = collection(db, 'campaigns');
-    const q = featuredOnly 
-      ? query(campaignsRef, where('featured', '==', true))
-      : query(campaignsRef);
-    
+    const campaignsRef = collection(db, CAMPAIGNS_COLLECTION);
+    const q = featuredOnly ? query(campaignsRef, where('featured', '==', true)) : query(campaignsRef);
     const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-      return featuredOnly ? DEFAULT_CAMPAIGNS.filter(c => c.featured) : DEFAULT_CAMPAIGNS;
-    }
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Campaign));
   } catch (error) {
-    return featuredOnly ? DEFAULT_CAMPAIGNS.filter(c => c.featured) : DEFAULT_CAMPAIGNS;
+    handleFirestoreError(error, { path: CAMPAIGNS_COLLECTION, operation: 'list' });
+    return [];
   }
 }
 
 export async function getCampaignById(id: string): Promise<Campaign | null> {
+  const ref = doc(db, CAMPAIGNS_COLLECTION, id);
   try {
-    const docSnap = await getDoc(doc(db, 'campaigns', id));
-    if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as Campaign;
-    }
-  } catch (e) {}
-  // Fallback to defaults
-  const defaultC = DEFAULT_CAMPAIGNS.find(c => c.id === id);
-  return defaultC || null;
+    const docSnap = await getDoc(ref);
+    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as Campaign;
+  } catch (error) {
+    handleFirestoreError(error, { path: ref.path, operation: 'get' });
+  }
+  return null;
 }
 
-export async function saveCampaign(campaign: Partial<Campaign>) {
+export function saveCampaign(campaign: Partial<Campaign>) {
+  const cleanedData = cleanData(campaign);
   if (campaign.id) {
-    const ref = doc(db, 'campaigns', campaign.id);
-    await updateDoc(ref, { ...campaign, updatedAt: serverTimestamp() });
+    const ref = doc(db, CAMPAIGNS_COLLECTION, campaign.id);
+    const updateData = { ...cleanedData, updatedAt: serverTimestamp() };
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
   } else {
-    await addDoc(collection(db, 'campaigns'), {
-      ...campaign,
-      createdAt: serverTimestamp(),
+    const colRef = collection(db, CAMPAIGNS_COLLECTION);
+    const newRef = doc(colRef);
+    const newData = { ...cleanedData, id: newRef.id, status: 'active', createdAt: serverTimestamp() };
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
     });
   }
 }
 
-export async function deleteCampaign(id: string) {
-  await deleteDoc(doc(db, 'campaigns', id));
+export function deleteCampaign(id: string) {
+  const ref = doc(db, CAMPAIGNS_COLLECTION, id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
+}
+
+// --- DEPARTURES (Scheduled Events) ---
+
+export async function fetchDepartures(): Promise<Departure[]> {
+  try {
+    const departuresRef = collection(db, DEPARTURES_COLLECTION);
+    const q = query(departuresRef, orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Departure));
+  } catch (error) {
+    handleFirestoreError(error, { path: DEPARTURES_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export async function getDepartureById(id: string): Promise<Departure | null> {
+  const ref = doc(db, DEPARTURES_COLLECTION, id);
+  try {
+    const docSnap = await getDoc(ref);
+    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as Departure;
+  } catch (error) {
+    handleFirestoreError(error, { path: ref.path, operation: 'get' });
+  }
+  return null;
+}
+
+export function saveDeparture(departure: Partial<Departure>) {
+  const cleanedData = cleanData(departure);
+  if (departure.id) {
+    const ref = doc(db, DEPARTURES_COLLECTION, departure.id);
+    const updateData = { ...cleanedData, updatedAt: serverTimestamp() };
+    return updateDoc(ref, updateData).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: updateData });
+      throw err;
+    });
+  } else {
+    const colRef = collection(db, DEPARTURES_COLLECTION);
+    const newRef = doc(colRef);
+    const newData = { ...cleanedData, id: newRef.id, createdAt: serverTimestamp() };
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
+  }
+}
+
+export function deleteDeparture(id: string) {
+  const ref = doc(db, DEPARTURES_COLLECTION, id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
+}
+
+// --- PROMOTIONS ---
+
+export async function fetchPromotions(): Promise<Promotion[]> {
+  try {
+    const q = query(collection(db, 'promotions'), orderBy('title', 'asc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Promotion));
+  } catch (error) {
+    handleFirestoreError(error, { path: 'promotions', operation: 'list' });
+    return [];
+  }
+}
+
+export function savePromotion(promo: Partial<Promotion>) {
+  const cleaned = cleanData(promo);
+  if (promo.id) {
+    const ref = doc(db, 'promotions', promo.id);
+    return updateDoc(ref, cleaned).catch(err => {
+      handleFirestoreError(err, { path: ref.path, operation: 'update', requestResourceData: cleaned });
+      throw err;
+    });
+  } else {
+    const colRef = collection(db, 'promotions');
+    const newRef = doc(colRef);
+    const newData = { ...cleaned, id: newRef.id, createdAt: serverTimestamp() };
+    return setDoc(newRef, newData).catch(err => {
+      handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+      throw err;
+    });
+  }
+}
+
+export function deletePromotion(id: string) {
+  const ref = doc(db, 'promotions', id);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
+  });
 }
 
 // --- IDEAS ---
 
-export async function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
-  const docRef = await addDoc(collection(db, 'ideas'), {
-    ...data,
-    votes: 0,
-    voters: [],
-    status: 'New',
-    commentsCount: 0,
-    createdAt: serverTimestamp(),
+export function submitIdea(data: Omit<Idea, 'id' | 'dateSubmitted' | 'votes' | 'voters' | 'status' | 'commentsCount'>) {
+  const colRef = collection(db, IDEAS_COLLECTION);
+  const newRef = doc(colRef);
+  const newData = cleanData({ ...data, id: newRef.id, votes: 0, voters: [], status: 'New', commentsCount: 0, createdAt: serverTimestamp() });
+  return setDoc(newRef, newData).catch(err => {
+    handleFirestoreError(err, { path: newRef.path, operation: 'create', requestResourceData: newData });
+    throw err;
   });
-  return docRef.id;
 }
 
 export async function fetchIdeas(): Promise<Idea[]> {
   try {
-    const q = query(collection(db, 'ideas'));
+    const q = query(collection(db, IDEAS_COLLECTION), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
       const data = doc.data();
@@ -508,38 +961,47 @@ export async function fetchIdeas(): Promise<Idea[]> {
         dateSubmitted: data.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'Recently',
       } as Idea;
     });
-  } catch (e) {
+  } catch (error) {
+    handleFirestoreError(error, { path: IDEAS_COLLECTION, operation: 'list' });
     return [];
   }
 }
 
-export async function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
-  const ideaRef = doc(db, 'ideas', ideaId);
-  if (hasVoted) {
-    await updateDoc(ideaRef, {
-      votes: increment(-1),
-      voters: arrayRemove(userId)
-    });
-  } else {
-    await updateDoc(ideaRef, {
-      votes: increment(1),
-      voters: arrayUnion(userId)
-    });
-  }
-}
-
-// --- CHAT ---
-
-export async function sendMessage(message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
-  await addDoc(collection(db, 'chats'), {
-    ...message,
-    createdAt: serverTimestamp(),
+export function voteForIdea(ideaId: string, userId: string, hasVoted: boolean) {
+  const ideaRef = doc(db, IDEAS_COLLECTION, ideaId);
+  const updateData = hasVoted ? { votes: increment(-1), voters: arrayRemove(userId) } : { votes: increment(1), voters: arrayUnion(userId) };
+  return updateDoc(ideaRef, updateData).catch(err => {
+    handleFirestoreError(err, { path: ideaRef.path, operation: 'update', requestResourceData: updateData });
+    throw err;
   });
 }
 
-export function subscribeToMessages(callback: (messages: ChatMessage[]) => void) {
-  const q = query(collection(db, 'chats'), orderBy('createdAt', 'asc'), limit(50));
+// --- CHATROOMS & MESSAGES ---
+
+export async function fetchChatrooms(): Promise<Chatroom[]> {
+  try {
+    const q = query(collection(db, CHATROOMS_COLLECTION), orderBy('name', 'asc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chatroom));
+  } catch (error) {
+    handleFirestoreError(error, { path: CHATROOMS_COLLECTION, operation: 'list' });
+    return [];
+  }
+}
+
+export function sendMessage(roomId: string, message: Omit<ChatMessage, 'id' | 'timestamp' | 'createdAt'>) {
+  const colRef = collection(db, CHATROOMS_COLLECTION, roomId, 'messages');
+  const roomRef = doc(db, CHATROOMS_COLLECTION, roomId);
+  const newData = cleanData({ ...message, createdAt: serverTimestamp() });
   
+  addDoc(colRef, newData).catch(err => {
+    handleFirestoreError(err, { path: colRef.path, operation: 'create', requestResourceData: newData });
+  });
+  return updateDoc(roomRef, { lastActivity: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }).catch(err => handleFirestoreError(err, { path: roomRef.path, operation: 'update' }));
+}
+
+export function subscribeToMessages(roomId: string, callback: (messages: ChatMessage[]) => void) {
+  const q = query(collection(db, CHATROOMS_COLLECTION, roomId, 'messages'), orderBy('createdAt', 'asc'), limit(50));
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => {
       const data = doc.data();
@@ -550,5 +1012,24 @@ export function subscribeToMessages(callback: (messages: ChatMessage[]) => void)
       } as ChatMessage;
     });
     callback(messages);
+  }, (err) => handleFirestoreError(err, { path: `chatrooms/${roomId}/messages`, operation: 'list' }));
+}
+
+export function deleteChatMessage(roomId: string, messageId: string) {
+  const ref = doc(db, CHATROOMS_COLLECTION, roomId, 'messages', messageId);
+  return deleteDoc(ref).catch(err => {
+    handleFirestoreError(err, { path: ref.path, operation: 'delete' });
+    throw err;
   });
+}
+
+export async function fetchUserBookings(userId: string): Promise<any[]> {
+  try {
+    const q = query(collection(db, CUSTOM_BOOKINGS_COLLECTION), where('userId', '==', userId), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    handleFirestoreError(err, { path: CUSTOM_BOOKINGS_COLLECTION, operation: 'list' });
+    return [];
+  }
 }

@@ -1,0 +1,61 @@
+
+[
+  {
+    "name": "Ultimate Primate Safari",
+    "slug": "ultimate-primate-safari",
+    "subtitle": "A deep dive into the worlds of Gorillas and Chimpanzees.",
+    "description": "This premium package combines the highlights of Bwindi Impenetrable Forest and Kibale National Park. Designed for wildlife enthusiasts, it offers a seamless blend of adventure, comfort, and profound primate encounters.",
+    "basePrice": 4500,
+    "priceDescription": "per person",
+    "durationDays": 7,
+    "durationText": "7 Days / 6 Nights",
+    "features": [
+      "Gorilla Trekking Permit Included",
+      "Chimpanzee Tracking Permit Included",
+      "Luxury Eco-Lodge Accommodation",
+      "Private 4x4 Land Cruiser"
+    ],
+    "whatsIncluded": [
+      "All domestic transfers",
+      "Professional English-speaking guide",
+      "All park entrance fees",
+      "Full board meals (B,L,D)"
+    ],
+    "imageUrl": "https://picsum.photos/seed/pkg-primate/1200/600",
+    "dataAiHint": "mountain gorilla",
+    "isPopular": true,
+    "isActive": true,
+    "includedTours": [],
+    "itineraryTitle": "The Primate Loop",
+    "sampleItinerary": [
+      {
+        "day": 1,
+        "activity": "Arrival & Transfer to Kibale",
+        "sections": [
+          {
+            "id": "s1",
+            "type": "text",
+            "content": "Arrive at Entebbe International Airport where you will be met by our expert guide and transferred to the Kibale Forest region."
+          }
+        ]
+      },
+      {
+        "day": 2,
+        "activity": "Chimpanzee Tracking",
+        "sections": [
+          {
+            "id": "s2",
+            "type": "text",
+            "content": "Enter the rainforest of Kibale, home to the highest density of primates in Africa, for an unforgettable trek with wild chimpanzees."
+          },
+          {
+            "id": "s3",
+            "type": "image",
+            "content": "https://picsum.photos/seed/chimp/800/600",
+            "imageLayout": "full"
+          }
+        ]
+      }
+    ]
+  }
+]

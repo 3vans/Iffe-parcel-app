@@ -10,8 +10,8 @@ import WhatsAppCTA from '@/components/layout/whatsapp-cta';
 import BottomNav from '@/components/layout/bottom-nav';
 
 export const metadata: Metadata = {
-  title: 'iffe-travels',
-  description: 'Your adventure into the wild awaits. Book unforgettable safari tours and expeditions.',
+  title: 'iffe-travels | Professional Adventure Tourism',
+  description: 'Your adventure into the wild awaits. Bespoke safari tours, community-driven expeditions, and expert-led journeys across Africa.',
   icons: null,
 };
 

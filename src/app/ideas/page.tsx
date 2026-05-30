@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import IdeaCard, { type IdeaCardProps } from '@/components/idea-card';
@@ -16,7 +15,7 @@ import Image from 'next/image';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { fetchIdeas, submitIdea, voteForIdea, type Idea } from '@/lib/services/cms-service';
 
 const ideaSchema = z.object({
@@ -28,7 +27,7 @@ const ideaSchema = z.object({
 type IdeaFormValues = z.infer<typeof ideaSchema>;
 
 export default function IdeaBoxPage() {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,7 +75,7 @@ export default function IdeaBoxPage() {
   };
 
   const handleVote = async (id: string) => {
-    if (!session?.user) {
+    if (!user) {
       toast({ title: "Login Required", description: "Please sign in to vote for ideas.", variant: "destructive" });
       return;
     }
@@ -84,10 +83,10 @@ export default function IdeaBoxPage() {
     const idea = ideas.find(i => i.id === id);
     if (!idea) return;
 
-    const hasVoted = idea.voters.includes(session.user.id);
+    const hasVoted = idea.voters.includes(user.uid);
     
     try {
-      await voteForIdea(id, session.user.id, hasVoted);
+      await voteForIdea(id, user.uid, hasVoted);
       loadIdeas(); // Refresh list
       toast({ 
         title: hasVoted ? "Vote Removed" : "Vote Cast!", 
@@ -99,7 +98,7 @@ export default function IdeaBoxPage() {
   };
 
   const onSubmitIdea: SubmitHandler<IdeaFormValues> = async (data) => {
-    if (!session?.user) {
+    if (!user) {
       toast({ title: "Login Required", description: "Please sign in to submit a trip idea.", variant: "destructive" });
       return;
     }
@@ -109,7 +108,7 @@ export default function IdeaBoxPage() {
       await submitIdea({
         title: data.title,
         description: data.description,
-        submittedBy: session.user.name || 'Anonymous',
+        submittedBy: user.displayName || user.email || 'Anonymous',
         imageUrl: data.imageUrl,
         dataAiHint: data.dataAiHint,
       });
@@ -128,7 +127,7 @@ export default function IdeaBoxPage() {
   
     const AnimatedIdeaCard = ({ idea }: { idea: Idea }) => {
         const [ref, isVisible] = useScrollAnimation();
-        const hasVoted = session?.user ? idea.voters.includes(session.user.id) : false;
+        const hasVoted = user ? idea.voters.includes(user.uid) : false;
 
         return (
             <div ref={ref} className={cn('scroll-animate', isVisible && 'scroll-animate-in')}>

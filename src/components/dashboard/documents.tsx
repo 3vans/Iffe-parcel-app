@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, Clock, ShieldCheck } from 'lucide-react';
+import { FileText, Download, Loader2, Clock, ShieldCheck, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface UserDoc {
@@ -20,26 +19,20 @@ export default function DashboardDocuments() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulated fetch - will be wired to Firestore restricted by userId
+    // In a production scenario, this would query a user-specific 'documents' collection in Firestore
+    // or list files in a Supabase/Firebase storage folder named after the user's UID.
     setTimeout(() => {
       setDocs([
         {
           id: 'd1',
-          title: 'Gorilla Trekking Certificate - alex_j.pdf',
-          type: 'Certificate',
-          createdAt: 'Oct 15, 2023',
-          fileUrl: '#'
-        },
-        {
-          id: 'd2',
-          title: 'Detailed Itinerary: Serengeti Migration 2024.pdf',
-          type: 'Itinerary',
-          createdAt: 'Feb 01, 2024',
+          title: 'Explorer Club Welcome Guide.pdf',
+          type: 'Other',
+          createdAt: 'Recently',
           fileUrl: '#'
         }
       ]);
       setIsLoading(false);
-    }, 800);
+    }, 1200);
   }, []);
 
   if (isLoading) {
@@ -51,7 +44,7 @@ export default function DashboardDocuments() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-accent" />
-          <h2 className="text-2xl font-headline font-black text-primary uppercase">My Documents</h2>
+          <h2 className="text-2xl font-headline font-black text-primary uppercase">Travel Documents</h2>
         </div>
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
           <ShieldCheck className="w-3 h-3 mr-1" /> Secure Storage
@@ -61,27 +54,29 @@ export default function DashboardDocuments() {
       <div className="grid sm:grid-cols-2 gap-6">
         {docs.length > 0 ? (
           docs.map((doc) => (
-            <Card key={doc.id} className="group hover:border-accent transition-colors overflow-hidden">
-              <CardHeader className="p-4 bg-muted/30 border-b">
-                <Badge variant="secondary" className="w-fit mb-2">{doc.type}</Badge>
-                <CardTitle className="text-sm font-bold truncate">{doc.title}</CardTitle>
+            <Card key={doc.id} className="group hover:border-accent transition-all duration-300 hover:shadow-lg overflow-hidden border-primary/5">
+              <CardHeader className="p-6 bg-muted/20 border-b">
+                <Badge variant="secondary" className="w-fit mb-3 uppercase text-[10px] font-black tracking-widest">{doc.type}</Badge>
+                <CardTitle className="text-base font-bold text-primary truncate leading-tight">{doc.title}</CardTitle>
               </CardHeader>
-              <CardContent className="p-4 text-xs text-muted-foreground">
+              <CardContent className="p-6 text-[10px] font-black uppercase text-muted-foreground tracking-widest">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-3 h-3" /> Issued on {doc.createdAt}
+                  <Clock className="w-3 h-3" /> Issued: {doc.createdAt}
                 </div>
               </CardContent>
-              <CardFooter className="p-4 pt-0">
-                <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white transition-all">
-                  <Download className="w-4 h-4 mr-2" /> Download PDF
+              <CardFooter className="p-6 pt-0">
+                <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white transition-all font-bold h-10 rounded-xl">
+                  <Download className="w-4 h-4 mr-2" /> DOWNLOAD PDF
                 </Button>
               </CardFooter>
             </Card>
           ))
         ) : (
-          <Card className="col-span-full bg-muted/30 border-dashed">
-            <CardContent className="p-12 text-center">
-              <p className="text-muted-foreground">You don't have any private documents yet.</p>
+          <Card className="col-span-full bg-muted/30 border-dashed border-2 rounded-[2rem] border-primary/5">
+            <CardContent className="p-20 text-center">
+              <Compass className="h-12 w-12 mx-auto mb-4 text-primary/10" />
+              <p className="text-stone-400 font-bold uppercase tracking-widest text-sm">No documents found</p>
+              <p className="text-xs text-stone-400 mt-2">Invoices and custom itineraries will appear here after booking.</p>
             </CardContent>
           </Card>
         )}

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,12 +17,15 @@ import {
   LogOut, 
   Settings, 
   User,
-  AlertCircle
+  AlertCircle,
+  Loader2,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { useToast } from '@/hooks/use-toast';
 
 import DashboardAnnouncements from '@/components/dashboard/announcements';
 import DashboardDocuments from '@/components/dashboard/documents';
@@ -31,18 +33,34 @@ import DashboardChat from '@/components/dashboard/chat';
 import DashboardTrips from '@/components/dashboard/trips';
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, isSuspended } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [ref, isVisible] = useScrollAnimation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/');
+    if (!loading) {
+      if (!user) {
+        router.push('/');
+      } else if (isSuspended) {
+        toast({
+          title: "Account Restricted",
+          description: "Your account has been suspended by an administrator. Please contact support.",
+          variant: "destructive"
+        });
+        signOut(auth).then(() => router.push('/'));
+      }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isSuspended, toast]);
 
-  if (loading || !user) return null;
+  if (loading || !user || isSuspended) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -56,15 +74,17 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
             <Avatar className="h-24 w-24 border-4 border-accent shadow-lg">
-              <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'Traveler'} />
+              <AvatarImage src={user.photoURL || profile?.profilePictureUrl || undefined} alt={user.displayName || 'Traveler'} />
               <AvatarFallback className="text-2xl">{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
                 <h1 className="font-headline text-3xl font-black text-primary">{user.displayName || 'Explorer'}</h1>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
-                  <ShieldCheck className="w-3 h-3 mr-1" /> Verified Traveler
-                </Badge>
+                {(profile?.isCreator || profile?.isAdmin) && (
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
+                    <ShieldCheck className="w-3 h-3 mr-1" /> Verified Traveler
+                  </Badge>
+                )}
               </div>
               <p className="text-muted-foreground font-medium">{user.email}</p>
               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
@@ -80,8 +100,8 @@ export default function DashboardPage() {
           <Card className="w-full md:w-auto bg-primary text-primary-foreground border-none">
             <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-1">
               <p className="text-[10px] uppercase font-black tracking-widest opacity-70">Impact Points</p>
-              <p className="text-4xl font-black text-accent">1,250</p>
-              <p className="text-xs font-bold">Gold Level Explorer</p>
+              <p className="text-4xl font-black text-accent">{profile?.points || 0}</p>
+              <p className="text-xs font-bold">{profile?.level || 'Seedling Explorer'}</p>
             </CardContent>
           </Card>
         </div>
