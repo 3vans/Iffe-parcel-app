@@ -385,9 +385,8 @@ export default function AdminInventoryPage() {
                     <TableHead>Region</TableHead>
                     <TableHead>Price (USD)</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                </Table>
+                  </TableRow>
+                </TableHeader>
                 <TableBody>
                   {addons.map((addon) => (
                     <TableRow key={addon.id}>
@@ -406,7 +405,7 @@ export default function AdminInventoryPage() {
                     </TableRow>
                   ))}
                 </TableBody>
-              
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
