@@ -132,7 +132,7 @@ const ScrollableImageGrid = ({ title, icon: Icon, items }: { title: string, icon
                     {validItems.map((item, index) => {
                         const itemImage = placeholderImages[item.image as keyof typeof placeholderImages] || { src: item.image, hint: 'safari visual' };
                         return (
-                            <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[300px] flex-shrink-0">
+                            <Card key={index} className="overflow-hidden shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 group w-[280px] sm:w-[300px] flex-shrink-0">
                                 <div className="relative w-full aspect-[16/9] bg-muted">
                                     <Image 
                                         src={itemImage.src || placeholderImages.campaignDetailWildebeest.src} 
@@ -266,20 +266,23 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
   }, [campaign?.endDate]);
   
   return (
-    <div ref={ref} className={cn('space-y-8 scroll-animate container mx-auto px-4 py-8', isVisible && 'scroll-animate-in')}>
-      <Button variant="ghost" asChild className="mb-2">
-        <Link href="/campaigns">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
-        </Link>
-      </Button>
+    <div ref={ref} className={cn('space-y-8 scroll-animate container mx-auto px-0 sm:px-4 py-8', isVisible && 'scroll-animate-in')}>
+      <div className="px-4 sm:px-0">
+        <Button variant="ghost" asChild className="mb-2">
+          <Link href="/campaigns">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Tours
+          </Link>
+        </Button>
+      </div>
 
-      <Card className="overflow-hidden shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
+      <Card className="overflow-hidden border-x-0 sm:border-x rounded-none sm:rounded-2xl shadow-xl transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-1">
         <div className="relative w-full h-[300px] md:h-[400px] bg-muted">
           <Image 
             src={heroImgSrc} 
             alt={campaign.title} 
             fill 
             style={{ objectFit: 'cover' }} 
+            data-nimg="fill"
             data-ai-hint={campaign.dataAiHint}
             onError={() => setHeroImgSrc(placeholderImages.campaignDetailWildebeest.src)}
             priority 
@@ -288,7 +291,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
            <CardTitle className="font-headline text-3xl md:text-4xl text-white absolute bottom-6 left-6 z-10">{campaign.title}</CardTitle>
         </div>
         
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             <div className="md:col-span-2 space-y-8">
 
@@ -296,7 +299,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
                 <h2 className="font-headline text-2xl font-semibold text-primary">About this Tour</h2>
                 <div className="space-y-6">
                     {(!campaign.sections || campaign.sections.length === 0) && (
-                        <p className="text-muted-foreground leading-relaxed">{campaign.description}</p>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{campaign.description}</p>
                     )}
                     
                     {(campaign.sections || []).map((section, idx) => (
@@ -328,7 +331,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               />
             </div>
 
-            <aside className="space-y-6 md:sticky md:top-24 h-fit">
+            <aside className="space-y-6 md:sticky md:top-24 h-fit px-4 sm:px-0">
                 <CampaignActionsCard
                     campaignTitle={campaign.title}
                     currentAmount={campaign.currentAmount}
@@ -361,7 +364,7 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
             </aside>
           </div>
 
-          <div className="mt-8 space-y-8">
+          <div className="mt-8 space-y-8 px-4 sm:px-0">
               <ScrollableImageGrid
                 title="Activities"
                 icon={Activity}
@@ -392,11 +395,13 @@ export default function CampaignDetailClientPage({ campaign, relatedTours }: Cam
               )}
           </div>
           
-          <Summarizer 
-            campaignDescription={campaign.description} 
-            campaignTitle={campaign.title} 
-            bookingTips={campaign.bookingTips} 
-          />
+          <div className="px-4 sm:px-0">
+            <Summarizer 
+              campaignDescription={campaign.description} 
+              campaignTitle={campaign.title} 
+              bookingTips={campaign.bookingTips} 
+            />
+          </div>
         </div>
         
         <CardFooter className="border-t p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
