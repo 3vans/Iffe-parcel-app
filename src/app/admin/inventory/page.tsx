@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -587,7 +586,7 @@ export default function AdminInventoryPage() {
                   </div>
                   <div className="space-y-2">
                       {editingPackage?.whatsIncluded?.map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-2 group">
+                        <div key={idx} className="flex items-start gap-3 group">
                           <Input 
                             value={item} 
                             onChange={(e) => updateInclusion(idx, e.target.value)} 

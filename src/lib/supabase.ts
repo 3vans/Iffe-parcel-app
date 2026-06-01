@@ -2,13 +2,13 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Fallback to placeholder values during build/prerendering to prevent "supabaseUrl is required" error
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-project.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
-// Add a more helpful warning for placeholders
-if (!supabaseUrl || supabaseUrl.includes('your-supabase-url') || !supabaseAnonKey || supabaseAnonKey.includes('your-supabase-anon-key')) {
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
   if (typeof window !== 'undefined') {
-    console.warn("Supabase Warning: Using placeholder credentials. Media uploads will fail until you update your .env file with actual keys from your Supabase Dashboard.");
+    console.warn("Supabase Warning: Missing credentials. Media uploads will fail until you update your .env file.");
   }
 }
 
