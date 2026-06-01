@@ -1,14 +1,13 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, Users, HeartHandshake, Star, Info, LayoutList } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 
 interface CampaignActionsCardProps {
   campaignTitle: string;
