@@ -86,8 +86,8 @@ export default function Hero() {
       </div>
       
       {/* Mobile Content Container */}
-      <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden pt-[68px]">
-        <div className="bg-stone-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 text-center text-white border border-white/10 shadow-2xl flex flex-col gap-4 sm:gap-6 w-full max-w-sm mx-auto">
+      <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden pt-[68px] overflow-hidden">
+        <div className="bg-stone-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 text-center text-white border border-white/10 shadow-2xl flex flex-col gap-4 sm:gap-6 w-full max-w-[95%] mx-auto">
             <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500 leading-tight", hasScrolled ? 'text-[9px]' : 'text-[10px]')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
               className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-xl" : "text-2xl")}

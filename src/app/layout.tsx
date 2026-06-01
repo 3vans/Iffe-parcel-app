@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -21,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="max-w-full overflow-x-hidden">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -31,12 +30,12 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="preconnect" href="https://www.youtube.com" />
       </head>
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="max-w-full overflow-x-hidden relative">
         <AuthProvider>
           <ThemeProviderClient>
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
               <AppHeader />
-              <main className="flex-grow">
+              <main className="flex-grow w-full max-w-full overflow-x-hidden">
                 {children}
               </main>
               <AppFooter />
