@@ -152,10 +152,7 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
         return 'card-right';
       case -1:
         return 'card-left';
-      case 2:
-        return 'card-far-right';
-      case -2:
-        return 'card-far-left';
+      // We hide the far positions (2 and -2) to limit the view to 3 cards for better symmetry as requested
       default:
         return 'card-hidden';
     }
