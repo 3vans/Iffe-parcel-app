@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -185,7 +184,7 @@ export default function ContactPage() {
                     </Link>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
-                    <Link href="#">
+                    <Link href="https://x.com/IMudembula" target="_blank" rel="noopener noreferrer">
                         <i className="fa-brands fa-x-twitter mr-3 h-6 w-6 text-foreground"></i> X (Twitter)
                     </Link>
                 </Button>

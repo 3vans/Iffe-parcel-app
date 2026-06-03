@@ -66,7 +66,7 @@ export default function AppFooter() {
                         <Instagram className="h-5 w-5" />
                     </Button>
                     </Link>
-                    <Link href="#" aria-label="Twitter">
+                    <Link href="https://x.com/IMudembula" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
                     <Button variant="outline" size="icon" className="border-muted-foreground/50 text-muted-foreground hover:bg-accent/10 hover:border-accent hover:text-accent">
                         <Twitter className="h-5 w-5" />
                     </Button>
@@ -93,7 +93,7 @@ export default function AppFooter() {
                     <li><Link href="/packages" className="text-muted-foreground hover:text-primary">Packages</Link></li>
                     <li><Link href="/events" className="text-muted-foreground hover:text-primary">Departures</Link></li>
                     <li className="flex items-center gap-2"><Waves className="h-4 w-4 text-accent" /><Link href="/discover-jinja" className="text-muted-foreground hover:text-primary">Discover Jinja</Link></li>
-                    <li className="flex items-center gap-2"><Mountain className="h-4 w-4 text-accent" /><Link href="/sipi-falls" className="text-muted-foreground hover:text-primary">Sipi Falls</Link></li>
+                    <li className="flex items-center gap-2"><Mountain className="h-4 w-4 text-accent" /><Link href="/sipi-falls" className="text-muted-foreground hover:text-primary">Sipi Falls Adventure</Link></li>
                     <li><Link href="/ideas" className="text-muted-foreground hover:text-primary">Dream Trips</Link></li>
                 </ul>
                 </div>
