@@ -158,6 +158,34 @@
       cursor: pointer;
   }
 
+  .card-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+  }
+
+  .card-title {
+      font-family: var(--font-headline);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: hsl(var(--primary));
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+  }
+
+  .card-location {
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+      color: hsl(var(--muted-foreground));
+      margin-bottom: 0.75rem;
+  }
+
+  .card-button {
+      margin-top: auto;
+  }
+
   .card-center {
       z-index: 30;
       transform: translateX(0) scale(1);
