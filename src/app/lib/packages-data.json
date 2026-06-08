@@ -1,4 +1,3 @@
-
 [
   {
     "slug": "explorer",
@@ -7,7 +6,7 @@
     "price": "750",
     "priceDescription": "per person",
     "duration": "4 Days / 3 Nights",
-    "imageUrl": "campaignSipi",
+    "imageUrl": "https://images.unsplash.com/photo-1605333140632-619234190c60?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "description": "The Explorer Package is the perfect introduction to the beauty and adventure of Eastern Uganda. This compact journey takes you to the legendary Source of the Nile in Jinja, where you'll experience the power of the world's longest river. Then, you'll travel to the stunning Sipi Falls on the slopes of Mt. Elgon for breathtaking hikes and a unique coffee tour. It's an ideal trip for those with limited time who want to experience some of Uganda's most iconic landscapes.",
     "includedTours": ["8", "11"],
     "sampleItinerary": [
@@ -24,7 +23,7 @@
     "price": "4500",
     "priceDescription": "per person",
     "duration": "7 Days / 6 Nights",
-    "imageUrl": "campaignBwindi",
+    "imageUrl": "https://images.unsplash.com/photo-1599818454238-149f78a74e50?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "description": "The Adventurer Package is a primate lover's dream. This tour focuses on Uganda's two most iconic primate experiences. You'll begin in Kibale Forest, the primate capital of the world, to track habituated chimpanzees. Afterwards, you'll journey south to the ancient Bwindi Impenetrable Forest for the awe-inspiring experience of spending time with a mountain gorilla family. This is a profound wildlife journey you'll never forget.",
     "includedTours": ["4", "1"],
     "sampleItinerary": [
@@ -44,7 +43,7 @@
     "price": "8000",
     "priceDescription": "per person",
     "duration": "10 Days / 9 Nights",
-    "imageUrl": "campaignQueenElizabeth",
+    "imageUrl": "https://images.unsplash.com/photo-1592994801196-17a41760920f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "description": "The Ultimate Safari is a comprehensive journey through the highlights of Western Uganda. Starting with the powerful Murchison Falls, you'll experience classic savannah game drives and a Nile boat safari. You'll then head to Kibale for chimpanzee trekking before exploring the diverse ecosystems of Queen Elizabeth National Park, famous for its tree-climbing lions and the Kazinga Channel. This tour offers an unparalleled diversity of landscapes and wildlife.",
     "includedTours": ["3", "4", "2"],
     "sampleItinerary": [
@@ -67,7 +66,7 @@
     "price": "12000",
     "priceDescription": "per person",
     "duration": "14 Days / 13 Nights",
-    "imageUrl": "campaignKidepo",
+    "imageUrl": "https://images.unsplash.com/photo-1587576595503-f327a34cff3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "description": "For the traveler who wants to see it all, the Super Combo is our most comprehensive package. This epic 14-day journey covers the best of Uganda: the powerful Murchison Falls, chimpanzee trekking in Kibale, the diverse wildlife of Queen Elizabeth National Park, and the unforgettable mountain gorilla encounter in Bwindi Impenetrable Forest. This is the ultimate Ugandan wildlife and landscape experience.",
     "includedTours": ["3", "4", "2", "1"],
     "sampleItinerary": [

@@ -1,4 +1,3 @@
-
 [
   {
     "id": "pkg-explorer",
@@ -8,7 +7,7 @@
     "rating": "98",
     "speed": "4 Days",
     "skill": "Sightseeing",
-    "image": "campaignSipi",
+    "image": "https://images.unsplash.com/photo-1605333140632-619234190c60?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "dataAiHint": "sipi falls landscape",
     "link": "/packages/explorer",
     "price": "750"
@@ -21,7 +20,7 @@
     "rating": "99",
     "speed": "7 Days",
     "skill": "Primate Trekking",
-    "image": "campaignBwindi",
+    "image": "https://images.unsplash.com/photo-1599818454238-149f78a74e50?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "dataAiHint": "mountain gorilla forest",
     "link": "/packages/adventurer",
     "price": "4,500"
@@ -34,7 +33,7 @@
     "rating": "97",
     "speed": "10 Days",
     "skill": "Big Five Safari",
-    "image": "campaignQueenElizabeth",
+    "image": "https://images.unsplash.com/photo-1592994801196-17a41760920f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "dataAiHint": "savannah wildlife",
     "link": "/packages/ultimate",
     "price": "8,000"
@@ -47,7 +46,7 @@
     "rating": "96",
     "speed": "14 Days",
     "skill": "Full Expedition",
-    "image": "campaignKidepo",
+    "image": "https://images.unsplash.com/photo-1587576595503-f327a34cff3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "dataAiHint": "kidepo valley vista",
     "link": "/packages/super-combi",
     "price": "12,000"
