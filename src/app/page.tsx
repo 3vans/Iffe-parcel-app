@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -120,6 +119,7 @@ export default function Home() {
     <>
       <Hero />
       <div className="relative z-10 space-y-12 animate-fade-in pt-12">
+        {/* Main CTA Entry Points */}
         <section>
           <AnimatedCard>
           <Card className="shadow-lg bg-card/80 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 border-primary/10">
@@ -149,14 +149,35 @@ export default function Home() {
           </AnimatedCard>
         </section>
 
-        {/* Dynamic Visual Carousel Section */}
+        {/* Featured Foundation Packages (FIFA Carousel) */}
+        <section className="carousel-background-container">
+            <div 
+                className="carousel-background-image"
+                style={{ backgroundImage: activeCarouselImage ? `url(${activeCarouselImage})` : 'none' }}
+            />
+            <div className="carousel-background-overlay" />
+            <FifaCardCarousel 
+                cards={fifaCardData as any}
+                title="Featured Safari Packages"
+                onActiveCardChange={(card) => {
+                    if (card) {
+                        const imageData = placeholderImages[card.image as keyof typeof placeholderImages];
+                        if (imageData) {
+                            setActiveCarouselImage(imageData.src);
+                        }
+                    }
+                }} 
+            />
+        </section>
+
+        {/* Dynamic Tours Section (Film Strip) */}
         <section>
           <AnimatedCard className="border-none shadow-none bg-transparent h-auto">
             <CampaignCarousel campaigns={liveCampaigns.length > 0 ? liveCampaigns : []} />
           </AnimatedCard>
         </section>
 
-        {/* Dynamic Custom Builder Section */}
+        {/* Custom Safari Builder Section */}
         <AnimatedSection className="container mx-auto px-4">
             <CustomSafariBuilder 
                 initialPackages={livePackages} 
@@ -203,6 +224,7 @@ export default function Home() {
             </AnimatedCard>
         </section>
         
+        {/* Community & Social Feed */}
         <section>
           <h2 className="font-headline text-3xl font-bold text-primary mb-6">From the Wild</h2>
           {isLoading ? (
@@ -254,7 +276,7 @@ export default function Home() {
                           <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">Recent Photo</div>
                         </div>
                         <CardHeader>
-                          <CardTitle className="text-lg font-headline">{item.image.caption || "A moment from the wild"}</CardTitle>
+                          <CardTitle className="text-lg font-headline">{item.image.caption || "The Kidepo Experience"}</CardTitle>
                           <CardDescription>{item.image.date}</CardDescription>
                         </CardHeader>
                         <CardFooter>
@@ -275,25 +297,6 @@ export default function Home() {
                   <p className="text-xl text-muted-foreground">The feed is quiet right now... Why not start something?</p>
               </div>
           )}
-        </section>
-
-        <section className="carousel-background-container">
-            <div 
-                className="carousel-background-image"
-                style={{ backgroundImage: activeCarouselImage ? `url(${activeCarouselImage})` : 'none' }}
-            />
-            <div className="carousel-background-overlay" />
-            <FifaCardCarousel 
-                cards={fifaCardData as any}
-                onActiveCardChange={(card) => {
-                    if (card) {
-                        const imageData = placeholderImages[card.image as keyof typeof placeholderImages];
-                        if (imageData) {
-                            setActiveCarouselImage(imageData.src);
-                        }
-                    }
-                }} 
-            />
         </section>
 
         {/* Trust & Authority */}
