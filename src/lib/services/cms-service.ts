@@ -156,6 +156,7 @@ export interface ItinerarySection {
 export interface ItineraryItem {
   day: number;
   activity: string;
+  description?: string;
   sections: ItinerarySection[];
 }
 
@@ -369,7 +370,7 @@ export function deleteAnnouncement(id: string) {
 
 export async function fetchBasePackages(): Promise<Package[]> {
   try {
-    const q = query(collection(db, PACKAGES_COLLECTION), where('isActive', '==', true));
+    const q = query(collection(db, PACKAGES_COLLECTION));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Package));
   } catch (error) {
@@ -459,7 +460,7 @@ export function saveAddon(addon: Partial<Addon>) {
 export function deleteAddon(id: string) {
   const addonRef = doc(db, 'addons', id);
   return deleteDoc(addonRef).catch(err => {
-    handleFirestoreError(err, { path: pkgRef.path, operation: 'delete' });
+    handleFirestoreError(err, { path: addonRef.path, operation: 'delete' });
     throw err;
   });
 }

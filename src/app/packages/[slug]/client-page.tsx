@@ -33,6 +33,7 @@ type ItinerarySection = {
 type ItineraryItem = {
     day: number;
     activity: string;
+    description?: string;
     sections: ItinerarySection[];
 }
 
@@ -168,6 +169,16 @@ export default function ComboPackageClientPage({ packageDetails }: ComboPackageC
                       </AccordionTrigger>
                       <AccordionContent className="mt-2 p-4 sm:p-8 bg-muted/30 rounded-3xl border border-primary/5">
                         <div className="space-y-8">
+                            {/* Primary/Legacy Narrative support */}
+                            {item.description && (
+                                <div className="prose prose-stone dark:prose-invert max-w-none">
+                                    <p className="text-muted-foreground whitespace-pre-line leading-relaxed text-lg px-2">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Dynamic Modular Sections */}
                             {(item.sections || []).map((section, sIdx) => {
                                 if (section.type === 'text') {
                                     return (

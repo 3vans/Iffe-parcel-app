@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -68,6 +69,7 @@ export default function AdminInventoryPage() {
           {
             "day": 1,
             "activity": "Arrival",
+            "description": "Welcome narrative...",
             "sections": [
               { "id": "s1", "type": "text", "content": "Welcome to Uganda. Transfer to your luxury lodge." }
             ]
@@ -203,7 +205,7 @@ export default function AdminInventoryPage() {
   const addItineraryDay = () => {
     const currentItinerary = [...(editingPackage?.sampleItinerary || [])];
     const nextDay = currentItinerary.length + 1;
-    const newItem: ItineraryItem = { day: nextDay, activity: '', sections: [] };
+    const newItem: ItineraryItem = { day: nextDay, activity: '', description: '', sections: [] };
     setEditingPackage(prev => prev ? { ...prev, sampleItinerary: [...currentItinerary, newItem] } : null);
   };
   const removeItineraryDay = (index: number) => {
@@ -668,6 +670,16 @@ export default function AdminInventoryPage() {
                                             <ImageIcon className="h-3 w-3 mr-1" /> + Visual
                                         </Button>
                                     </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-[9px] font-bold uppercase text-muted-foreground">Primary Narrative / Summary</Label>
+                                    <Textarea 
+                                        value={day.description || ''} 
+                                        onChange={(e) => updateItineraryItem(dayIndex, 'description', e.target.value)} 
+                                        placeholder="Quick summary for this day (appears in the drop-down)"
+                                        rows={3}
+                                    />
                                 </div>
 
                                 <div className="space-y-4">
