@@ -192,7 +192,7 @@ export default function ContactPage() {
                     </Link>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
-                    <Link href="#">
+                    <Link href="https://www.tripadvisor.com/Profile/iffetravels" target="_blank" rel="noopener noreferrer">
                         <i className="fa-brands fa-tripadvisor mr-3 h-6 w-6 text-green-600"></i> TripAdvisor
                     </Link>
                 </Button>
