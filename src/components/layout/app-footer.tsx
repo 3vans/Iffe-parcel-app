@@ -43,7 +43,7 @@ export default function AppFooter() {
                     </Link>
                     <div className="flex items-start text-sm text-muted-foreground mb-4 max-w-sm">
                         <MapPin className="h-4 w-4 mr-2 mt-1 text-accent shrink-0" />
-                        <span>Plot 123, Adventure Lane, Kampala, Uganda</span>
+                        <span>Buwenda, Jinja Uganda</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-4 max-w-sm">
                         Subscribe to our newsletter for the latest travel deals, tips, and stories from the wild.
