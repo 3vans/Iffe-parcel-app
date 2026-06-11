@@ -61,7 +61,7 @@ export default function AppFooter() {
                         <Facebook className="h-5 w-5" />
                     </Button>
                     </Link>
-                    <Link href="#" aria-label="Instagram">
+                    <Link href="https://www.instagram.com/iffe.travels.ltd" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                     <Button variant="outline" size="icon" className="border-muted-foreground/50 text-muted-foreground hover:bg-accent/10 hover:border-accent hover:text-accent">
                         <Instagram className="h-5 w-5" />
                     </Button>
@@ -76,7 +76,7 @@ export default function AppFooter() {
                         <Linkedin className="h-5 w-5" />
                     </Button>
                     </Link>
-                    <Link href="#" aria-label="YouTube">
+                    <Link href="https://www.youtube.com/channel/UCpzZFQ5eBs11PElV5z7CGPw" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                     <Button variant="outline" size="icon" className="border-muted-foreground/50 text-muted-foreground hover:bg-accent/10 hover:border-accent hover:text-accent">
                         <Youtube className="h-5 w-5" />
                     </Button>
@@ -117,6 +117,7 @@ export default function AppFooter() {
             </div>
             </div>
 
+            {/* Bottom Perforation Strip (Inert in Footer) */}
             <Separator className="my-6" />
 
             <div className="text-center text-xs text-muted-foreground">
