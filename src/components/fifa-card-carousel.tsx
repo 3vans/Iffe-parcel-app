@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, UserCircle, MapPin, DollarSign } from 'lucide-react';
+import { UserCircle, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import cardDataFromFile from '@/app/lib/fifa-card-data.json';
 import { cn } from '@/lib/utils';
@@ -73,13 +73,9 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
     setCurrentIndex((prevIndex) => (prevIndex + 1) % cards.length);
   }, [cards.length]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + cards.length) % cards.length);
-  };
-  
-  const handleIndicatorClick = (index: number) => {
-    setCurrentIndex(index);
-  };
+  }, [cards.length]);
   
   const onTouchStart = (e: React.TouchEvent) => {
       setTouchEnd(null);
@@ -206,25 +202,6 @@ export default function FifaCardCarousel({ cards: cardsProp, title = "Featured E
                     </div>
                 ))}
             </div>
-        </div>
-        
-        <div className="carousel-nav">
-            <Button variant="outline" size="icon" onClick={handlePrev} className="nav-button prev">
-                <ChevronLeft />
-            </Button>
-            <Button variant="outline" size="icon" onClick={handleNext} className="nav-button next">
-                <ChevronRight />
-            </Button>
-        </div>
-        
-        <div className="card-indicators">
-            {cards.map((_, index) => (
-                <div 
-                    key={index}
-                    className={`indicator ${index === currentIndex ? 'active' : ''}`}
-                    onClick={() => handleIndicatorClick(index)}
-                />
-            ))}
         </div>
     </div>
   );
