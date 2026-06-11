@@ -44,12 +44,6 @@ const teamMembers = [
     avatar: placeholderImages.teamBen,
     link: "/profile/ben",
   },
-  {
-    name: "Alice Green",
-    role: "Customer Relations",
-    avatar: placeholderImages.teamAlice,
-    link: "/profile/alice-green",
-  },
 ];
 
 function AnimatedCard({ children, className }: { children: React.ReactNode, className?:string }) {

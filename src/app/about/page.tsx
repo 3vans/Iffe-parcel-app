@@ -35,17 +35,6 @@ const teamMembers = [
     link: "/profile/ben"
   },
   {
-    id: "team3",
-    title: "Alice Green",
-    country: "Customer Relations",
-    rating: "99",
-    speed: "8 Yrs",
-    skill: "450+ Tours",
-    image: "teamAlice" as keyof typeof placeholderImages,
-    dataAiHint: "customer relations portrait",
-    link: "/profile/alice-green"
-  },
-  {
     id: "team4",
     title: "David Lee",
     country: "Lead Photographer",
