@@ -1,4 +1,3 @@
-
 'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -120,12 +119,6 @@ const AppHeader = () => {
                     <DropdownMenuItem asChild><Link href="/campaigns"><Compass className="mr-2 h-4 w-4" />All Expeditions</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/packages"><Package className="mr-2 h-4 w-4" />Safari Packages</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href="/events"><CalendarClock className="mr-2 h-4 w-4" />Scheduled Departures</Link></DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuLabel>Agency Highlights</DropdownMenuLabel>
-                    <DropdownMenuItem asChild><Link href="/discover-jinja"><Waves className="mr-2 h-4 w-4" />Discover Jinja</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href="/sipi-falls"><MountainSnow className="mr-2 h-4 w-4" />Sipi Falls Adventure</Link></DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

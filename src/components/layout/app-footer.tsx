@@ -97,8 +97,7 @@ export default function AppFooter() {
                 <ul className="space-y-2 text-sm">
                     <li><Link href="/packages" className="text-muted-foreground hover:text-primary">Packages</Link></li>
                     <li><Link href="/events" className="text-muted-foreground hover:text-primary">Departures</Link></li>
-                    <li className="flex items-center gap-2"><Waves className="h-4 w-4 text-accent" /><Link href="/discover-jinja" className="text-muted-foreground hover:text-primary">Discover Jinja</Link></li>
-                    <li className="flex items-center gap-2"><Mountain className="h-4 w-4 text-accent" /><Link href="/sipi-falls" className="text-muted-foreground hover:text-primary">Sipi Falls Adventure</Link></li>
+                    <li><Link href="/campaigns" className="text-muted-foreground hover:text-primary">All Expeditions</Link></li>
                     <li><Link href="/ideas" className="text-muted-foreground hover:text-primary">Dream Trips</Link></li>
                 </ul>
                 </div>

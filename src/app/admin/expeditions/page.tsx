@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud, DatabaseBackup, Download } from "lucide-react";
+import { Edit2, Plus, Trash2, Loader2, Map, Image as ImageIcon, Sparkles, CalendarClock, Globe, ChevronUp, ChevronDown, Type, X, Layout, RectangleHorizontal, ListChecks, UploadCloud, DatabaseBackup, Download, Star } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { fetchCampaigns, saveCampaign, deleteCampaign, fetchDepartures, saveDeparture, deleteDeparture, uploadFile, type Campaign, type Departure, type ItinerarySection } from '@/lib/services/cms-service';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function AdminExpeditionsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -191,17 +191,17 @@ export default function AdminExpeditionsPage() {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const url = await uploadFile(file, 'blobs', 'expeditions');
-      callback(url);
-      toast({ title: "Image Uploaded Successfully" });
-    } catch (err: any) {
-      toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
-    } finally {
-      setIsUploading(false);
+    if (file) {
+      setIsUploading(true);
+      try {
+        const url = await uploadFile(file, 'blobs', 'expeditions');
+        callback(url);
+        toast({ title: "Image Uploaded Successfully" });
+      } catch (err: any) {
+        toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -306,7 +306,8 @@ export default function AdminExpeditionsPage() {
                 meals: [], 
                 bookingTips: [], 
                 sections: [],
-                organizer: 'iffe-travels'
+                organizer: 'iffe-travels',
+                featured: false
             })} className="h-11 px-6 rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-black uppercase text-xs tracking-widest">
                 <Plus className="mr-2 h-4 w-4" /> New Itinerary
             </Button>
@@ -349,7 +350,10 @@ export default function AdminExpeditionsPage() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="font-bold">{camp.title}</TableCell>
+                        <TableCell className="font-bold flex items-center gap-2">
+                            {camp.title}
+                            {camp.featured && <Star className="h-3 w-3 text-accent fill-accent" title="Featured Highlight" />}
+                        </TableCell>
                         <TableCell className="text-xs uppercase tracking-widest text-muted-foreground">{camp.region}</TableCell>
                         <TableCell>{camp.currentAmount}%</TableCell>
                         <TableCell className="text-right space-x-1">
@@ -544,12 +548,24 @@ export default function AdminExpeditionsPage() {
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="font-bold uppercase text-[10px] tracking-widest">Tour Operator / Organizer</Label>
-                  <Input 
-                    value={editingCampaign?.organizer || 'iffe-travels'} 
-                    onChange={(e) => setEditingCampaign(prev => ({ ...prev, organizer: e.target.value }))}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="font-bold uppercase text-[10px] tracking-widest">Tour Operator / Organizer</Label>
+                      <Input 
+                        value={editingCampaign?.organizer || 'iffe-travels'} 
+                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, organizer: e.target.value }))}
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6">
+                        <Checkbox 
+                            id="featured" 
+                            checked={!!editingCampaign?.featured} 
+                            onCheckedChange={(val) => setEditingCampaign(prev => ({ ...prev, featured: !!val }))}
+                        />
+                        <Label htmlFor="featured" className="text-sm font-bold text-primary flex items-center gap-1.5">
+                            <Star className="h-3 w-3 text-accent fill-accent" /> Promote as Agency Highlight
+                        </Label>
+                    </div>
                 </div>
               </TabsContent>
 
