@@ -158,16 +158,14 @@ export default function ContactPage() {
                 <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-muted">
                     <iframe
                         className="absolute inset-0 w-full h-full"
-                        src="https://maps.google.com/maps?q=0.347596,32.582520&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                        frameBorder="0"
-                        scrolling="no"
-                        marginHeight={0}
-                        marginWidth={0}
-                        title="iffe-travels Location"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15958.765184678583!2d33.17908971680265!3d0.45719914681677315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sug!4v1781147042465!5m2!1sen!2sug"
+                        style={{ border: 0 }}
+                        allowFullScreen
                         loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="iffe-travels Location"
                     ></iframe>
                 </div>
-                <p className="text-muted-foreground mt-2 text-sm">Plot 123, Adventure Lane, Kampala, Uganda</p>
             </CardContent>
         </AnimatedCard>
         <div className="space-y-4">
