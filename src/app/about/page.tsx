@@ -74,8 +74,8 @@ export default function AboutPage() {
         <PageHero 
           title="Our Mission: Your Adventure"
           subtitle="We are a team of passionate explorers dedicated to crafting unforgettable and responsible travel experiences in the heart of Africa."
-          imageUrl={placeholderImages.gallerySafariGroup.src}
-          dataAiHint={placeholderImages.gallerySafariGroup.hint}
+          imageUrl={placeholderImages.aboutHeader.src}
+          dataAiHint={placeholderImages.aboutHeader.hint}
           primaryAction={{ text: "View Our Packages", link: "/packages" }}
           secondaryAction={{ text: "Contact Us", link: "/contact" }}
         />
@@ -99,7 +99,7 @@ export default function AboutPage() {
         <section className="carousel-background-container">
             <div 
                 className="carousel-background-image"
-                style={{ backgroundImage: `url(${placeholderImages.gallerySafariGroup.src})` }}
+                style={{ backgroundImage: `url(${placeholderImages.aboutHeader.src})` }}
             />
             <div className="carousel-background-overlay" />
             <FifaCardCarousel cards={teamMembers} title="Meet The Team" />

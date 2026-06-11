@@ -85,8 +85,8 @@ export default function ContactPage() {
       <PageHero 
         title="Get in Touch"
         subtitle="We'd love to hear from you. Whether you have a question about our tours or want to plan a custom safari, our team is ready to help."
-        imageUrl={placeholderImages.teamJane.src}
-        dataAiHint={placeholderImages.teamJane.hint}
+        imageUrl={placeholderImages.contactHeader.src}
+        dataAiHint={placeholderImages.contactHeader.hint}
       />
       
       <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-12 container mx-auto max-w-4xl px-4')}>

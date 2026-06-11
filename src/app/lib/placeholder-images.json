@@ -240,262 +240,28 @@
     "height": 64,
     "hint": "logistics coordinator"
   },
-  "fifaCardGorilla": {
-    "src": "https://images.unsplash.com/photo-1534567154991-285b0d346453?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 800,
-    "hint": "mountain gorilla"
-  },
-  "fifaCardMasai": {
-    "src": "https://images.unsplash.com/photo-1534749303573-0f72da05891e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 800,
-    "hint": "safari group"
-  },
-  "fifaCardOkavango": {
-    "src": "https://images.unsplash.com/photo-1583923269213-97b78996251b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 800,
-    "hint": "mokoro canoe"
-  },
-  "fifaCardNile": {
-    "src": "https://images.unsplash.com/photo-1568940059539-0a693721b585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 800,
-    "hint": "nile river"
-  },
-  "fifaCardKili": {
-    "src": "https://images.unsplash.com/photo-1589182332698-2c2a41a4a1a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 800,
-    "hint": "mount kilimanjaro"
-  },
-  "pkgExplorer": {
-    "src": "https://images.unsplash.com/photo-1534327429-13834be34268?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "safari group"
-  },
-  "pkgAdventurer": {
-    "src": "https://images.unsplash.com/photo-1587587878385-a77372b395e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "luxury tent"
-  },
-  "pkgUltimate": {
-    "src": "https://images.unsplash.com/photo-1534749303573-0f72da05891e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "safari sunset"
-  },
-  "videoThumbConference": {
-    "src": "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "Serengeti sunrise"
-  },
-  "videoThumbTraining": {
-    "src": "https://images.unsplash.com/photo-1534567154991-285b0d346453?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "gorilla family"
-  },
-  "videoThumbWater": {
-    "src": "https://images.unsplash.com/photo-1561019895-79567954b542?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "wildebeest river"
-  },
-  "videoThumbTestimonial": {
-    "src": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "tourist testimonial"
-  },
-  "videoThumbYouth": {
-    "src": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "safari packing"
-  },
-  "videoThumbPlanning": {
-    "src": "https://images.unsplash.com/photo-1583923269213-97b78996251b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 338,
-    "hint": "mokoro canoe"
-  },
-  "contactMap": {
-    "src": "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "width": 800,
-    "height": 600,
-    "hint": "city map"
-  },
-  "sipiHero": {
-    "src": "https://images.unsplash.com/photo-1605333140632-619234190c60?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+  "aboutHeader": {
+    "src": "/header/about_header_image.jpeg",
     "width": 1920,
     "height": 1080,
-    "hint": "sipi falls"
+    "hint": "safari landscape"
   },
-  "sipiHiking": {
-    "src": "https://images.unsplash.com/photo-1605333140596-1c5c64574992?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "hiking mount elgon"
+  "contactHeader": {
+    "src": "/header/contact_header_image.jpeg",
+    "width": 1920,
+    "height": 1080,
+    "hint": "contact us"
   },
-  "sipiAbseiling": {
-    "src": "https://images.unsplash.com/photo-1599497581786-2135a4209503?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "abseiling waterfall"
+  "safariPackageHeader": {
+    "src": "/header/safari_package_header_image.jpeg",
+    "width": 1920,
+    "height": 1080,
+    "hint": "safari package"
   },
-  "sipiCoffee": {
-    "src": "https://images.unsplash.com/photo-1551030173-122aabc2428f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 400,
-    "hint": "coffee beans uganda"
-  },
-   "campaignBwindi": {
-    "src": "https://images.unsplash.com/photo-1599818454238-149f78a74e50?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "bwindi forest"
-  },
-  "campaignQueenElizabeth": {
-    "src": "https://images.unsplash.com/photo-1592994801196-17a41760920f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "tree climbing lion"
-  },
-  "campaignMurchison": {
-    "src": "https://images.unsplash.com/photo-1618422629636-b53e8e4e6c6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "murchison falls"
-  },
-  "campaignKibale": {
-    "src": "https://images.unsplash.com/photo-1629813244911-482436449a2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "chimpanzee forest"
-  },
-  "campaignRwenzori": {
-    "src": "https://images.unsplash.com/photo-1629989025348-18c7c9c0b115?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "rwenzori mountains"
-  },
-  "campaignBunyonyi": {
-    "src": "https://images.unsplash.com/photo-1596763953456-9d2a3a5f2e8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "lake bunyonyi"
-  },
-  "campaignMburo": {
-    "src": "https://images.unsplash.com/photo-1598335036720-911855b34a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "zebra safari"
-  },
-  "campaignSourceNile": {
-    "src": "https://images.unsplash.com/photo-1604754742461-32943801f93e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "source of nile"
-  },
-  "campaignRafting": {
-    "src": "https://images.unsplash.com/photo-1565985800588-4687d60a4f5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "white water rafting"
-  },
-  "campaignElgon": {
-    "src": "https://images.unsplash.com/photo-1605333140596-1c5c64574992?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "mount elgon"
-  },
-  "campaignSipi": {
-    "src": "https://images.unsplash.com/photo-1605333140632-619234190c60?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "sipi falls"
-  },
-  "campaignBusoga": {
-    "src": "https://images.unsplash.com/photo-1582103232742-83d39031f135?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "cultural kingdom"
-  },
-  "campaignKidepo": {
-    "src": "https://images.unsplash.com/photo-1587576595503-f327a34cff3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "kidepo valley"
-  },
-  "campaignKaruma": {
-    "src": "https://images.unsplash.com/photo-1618422629636-b53e8e4e6c6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "karuma falls"
-  },
-  "campaignPianUpe": {
-    "src": "https://images.unsplash.com/photo-1580221299949-b3a693f4164b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "savannah reserve"
-  },
-  "campaignKampala": {
-    "src": "https://images.unsplash.com/photo-1580554336357-123351583324?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "kampala city"
-  },
-  "campaignEntebbe": {
-    "src": "https://images.unsplash.com/photo-1596763953456-9d2a3a5f2e8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "entebbe botanical"
-  },
-  "campaignNgamba": {
-    "src": "https://images.unsplash.com/photo-1629813244911-482436449a2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "chimpanzee sanctuary"
-  },
-  "campaignMabira": {
-    "src": "https://images.unsplash.com/photo-1533460004989-cef01064af7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "rainforest zip"
-  },
-  "campaignSsese": {
-    "src": "https://images.unsplash.com/photo-1604754742461-32943801f93e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "lake victoria island"
-  },
-  "campaignSemuliki": {
-    "src": "https://images.unsplash.com/photo-1620356793136-e8284558c353?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "semuliki hot springs"
-  },
-  "campaignFortPortal": {
-    "src": "https://images.unsplash.com/photo-1605333140596-1c5c64574992?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "width": 600,
-    "height": 350,
-    "hint": "crater lake"
-  },
-   "campaignNileCruise": {
-    "src": "https://images.unsplash.com/photo-1568940059539-0a693721b585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-    "width": 1200,
-    "height": 600,
-    "hint": "nile river cruise"
-  },
-  "campaignKilimanjaro": {
-    "src": "https://images.unsplash.com/photo-1589182332698-2c2a41a4a1a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-    "width": 1200,
-    "height": 600,
-    "hint": "mount kilimanjaro"
+  "scheduledDeparturesHeader": {
+    "src": "/header/scheduled_departures_header_image.jpeg",
+    "width": 1920,
+    "height": 1080,
+    "hint": "safari group"
   }
 }

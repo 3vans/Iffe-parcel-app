@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,9 +38,6 @@ export default function PackagesPage() {
         load();
     }, []);
 
-    const heroImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
-    const heroDataAiHint = 'mountain valley landscape';
-
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
@@ -54,8 +52,8 @@ export default function PackagesPage() {
             <PageHero 
                 title="Our Safari Packages"
                 subtitle="Choose the perfect adventure that suits your style and budget. Experience the wild like never before with our expertly crafted safari journeys."
-                imageUrl={heroImage}
-                dataAiHint={heroDataAiHint}
+                imageUrl={placeholderImages.safariPackageHeader.src}
+                dataAiHint={placeholderImages.safariPackageHeader.hint}
                 primaryAction={{ text: "Explore All Tours", link: "/campaigns" }}
                 secondaryAction={{ text: "Customize Your Trip", link: "#custom-builder" }}
             />

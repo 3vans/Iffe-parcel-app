@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,8 +38,8 @@ export default function EventsPage() {
         <PageHero 
           title="Scheduled Departures"
           subtitle="Join our group tours, webinars, and special events. Your adventure awaits!"
-          imageUrl={placeholderImages.eventDetailDefault.src}
-          dataAiHint={placeholderImages.eventDetailDefault.hint}
+          imageUrl={placeholderImages.scheduledDeparturesHeader.src}
+          dataAiHint={placeholderImages.scheduledDeparturesHeader.hint}
           primaryAction={{ text: "Inquire Now", link: "/contact" }}
           secondaryAction={{ text: "Plan a Custom Trip", link: "/campaigns/new" }}
         />
