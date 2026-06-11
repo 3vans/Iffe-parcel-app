@@ -88,12 +88,12 @@ export default function Hero() {
       {/* Mobile Content Container */}
       <div className="relative h-full flex items-center justify-center z-10 p-4 md:hidden pt-[68px] overflow-hidden">
         <div className="bg-stone-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 text-center text-white border border-white/10 shadow-2xl flex flex-col gap-4 sm:gap-6 w-full max-w-[95%] mx-auto">
-            <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500 leading-tight", hasScrolled ? 'text-[9px]' : 'text-[10px]')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
+            <p className={cn("font-semibold text-yellow-400 uppercase tracking-widest transition-all duration-500 leading-tight", hasScrolled ? 'text-[9px]' : 'text-[10px]')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
-              className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-2xl" : "text-3xl")}
+              className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-3xl" : "text-4xl")}
                style={{
-                WebkitTextStroke: '0.5px white',
-                color: 'transparent'
+                WebkitTextStroke: '0.8px hsl(var(--primary))',
+                WebkitTextFillColor: 'transparent'
               }}
             >
               <span className="block">Explore the</span>
@@ -127,23 +127,27 @@ export default function Hero() {
         >
           <div>
             <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500", hasScrolled ? 'text-xs mb-1' : 'text-sm mb-2')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
-             <div className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-7xl")}>
-                <div style={{ WebkitTextStroke: '1.5px hsl(var(--primary))' }}>
-                  <DockTextEffect text="Explore the" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
-                  <DockTextEffect text="PEARL" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
-                </div>
+             <div 
+                className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-7xl")}
+                style={{ 
+                    WebkitTextStroke: '1.5px hsl(var(--primary))',
+                    WebkitTextFillColor: 'transparent'
+                }}
+            >
+              <DockTextEffect text="Explore the" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
+              <DockTextEffect text="PEARL" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
             </div>
             <div className={cn("h-1 bg-accent transition-all duration-500", hasScrolled ? "w-16 mb-4" : "w-24 mb-6")}></div>
              <p className={cn("text-muted-foreground max-w-md transition-all duration-500 font-body", hasScrolled ? 'text-sm h-16' : 'h-20 mb-8 text-base')} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex items-center gap-4 mb-4">
-               <Button size={hasScrolled ? 'default' : 'lg'} asChild className={cn("bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full transition-all duration-500", hasScrolled ? "py-5 px-6 text-sm" : "text-md py-6 px-8")}>
+               <Button size={hasScrolled ? 'default' : 'lg'} asChild className={cn("bg-accent text-accent-foreground hover:bg-accent/90 font-black rounded-full transition-all duration-500 shadow-lg shadow-accent/20 uppercase tracking-widest", hasScrolled ? "py-5 px-6 text-sm" : "text-md py-6 px-10")}>
                 <Link href="/contact">
                   LET'S GET STARTED
                 </Link>
               </Button>
-               <Button variant="outline" asChild className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary transition-all duration-500", hasScrolled ? "px-5 py-5 text-xs" : "px-6 py-6 text-sm")}>
+               <Button variant="outline" asChild className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary transition-all duration-500 font-bold", hasScrolled ? "px-5 py-5 text-xs" : "px-6 py-6 text-sm")}>
                 <Link href="/about">Who we are</Link>
               </Button>
             </div>

@@ -41,9 +41,8 @@ export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, ico
           </div>
         )}
         <h1 
-          className="font-headline text-4xl md:text-6xl font-black mb-4 uppercase tracking-widest relative inline-block"
+          className="font-headline text-4xl md:text-6xl lg:text-7xl font-black mb-4 pb-4 relative uppercase tracking-widest leading-none inline-block"
           style={{
-            color: 'hsl(var(--primary))',
             WebkitTextStroke: '1px hsl(var(--primary))',
             WebkitTextFillColor: 'transparent'
           }}
@@ -52,7 +51,7 @@ export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, ico
           <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></span>
         </h1>
         {subtitle && (
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mt-6 font-body">{subtitle}</p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mt-6 font-body leading-relaxed">{subtitle}</p>
         )}
       </div>
     </section>

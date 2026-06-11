@@ -27,6 +27,7 @@ interface PageHeroProps {
  * Standard Page Hero component.
  * Uses Montserrat (font-headline) for titles with a 1px primary stroke.
  * Uses Lora (font-body) for content.
+ * Character centers are translucent (transparent fill) to contrast with solid body text.
  */
 export default function PageHero({ 
   title, 
@@ -56,10 +57,10 @@ export default function PageHero({
             <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/70 text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
               <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">{tagline}</p>
               <h1
-                className="font-headline text-4xl md:text-5xl lg:text-6xl font-black mb-4 pb-4 relative uppercase tracking-widest"
+                className="font-headline text-4xl md:text-5xl lg:text-7xl font-black mb-4 pb-4 relative uppercase tracking-widest leading-tight"
                 style={{
-                  color: 'hsl(var(--primary-foreground))',
                   WebkitTextStroke: '1px hsl(var(--primary))',
+                  WebkitTextFillColor: 'transparent',
                 }}
               >
                  {title}
@@ -70,14 +71,14 @@ export default function PageHero({
               </p>
               <div className="flex flex-wrap items-center gap-4">
                  {primaryAction && (
-                    <Button size="lg" asChild className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105">
+                    <Button size="lg" asChild className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105 rounded-full px-8">
                         <Link href={primaryAction.link}>
                             {primaryAction.text}
                         </Link>
                     </Button>
                  )}
                  {secondaryAction && (
-                    <Button variant="link" asChild className="text-yellow-400 hover:text-yellow-300">
+                    <Button variant="link" asChild className="text-yellow-400 hover:text-yellow-300 font-bold">
                         <Link href={secondaryAction.link}>
                             {secondaryAction.text}
                         </Link>
