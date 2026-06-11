@@ -172,8 +172,8 @@ export default function ContactPage() {
             <h2 className="font-headline text-2xl font-bold text-primary flex items-center"><Share2 className="mr-2 h-6 w-6 text-accent"/> Connect With Us</h2>
             <div className="space-y-3">
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
-                    <Link href="#">
-                        <i className="fa-brands fa-facebook mr-3 h-6 w-6 text-blue-600"></i> Facebook
+                    <Link href="https://www.youtube.com/channel/UCpzZFQ5eBs11PElV5z7CGPw" target="_blank" rel="noopener noreferrer">
+                        <i className="fa-brands fa-youtube mr-3 h-6 w-6 text-red-600"></i> YouTube
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
