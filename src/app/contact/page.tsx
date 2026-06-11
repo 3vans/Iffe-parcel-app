@@ -179,7 +179,7 @@ export default function ContactPage() {
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
-                    <Link href="#">
+                    <Link href="https://www.instagram.com/iffe.travels.ltd" target="_blank" rel="noopener noreferrer">
                         <i className="fa-brands fa-instagram mr-3 h-6 w-6 text-pink-500"></i> Instagram
                     </Link>
                 </Button>
@@ -189,7 +189,7 @@ export default function ContactPage() {
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
-                    <Link href="#">
+                    <Link href="https://www.linkedin.com/in/iffe-travels-limited-201849415" target="_blank" rel="noopener noreferrer">
                         <i className="fa-brands fa-linkedin mr-3 h-6 w-6 text-sky-700"></i> LinkedIn
                     </Link>
                 </Button>

@@ -71,7 +71,7 @@ export default function AppFooter() {
                         <Twitter className="h-5 w-5" />
                     </Button>
                     </Link>
-                    <Link href="#" aria-label="LinkedIn">
+                    <Link href="https://www.linkedin.com/in/iffe-travels-limited-201849415" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                     <Button variant="outline" size="icon" className="border-muted-foreground/50 text-muted-foreground hover:bg-accent/10 hover:border-accent hover:text-accent">
                         <Linkedin className="h-5 w-5" />
                     </Button>
