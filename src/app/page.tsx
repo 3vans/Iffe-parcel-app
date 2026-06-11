@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -76,10 +77,10 @@ export default function Home() {
           items.push({
             id: 'guide-1',
             type: 'creator',
-            name: 'Ian Ivan',
-            avatarUrl: placeholderImages.homeCreatorJane.src,
-            specialty: 'Expert Guide & Wildlife Photographer',
-            profileLink: '/profile/ian-ivan',
+            name: 'Ian Mudembula',
+            avatarUrl: placeholderImages.teamIvan.src,
+            specialty: 'Founder & Lead Guide',
+            profileLink: '/profile/ian-mudembula',
           });
 
           setFeedItems(items.sort(() => Math.random() - 0.5));
