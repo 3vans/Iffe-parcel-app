@@ -1,4 +1,3 @@
-
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,7 +10,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useState, useMemo, useEffect } from 'react';
-import HeroSection from '@/components/layout/hero-section';
+import PageHero from '@/components/layout/page-hero';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AnimatedSection from '@/components/animated-section';
@@ -72,7 +71,6 @@ export default function CampaignsPage() {
   const AnimatedCard = ({ campaign }: { campaign: Campaign }) => {
     const [ref, isVisible] = useScrollAnimation();
     const progressPercentage = campaign.currentAmount || 0;
-    // Ensure we don't pass an empty string to Image src
     const [imgSrc, setImgSrc] = useState(campaign.imageUrl || placeholderImages.campaignDetailWildebeest.src);
 
     return (
@@ -129,10 +127,9 @@ export default function CampaignsPage() {
     
   return (
     <div className="space-y-12 animate-fade-in pb-20">
-      <HeroSection 
+      <PageHero 
         title="Bespoke Safari Tours"
         subtitle="Unforgettable wildlife encounters and cultural journeys across the Pearl of Africa."
-        iconName="Compass"
         imageUrl={placeholderImages.campaignDetailWildebeest.src}
         dataAiHint={placeholderImages.campaignDetailWildebeest.hint}
       />

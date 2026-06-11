@@ -1,19 +1,18 @@
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { getMockVideoData } from './data'; // Changed import
+import { getMockVideoData } from './data';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlayCircle } from 'lucide-react';
-import HeroSection from '@/components/layout/hero-section';
+import PageHero from '@/components/layout/page-hero';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 
 export default async function VideoLibraryPage() {
-  const videos = getMockVideoData(); // Changed function call
+  const videos = getMockVideoData();
 
   return (
     <div className="space-y-8 animate-fade-in">
-        <HeroSection
+        <PageHero
           title="Travel Video Library"
           subtitle="Watch highlights from our expeditions, travel tips from guides, and stories from fellow adventurers."
           imageUrl={placeholderImages.videoPlaceholder.src}
@@ -21,7 +20,7 @@ export default async function VideoLibraryPage() {
         />
 
       {videos && videos.length > 0 ? (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 container mx-auto px-4 py-8">
           {videos.map((video) => (
             <Card key={video.id} className="overflow-hidden shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1 group">
                 <Link href={`/watch/${video.youtubeVideoId}`} className="block">

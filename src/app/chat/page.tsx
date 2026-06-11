@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -11,7 +10,7 @@ import { Send, Loader2, MessageSquare, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/app/lib/placeholder-images.json';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import HeroSection from '@/components/layout/hero-section';
+import PageHero from '@/components/layout/page-hero';
 import { useAuth } from '@/context/AuthContext';
 import { sendMessage, subscribeToMessages, fetchChatrooms, type ChatMessage, type Chatroom } from '@/lib/services/cms-service';
 import { useToast } from '@/hooks/use-toast';
@@ -95,10 +94,10 @@ export default function ChatPage() {
 
   return (
     <div className="space-y-8 pb-20">
-      <HeroSection 
+      <PageHero 
         title="Community Chat"
         subtitle="Connect with our team and other travelers in real-time channels."
-        iconName="MessageCircle"
+        imageUrl={placeholderImages.videoThumbPlanning.src}
       />
       
       <div ref={ref} className={cn('grid grid-cols-1 lg:grid-cols-4 gap-6 container mx-auto px-4 scroll-animate', isVisible && 'scroll-animate-in')}>
@@ -163,7 +162,7 @@ export default function ChatPage() {
                     <div
                       key={msg.id}
                       className={cn(
-                        'flex items-start gap-3 max-w-[85%] sm:max-w-[75%]',
+                        'flex items-start gap-3 max-w-[85%] min-w-[200px]',
                         isOwn ? 'ml-auto flex-row-reverse' : 'mr-auto'
                       )}
                     >

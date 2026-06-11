@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -12,7 +11,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import placeholderImages from '@/app/lib/placeholder-images.json';
-import Image from 'next/image';
+import PageHero from '@/components/layout/page-hero';
 import { fetchBlogPosts, type BlogPost } from '@/lib/services/cms-service';
 
 const availableTags = ['#BigCats', '#Leopard', '#Birdwatching', '#Uganda', '#Photography', '#Conservation', '#Serengeti', '#Okavango'];
@@ -55,57 +54,18 @@ export default function BlogPage() {
     });
   }, [posts, searchTerm, selectedTag]);
 
-  const [headerRef, isHeaderVisible] = useScrollAnimation();
-  const heroImage = placeholderImages.blogPostDefault.src;
-  const heroDataAiHint = placeholderImages.blogPostDefault.hint;
-
   return (
     <div className="space-y-8 animate-fade-in">
-       <section ref={headerRef} className={cn('relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg scroll-animate flex items-center', isHeaderVisible && 'scroll-animate-in')}>
-        <Image
-          src={heroImage}
-          alt="Travel Journal"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
-          data-ai-hint={heroDataAiHint}
-          priority
-        />
-        <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
-        
-        <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
-            <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/70 text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
-              <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">FROM THE WILD</p>
-              <h1
-                className="font-headline text-4xl md:text-5xl font-black mb-4 pb-4 relative uppercase tracking-widest"
-                style={{
-                  color: 'hsl(var(--primary-foreground))',
-                  WebkitTextStroke: '1px hsl(var(--primary))',
-                }}
-              >
-                Travel Journal
-                 <span className="absolute bottom-0 left-0 w-20 h-0.5 bg-gradient-to-r from-yellow-400 to-transparent"></span>
-              </h1>
-              <p className="text-lg text-slate-300 max-w-md mb-8">
-                Stories, tips, and updates from our adventures in the wild.
-              </p>
-              <div className="flex flex-wrap items-center gap-4">
-                 <Button size="lg" asChild className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105">
-                   <Link href="/blog/submit">
-                     Share a Story
-                   </Link>
-                 </Button>
-                 <Button variant="link" asChild className="text-yellow-400 hover:text-yellow-300">
-                    <Link href="/contact">
-                        Contact Us
-                    </Link>
-                 </Button>
-              </div>
-            </div>
-          </div>
-      </section>
+       <PageHero 
+         title="Travel Journal"
+         subtitle="Stories, tips, and updates from our adventures in the wild."
+         imageUrl={placeholderImages.blogPostDefault.src}
+         dataAiHint={placeholderImages.blogPostDefault.hint}
+         primaryAction={{ text: "Share a Story", link: "/blog/submit" }}
+         secondaryAction={{ text: "Contact Us", link: "/contact" }}
+       />
 
-      <AnimatedSection>
+      <AnimatedSection className="container mx-auto px-4">
         <Card className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow">
             <div className="relative w-full md:w-1/2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -142,7 +102,7 @@ export default function BlogPage() {
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>
       ) : (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 container mx-auto px-4">
           {filteredPosts.map(post => (
             <BlogCard key={post.id} {...post} />
           ))}

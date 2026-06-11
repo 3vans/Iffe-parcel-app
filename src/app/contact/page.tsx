@@ -8,14 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin, Loader2 } from "lucide-react";
+import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin, Loader2, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import placeholderImages from "@/app/lib/placeholder-images.json";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import { cn } from "@/lib/utils";
-import HeroSection from "@/components/layout/hero-section";
+import PageHero from "@/components/layout/page-hero";
 import { useState } from 'react';
 import TestimonialSection from '@/components/testimonial-section';
 import Link from 'next/link';
@@ -87,10 +87,9 @@ export default function ContactPage() {
 
   return (
     <div className="space-y-12 pb-20">
-      <HeroSection 
+      <PageHero 
         title="Get in Touch"
         subtitle="We'd love to hear from you. Whether you have a question about our tours or want to plan a custom safari, our team is ready to help."
-        iconName="Mail"
         imageUrl={placeholderImages.teamJane.src}
         dataAiHint={placeholderImages.teamJane.hint}
       />
