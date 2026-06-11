@@ -198,6 +198,18 @@
     "height": 180,
     "hint": "uploaded video"
   },
+  "teamIvan": {
+    "src": "/profile/ivan.png",
+    "width": 400,
+    "height": 400,
+    "hint": "ivan portrait"
+  },
+  "teamBen": {
+    "src": "/profile/ben.png",
+    "width": 400,
+    "height": 400,
+    "hint": "ben portrait"
+  },
   "teamJane": {
     "src": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=64&q=80",
     "width": 64,

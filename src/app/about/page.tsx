@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +19,7 @@ const teamMembers = [
     rating: "98",
     speed: "15 Yrs", 
     skill: "300+ Tours",
-    image: "teamJane" as keyof typeof placeholderImages,
+    image: "teamIvan" as keyof typeof placeholderImages,
     dataAiHint: "safari guide portrait",
     link: "/profile/ian-mudembula"
   },
@@ -29,7 +30,7 @@ const teamMembers = [
     rating: "99",
     speed: "10 Yrs",
     skill: "500+ Tours",
-    image: "teamJohn" as keyof typeof placeholderImages,
+    image: "teamBen" as keyof typeof placeholderImages,
     dataAiHint: "operations manager portrait",
     link: "/profile/ben"
   },

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin, Loader2, Mail } from "lucide-react";
+import { Users, Send, MapPin, Share2, Facebook, Instagram, Twitter, Linkedin, Loader2, Mail, Youtube } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
@@ -34,13 +35,13 @@ const teamMembers = [
   {
     name: "Ian Mudembula",
     role: "Founder & Lead Guide",
-    avatar: placeholderImages.teamJane,
+    avatar: placeholderImages.teamIvan,
     link: "/profile/ian-mudembula",
   },
   {
     name: "Ben",
     role: "Head of Operations",
-    avatar: placeholderImages.teamJohn,
+    avatar: placeholderImages.teamBen,
     link: "/profile/ben",
   },
   {
@@ -172,22 +173,22 @@ export default function ContactPage() {
             <div className="space-y-3">
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="https://www.youtube.com/channel/UCpzZFQ5eBs11PElV5z7CGPw" target="_blank" rel="noopener noreferrer">
-                        <i className="fa-brands fa-youtube mr-3 h-6 w-6 text-red-600"></i> YouTube
+                        <Youtube className="mr-3 h-6 w-6 text-red-600" /> YouTube
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="https://www.instagram.com/iffe.travels.ltd" target="_blank" rel="noopener noreferrer">
-                        <i className="fa-brands fa-instagram mr-3 h-6 w-6 text-pink-500"></i> Instagram
+                        <Instagram className="mr-3 h-6 w-6 text-pink-500" /> Instagram
                     </Link>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="https://x.com/IMudembula" target="_blank" rel="noopener noreferrer">
-                        <i className="fa-brands fa-x-twitter mr-3 h-6 w-6 text-foreground"></i> X (Twitter)
+                        <Twitter className="mr-3 h-6 w-6 text-foreground" /> X (Twitter)
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
                     <Link href="https://www.linkedin.com/in/iffe-travels-limited-201849415" target="_blank" rel="noopener noreferrer">
-                        <i className="fa-brands fa-linkedin mr-3 h-6 w-6 text-sky-700"></i> LinkedIn
+                        <Linkedin className="mr-3 h-6 w-6 text-sky-700" /> LinkedIn
                     </Link>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-center text-lg py-6 rounded-full border-primary/50">
