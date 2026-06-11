@@ -12,12 +12,7 @@ import TestimonialSection from "@/components/testimonial-section";
 import CustomSafariBuilder from "@/components/custom-safari-builder/custom-safari-builder";
 import { fetchBasePackages, fetchAddons, type Package as BuilderPackage, type Addon } from "@/lib/services/cms-service";
 import { cn } from "@/lib/utils";
-
-/**
- * TYPOGRAPHY NOTE:
- * - Headlines ("Our Safari Packages") use Montserrat (font-headline) for a bold, adventurous look.
- * - Subtitles and body text use Lora (default body) for a classic, readable serif feel.
- */
+import PageHero from '@/components/layout/page-hero';
 
 export default function PackagesPage() {
     const [livePackages, setLivePackages] = useState<BuilderPackage[]>([]);
@@ -56,48 +51,14 @@ export default function PackagesPage() {
 
     return (
         <div className="space-y-12">
-            <section className="relative w-full h-[80vh] min-h-[600px] overflow-hidden rounded-lg shadow-lg flex items-center">
-                <Image
-                    src={heroImage}
-                    alt="Safari Packages"
-                    fill
-                    className="object-cover z-0"
-                    data-ai-hint={heroDataAiHint}
-                    priority
-                />
-                <div className="absolute inset-0 bg-stone-900/30 z-10"></div>
-                
-                <div className="absolute inset-0 h-full flex items-center z-10 min-h-[400px]">
-                    <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/70 text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
-                        <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
-                        <h1
-                            className="font-headline text-4xl md:text-5xl font-black mb-4 pb-4 relative uppercase tracking-widest"
-                            style={{
-                                color: 'hsl(var(--primary-foreground))',
-                                WebkitTextStroke: '1px hsl(var(--primary))',
-                            }}
-                        >
-                            Our Safari Packages
-                            <span className="absolute bottom-0 left-0 w-20 h-0.5 bg-gradient-to-r from-yellow-400 to-transparent"></span>
-                        </h1>
-                        <p className="text-lg text-slate-300 max-w-md mb-8">
-                            Choose the perfect adventure that suits your style and budget. Experience the wild like never before with our expertly crafted safari journeys.
-                        </p>
-                        <div className="flex flex-wrap items-center gap-4">
-                            <Button size="lg" asChild className="bg-gradient-to-r from-yellow-400 to-orange-400 text-stone-900 font-bold hover:opacity-90 transition-transform hover:scale-105">
-                                <Link href="/campaigns">
-                                    Explore All Tours
-                                </Link>
-                            </Button>
-                            <Button variant="link" asChild className="text-yellow-400 hover:text-yellow-300">
-                                <Link href="#custom-builder">
-                                    Customize Your Trip
-                                </Link>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <PageHero 
+                title="Our Safari Packages"
+                subtitle="Choose the perfect adventure that suits your style and budget. Experience the wild like never before with our expertly crafted safari journeys."
+                imageUrl={heroImage}
+                dataAiHint={heroDataAiHint}
+                primaryAction={{ text: "Explore All Tours", link: "/campaigns" }}
+                secondaryAction={{ text: "Customize Your Trip", link: "#custom-builder" }}
+            />
             
             <section className="container mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch pt-8">
@@ -125,7 +86,7 @@ export default function PackagesPage() {
                                     <p className="text-sm text-muted-foreground ml-1">{pkg.priceDescription}</p>
                                 </div>
                             </CardHeader>
-                            <CardContent className="flex-grow">
+                            <CardContent className="flex-grow font-body">
                                 <ul className="space-y-2 text-sm">
                                     {pkg.features?.map(feature => (
                                         <li key={feature} className="flex items-center">

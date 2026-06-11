@@ -90,7 +90,7 @@ export default function Hero() {
         <div className="bg-stone-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 text-center text-white border border-white/10 shadow-2xl flex flex-col gap-4 sm:gap-6 w-full max-w-[95%] mx-auto">
             <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500 leading-tight", hasScrolled ? 'text-[9px]' : 'text-[10px]')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
             <h1
-              className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-xl" : "text-2xl")}
+              className={cn("font-headline font-black tracking-widest uppercase transition-all duration-500 leading-none", hasScrolled ? "text-2xl" : "text-3xl")}
                style={{
                 WebkitTextStroke: '0.5px white',
                 color: 'transparent'
@@ -100,7 +100,7 @@ export default function Hero() {
               <span className="block">PEARL</span>
             </h1>
             <div className="h-0.5 bg-accent/40 w-12 mx-auto rounded-full" />
-            <p className={cn("text-stone-300 transition-opacity duration-500 leading-relaxed font-medium", hasScrolled ? "text-xs line-clamp-2" : "text-sm")} key={currentBg.description}>
+            <p className={cn("text-stone-300 transition-opacity duration-500 leading-relaxed font-body", hasScrolled ? "text-xs line-clamp-2" : "text-sm")} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex flex-col gap-3 pt-2">
@@ -127,12 +127,14 @@ export default function Hero() {
         >
           <div>
             <p className={cn("font-semibold text-primary uppercase tracking-widest transition-all duration-500", hasScrolled ? 'text-xs mb-1' : 'text-sm mb-2')}>Tour, Travel & Adventure Camping Across Uganda and East Africa</p>
-             <div className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl")}>
-                <DockTextEffect text="Explore the" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
-                <DockTextEffect text="PEARL" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
+             <div className={cn("font-black mb-4 tracking-[3px] uppercase transition-all duration-500", hasScrolled ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-7xl")}>
+                <div style={{ WebkitTextStroke: '1.5px hsl(var(--primary))' }}>
+                  <DockTextEffect text="Explore the" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
+                  <DockTextEffect text="PEARL" className="font-headline dock-text-container" animationTrigger={animationTrigger} />
+                </div>
             </div>
             <div className={cn("h-1 bg-accent transition-all duration-500", hasScrolled ? "w-16 mb-4" : "w-24 mb-6")}></div>
-             <p className={cn("text-muted-foreground max-w-md transition-all duration-500", hasScrolled ? 'text-sm h-16' : 'h-20 mb-8 text-base')} key={currentBg.description}>
+             <p className={cn("text-muted-foreground max-w-md transition-all duration-500 font-body", hasScrolled ? 'text-sm h-16' : 'h-20 mb-8 text-base')} key={currentBg.description}>
                 {currentBg.description}
             </p>
             <div className="flex items-center gap-4 mb-4">

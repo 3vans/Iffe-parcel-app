@@ -1,4 +1,3 @@
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -20,7 +19,7 @@ export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, ico
   const Icon = iconName ? icons[iconName] : null;
 
   return (
-    <section ref={ref} className={cn('relative text-center py-12 md:py-20 rounded-lg overflow-hidden bg-gradient-to-r from-primary/10 to-accent/10 scroll-animate', isVisible && 'scroll-animate-in', className)}>
+    <section ref={ref} className={cn('relative text-center py-16 md:py-24 rounded-lg overflow-hidden bg-gradient-to-r from-primary/10 to-accent/10 scroll-animate', isVisible && 'scroll-animate-in', className)}>
       {imageUrl && (
         <>
           <Image
@@ -37,15 +36,23 @@ export default function HeroSection({ title, subtitle, imageUrl, dataAiHint, ico
       )}
       <div className="relative z-10 p-4">
         {Icon && (
-          <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-4">
+          <div className="mx-auto bg-accent/20 p-3 rounded-full w-fit mb-6">
             <Icon className="h-10 w-10 md:h-12 md:w-12 text-accent" />
           </div>
         )}
-        <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary mb-2">
+        <h1 
+          className="font-headline text-4xl md:text-6xl font-black mb-4 uppercase tracking-widest relative inline-block"
+          style={{
+            color: 'hsl(var(--primary))',
+            WebkitTextStroke: '1px hsl(var(--primary))',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
           {title}
+          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></span>
         </h1>
         {subtitle && (
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{subtitle}</p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mt-6 font-body">{subtitle}</p>
         )}
       </div>
     </section>

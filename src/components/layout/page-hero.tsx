@@ -25,7 +25,8 @@ interface PageHeroProps {
 
 /**
  * Standard Page Hero component.
- * Uses Montserrat (font-headline) for titles and Lora (font-body) for content.
+ * Uses Montserrat (font-headline) for titles with a 1px primary stroke.
+ * Uses Lora (font-body) for content.
  */
 export default function PageHero({ 
   title, 
@@ -55,7 +56,7 @@ export default function PageHero({
             <div className="relative w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center bg-stone-900/70 text-white backdrop-blur-md p-8 md:p-12 rounded-lg">
               <p className="font-semibold text-yellow-400 uppercase tracking-widest text-sm mb-2">{tagline}</p>
               <h1
-                className="font-headline text-4xl md:text-5xl font-black mb-4 pb-4 relative uppercase tracking-widest"
+                className="font-headline text-4xl md:text-5xl lg:text-6xl font-black mb-4 pb-4 relative uppercase tracking-widest"
                 style={{
                   color: 'hsl(var(--primary-foreground))',
                   WebkitTextStroke: '1px hsl(var(--primary))',
@@ -64,7 +65,7 @@ export default function PageHero({
                  {title}
                  <span className="absolute bottom-0 left-0 w-20 h-0.5 bg-gradient-to-r from-yellow-400 to-transparent"></span>
               </h1>
-              <p className="text-lg text-slate-300 max-w-md mb-8">
+              <p className="text-lg text-slate-300 max-w-md mb-8 font-body">
                 {subtitle}
               </p>
               <div className="flex flex-wrap items-center gap-4">
