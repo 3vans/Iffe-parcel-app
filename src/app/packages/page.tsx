@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -13,6 +12,12 @@ import TestimonialSection from "@/components/testimonial-section";
 import CustomSafariBuilder from "@/components/custom-safari-builder/custom-safari-builder";
 import { fetchBasePackages, fetchAddons, type Package as BuilderPackage, type Addon } from "@/lib/services/cms-service";
 import { cn } from "@/lib/utils";
+
+/**
+ * TYPOGRAPHY NOTE:
+ * - Headlines ("Our Safari Packages") use Montserrat (font-headline) for a bold, adventurous look.
+ * - Subtitles and body text use Lora (default body) for a classic, readable serif feel.
+ */
 
 export default function PackagesPage() {
     const [livePackages, setLivePackages] = useState<BuilderPackage[]>([]);
